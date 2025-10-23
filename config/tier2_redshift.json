@@ -1,0 +1,28 @@
+{
+  "base_paths": {
+    "results": "../results"
+  },
+  "hardware": {
+    "gpu_enabled": true,
+    "gpu_device": 0
+  },
+  "tier": 2,
+  "category": "Weak-Field Redshift",
+  "parameters": {
+    "c": 1.0,
+    "time_step": 5e-4,
+    "space_step": 5e-3,
+    "N": 512
+  },
+  "tolerances": {
+    "redshift_correlation": 0.95,
+    "energy_drift": 1e-12
+  },
+  "variants": [
+    {"description": "GRAV-09 small χ gradient", "chi_gradient": [0.0, 0.05], "steps": 4000},
+    {"description": "GRAV-10 medium χ gradient", "chi_gradient": [0.0, 0.1], "steps": 4000},
+    {"description": "GRAV-11 reversed gradient", "chi_gradient": [0.1, 0.0], "steps": 4000},
+    {"description": "GRAV-12 oscillatory χ", "chi_function": "sin(πx)", "steps": 4000}
+  ],
+  "notes": "Tests weak-field frequency redshift and time-delay analogues."
+}

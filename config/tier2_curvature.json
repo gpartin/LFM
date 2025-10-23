@@ -1,0 +1,28 @@
+{
+  "base_paths": {
+    "results": "../results"
+  },
+  "hardware": {
+    "gpu_enabled": true,
+    "gpu_device": 0
+  },
+  "tier": 2,
+  "category": "Strong-Field Curvature / Stability",
+  "parameters": {
+    "c": 1.0,
+    "time_step": 5e-4,
+    "space_step": 5e-3,
+    "N": 512
+  },
+  "tolerances": {
+    "energy_drift": 1e-11,
+    "field_stability": 0.02
+  },
+  "variants": [
+    {"description": "GRAV-13 deep potential well", "chi_profile": "exp(-r^2/0.1)", "steps": 8000},
+    {"description": "GRAV-14 steep χ wall", "chi_profile": "step(x,0.1)", "steps": 8000},
+    {"description": "ENER-17 curved-field energy flow", "chi_gradient": [0.0, 0.3], "steps": 8000},
+    {"description": "ENER-18 stability stress test", "chi_profile": "random(±0.2)", "steps": 10000}
+  ],
+  "notes": "Large-χ gradients, deflection, and energy transport stability tests."
+}
