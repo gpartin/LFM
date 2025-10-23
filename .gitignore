@@ -1,0 +1,34 @@
+# --- LFM Project .gitignore (v1.1) ---
+
+# OS / IDE junk
+Thumbs.db
+desktop.ini
+.vscode/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Python virtual environments
+.venv/
+env/
+venv/
+
+# Installers and binaries
+installer/
+*.exe
+*.msi
+*.msix
+*.zip
+
+# Runtime / results / logs
+runs/
+results/
+logs/
+packages/
+*.tmp
+*.bak
+
+# Config caches
+*.json.lock
+*.DS_Store
