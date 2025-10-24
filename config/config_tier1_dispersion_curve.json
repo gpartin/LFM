@@ -1,0 +1,26 @@
+{
+  "tier": 1,
+  "variant_id": "REL-04-Continuum",
+  "test_name": "Dispersion Curve — Continuum Limit (4th-Order)",
+  "category": "Relativistic",
+  "description": "Continuum-limit dispersion using 4th-order spatial stencil to suppress numerical dispersion.",
+  "parameters": {
+    "grid_points": 4096,
+    "steps": 24000,
+    "dx": 1.0,
+    "dt": 0.25,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "chi": 0.0,
+    "save_every": 1,
+    "k_fraction": 0.30,
+    "k_sweep": [0.05, 0.10, 0.15, 0.20, 0.25, 0.30],
+    "stencil_order": 4
+  },
+  "tolerances": { "phase_error_max": 0.01 },
+  "run_settings": { "use_gpu": true, "precision": "float64", "boundary": "absorbing", "log_level": "info" },
+  "hardware": { "gpu_model": "RTX 4060", "cpu_model": "Ryzen 7 8845HS", "threads": 8 },
+  "output_dir": "results/Tier1/DispersionCurve_Continuum/",
+  "status": "Planned",
+  "notes": "4th-order stencil + smaller dt reduces phase error; CFL=0.25 safe. Sweep limited to continuum region (k<=0.30)."
+}
