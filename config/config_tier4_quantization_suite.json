@@ -1,0 +1,31 @@
+{
+  "tier": 4,
+  "category": "Quantization & Nonlinear Stability",
+  "hardware": {
+    "gpu_enabled": true,
+    "precision": "float64"
+  },
+  "parameters": {
+    "c": 1.0,
+    "time_step": 2e-4,
+    "space_step": 5e-3,
+    "N": 256,
+    "save_every": 20
+  },
+  "tolerances": {
+    "energy_drift": 1e-2,
+    "entropy_tolerance": 0.01,
+    "nonlinear_stability": 3.0
+  },
+  "output_dir": "results/Tier4/QuantizationSuite",
+  "variants": [
+    {"variant_id": "QUAN-22", "description": "ΔE Transfer — Low Energy", "energy_scale": 0.5},
+    {"variant_id": "QUAN-23", "description": "ΔE Transfer — High Energy", "energy_scale": 2.0},
+    {"variant_id": "QUAN-24", "description": "Spectral Linearity — Coarse Steps", "chi_const": 0.05},
+    {"variant_id": "QUAN-25", "description": "Spectral Linearity — Fine Steps", "chi_const": 0.01},
+    {"variant_id": "QUAN-26", "description": "Phase–Amplitude Coupling — Low Noise", "noise_amp": 1e-3},
+    {"variant_id": "QUAN-27", "description": "Phase–Amplitude Coupling — High Noise", "noise_amp": 5e-3},
+    {"variant_id": "QUAN-28", "description": "Nonlinear Wavefront Stability", "chi_function": "sin(πx)", "steps": 6000},
+    {"variant_id": "QUAN-29", "description": "High-Energy Lattice Blowout Test", "energy_scale": 4.0, "steps": 8000}
+  ]
+}
