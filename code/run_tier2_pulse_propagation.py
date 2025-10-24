@@ -31,7 +31,7 @@ def load_config(cfg_name: str):
 # ---------------------------------------------------------------------------
 # --- Paths & setup
 # ---------------------------------------------------------------------------
-cfg, ROOT = load_config("tier2_flat_pulse.json")
+cfg, ROOT = load_config("config_tier2_pulse_propagation.json")
 params, tol = cfg["parameters"], cfg["tolerances"]
 
 OUT_BASE = Path(cfg["base_paths"]["results"]) / "Tier2" / "Pulse"

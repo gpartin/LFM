@@ -31,7 +31,7 @@ def load_config(cfg_name: str):
 # ---------------------------------------------------------------------------
 # --- Load hierarchical configuration
 # ---------------------------------------------------------------------------
-cfg, ROOT = load_config("tier3_entropy.json")
+cfg, ROOT = load_config("config_tier3_entropy_growth.json")
 params = cfg["parameters"]
 tol = cfg.get("tolerances", {})
 

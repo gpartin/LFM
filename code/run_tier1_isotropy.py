@@ -32,7 +32,7 @@ def load_config(cfg_name: str):
 # ---------------------------------------------------------------------------
 # --- Load hierarchical configuration
 # ---------------------------------------------------------------------------
-cfg, root = load_config("tier1_isotropy.json")
+cfg, root = load_config("config_tier1_isotropy.json")
 params, tol = cfg["parameters"], cfg["tolerances"]
 
 dt = params["time_step"]

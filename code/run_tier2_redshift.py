@@ -31,7 +31,7 @@ def load_config(cfg_name: str):
 # ---------------------------------------------------------------------------
 # --- Load configuration
 # ---------------------------------------------------------------------------
-cfg, ROOT = load_config("tier2_redshift.json")
+cfg, ROOT = load_config("config_tier2_redshift.json")
 params, tol = cfg["parameters"], cfg["tolerances"]
 
 OUT_BASE = Path(cfg["base_paths"]["results"]) / "Tier2" / "Redshift"

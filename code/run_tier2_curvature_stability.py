@@ -32,7 +32,7 @@ def load_config(cfg_name: str):
 # ---------------------------------------------------------------------------
 # --- Load configuration and setup GPU
 # ---------------------------------------------------------------------------
-cfg, ROOT = load_config("tier2_curvature.json")
+cfg, ROOT = load_config("config_tier2_curvature_stability.json")
 params, tol = cfg["parameters"], cfg["tolerances"]
 
 OUT_BASE = Path(cfg["base_paths"]["results"]) / "Tier2" / "Curvature"
