@@ -136,3 +136,4 @@ for r in manifest:
     print(f"\n[{r['kernel']}]")
     for k, v in m.items():
         print(f"  {k:<25} {v:.3e}")
+    
