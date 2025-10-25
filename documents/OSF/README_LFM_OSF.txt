@@ -1,6 +1,6 @@
 Lattice-Field Medium (LFM) — OSF Submission Package v2.0 (2025-10-24)
 Author: Greg D. Partin | LFM Research — Los Angeles CA USA
-License: CC BY 4.0
+License: This work is licensed under the Creative Commons Attribution–NonCommercial 4.0 International License (CC BY-NC 4.0).
 
 FILES INCLUDED
 1. LFM_Main_Paper_v2.0.docx — unified main paper combining conceptual + mathematical content.
