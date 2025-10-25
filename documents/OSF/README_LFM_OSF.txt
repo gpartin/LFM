@@ -16,4 +16,4 @@ DIRECTORY STRUCTURE
 /PACKAGES — proof packets (ZIPs)
 
 CONTACT
-greg.partin (at) lfm-research.org
+gpartin@gmail.com
