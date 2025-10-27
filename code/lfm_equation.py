@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 """
-lfm_equation.py — Canonical LFM lattice update (v1.4 — 3D Extended)
+lfm_equation.py — Canonical LFM lattice update (v1.5 — 3D Extended, χ-field safe)
 
 Implements the canonical continuum equation:
     ∂²E/∂t² = c² ∇²E − χ(x,t)² E,   with   c² = α/β
 
-Enhancements in v1.4:
-  • Adds full 3D Laplacian (6-neighbor stencil, order=2)
-  • Adds 3D boundary handling (periodic/reflective/absorbing)
-  • Adds 3D energy_total() variant
-  • Adds gradient isotropy metric for 3D
-  • Improved diagnostics warnings and NaN detection
-  • Maintains all CFL and energy-drift safeguards
+Changes in v1.5:
+  • Fix: energy_total() and advance() now accept full χ(x) fields, not only scalars.
+  • Fix: core_metrics() no longer forces χ to float — supports spatial χ arrays.
+  • No physics or numerical updates — equation and solver are unchanged.
 """
 
 from __future__ import annotations
@@ -134,7 +131,7 @@ def apply_boundary(E, mode="periodic", absorb_width=0, absorb_factor=1.0):
 
 
 # ---------------------------------------------------------------------
-# Energy (now includes 3D)
+# Energy (1D–3D)
 # ---------------------------------------------------------------------
 def energy_total(E, E_prev, dt, dx, c, chi):
     E_np, E_prev_np = _asarray(E, _np), _asarray(E_prev, _np)
@@ -194,7 +191,7 @@ def lattice_step(E, E_prev, params):
 
 
 # ---------------------------------------------------------------------
-# Diagnostics utilities (3D-compatible)
+# Diagnostics utilities
 # ---------------------------------------------------------------------
 def _get_debug(params: Dict):
     dbg = params.get("debug", {}) or {}
@@ -235,14 +232,15 @@ def core_metrics(E, E_prev, params, E0, dbg):
     dt, dx = float(params["dt"]), float(params["dx"])
     c = math.sqrt(float(params["alpha"]) / float(params["beta"]))
 
-    en = energy_total(E_np, E_prev_np, dt, dx, c, float(params.get("chi", 0.0)))
+    chi_param = params.get("chi", 0.0)
+    en = energy_total(E_np, E_prev_np, dt, dx, c, chi_param)
+
     drift = ((en - E0) / (abs(E0) + 1e-30)) if E0 is not None else 0.0
     cfl_ratio = c * dt / dx
     cfl_limit = 1.0 / math.sqrt(max(1, E_np.ndim))
     max_abs = float(_np.max(_np.abs(E_np))) if E_np.size else 0.0
     has_bad = not _np.all(_np.isfinite(E_np)) if dbg["check_nan"] else False
 
-    # Edge ratio (dim-agnostic)
     band = dbg["edge_band"]
     if band <= 0:
         band = max(2, int(0.02 * min(E_np.shape)))
@@ -259,7 +257,6 @@ def core_metrics(E, E_prev, params, E0, dbg):
     rms_edge, rms_center = _rms(edge), _rms(center)
     edge_ratio = (rms_edge / (rms_center + 1e-30)) if rms_center > 0 else 0.0
 
-    # Gradient isotropy
     grad_ratio = 1.0
     if E_np.ndim >= 2:
         gx = (_np.roll(E_np, -1, -1) - _np.roll(E_np, 1, -1)) / (2 * dx)
@@ -298,11 +295,15 @@ def advance(E0, params, steps, save_every=0):
     diagnostics_enabled = dbg["enable"] or bool(params.get("energy_monitor_every", 0))
 
     c = math.sqrt(float(params["alpha"]) / float(params["beta"]))
+
+    # --- FIXED χ HANDLING ---
+    chi_param = params.get("chi", 0.0)
     E0_val = energy_total(
         _np.asarray(E.get() if _HAS_CUPY and hasattr(E, "get") else E),
         _np.asarray(E_prev.get() if _HAS_CUPY and hasattr(E_prev, "get") else E_prev),
-        float(params["dt"]), float(params["dx"]), c, float(params.get("chi", 0.0))
+        float(params["dt"]), float(params["dx"]), c, chi_param
     )
+    # -------------------------
 
     if diagnostics_enabled:
         with open(dbg["diagnostics_path"], "w", encoding="utf-8") as f:
