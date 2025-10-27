@@ -23,10 +23,10 @@
     "chi_base": 0.00,
     "chi_delta": 0.06,
     "chi_width": 0.35,
-    "chi_sign":  "+1",
+    "chi_sign": "+1",
     "x0": 0.20,
     "win_width_cells": 96,
-    "win_left_center":  256,
+    "win_left_center": 256,
     "win_right_center": 1792,
     "chi_energy": 0.0,
     "z_abs_max": 0.5
@@ -35,6 +35,65 @@
     "corr_min": 0.90
   },
   "variants": [
-    { "test_id": "GRAV-09", "description": "Traveling packet across oriented χ-ramp (weak-field red/blue shift)" }
+    {
+      "test_id": "GRAV-09",
+      "description": "Variable-c Redshift — Weak Gradient",
+      "chi_profile": "linear",
+      "chi_grad": 0.0002,
+      "chi_orient": "ahead_lower",
+      "pulse_amp": 3.0,
+      "pulse_width": 0.12,
+      "gamma_damp": 2e-6,
+      "save_every": 2,
+      "steps": 16000,
+      "launch_direction": "right",
+      "init_center": 0.25
+    },
+    {
+      "test_id": "GRAV-10",
+      "description": "Variable-c Redshift — Strong Gradient",
+      "chi_delta": 0.08,
+      "chi_sign": "+1",
+      "chi_width": 0.25,
+      "x0": 0.20
+    },
+    {
+      "test_id": "GRAV-11",
+      "description": "Shapiro Delay — Radial",
+      "chi_delta": 0.06,
+      "chi_sign": "+1",
+      "chi_width": 0.35,
+      "x0": 0.20,
+      "win_left_center": 384,
+      "win_right_center": 1664
+    },
+    {
+      "test_id": "GRAV-12",
+      "description": "Shapiro Delay — Tangential",
+      "chi_delta": 0.06,
+      "chi_sign": "-1",
+      "chi_width": 0.35,
+      "x0": 0.20,
+      "win_left_center": 384,
+      "win_right_center": 1664
+    },
+    {
+      "test_id": "GRAV-13",
+      "description": "Weak Field Deflection",
+      "chi_delta": 0.05,
+      "chi_sign": "+1",
+      "chi_width": 0.30,
+      "x0": 0.15,
+      "k_fraction": 0.10
+    },
+    {
+      "test_id": "GRAV-14",
+      "description": "Curvature Gradient Stability",
+      "chi_delta": 0.06,
+      "chi_sign": "+1",
+      "chi_width": 0.40,
+      "x0": 0.25,
+      "steps": 9000
+    }
   ]
 }

@@ -1,55 +1,56 @@
 #!/usr/bin/env python3
 """
-Quick diagnostic analyzer for Tier-2 Gravity Analogue runs.
-Reads summary.json files and gives quick interpretation of failures.
-Run this from inside /code (next to run_tier2_gravityanalogue.py).
+lfm_scan_results.py — Tier-2 diagnostics auditor (v1.0)
+
+Scans C:/LFM/results/Gravity for all tests, reads:
+ • debug_*.txt → extracts ω_lowChi, ω_highChi, z, env amplitudes
+ • summary.json (if present)
+Flags:
+ - missing or unreadable files
+ - huge |z| > 1, or ω ratio > 2.0
+ - env_lowChi / env_highChi < 0.3 (energy imbalance)
 """
 
-import json, math
+import re, json
 from pathlib import Path
 
-# Locate results folder relative to /code
-ROOT = Path(__file__).resolve().parent.parent / "results" / "GravityAnalogue"
-if not ROOT.exists():
-    print(f"❌ No GravityAnalogue results found at {ROOT}")
-    exit(1)
+root = Path("C:/LFM/results/Gravity")
+if not root.exists():
+    print("❌ Directory not found:", root)
+    raise SystemExit
 
-def safe_load_json(p):
-    try:
-        return json.loads(p.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
+print("=== LFM Gravity Diagnostics Scan ===")
+for test_dir in root.glob("GRAV*"):
+    dbg_files = list(test_dir.rglob("debug_*.txt"))
+    if not dbg_files:
+        print(f"⚠️  {test_dir.name}: no debug file found")
+        continue
 
-def assess(corr, z):
-    msg = []
-    if corr is None or math.isnan(corr) or abs(corr) < 0.2:
-        msg.append("χ–E correlation too low → field not deflecting (gradient too small or wrong sign).")
-    elif corr < 0.9:
-        msg.append("weak χ coupling → increase chi_grad or pulse_amp.")
-    if z is None or math.isnan(z):
-        msg.append("redshift NaN → instability or zero FFT signal.")
-    elif abs(z) > 0.1:
-        if z > 0:
-            msg.append("large redshift (wave slowed too much) → maybe dt too high or χ² sign error.")
-        else:
-            msg.append("blueshift (χ acting inverted) → check sign of χ² term.")
-    return "; ".join(msg) if msg else "✅ metrics within expected range."
+    dbg = dbg_files[-1]
+    text = dbg.read_text(encoding="utf-8", errors="ignore")
 
-rows = []
-for summary_path in ROOT.glob("*/summary.json"):
-    s = safe_load_json(summary_path)
-    tid = s.get("id", summary_path.parent.name)
-    corr = s.get("corr")
-    z = s.get("redshift")
-    passed = s.get("passed", False)
-    rows.append((tid, corr, z, passed))
+    def grab(label):
+        m = re.search(fr"{label}=([-\d\.eE\+]+)", text)
+        return float(m.group(1)) if m else None
 
-if not rows:
-    print("❌ No summary.json files found under", ROOT)
-    exit(1)
+    w_lo = grab("omega_lowChi")
+    w_hi = grab("omega_highChi")
+    z = grab("z")
+    env_lo = grab("env_at_lowChi")
+    env_hi = grab("env_at_highChi")
 
-print("\n=== Tier-2 Gravity Analogue Diagnostics ===")
-for tid, corr, z, passed in sorted(rows):
-    status = "PASS ✅" if passed else "FAIL ❌"
-    issue = assess(corr, z)
-    print(f"{tid:>12} | corr={corr:+.3f} | z={z:+.3e} | {status} | {issue}")
+    ratio = w_hi / (w_lo + 1e-30) if w_lo and w_hi else None
+    energy_ratio = env_lo / (env_hi + 1e-30) if env_lo and env_hi else None
+
+    flags = []
+    if not all([w_lo, w_hi]): flags.append("ω missing")
+    if z and abs(z) > 1: flags.append(f"|z|={z:.2f}")
+    if ratio and ratio > 2.0: flags.append(f"ω_hi/lo={ratio:.2f}")
+    if energy_ratio and energy_ratio < 0.3: flags.append(f"weak low probe ({energy_ratio:.2f})")
+
+    if flags:
+        print(f"❌ {test_dir.name}: {'; '.join(flags)}")
+    else:
+        print(f"✅ {test_dir.name}: ok  (z={z:.3g}, ω_hi/lo={ratio:.2f})")
+
+print("=== Scan complete ===")
