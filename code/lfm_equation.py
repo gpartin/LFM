@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
 """
-lfm_equation.py — Canonical LFM lattice update (v1.2)
+lfm_equation.py — Canonical LFM lattice update (v1.4 — 3D Extended)
 
 Implements the canonical continuum equation:
     ∂²E/∂t² = c² ∇²E − χ(x,t)² E,   with   c² = α/β
 
-This version adds stability and reproducibility safeguards:
-  • CFL stability check (warns if c·dt/dx > 1/√dim)
-  • Precision enforcement (float64 default)
-  • Optional energy monitor hook (records total energy every N steps)
-  • Lightweight lattice-level diagnostics (no per-cell logging)
-
-Diagnostics (toggle via params["debug"]):
-  • energy_total + drift rate (ΔE/E0 per tick)
-  • CFL ratio persisted (c·dt/dx and limit)
-  • edge vs center RMS ratio (boundary reflection sentinel)
-  • 2D gradient isotropy (rms(∂x) vs rms(∂y))
-  • NaN/Inf detector + max|E|
-  • 32-bit checksum (sampled) for determinism checks
-Writes CSV to params["diagnostics_path"] or "diagnostics_core.csv" when enabled.
+Enhancements in v1.4:
+  • Adds full 3D Laplacian (6-neighbor stencil, order=2)
+  • Adds 3D boundary handling (periodic/reflective/absorbing)
+  • Adds 3D energy_total() variant
+  • Adds gradient isotropy metric for 3D
+  • Improved diagnostics warnings and NaN detection
+  • Maintains all CFL and energy-drift safeguards
 """
 
 from __future__ import annotations
-from typing import Dict, Literal
-import math, warnings
+from typing import Dict
+import math, time, warnings
 import numpy as _np
 try:
     import cupy as _cp  # type: ignore
@@ -49,7 +42,7 @@ def _asarray(x, xp, dtype=_np.float64):
 
 
 # ---------------------------------------------------------------------
-# Laplacian
+# Laplacian (now includes 3D)
 # ---------------------------------------------------------------------
 def laplacian(E, dx, order=2):
     xp = _xp_for(E)
@@ -64,6 +57,7 @@ def laplacian(E, dx, order=2):
                 + 4/3  * xp.roll(E, -1)
                 - 1/12 * xp.roll(E, -2)
             ) / (dx * dx)
+
     elif E.ndim == 2:
         if order == 2:
             Exp1 = xp.roll(E, 1, 1); Exn1 = xp.roll(E, -1, 1)
@@ -80,11 +74,20 @@ def laplacian(E, dx, order=2):
                 + c1 * (Ex1p + Ex1n + Ey1p + Ey1n)
                 + c2 * (Ex2p + Ex2n + Ey2p + Ey2n)
             ) / (dx * dx)
+
+    elif E.ndim == 3:
+        if order == 2:
+            Exn1 = xp.roll(E, -1, 2); Exp1 = xp.roll(E, 1, 2)
+            Eyn1 = xp.roll(E, -1, 1); Eyp1 = xp.roll(E, 1, 1)
+            Ezn1 = xp.roll(E, -1, 0); Ezp1 = xp.roll(E, 1, 0)
+            return (Exp1 + Exn1 + Eyp1 + Eyn1 + Ezp1 + Ezn1 - 6 * E) / (dx * dx)
+        else:
+            raise ValueError("4th-order Laplacian not implemented for 3D")
     raise ValueError(f"Unsupported ndim={E.ndim}")
 
 
 # ---------------------------------------------------------------------
-# Boundaries
+# Boundaries (1D–3D)
 # ---------------------------------------------------------------------
 def apply_boundary(E, mode="periodic", absorb_width=0, absorb_factor=1.0):
     xp = _xp_for(E)
@@ -110,10 +113,28 @@ def apply_boundary(E, mode="periodic", absorb_width=0, absorb_factor=1.0):
             else:
                 E[:w, :] *= absorb_factor; E[-w:, :] *= absorb_factor
                 E[:, :w] *= absorb_factor; E[:, -w:] *= absorb_factor
+    elif E.ndim == 3:
+        if mode == "reflective":
+            E[0, :, :] = E[1, :, :]; E[-1, :, :] = E[-2, :, :]
+            E[:, 0, :] = E[:, 1, :]; E[:, -1, :] = E[:, -2, :]
+            E[:, :, 0] = E[:, :, 1]; E[:, :, -1] = E[:, :, -2]
+        elif mode == "absorbing":
+            w = max(1, int(absorb_width or 1))
+            slices = [slice(None)] * 3
+            for axis in range(3):
+                leading = [slice(None)] * 3
+                trailing = [slice(None)] * 3
+                leading[axis] = slice(0, w)
+                trailing[axis] = slice(-w, None)
+                if absorb_factor >= 1.0:
+                    E[tuple(leading)] = 0; E[tuple(trailing)] = 0
+                else:
+                    E[tuple(leading)] *= absorb_factor
+                    E[tuple(trailing)] *= absorb_factor
 
 
 # ---------------------------------------------------------------------
-# Energy
+# Energy (now includes 3D)
 # ---------------------------------------------------------------------
 def energy_total(E, E_prev, dt, dx, c, chi):
     E_np, E_prev_np = _asarray(E, _np), _asarray(E_prev, _np)
@@ -127,6 +148,12 @@ def energy_total(E, E_prev, dt, dx, c, chi):
         gy = (_np.roll(E_np, -1, 0) - _np.roll(E_np, 1, 0)) / (2 * dx)
         dens = 0.5 * (Et**2 + (c**2)*(gx**2 + gy**2) + (chi**2)*E_np**2)
         return float(_np.sum(dens) * (dx * dx))
+    elif E_np.ndim == 3:
+        gx = (_np.roll(E_np, -1, 2) - _np.roll(E_np, 1, 2)) / (2 * dx)
+        gy = (_np.roll(E_np, -1, 1) - _np.roll(E_np, 1, 1)) / (2 * dx)
+        gz = (_np.roll(E_np, -1, 0) - _np.roll(E_np, 1, 0)) / (2 * dx)
+        dens = 0.5 * (Et**2 + (c**2)*(gx**2 + gy**2 + gz**2) + (chi**2)*E_np**2)
+        return float(_np.sum(dens) * (dx**3))
 
 
 # ---------------------------------------------------------------------
@@ -150,8 +177,10 @@ def lattice_step(E, E_prev, params):
 
     c = math.sqrt(alpha / beta)
     cfl_limit = 1.0 / math.sqrt(E.ndim if E.ndim > 0 else 1)
-    if c * dt / dx > cfl_limit:
-        warnings.warn(f"[CFL] Stability risk: c·dt/dx = {c*dt/dx:.3f} > {cfl_limit:.3f}")
+    cfl_ratio = c * dt / dx
+    params["_cfl_ratio"] = cfl_ratio
+    if cfl_ratio > cfl_limit:
+        warnings.warn(f"[CFL] Stability risk: c·dt/dx = {cfl_ratio:.3f} > {cfl_limit:.3f}")
 
     chi_field = chi if xp.isscalar(chi) else _asarray(chi, xp, dtype)
     lap = laplacian(E, dx, order)
@@ -165,7 +194,7 @@ def lattice_step(E, E_prev, params):
 
 
 # ---------------------------------------------------------------------
-# Diagnostics utilities
+# Diagnostics utilities (3D-compatible)
 # ---------------------------------------------------------------------
 def _get_debug(params: Dict):
     dbg = params.get("debug", {}) or {}
@@ -186,14 +215,11 @@ def _checksum32_sampled(arr, stride=4096):
         return 0
     s = max(1, int(stride))
     view = a[::min(s, max(1, a.size // s))]
-    s1 = float(view.sum())
-    s2 = float((view * view).sum())
-    s3 = float(_np.abs(view).sum())
+    s1 = float(view.sum()); s2 = float((view * view).sum()); s3 = float(_np.abs(view).sum())
     h = _np.uint64(1469598103934665603)
     for v in (s1, s2, s3):
         x = _np.frombuffer(_np.float64(v).tobytes(), dtype=_np.uint64)[0]
-        h ^= x
-        h *= _np.uint64(1099511628211)
+        h ^= x; h *= _np.uint64(1099511628211)
     return _np.uint32(h & _np.uint64(0xFFFFFFFF)).item()
 
 
@@ -202,7 +228,7 @@ def _rms(x):
     return float(_np.sqrt(_np.mean(x * x))) if x.size else 0.0
 
 
-def _core_metrics(E, E_prev, params, E0, dbg):
+def core_metrics(E, E_prev, params, E0, dbg):
     xp = _xp_for(E)
     E_np = _np.asarray(E.get() if _HAS_CUPY and hasattr(E, "get") else E, dtype=_np.float64)
     E_prev_np = _np.asarray(E_prev.get() if _HAS_CUPY and hasattr(E_prev, "get") else E_prev, dtype=_np.float64)
@@ -216,28 +242,34 @@ def _core_metrics(E, E_prev, params, E0, dbg):
     max_abs = float(_np.max(_np.abs(E_np))) if E_np.size else 0.0
     has_bad = not _np.all(_np.isfinite(E_np)) if dbg["check_nan"] else False
 
+    # Edge ratio (dim-agnostic)
     band = dbg["edge_band"]
     if band <= 0:
-        band = max(2, int(0.02 * (E_np.shape[0] if E_np.ndim == 1 else min(E_np.shape))))
-    if E_np.ndim == 1:
-        edge = _np.concatenate([E_np[:band], E_np[-band:]]) if E_np.size >= 2 * band else E_np
-        center = E_np[band:-band] if E_np.size > 2 * band else E_np
-    else:
-        edge_mask = _np.zeros_like(E_np, dtype=bool)
-        edge_mask[:band, :] = True; edge_mask[-band:, :] = True
-        edge_mask[:, :band] = True; edge_mask[:, -band:] = True
-        edge = E_np[edge_mask]
-        center = E_np[~edge_mask] if (~edge_mask).any() else E_np
-    rms_edge = _rms(edge)
-    rms_center = _rms(center)
+        band = max(2, int(0.02 * min(E_np.shape)))
+    edge_mask = _np.zeros_like(E_np, dtype=bool)
+    for axis in range(E_np.ndim):
+        slices_low = [slice(None)] * E_np.ndim
+        slices_high = [slice(None)] * E_np.ndim
+        slices_low[axis] = slice(0, band)
+        slices_high[axis] = slice(-band, None)
+        edge_mask[tuple(slices_low)] = True
+        edge_mask[tuple(slices_high)] = True
+    edge = E_np[edge_mask]
+    center = E_np[~edge_mask] if (~edge_mask).any() else E_np
+    rms_edge, rms_center = _rms(edge), _rms(center)
     edge_ratio = (rms_edge / (rms_center + 1e-30)) if rms_center > 0 else 0.0
 
+    # Gradient isotropy
     grad_ratio = 1.0
-    if E_np.ndim == 2:
-        gx = (_np.roll(E_np, -1, 1) - _np.roll(E_np, 1, 1)) / (2 * dx)
-        gy = (_np.roll(E_np, -1, 0) - _np.roll(E_np, 1, 0)) / (2 * dx)
-        rx, ry = _rms(gx), _rms(gy)
-        gmin, gmax = (min(rx, ry), max(rx, ry)) if (rx > 0 and ry > 0) else (1.0, 1.0)
+    if E_np.ndim >= 2:
+        gx = (_np.roll(E_np, -1, -1) - _np.roll(E_np, 1, -1)) / (2 * dx)
+        gy = (_np.roll(E_np, -1, -2) - _np.roll(E_np, 1, -2)) / (2 * dx)
+        components = [gx, gy]
+        if E_np.ndim == 3:
+            gz = (_np.roll(E_np, -1, 0) - _np.roll(E_np, 1, 0)) / (2 * dx)
+            components.append(gz)
+        rms_vals = [_rms(g) for g in components]
+        gmin, gmax = (min(rms_vals), max(rms_vals)) if all(r > 0 for r in rms_vals) else (1.0, 1.0)
         grad_ratio = gmin / (gmax + 1e-30)
 
     checksum = _checksum32_sampled(E_np, dbg["checksum_stride"]) if dbg["enable"] else 0
@@ -278,6 +310,8 @@ def advance(E0, params, steps, save_every=0):
 
     series = [xp.array(E0, copy=True)] if save_every > 0 else None
     monitor_every = int(params.get("energy_monitor_every", 0)) or (100 if dbg["enable"] else 0)
+    profile_every = dbg.get("profile_steps", 0)
+    t0 = time.time()
 
     for n in range(steps):
         E_next = lattice_step(E, E_prev, params)
@@ -287,7 +321,7 @@ def advance(E0, params, steps, save_every=0):
         do_diag = diagnostics_enabled and (monitor_every > 0) and ((n + 1) % monitor_every == 0)
 
         if do_diag:
-            met = _core_metrics(E, E_prev, params, E0_val, dbg)
+            met = core_metrics(E, E_prev, params, E0_val, dbg)
             with open(dbg["diagnostics_path"], "a", encoding="utf-8") as f:
                 f.write(f"{n+1},{met['energy']:.10e},{met['drift']:.6e},{met['cfl_ratio']:.6f},{met['cfl_limit']:.6f},"
                         f"{met['max_abs']:.6e},{met['edge_ratio']:.6f},{met['grad_ratio']:.6f},{int(met['has_bad'])},{met['checksum']}\\n")
@@ -300,11 +334,10 @@ def advance(E0, params, steps, save_every=0):
         if do_save:
             series.append(xp.array(E, copy=True))
 
+        if profile_every and (n + 1) % profile_every == 0:
+            dt_run = time.time() - t0
+            print(f"[PROFILE] step {n+1}/{steps} elapsed={dt_run:.3f}s avg/step={dt_run/(n+1):.6f}s")
+
     if series is not None:
         return series
     return E
-
-
-# ---------------------------------------------------------------------
-# End of file — canonical LFM equation core (v1.2)
-# ---------------------------------------------------------------------
