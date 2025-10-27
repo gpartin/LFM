@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
 """
 lfm_parallel.py — Canonical LFM parallel/time-evolution runner
-v1.9.4-energyguard-orderfix
+v1.9.6-monitor-integrity-lockfix
 
-Includes:
-  • Compensated energy_total (from lfm_diagnostics)
-  • Guarded optional energy_lock (diagnostic-only)
-  • FIX: 1D tile unpacking bug (_normalize_tile_args)
-  • FIX: Apply energy_lock *before* logging drift and scale (E, E_prev) together
-  • Extra per-step CSV drift trace (optional)
-  • No change to solver physics.
+Adds (diagnostics only; NO physics change):
+  • Integrated EnergyMonitor (optional per run)
+  • NumericIntegrityMixin for CFL/NaN validation
+  • Guarded optional energy_lock projection (constant-energy manifold)
+  • Order fix: apply energy_lock BEFORE drift logging and scale (E, E_prev)
+  • 1D tile unpack fix via _normalize_tile_args()
 """
 
 from __future__ import annotations
 from typing import Tuple, Union, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import math, os, csv
+import math, os
 import numpy as np
 from pathlib import Path
 
 from lfm_equation import laplacian, _xp_for, apply_boundary
 from lfm_diagnostics import energy_total  # compensated measurement
+from energy_monitor import EnergyMonitor
+from numeric_integrity import NumericIntegrityMixin
 
 try:
     import cupy as cp  # type: ignore
@@ -28,7 +29,6 @@ try:
 except Exception:
     cp = None
     _HAS_CUPY = False
-
 
 # ------------------------ Utility functions ------------------------
 def _is_cupy_array(x) -> bool:
@@ -55,7 +55,6 @@ def _tiles_3d(shape: Tuple[int,int,int], tiles: Tuple[int,int,int]):
     ys = _tiles_1d(shape[1], tiles[1])
     xs = _tiles_1d(shape[2], tiles[2])
     return [(z, y, x) for z in zs for y in ys for x in xs]
-
 
 # ------------------------ Threaded kernel ------------------------
 def _normalize_tile_args(t):
@@ -110,7 +109,6 @@ def _step_threaded(E, E_prev, params, tiles, deterministic=False):
         apply_boundary(E_next, mode=params.get("boundary","periodic"))
     return E_next
 
-
 # ------------------------ Main runner ------------------------
 def run_lattice(E0, params:dict, steps:int,
                 tiles:Union[Tuple[int,int],Tuple[int,int,int]]=(1,1),
@@ -123,67 +121,71 @@ def run_lattice(E0, params:dict, steps:int,
     dt, dx = float(params["dt"]), float(params["dx"])
     chi = params.get("chi",0.0)
 
-    # Tile layout
+    integrity = NumericIntegrityMixin()
+    integrity.check_cfl(c, dt, dx, dim)
+    integrity.validate_field(E, "E0")
+
     tile_list = (_tiles_1d(E.shape[0],tiles[0]) if dim==1 else
                  _tiles_2d(E.shape,tiles) if dim==2 else
                  _tiles_3d(E.shape,tiles))
 
-    # Sync E_prev via local Taylor step
+    # Bootstrap E_prev via local Taylor step if absent
     if E_prev is None:
         L0 = laplacian(E,dx,order=int(params.get("stencil_order",2)))
         mass_term = (chi**2)*E if xp.isscalar(chi) else (chi*chi)*E
         E_prev = E - 0.5*(dt*dt)*((c*c)*L0 - mass_term)
 
-    # Energy baseline + logs
+    # Baseline energy (compensated)
     E0_energy = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
     params.setdefault("_energy_log", []).clear()
     params.setdefault("_energy_drift_log", []).clear()
     params["_energy_log"].append(E0_energy)
     params["_energy_drift_log"].append(0.0)
 
-    # Optional drift CSV (if path provided)
-    drift_csv_path = params.get("drift_csv_path", None)
-    drift_writer = None
-    if drift_csv_path:
-        Path(drift_csv_path).parent.mkdir(parents=True, exist_ok=True)
-        f = open(drift_csv_path, "w", newline="", encoding="utf-8")
-        drift_writer = csv.writer(f); drift_writer.writerow(["step","energy","drift"])
+    # Optional monitor
+    mon = None
+    if params.get("enable_monitor", False):
+        mon = EnergyMonitor(dt, dx, c, chi,
+                            outdir=params.get("monitor_outdir", "diagnostics"),
+                            label=params.get("monitor_label", "lfm_parallel"))
 
-    # Conservative conditions for projection
+    # Helper: determine conservative scenario for projection
     def _is_conservative():
         return (
             params.get("gamma_damp",0.0)==0.0 and
             params.get("boundary","periodic") in ("periodic","reflective") and
-            (not hasattr(params.get("chi",0.0),"shape")) and
+            (not hasattr(params.get("chi",0.0), "shape")) and
             float(params.get("absorb_width",0))==0.0 and
             float(params.get("absorb_factor",1.0))==1.0
         )
 
     for n in range(steps):
-        # advance
+        # Advance one step
         E_next = _step_threaded(E, E_prev, params, tile_list, deterministic=det)
         E_prev, E = E, E_next
 
-        # --- Apply optional projection BEFORE logging drift
+        # Optional diagnostic projection BEFORE measuring drift
         if params.get("energy_lock", False) and _is_conservative():
             e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
             if abs(e_now_pre) > 0:
-                scale = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
-                E *= scale
-                E_prev *= scale  # scale both to preserve Et scaling
+                s = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
+                E *= s
+                E_prev *= s  # keep Et consistent
 
-        # measure AFTER any projection
+        # Measure AFTER any projection
         e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
         drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
         params["_energy_log"].append(e_now)
         params["_energy_drift_log"].append(drift)
-        if drift_writer:
-            drift_writer.writerow([n+1, f"{e_now:.10e}", f"{drift:.6e}"])
+        integrity.validate_energy(drift, tol=1e-6, label=f"step{n}")
+
+        if mon:
+            mon.record(E, E_prev, n)
 
         if n < 3:
             print(f"[probe] step {n+1:3d}  drift={drift:+.3e}  E={e_now:.6e}")
 
-    if drift_writer:
-        drift_writer = drift_writer  # keep ref for clarity; file will auto-close via GC when process exits
+    if mon:
+        mon.finalize()
 
     return xp.array(E, copy=True)
