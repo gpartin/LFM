@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 lfm_parallel.py — Canonical LFM parallel/time-evolution runner
-v1.9.2-energyguard (Diagnostics: compensated energy + guarded energy_lock)
+v1.9.3-energyguard-tilefix
 
-Adds (diagnostics only; NO physics change):
-  • Uses compensated energy_total from lfm_diagnostics for all measurements.
-  • Optional params["energy_lock"]: project back to constant-energy manifold.
-    Activates only if boundary∈{periodic,reflective}, gamma_damp=0, scalar χ,
-    absorb_width=0, absorb_factor=1.
+Includes:
+  • Compensated energy_total (from lfm_diagnostics)
+  • Guarded optional energy_lock (diagnostic-only)
+  • FIX: 1D tile unpacking bug in _step_threaded() (slices normalized)
+  • No change to solver physics.
 """
 
 from __future__ import annotations
@@ -25,6 +25,8 @@ except Exception:
     cp = None
     _HAS_CUPY = False
 
+
+# ------------------------ Utility functions ------------------------
 def _is_cupy_array(x) -> bool:
     return _HAS_CUPY and hasattr(x, "__cuda_array_interface__")
 
@@ -45,10 +47,17 @@ def _tiles_2d(shape: Tuple[int,int], tiles: Tuple[int,int]):
     return [(y, x) for y in ys for x in xs]
 
 def _tiles_3d(shape: Tuple[int,int,int], tiles: Tuple[int,int,int]):
-    zs = _tiles_1d(shape[0], tiles[0]); ys = _tiles_1d(shape[1], tiles[1]); xs = _tiles_1d(shape[2], tiles[2])
+    zs = _tiles_1d(shape[0], tiles[0])
+    ys = _tiles_1d(shape[1], tiles[1])
+    xs = _tiles_1d(shape[2], tiles[2])
     return [(z, y, x) for z in zs for y in ys for x in xs]
 
+
 # ------------------------ Threaded kernel ------------------------
+def _normalize_tile_args(t):
+    """Return tuple of slices regardless of dimension (1D safe)."""
+    return (t,) if isinstance(t, slice) else t
+
 def _step_threaded(E, E_prev, params, tiles, deterministic=False):
     dt, dx = float(params["dt"]), float(params["dx"])
     alpha, beta = float(params["alpha"]), float(params["beta"])
@@ -59,10 +68,12 @@ def _step_threaded(E, E_prev, params, tiles, deterministic=False):
     c = math.sqrt(alpha / beta)
     L = laplacian(E, dx, order=order)
     E_next = xp.empty_like(E)
+
     if xp.isscalar(chi):
         def chi_view(*_): return chi
     else:
         def chi_view(*s): return chi[s]
+
     def update_tile(*slices):
         if E.ndim == 1:
             (sy,) = slices
@@ -76,18 +87,26 @@ def _step_threaded(E, E_prev, params, tiles, deterministic=False):
             sz, sy, sx = slices; chi_loc = chi_view(sz, sy, sx)
             term_wave = (c*c)*L[sz,sy,sx]; term_mass = -(chi_loc**2)*E[sz,sy,sx]
             E_next[sz,sy,sx] = (2-gamma)*E[sz,sy,sx] - (1-gamma)*E_prev[sz,sy,sx] + (dt*dt)*(term_wave + term_mass)
+
     if deterministic:
-        for t in tiles: update_tile(*t)
+        for t in tiles:
+            update_tile(*_normalize_tile_args(t))
     else:
         workers = int(params.get("threads",0)) or (os.cpu_count() or 1)
-        if workers<=1:
-            for t in tiles: update_tile(*t)
+        if workers <= 1:
+            for t in tiles:
+                update_tile(*_normalize_tile_args(t))
         else:
             with ThreadPoolExecutor(max_workers=workers) as ex:
-                for _ in as_completed([ex.submit(update_tile,*t) for t in tiles]): pass
-    if E.ndim<=2:
+                futs = [ex.submit(update_tile, *_normalize_tile_args(t)) for t in tiles]
+                for _ in as_completed(futs):
+                    pass
+
+    if E.ndim <= 2:
         apply_boundary(E_next, mode=params.get("boundary","periodic"))
+
     return E_next
+
 
 # ------------------------ Main runner ------------------------
 def run_lattice(E0, params:dict, steps:int,
