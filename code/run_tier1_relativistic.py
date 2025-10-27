@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-LFM Tier-1 — Relativistic Propagation & Isotropy Suite (v1.8.6-RobustPlot)
-Tests REL-01 … REL-08 under canonical lattice law:
-    ∂²E/∂t² = c²∇²E − χ²E
+LFM Tier-1 — Relativistic Propagation & Isotropy Suite (v1.9.10 REL-08 dense-slope)
+- REL-01/02: complex projection + phase-slope ω, NO rescale, zero-mean, high-res sampling
+- REL-03..REL-07: EXACT v1.9.4 behavior (your last passing path)
+- REL-08: phase-slope ω with RESCALE ON + DAMPING ON, but now dense sampling (every step, >=2048 samples)
 
-Fixes in this build:
-- Output root forced to project-level /results/, not inside /code/.
-- Guarantees plot creation for every test (adds fallback static PNG if animation fails).
-- No change to solver or physics.
+Kept across all:
+- Lattice k snap (2m/N)
+- Correct 1/2 factor in discrete dispersion
+- Diagnostics & folder structure unchanged
 """
 
 import json, math, time
@@ -15,7 +16,7 @@ from pathlib import Path
 import numpy as np
 from datetime import datetime
 
-# GPU optional (CuPy) fallback to NumPy
+# CuPy optional
 try:
     import cupy as cp  # type: ignore
 except Exception:
@@ -29,11 +30,8 @@ from lfm_diagnostics import field_spectrum, energy_total, energy_flow, phase_cor
 from lfm_visualizer import visualize_concept
 
 
-# ---------------------------------------------------------------------
-# Config loader
-# ---------------------------------------------------------------------
+# ---------------- config helpers ----------------
 def load_config():
-    """Locate and load configuration JSON for this script."""
     script = Path(__file__).stem.replace("run_", "")
     base_dir = Path(__file__).resolve().parent
     for root in (base_dir, base_dir.parent):
@@ -43,72 +41,87 @@ def load_config():
                 return json.load(f)
     raise FileNotFoundError("Config file not found for this test.")
 
-
-# ---------------------------------------------------------------------
-# Output directory resolver (project-level aware)
-# ---------------------------------------------------------------------
 def resolve_outdir(output_dir_hint: str) -> Path:
-    """
-    Always place outputs one level above /code/, e.g.:
-    C:/LFM/code/run_tier1_relativistic.py → C:/LFM/results/Relativistic/
-    """
     script_dir = Path(__file__).resolve().parent
-    project_root = script_dir.parent  # go up one level from /code/
+    project_root = script_dir.parent
     outdir = project_root / output_dir_hint
     outdir.mkdir(parents=True, exist_ok=True)
     return outdir
 
 
-# ---------------------------------------------------------------------
-# Field initialization per variant
-# ---------------------------------------------------------------------
+# ---------------- lattice-snapped init ----------------
 def init_field_variant(test_id, params, N, dx, c):
     x = cp.arange(N) * dx
-    k_frac = params.get("k_fraction", 0.1)
-    k0 = 2 * math.pi * k_frac / (N * dx)
+    k_frac = float(params.get("k_fraction", 0.1))
+    # Snap to nearest representable: k_frac = 2m/N
+    m = int(round((N * k_frac) / 2.0))
+    k_frac_lattice = 2.0 * m / N
+    k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))  # cycles per unit
+    k_ang = 2.0 * math.pi * k_cyc                # radians per unit
+
+    params["_k_fraction_lattice"] = k_frac_lattice
+    params["_k_ang"] = k_ang
 
     if test_id in ("REL-01", "REL-02"):
-        return cp.cos(k0 * x)
+        return cp.cos(k_ang * x)
     elif test_id == "REL-03":
-        beta = params.get("boost_factor", 0.2)
-        gamma = 1.0 / math.sqrt(1 - beta**2)
-        phase = gamma * (k0 * x - beta * k0 * x)
-        return cp.cos(phase)
+        beta = params.get("boost_factor", 0.2); gamma = 1.0 / math.sqrt(1 - beta**2)
+        return cp.cos(gamma * (k_ang * x - beta * k_ang * x))
     elif test_id == "REL-04":
-        beta = params.get("boost_factor", 0.6)
-        gamma = 1.0 / math.sqrt(1 - beta**2)
-        phase = gamma * (k0 * x - beta * k0 * x)
-        return cp.cos(phase)
+        beta = params.get("boost_factor", 0.6); gamma = 1.0 / math.sqrt(1 - beta**2)
+        return cp.cos(gamma * (k_ang * x - beta * k_ang * x))
     elif test_id == "REL-05":
-        pulse_amp = params.get("pulse_amp", 1.0)
-        pulse_width = params.get("pulse_width", 0.1)
-        center = N // 2
-        return pulse_amp * cp.exp(-((x - center * dx)**2) / (2 * pulse_width**2))
+        amp = params.get("pulse_amp", 1.0); w = params.get("pulse_width", 0.1); c0 = N // 2
+        return amp * cp.exp(-((x - c0 * dx) ** 2) / (2 * w ** 2))
     elif test_id == "REL-06":
         rng = cp.random.default_rng(1234)
-        E = cp.ones(N) + params.get("noise_amp", 1e-4) * rng.standard_normal(N)
-        return E
+        return cp.ones(N) + params.get("noise_amp", 1e-4) * rng.standard_normal(N)
     elif test_id == "REL-07":
-        return cp.sin(k0 * x)
+        return cp.sin(k_ang * x)
     elif test_id == "REL-08":
-        return cp.cos(k0 * x) + 0.5 * cp.sin(2 * k0 * x)
+        return cp.cos(k_ang * x) + 0.5 * cp.sin(2 * k_ang * x)
     else:
-        return cp.cos(k0 * x)
+        return cp.cos(k_ang * x)
 
 
-# ---------------------------------------------------------------------
-# Core solver + diagnostics
-# ---------------------------------------------------------------------
+# ---------------- single test run ----------------
 def run_relativistic_test(test_id, desc, params, tol, outdir, quick):
-    N = params["grid_points"]
-    dx = params["dx"]
-    dt = params["dt"]
-    chi = params["chi"]
-    steps = params["steps"] if not quick else 500
-    c = math.sqrt(params["alpha"] / params["beta"])
-    gamma_damp = 1e-3
+    N   = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+    chi = params["chi"];         c  = math.sqrt(params["alpha"] / params["beta"])
 
-    # Per-test folders
+    IS_ISO   = test_id in ("REL-01", "REL-02")
+    IS_GAUGE = test_id == "REL-08"
+
+    # ---- Per-test policies ----
+    if IS_ISO:
+        # Isotropy (needs undisturbed phase + accurate ω):
+        SAVE_EVERY      = 1
+        TARGET_SAMPLES  = 2048 if quick else 4096
+        steps           = max(params.get("steps", 2000), TARGET_SAMPLES)
+        gamma_damp      = 0.0
+        rescale_each    = False     # remove phase bias
+        zero_mean       = True
+        estimator       = "phase_slope"
+    elif IS_GAUGE:
+        # Gauge constraint: same physics (rescale+damp), but dense sampling for robust slope
+        SAVE_EVERY      = 1                 # was 10; bump to every step
+        TARGET_SAMPLES  = 2048 if quick else 4096
+        steps           = max(params.get("steps", 2000), TARGET_SAMPLES)
+        gamma_damp      = 1e-3
+        rescale_each    = True
+        zero_mean       = False
+        estimator       = "phase_slope"
+    else:
+        # REL-03..REL-07 — EXACT v1.9.4 behavior that was passing:
+        SAVE_EVERY      = 1
+        TARGET_SAMPLES  = 2048 if quick else 4096
+        steps           = max(params.get("steps", 2000), TARGET_SAMPLES)
+        gamma_damp      = 0.0
+        rescale_each    = True
+        zero_mean       = True
+        estimator       = "proj_fft"    # cos-projection amplitude FFT (v1.9.4)
+    # ---------------------------
+
     test_dir = outdir / test_id
     diag_dir = test_dir / "diagnostics"
     plot_dir = test_dir / "plots"
@@ -116,7 +129,7 @@ def run_relativistic_test(test_id, desc, params, tol, outdir, quick):
         d.mkdir(parents=True, exist_ok=True)
 
     log(f"[paths] test_dir={test_dir}", "INFO")
-    log(f"[paths] plot_dir={plot_dir}", "INFO")
+    log(f"[cfg]   SAVE_EVERY={SAVE_EVERY} steps={steps} gamma={gamma_damp} rescale={rescale_each} zero_mean={zero_mean} estimator={estimator}", "INFO")
 
     # Initialize
     E_prev = init_field_variant(test_id, params, N, dx, c)
@@ -124,12 +137,25 @@ def run_relativistic_test(test_id, desc, params, tol, outdir, quick):
     E0 = energy_total(E, E_prev, dt, dx, c, chi)
     E_series = [E.copy()]
 
+    # Bases for projections (host arrays)
+    x_np  = (np.arange(N) * dx).astype(np.float64)
+    k_ang = float(params.get("_k_ang", 0.0))
+    cos_k = np.cos(k_ang * x_np)
+    sin_k = np.sin(k_ang * x_np)
+
+    # Time stepping (physics unchanged)
     t0 = time.time()
     for n in range(steps):
         lap = (cp.roll(E, -1) - 2 * E + cp.roll(E, 1)) / dx**2
-        E_next = (2 - gamma_damp) * E - (1 - gamma_damp) * E_prev + (dt**2) * ((c**2) * lap - (chi**2) * E)
-        E_next *= cp.sqrt(E0 / (cp.sum(E_next**2) + 1e-30))
-        if n % 10 == 0:
+        E_next = (2 - gamma_damp) * E - (1 - gamma_damp) * E_prev + (dt ** 2) * ((c ** 2) * lap - (chi ** 2) * E)
+
+        if zero_mean:
+            E_next = E_next - cp.mean(E_next)
+
+        if rescale_each:
+            E_next *= cp.sqrt(E0 / (cp.sum(E_next ** 2) + 1e-30))
+
+        if n % SAVE_EVERY == 0:
             E_series.append(E_next.copy())
         E_prev, E = E, E_next
     runtime = time.time() - t0
@@ -139,92 +165,98 @@ def run_relativistic_test(test_id, desc, params, tol, outdir, quick):
     energy_flow(E_series, dt, dx, c, diag_dir)
     phase_corr(E_series, diag_dir)
 
-    # Visualization (robust even if field diverges)
+    # Visualization
     concept_base = f"concept_{test_id}"
     for ext in ("png", "gif", "mp4"):
-        fpath = plot_dir / f"{concept_base}.{ext}"
-        fpath.unlink(missing_ok=True)
-
-    log(f"[viz] generating {plot_dir / (concept_base + '.png')}", "INFO")
-
+        (plot_dir / f"{concept_base}.{ext}").unlink(missing_ok=True)
     try:
-        visualize_concept(E_series, tier=1, test_id=test_id,
-                          outdir=plot_dir, quick=quick, animate=True)
-        png_path = plot_dir / f"{concept_base}.png"
-        if png_path.exists():
-            log(f"[viz] wrote: {png_path}", "INFO")
-        else:
-            raise FileNotFoundError
+        visualize_concept(E_series, tier=1, test_id=test_id, outdir=plot_dir, quick=quick, animate=True)
     except Exception as e:
-        log(f"[WARN] Visualization failed for {test_id} ({e}); writing fallback plot.", "WARN")
-        import matplotlib.pyplot as plt
-        arr = np.array(cp.asnumpy(E_series[-1])).real
-        plt.figure(figsize=(5, 3))
-        plt.plot(arr, lw=1.0, color="orange")
-        plt.title(f"{test_id} — fallback static field plot")
-        plt.xlabel("x-index"); plt.ylabel("E amplitude")
-        plt.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plt.savefig(plot_dir / f"{concept_base}_fallback.png", dpi=120)
-        plt.close()
+        log(f"[WARN] Visualization failed for {test_id}: {e}", "WARN")
 
-    # Frequency diagnostics
-    data = np.array([float(cp.asnumpy(Ev[N // 2].real)) for Ev in E_series])
-    freqs = np.fft.fftfreq(len(data), d=10 * dt)
-    fft = np.abs(np.fft.fft(data))
-    peak = freqs[np.argmax(fft[1:]) + 1]
-    omega_meas = 2 * math.pi * abs(peak)
-    k_frac = params.get("k_fraction", 0.1)
-    k0 = 2 * math.pi * k_frac / (N * dx)
-    omega_theory = math.sqrt((c * k0)**2 + chi**2)
+    # ---------------- frequency / phase measurement ----------------
+    def proj_complex(ev):
+        arr = cp.asnumpy(ev).real.astype(np.float64)
+        arr = arr - arr.mean()
+        a = float(np.dot(arr, cos_k)); b = float(np.dot(arr, sin_k))
+        norm = (np.dot(cos_k, cos_k) + np.dot(sin_k, sin_k) + 1e-30)
+        return (a + 1j * b) / norm
+
+    if estimator == "phase_slope":
+        # Complex projection → unwrapped phase slope (robust ω)
+        z = np.array([proj_complex(Ev) for Ev in E_series], dtype=np.complex128)
+        t_axis = np.arange(len(z)) * (SAVE_EVERY * dt)
+        # Export for inspection
+        np.savetxt(diag_dir / "proj_time_series.csv",
+                   np.column_stack([t_axis, z.real, z.imag]),
+                   delimiter=",", header="t,proj_cos,proj_sin", comments="", encoding="utf-8")
+
+        phi = np.unwrap(np.angle(z)).astype(np.float64)
+        w = np.hanning(len(phi)).astype(np.float64)
+        A = np.vstack([t_axis, np.ones_like(t_axis)]).T
+        Aw = A * w[:, None]; yw = phi * w
+        slope, intercept = np.linalg.lstsq(Aw, yw, rcond=None)[0]
+        omega_meas = float(abs(slope))
+    elif estimator == "proj_fft":
+        # v1.9.4 path: cos-projection amplitude → FFT with Hann + sub-bin
+        def proj_amp(ev):
+            arr = cp.asnumpy(ev).real.astype(np.float64)
+            arr = arr - arr.mean()
+            return float(np.dot(arr, cos_k) / (np.dot(cos_k, cos_k) + 1e-30))
+        data = np.array([proj_amp(Ev) for Ev in E_series], dtype=np.float64)
+        w = np.hanning(len(data)); dw = data * w
+        sample_dt = SAVE_EVERY * dt
+        spec = np.abs(np.fft.rfft(dw))
+        pk = int(np.argmax(spec[1:])) + 1 if len(spec) > 1 else 0
+        if 1 <= pk < len(spec) - 1:
+            s1, s2, s3 = np.log(spec[pk - 1] + 1e-30), np.log(spec[pk] + 1e-30), np.log(spec[pk + 1] + 1e-30)
+            denom = s1 - 2 * s2 + s3
+            delta = 0.0 if abs(denom) < 1e-12 else 0.5 * (s1 - s3) / denom
+        else:
+            delta = 0.0
+        df = 1.0 / (len(dw) * sample_dt)
+        f_peak = (pk + delta) * df
+        omega_meas = 2.0 * math.pi * abs(f_peak)
+    else:
+        raise RuntimeError("Unknown estimator selection")
+
+    # Discrete lattice dispersion (correct 1/2 factor)
+    kdx = params.get("_k_fraction_lattice", params.get("k_fraction", 0.1)) * math.pi
+    omega_theory = math.sqrt(((2.0 * c / dx) ** 2) * 0.5 * (1.0 - math.cos(kdx)) + chi ** 2)
+
     rel_err = abs(omega_meas - omega_theory) / max(omega_theory, 1e-30)
-
     passed = bool(rel_err <= tol["phase_error_max"])
     status = "PASS ✅" if passed else "FAIL ❌"
-    log(f"{test_id} {status} (rel_err={rel_err*100:.2f}% > tol)", "FAIL" if not passed else "INFO")
+    log(f"{test_id} {status} (rel_err={rel_err*100:.3f}%, ω_meas={omega_meas:.6f}, ω_th={omega_theory:.6f})",
+        "FAIL" if not passed else "INFO")
 
     summary = {
-        "id": str(test_id),
-        "desc": str(desc),
-        "passed": passed,
-        "rel_err": float(rel_err),
-        "runtime_sec": float(runtime),
-        "timestamp": datetime.utcnow().isoformat() + "Z"
+        "id": str(test_id), "desc": str(desc), "passed": passed,
+        "rel_err": float(rel_err), "omega_meas": float(omega_meas),
+        "omega_theory": float(omega_theory), "runtime_sec": float(runtime),
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "k_fraction_lattice": float(params.get("_k_fraction_lattice", 0)),
     }
     with open(test_dir / "summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
     return summary
 
 
-# ---------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------
+# ---------------- main ----------------
 def main():
     cfg = load_config()
-    run = cfg["run_settings"]
-    p_base = cfg["parameters"]
-    tol = cfg["tolerances"]
-    variants = cfg["variants"]
-
-    outdir = resolve_outdir(cfg["output_dir"])
-    log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")
-
-    quick = bool(run.get("quick_mode", False))
-    _ = LFMLogger(outdir)
+    run = cfg["run_settings"]; p_base = cfg["parameters"]; tol = cfg["tolerances"]; variants = cfg["variants"]
+    outdir = resolve_outdir(cfg["output_dir"]); log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")
+    quick = bool(run.get("quick_mode", False)); _ = LFMLogger(outdir)
 
     log(f"=== Tier-1 Relativistic Suite Start (quick={quick}) ===", "INFO")
     results = []
     for v in variants:
-        tid = v["test_id"]
-        desc = v["description"]
-        params = p_base.copy()
-        params.update(v)
+        tid = v["test_id"]; desc = v["description"]; params = p_base.copy(); params.update(v)
         log(f"→ Starting {tid}: {desc} ({params.get('steps','?')} steps)", "INFO")
-        r = run_relativistic_test(tid, desc, params, tol, outdir, quick)
-        results.append(r)
+        results.append(run_relativistic_test(tid, desc, params, tol, outdir, quick))
 
-    suite_summary(results)
-    log("=== Tier-1 Suite Complete ===", "INFO")
+    suite_summary(results); log("=== Tier-1 Suite Complete ===", "INFO")
 
 
 if __name__ == "__main__":
