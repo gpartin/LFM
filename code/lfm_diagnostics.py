@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-lfm_diagnostics.py — unified diagnostic utilities for all LFM tiers (v1.10.0-compensated)
+lfm_diagnostics.py — unified diagnostic utilities for all LFM tiers
+v1.10.1-compensated-3d
 
-Changes from v1.9.1:
-  • energy_total() now uses Neumaier compensated summation to remove floating-sum drift.
-  • No change to physics or solver interfaces.
-  • All other diagnostic functions unchanged.
+Changes from v1.10.0:
+  • energy_total() now supports 3D (compensated/Neumaier summation).
+  • No change to solver physics or interfaces.
 """
 
 from pathlib import Path
@@ -23,6 +23,7 @@ except Exception:
     _HAS_CUPY = False
 
 def ensure_dirs(p): Path(p).mkdir(parents=True, exist_ok=True)
+
 def to_numpy(x):
     if _HAS_CUPY and hasattr(x, "get"):
         return x.get()
@@ -33,6 +34,7 @@ def energy_total(E, E_prev, dt, dx, c, chi):
     """
     ∫ ½[(E_t)^2 + c^2|∇E|^2 + χ^2E^2] dV
     Uses compensated (Neumaier) summation to suppress rounding error.
+    Supports 1D, 2D, 3D.
     """
     E, E_prev = to_numpy(E), to_numpy(E_prev)
     Et = (E - E_prev) / dt
@@ -41,12 +43,23 @@ def energy_total(E, E_prev, dt, dx, c, chi):
         gx = (np.roll(E, -1) - np.roll(E, 1)) / (2.0 * dx)
         dens = 0.5 * (Et**2 + (c**2)*gx**2 + (chi**2)*E**2)
         weight = dx
+
     elif E.ndim == 2:
         gx = (np.roll(E, -1, 1) - np.roll(E, 1, 1)) / (2.0 * dx)
         gy = (np.roll(E, -1, 0) - np.roll(E, 1, 0)) / (2.0 * dx)
         grad2 = gx**2 + gy**2
         dens = 0.5 * (Et**2 + (c**2)*grad2 + (chi**2)*E**2)
         weight = dx * dx
+
+    elif E.ndim == 3:
+        # Axes: (z, y, x)
+        gx = (np.roll(E, -1, 2) - np.roll(E, 1, 2)) / (2.0 * dx)
+        gy = (np.roll(E, -1, 1) - np.roll(E, 1, 1)) / (2.0 * dx)
+        gz = (np.roll(E, -1, 0) - np.roll(E, 1, 0)) / (2.0 * dx)
+        grad2 = gx**2 + gy**2 + gz**2
+        dens = 0.5 * (Et**2 + (c**2)*grad2 + (chi**2)*E**2)
+        weight = dx**3
+
     else:
         raise ValueError(f"Unsupported ndim={E.ndim}")
 
@@ -109,7 +122,7 @@ def field_spectrum(E, dx, outdir):
 
 # ------------------------- 3) Energy flow -----------------------------
 def energy_flow(E_series, dt, dx, c, outdir):
-    """Write t, E_sum_sq, rel_drift (warm-up excluded from rel_drift)."""
+    """Write t, E_sum_sq, rel_drift (baseline-corrected)."""
     ensure_dirs(outdir)
     if not E_series:
         return

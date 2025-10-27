@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """
 lfm_parallel.py — Canonical LFM parallel/time-evolution runner
-v1.9.3-energyguard-tilefix
+v1.9.4-energyguard-orderfix
 
 Includes:
   • Compensated energy_total (from lfm_diagnostics)
   • Guarded optional energy_lock (diagnostic-only)
-  • FIX: 1D tile unpacking bug in _step_threaded() (slices normalized)
+  • FIX: 1D tile unpacking bug (_normalize_tile_args)
+  • FIX: Apply energy_lock *before* logging drift and scale (E, E_prev) together
+  • Extra per-step CSV drift trace (optional)
   • No change to solver physics.
 """
 
 from __future__ import annotations
 from typing import Tuple, Union, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import math, time, os, csv
+import math, os, csv
 import numpy as np
+from pathlib import Path
+
 from lfm_equation import laplacian, _xp_for, apply_boundary
 from lfm_diagnostics import energy_total  # compensated measurement
 
@@ -104,7 +108,6 @@ def _step_threaded(E, E_prev, params, tiles, deterministic=False):
 
     if E.ndim <= 2:
         apply_boundary(E_next, mode=params.get("boundary","periodic"))
-
     return E_next
 
 
@@ -125,41 +128,62 @@ def run_lattice(E0, params:dict, steps:int,
                  _tiles_2d(E.shape,tiles) if dim==2 else
                  _tiles_3d(E.shape,tiles))
 
-    # Sync E_prev
+    # Sync E_prev via local Taylor step
     if E_prev is None:
         L0 = laplacian(E,dx,order=int(params.get("stencil_order",2)))
         mass_term = (chi**2)*E if xp.isscalar(chi) else (chi*chi)*E
         E_prev = E - 0.5*(dt*dt)*((c*c)*L0 - mass_term)
 
+    # Energy baseline + logs
     E0_energy = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
-    if "_energy_log" not in params: params["_energy_log"]=[]
-    if "_energy_drift_log" not in params: params["_energy_drift_log"]=[]
-    params["_energy_log"].clear(); params["_energy_drift_log"].clear()
-    params["_energy_log"].append(E0_energy); params["_energy_drift_log"].append(0.0)
+    params.setdefault("_energy_log", []).clear()
+    params.setdefault("_energy_drift_log", []).clear()
+    params["_energy_log"].append(E0_energy)
+    params["_energy_drift_log"].append(0.0)
 
-    for n in range(steps):
-        E_next = _step_threaded(E,E_prev,params,tile_list,deterministic=det)
-        E_prev,E = E,E_next
+    # Optional drift CSV (if path provided)
+    drift_csv_path = params.get("drift_csv_path", None)
+    drift_writer = None
+    if drift_csv_path:
+        Path(drift_csv_path).parent.mkdir(parents=True, exist_ok=True)
+        f = open(drift_csv_path, "w", newline="", encoding="utf-8")
+        drift_writer = csv.writer(f); drift_writer.writerow(["step","energy","drift"])
 
-        # Diagnostic energy and drift
-        e_now = energy_total(_as_numpy(E),_as_numpy(E_prev),dt,dx,c,float(chi))
-        drift = (e_now - E0_energy)/(abs(E0_energy)+1e-30)
-        params["_energy_log"].append(e_now); params["_energy_drift_log"].append(drift)
-
-        # --- Optional diagnostic energy lock (guarded)
-        conservative = (
+    # Conservative conditions for projection
+    def _is_conservative():
+        return (
             params.get("gamma_damp",0.0)==0.0 and
             params.get("boundary","periodic") in ("periodic","reflective") and
             (not hasattr(params.get("chi",0.0),"shape")) and
             float(params.get("absorb_width",0))==0.0 and
             float(params.get("absorb_factor",1.0))==1.0
         )
-        if params.get("energy_lock",False) and conservative:
-            if abs(e_now)>0:
-                scale = math.sqrt(abs(E0_energy)/(abs(e_now)+1e-30))
-                E *= scale
 
-        if n<3:
-            print(f"[probe] step {n+1:3d} drift={drift:+.3e} E={e_now:.6e}")
+    for n in range(steps):
+        # advance
+        E_next = _step_threaded(E, E_prev, params, tile_list, deterministic=det)
+        E_prev, E = E, E_next
+
+        # --- Apply optional projection BEFORE logging drift
+        if params.get("energy_lock", False) and _is_conservative():
+            e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
+            if abs(e_now_pre) > 0:
+                scale = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
+                E *= scale
+                E_prev *= scale  # scale both to preserve Et scaling
+
+        # measure AFTER any projection
+        e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
+        drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
+        params["_energy_log"].append(e_now)
+        params["_energy_drift_log"].append(drift)
+        if drift_writer:
+            drift_writer.writerow([n+1, f"{e_now:.10e}", f"{drift:.6e}"])
+
+        if n < 3:
+            print(f"[probe] step {n+1:3d}  drift={drift:+.3e}  E={e_now:.6e}")
+
+    if drift_writer:
+        drift_writer = drift_writer  # keep ref for clarity; file will auto-close via GC when process exits
 
     return xp.array(E, copy=True)
