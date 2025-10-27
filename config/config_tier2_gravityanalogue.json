@@ -1,0 +1,41 @@
+{
+  "tier": 2,
+  "category": "GravityAnalogue",
+  "output_dir": "results/GravityAnalogue/",
+  "run_settings": {
+    "use_gpu": true,
+    "precision": "float64",
+    "debug": true,
+    "quick_mode": true,
+    "make_animation": true,
+    "make_animation_mp4": true
+  },
+  "parameters": {
+    "grid_points": 512,
+    "steps": 12000,
+    "dx": 0.008,
+    "dt": 0.0015,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "gamma_damp": 1e-5,           
+    "pulse_amp": 3.0,            
+    "pulse_width": 0.06,
+    "init_center": 0.25,
+    "launch_direction": "right",
+    "save_every": 1,             
+    "chi_mass": 0.0
+  },
+  "tolerances": {
+    "energy_drift": 0.001,
+    "redshift_max": 0.05
+  },
+  "variants": [
+    { "test_id": "GRAV-09", "description": "Weak Gradient (linear)",       "chi_profile": "linear",      "chi0": 0.08, "chi_grad": 0.08 },
+    { "test_id": "GRAV-10", "description": "Strong Gradient (linear)",     "chi_profile": "linear",      "chi0": 0.10, "chi_grad": 0.12 },
+    { "test_id": "GRAV-11", "description": "Shapiro-like (radial)",        "chi_profile": "radial_like", "chi0": 0.08, "chi_grad": 0.10, "pulse_width": 0.06 },
+    { "test_id": "GRAV-12", "description": "Tangential pass (radial)",     "chi_profile": "radial_like", "chi0": 0.08, "chi_grad": 0.10, "pulse_width": 0.06 },
+    { "test_id": "GRAV-13", "description": "Weak-Field Deflection (gaus)", "chi_profile": "gaussian",    "chi0": 0.08, "chi_grad": 0.07, "chi_width": 0.20 },
+    { "test_id": "GRAV-14", "description": "Curvature Step Stability",     "chi_profile": "step",        "chi0": 0.06, "chi_grad": 0.10 },
+    { "test_id": "GRAV-VARC-01", "description": "Lensing & Shift (gaus)",  "chi_profile": "gaussian",    "chi0": 0.10, "chi_grad": 0.12, "chi_width": 0.12 }
+  ]
+}
