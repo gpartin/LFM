@@ -43,7 +43,16 @@ class NumericIntegrityMixin:
         If `suppress_monitoring` is True on the instance, no warnings are emitted
         regardless of drift value.
         """
-        # Check if monitoring should be suppressed entirely
+        # Global/harness-level suppression: if the console-level diagnostics
+        # toggle is off, treat this as suppressed as well.
+        try:
+            import lfm_console
+            if not getattr(lfm_console, "DIAGNOSTICS_ENABLED", True):
+                return True
+        except Exception:
+            pass
+
+        # Check if monitoring should be suppressed entirely (instance-level)
         if getattr(self, "suppress_monitoring", False):
             return True
 

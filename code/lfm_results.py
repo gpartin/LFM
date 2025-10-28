@@ -24,8 +24,36 @@ def write_json(path, data):
     ensure_dirs(Path(path).parent)
     if "timestamp" not in data:
         data["timestamp"] = datetime.utcnow().isoformat() + "Z"
+    # Convert Python and NumPy types to JSON-serializable values
+    def convert_types(obj):
+        import numpy as np
+        # Handle NumPy scalar types (includes np.bool_, np.integer, np.floating, etc.)
+        if isinstance(obj, np.generic):
+            try:
+                return obj.item()
+            except Exception:
+                # Fallback: convert to str if item() fails for some exotic scalar
+                return str(obj)
+        # NumPy arrays -> lists (recursively converted by calling convert_types again)
+        if isinstance(obj, np.ndarray):
+            return convert_types(obj.tolist())
+        # Python built-in bool, int, float, str are JSON-serializable as-is
+        if isinstance(obj, (bool, int, float, str)):
+            return obj
+        # Containers: recurse
+        if isinstance(obj, dict):
+            return {k: convert_types(v) for k, v in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return [convert_types(x) for x in obj]
+        # Unknown objects: use str() as a safe fallback to avoid json encoder errors
+        try:
+            json.dumps(obj)
+            return obj
+        except Exception:
+            return str(obj)
+    
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+        json.dump(convert_types(data), f, indent=2)
 
 def read_json(path):
     """Read JSON file (if exists) else return None."""

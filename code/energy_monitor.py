@@ -111,7 +111,7 @@ class EnergyMonitor:
         """Flush pending rows and write summary JSON alongside CSV."""
         # ensure all records are written
         self._flush()
-        import json
+        # Use central write_json which handles NumPy scalars/arrays safely
+        from lfm_results import write_json
         summary_path = self.csv_path.with_suffix(".json")
-        with open(summary_path, "w", encoding="utf-8") as f:
-            json.dump(self.summary(), f, indent=2)
+        write_json(summary_path, self.summary())

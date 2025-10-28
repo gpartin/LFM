@@ -115,6 +115,7 @@ def run_lattice(E0, params:dict, steps:int,
                 E_prev:Optional[np.ndarray]=None):
     xp = _xp_for(E0); E = xp.array(E0, copy=True)
     dbg = params.setdefault("debug",{})
+    # (Previously had a temporary instrumentation log here.)
     dim = int(getattr(E,"ndim",0))
     det = bool(dbg.get("deterministic",False))
     c = math.sqrt(float(params["alpha"])/float(params["beta"]))

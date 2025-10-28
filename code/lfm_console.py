@@ -11,6 +11,10 @@ from datetime import datetime
 # ---------------------------------------------------------------------
 # Core print helpers
 # ---------------------------------------------------------------------
+# Global toggle: when False, diagnostic-level messages (from monitors
+# and integrity checks) should be suppressed. Set by harness at start.
+DIAGNOSTICS_ENABLED = False
+
 def log(msg, level="INFO", end="\n", flush=True):
     """Timestamped console output with color by level."""
     timestamp = datetime.utcnow().strftime("%H:%M:%S")
@@ -26,6 +30,15 @@ def log(msg, level="INFO", end="\n", flush=True):
     sys.stdout.write(f"{color.get(level, '')}{prefix}{msg}{color['RESET']}{end}")
     if flush:
         sys.stdout.flush()
+
+
+def set_diagnostics_enabled(enabled: bool):
+    """Toggle whether diagnostic messages (non-critical warnings) are printed.
+
+    This is intended to be set once at program startup by the harness based on
+    the run config (run_settings.debug.enable_diagnostics)."""
+    global DIAGNOSTICS_ENABLED
+    DIAGNOSTICS_ENABLED = bool(enabled)
 
 # ---------------------------------------------------------------------
 # Progress / status utilities

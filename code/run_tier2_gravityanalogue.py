@@ -145,6 +145,14 @@ class Tier2Harness(NumericIntegrityMixin):
         self.out_root = out_root
         self.logger = LFMLogger(out_root)
         self.logger.record_env()
+        # Set global diagnostics enabled/disabled according to run settings so
+        # diagnostic warnings only print when explicitly enabled.
+        try:
+            from lfm_console import set_diagnostics_enabled
+            dbg_cfg = self.run_settings.get("debug", {}) or {}
+            set_diagnostics_enabled(bool(dbg_cfg.get("enable_diagnostics", False)))
+        except Exception:
+            pass
         log(f"[backend] on_gpu={self.on_gpu} (CuPy available={_HAS_CUPY})", "INFO")
 
     def run_variant(self, v: Dict) -> VariantResult:
@@ -279,8 +287,11 @@ class Tier2Harness(NumericIntegrityMixin):
 
 # --------------------------- Main ---------------------------
 def main():
-    cfg = json.load(open("../config/config_tier2_gravityanalogue.json"))
-    outdir = Path("results/Gravity"); outdir.mkdir(parents=True,exist_ok=True)
+    # Load config relative to this script file so running from any CWD works
+    cfg_path = Path(__file__).resolve().parent / "config" / "config_tier2_gravityanalogue.json"
+    cfg = json.load(open(cfg_path))
+    outdir = Path(__file__).resolve().parent / "results" / "Gravity"
+    outdir.mkdir(parents=True, exist_ok=True)
     harness = Tier2Harness(cfg,outdir)
     results = harness.run()
     suite_summary(results)
