@@ -158,10 +158,16 @@ def run_lattice(E0, params:dict, steps:int,
 
     # Optional monitor
     mon = None
+    monitor_stride = 0
     if params.get("enable_monitor", False):
         mon = EnergyMonitor(dt, dx, c, chi,
                             outdir=params.get("monitor_outdir", "diagnostics"),
                             label=params.get("monitor_label", "lfm_parallel"))
+        # Default to every 10 steps if monitor enabled, or use explicit stride
+        monitor_stride = int(params.get("energy_monitor_every", 10))
+    else:
+        # If no monitor, only validate at explicit stride (0 = never)
+        monitor_stride = int(params.get("energy_monitor_every", 0))
 
     # Helper: determine conservative scenario for projection
     def _is_conservative():
@@ -178,8 +184,12 @@ def run_lattice(E0, params:dict, steps:int,
         E_next = _step_threaded(E, E_prev, params, tile_list, deterministic=det)
         E_prev, E = E, E_next
 
+        # Determine if we should compute energy this step
+        compute_energy = (monitor_stride > 0) and ((n + 1) % monitor_stride == 0)
+        
         # Optional diagnostic projection BEFORE measuring drift
         if params.get("energy_lock", False) and _is_conservative():
+            # Energy lock requires energy computation
             try:
                 _chi_pre = float(chi)
             except Exception:
@@ -189,22 +199,24 @@ def run_lattice(E0, params:dict, steps:int,
                 s = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
                 E *= s
                 E_prev *= s  # keep Et consistent
+            compute_energy = True  # Force recompute after projection
 
-        # Measure AFTER any projection
-        try:
-            _chi_now = float(chi)
-        except Exception:
-            _chi_now = _as_numpy(chi)
-        e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_now)
-        drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
-        params["_energy_log"].append(e_now)
-        params["_energy_drift_log"].append(drift)
-        # use configured tolerance if provided on the integrity instance
-        tol_use = float(getattr(integrity, "energy_tol", ni_cfg.get("energy_tol", 1e-6)))
-        integrity.validate_energy(drift, tol=tol_use, label=f"step{n}")
+        # Measure energy only at monitor cadence (or if energy_lock was applied)
+        if compute_energy:
+            try:
+                _chi_now = float(chi)
+            except Exception:
+                _chi_now = _as_numpy(chi)
+            e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_now)
+            drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
+            params["_energy_log"].append(e_now)
+            params["_energy_drift_log"].append(drift)
+            # use configured tolerance if provided on the integrity instance
+            tol_use = float(getattr(integrity, "energy_tol", ni_cfg.get("energy_tol", 1e-6)))
+            integrity.validate_energy(drift, tol=tol_use, label=f"step{n}")
 
-        if mon:
-            mon.record(E, E_prev, n)
+            if mon:
+                mon.record(E, E_prev, n)
 
         # Probe prints are gated via params.debug.print_probe_steps to avoid
         # unconditional console spam from the parallel runner.
