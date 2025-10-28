@@ -203,6 +203,8 @@ def _get_debug(params: Dict):
         "edge_band": int(dbg.get("edge_band", 0)),
         "checksum_stride": int(dbg.get("checksum_stride", 4096)),
         "diagnostics_path": params.get("diagnostics_path", "diagnostics_core.csv"),
+        "print_probe_steps": bool(dbg.get("print_probe_steps", False)),  # control probe output
+        "quiet_run": bool(dbg.get("quiet_run", True)),  # suppress most runtime prints
     }
 
 
@@ -298,6 +300,7 @@ def advance(E0, params, steps, save_every=0):
     E = xp.array(E0, copy=True)
 
     dbg = _get_debug(params)
+    quiet_run = dbg["quiet_run"]
     diagnostics_enabled = dbg["enable"] or bool(params.get("energy_monitor_every", 0))
 
     c = math.sqrt(float(params["alpha"]) / float(params["beta"]))
@@ -338,16 +341,19 @@ def advance(E0, params, steps, save_every=0):
             with open(dbg["diagnostics_path"], "a", encoding="utf-8") as f:
                 f.write(f"{n+1},{met['energy']:.10e},{met['drift']:.6e},{met['cfl_ratio']:.6f},{met['cfl_limit']:.6f},"
                         f"{met['max_abs']:.6e},{met['edge_ratio']:.6f},{met['grad_ratio']:.6f},{int(met['has_bad'])},{met['checksum']}\\n")
-            if abs(met["drift"]) > dbg["energy_tol"]:
-                warnings.warn(f"[ENERGY] |ΔE/E0|={abs(met['drift']):.3e} > tol={dbg['energy_tol']:.1e}")
-            if met["has_bad"]:
-                warnings.warn("[NUMERIC] Non-finite values detected in field")
+            if not quiet_run:
+                if abs(met["drift"]) > dbg["energy_tol"]:
+                    warnings.warn(f"[ENERGY] |ΔE/E0|={abs(met['drift']):.3e} > tol={dbg['energy_tol']:.1e}")
+                if met["has_bad"]:
+                    warnings.warn("[NUMERIC] Non-finite values detected in field")
+                if dbg["print_probe_steps"]:
+                    print(f"[probe] step {n+1} drift={met['drift']:.6e} E={met['energy']:.6e}")
             params["_last_diagnostics"] = met
 
         if do_save:
             series.append(xp.array(E, copy=True))
 
-        if profile_every and (n + 1) % profile_every == 0:
+        if not quiet_run and profile_every and (n + 1) % profile_every == 0:
             dt_run = time.time() - t0
             print(f"[PROFILE] step {n+1}/{steps} elapsed={dt_run:.3f}s avg/step={dt_run/(n+1):.6f}s")
 
