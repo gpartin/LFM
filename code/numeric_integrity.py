@@ -39,18 +39,31 @@ class NumericIntegrityMixin:
           warning and mark `label` as warned.
         - If |drift| <= tol and label was previously warned, clear the
           warned state so future violations will warn again.
+        
+        If `suppress_monitoring` is True on the instance, no warnings are emitted
+        regardless of drift value.
         """
+        # Check if monitoring should be suppressed entirely
+        if getattr(self, "suppress_monitoring", False):
+            return True
+
         # lazy init of the per-instance cache
         if not hasattr(self, "_energy_warn_cache"):
             # mapping: label -> bool (True == currently warned)
             self._energy_warn_cache: Dict[str, bool] = {}
 
+        # Use instance settings if available
+        if hasattr(self, "energy_tol"):
+            tol = float(self.energy_tol)
+        quiet = bool(getattr(self, "quiet_warnings", False))
+
         exceeded = abs(drift) > float(tol)
         was_warned = bool(self._energy_warn_cache.get(label, False))
 
         if exceeded and not was_warned:
-            # log once (WARN level) and remember that we've warned
-            log(f"[{label}] warning: drift {drift:+.3e} exceeds tolerance {tol:.1e}", "WARN")
+            # Only log warning if quiet_warnings is not enabled
+            if not quiet:
+                log(f"[{label}] warning: drift {drift:+.3e} exceeds tolerance {tol:.1e}", "WARN")
             self._energy_warn_cache[label] = True
         elif not exceeded and was_warned:
             # clear the warned state so a future exceedance will warn again

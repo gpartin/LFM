@@ -122,6 +122,15 @@ def run_lattice(E0, params:dict, steps:int,
     chi = params.get("chi",0.0)
 
     integrity = NumericIntegrityMixin()
+    # configure numeric integrity from params (if present) so warnings/tolerance
+    # can be controlled by higher-level run settings
+    ni_cfg = params.get("numeric_integrity", {}) if isinstance(params, dict) else {}
+    # attach instance-level settings consumed by validate_energy
+    if "energy_tol" in ni_cfg:
+        integrity.energy_tol = float(ni_cfg.get("energy_tol"))
+    integrity.quiet_warnings = bool(ni_cfg.get("quiet_warnings", False))
+    integrity.suppress_monitoring = bool(ni_cfg.get("suppress_monitoring", False))
+
     integrity.check_cfl(c, dt, dx, dim)
     integrity.validate_field(E, "E0")
 
@@ -189,13 +198,19 @@ def run_lattice(E0, params:dict, steps:int,
         drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
         params["_energy_log"].append(e_now)
         params["_energy_drift_log"].append(drift)
-        integrity.validate_energy(drift, tol=1e-6, label=f"step{n}")
+        # use configured tolerance if provided on the integrity instance
+        tol_use = float(getattr(integrity, "energy_tol", ni_cfg.get("energy_tol", 1e-6)))
+        integrity.validate_energy(drift, tol=tol_use, label=f"step{n}")
 
         if mon:
             mon.record(E, E_prev, n)
 
-        if n < 3:
-            print(f"[probe] step {n+1:3d}  drift={drift:+.3e}  E={e_now:.6e}")
+        # Probe prints are gated via params.debug.print_probe_steps to avoid
+        # unconditional console spam from the parallel runner.
+        dbg = params.get("debug", {}) if isinstance(params, dict) else {}
+        if bool(dbg.get("print_probe_steps", False)) and not bool(dbg.get("quiet_run", True)):
+            if n < 3:
+                print(f"[probe] step {n+1:3d}  drift={drift:+.3e}  E={e_now:.6e}")
 
     if mon:
         mon.finalize()

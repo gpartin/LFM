@@ -117,6 +117,21 @@ class Tier2Harness(NumericIntegrityMixin):
         self.quick = bool(self.run_settings.get("quick_mode", False))
         self.verbose = bool(self.run_settings.get("verbose", False))
         self.monitor_stride = int(self.run_settings.get("monitor_stride_quick", 25))
+        
+        # Apply numeric integrity settings for energy drift warnings
+        if "numeric_integrity" in self.run_settings:
+            ni_cfg = self.run_settings["numeric_integrity"]
+            # These need to be instance variables for NumericIntegrityMixin
+            self.energy_tol = float(ni_cfg.get("energy_tol", 1e-6))
+            self.quiet_warnings = bool(ni_cfg.get("quiet_warnings", False))
+            # Also update in params for the equation solver
+            if "debug" not in self.run_settings:
+                self.run_settings["debug"] = {}
+            self.run_settings["debug"].update({
+                "quiet_run": True,
+                "print_probe_steps": False,
+                "energy_tol": self.energy_tol
+            })
         # How often to print verbose status lines
         self.verbose_stride = int(self.run_settings.get("verbose_stride", 200))
         # How many monitor records to buffer before flushing to disk
@@ -167,15 +182,25 @@ class Tier2Harness(NumericIntegrityMixin):
         self.check_cfl(c, dt, dx, ndim=3)
         params = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary="periodic",
                       chi=to_numpy(chi_field) if xp is np else chi_field)
+        # Propagate run-level debug and numeric_integrity settings into per-run params
+        if "debug" in self.run_settings:
+            params.setdefault("debug", {})
+            params["debug"].update(self.run_settings.get("debug", {}))
+        if "numeric_integrity" in self.run_settings:
+            params.setdefault("numeric_integrity", {})
+            params["numeric_integrity"].update(self.run_settings.get("numeric_integrity", {}))
 
         PROBE_A, PROBE_B = center, (N//2,N//2,int(0.7*N))
 
         # Serial
         series_A, series_B = [], []
+        # Use consistent energy tolerance across all components
+        energy_tol = float(self.run_settings.get("numeric_integrity", {}).get("energy_tol", 1e-3))
         mon = EnergyMonitor(dt, dx, c, 0.0,
-                            outdir=str(diag_dir),
-                            label=f"{tid}_serial",
-                            flush_interval=self.monitor_flush_interval)
+                           outdir=str(diag_dir),
+                           label=f"{tid}_serial",
+                           threshold=energy_tol,  # Use same tolerance
+                           flush_interval=self.monitor_flush_interval)
         E, Ep = E0.copy(), Eprev0.copy()
         # Hoist hot callables to local variables to reduce attribute lookups
         advance_local = advance

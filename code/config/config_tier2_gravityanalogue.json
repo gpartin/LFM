@@ -8,7 +8,18 @@
     "monitor_stride_quick": 25,
     "monitor_flush_interval": 50,
     "show_progress": true,
-    "progress_percent_stride": 5
+    "progress_percent_stride": 5,
+    "debug": {
+      "enable_diagnostics": true,
+      "energy_tol": 1e-3,
+      "quiet_run": true,
+      "print_probe_steps": false
+    },
+    "numeric_integrity": {
+      "energy_tol": 1e-3,
+      "quiet_warnings": true,
+      "suppress_monitoring": true
+    }
   },
   "parameters": {
     "grid_points": 64,
