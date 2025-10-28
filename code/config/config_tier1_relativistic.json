@@ -1,14 +1,25 @@
 {
-  "tier": 1,
-  "category": "Relativistic",
-  "output_dir": "results/Relativistic/",
   "run_settings": {
-    "use_gpu": true,
-    "precision": "float64",
-    "debug": true,
     "quick_mode": true,
-    "make_animation": true,
-    "make_animation_mp4": true
+    "use_gpu": true,
+    "output_dir": "results/Relativistic/",
+    "precision": "float64",
+    "show_progress": true,
+    "progress_percent_stride": 5,
+    "debug": {
+      "enable_diagnostics": false,
+      "energy_tol": 1e-6,
+      "quiet_run": true,
+      "print_probe_steps": false
+    },
+    "numeric_integrity": {
+      "energy_tol": 1e-6,
+      "quiet_warnings": true
+    }
+  },
+  "diagnostics": {
+    "energy_monitor_every": 0,
+    "diagnostics_path": "diagnostics_core.csv"
   },
   "parameters": {
     "grid_points": 512,
@@ -19,12 +30,16 @@
     "beta": 0.5,
     "chi": 0.0,
     "stencil_order": 4,
-    "boundary": "absorbing"
+    "boundary": "absorbing",
+    "tiles": [1,1,1],
+    "absorb_width": 1,
+    "absorb_factor": 1.0
   },
   "tolerances": {
     "energy_drift": 1e-6,
     "anisotropy_max": 0.01,
-    "phase_error_max": 0.02
+    "phase_error_max": 0.02,
+    "ratio_error_max": 0.05
   },
   "variants": [
     { "test_id": "REL-01", "description": "Isotropy — Coarse Grid", "k_fraction": 0.05 },

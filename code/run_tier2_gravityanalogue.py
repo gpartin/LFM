@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-LFM Tier-2 — Gravity Analogue Suite (Optimized Local Version)
--------------------------------------------------------------
-- Removes redundant CuPy→NumPy conversions.
-- Reduces console/log spam with throttling.
-- Reuses cached constants to minimize recomputation.
+LFM Tier-2 — Gravity Analogue Suite
+-----------------------------------
+Purpose:
+- Execute Tier-2 gravity-analogue tests (3D lattice runs) to validate
+    dispersion and gravity-analogue behaviour, capture diagnostics, and produce
+    standardized summaries.
+
+Highlights:
+- Optimized to minimize unnecessary CuPy→NumPy transfers and reduce log spam
+    via throttling and structured events.
+- Parallel and serial execution modes supported; configurable tiling for
+    threaded parallel runs.
+
+Config & output:
+- Expects configuration at `./config/config_tier2_gravityanalogue.json`.
+- Writes per-test results under `results/Gravity/<TEST_ID>/` with
+    `summary.json`, `metrics.csv`, `diagnostics/` and `plots/`.
 """
 
 import json, math, time, sys
@@ -21,7 +32,7 @@ except Exception:
     cp = None
     _HAS_CUPY = False
 
-from lfm_console import log, suite_summary
+from lfm_console import log, suite_summary, set_logger, log_run_config, report_progress
 from lfm_logger import LFMLogger
 from lfm_results import save_summary, write_metadata_bundle
 from lfm_diagnostics import energy_total
@@ -31,7 +42,7 @@ from energy_monitor import EnergyMonitor
 from lfm_equation import advance
 from lfm_parallel import run_lattice
 
-# --------------------------- Utility functions ---------------------------
+ 
 def pick_backend(use_gpu_flag: bool):
     on_gpu = bool(use_gpu_flag and _HAS_CUPY)
     return (cp if on_gpu else np), on_gpu
@@ -77,7 +88,7 @@ class VariantResult:
     runtime_sec: float
     on_gpu: bool
 
-# --------------------------- Core functions ---------------------------
+ 
 def build_chi_field(kind: str, N: int, dx: float, params: Dict, xp):
     if kind == "linear":
         g = float(params.get("chi_grad", 0.0))
@@ -106,7 +117,26 @@ def gaussian_packet(N, kvec, amplitude, width, xp):
 def local_omega_theory(c, k_mag, chi):
     return math.sqrt((c*c)*(k_mag*k_mag) + chi*chi)
 
-# --------------------------- Harness ---------------------------
+
+ 
+def _default_config_name() -> str:
+    return "config_tier2_gravityanalogue.json"
+
+def load_config() -> Dict:
+    """Search for the Tier-2 config in script `config/` (current or parent).
+
+    This mirrors the Tier-1 loader behavior so running from different CWDs
+    works the same across harnesses.
+    """
+    script_dir = Path(__file__).resolve().parent
+    for root in (script_dir, script_dir.parent):
+        cand = root / "config" / _default_config_name()
+        if cand.is_file():
+            with open(cand, "r", encoding="utf-8") as f:
+                return json.load(f)
+    raise FileNotFoundError(f"Tier-2 config not found (expected config/{_default_config_name()}).")
+
+ 
 class Tier2Harness(NumericIntegrityMixin):
     def __init__(self, cfg: Dict, out_root: Path):
         self.cfg = cfg
@@ -118,13 +148,10 @@ class Tier2Harness(NumericIntegrityMixin):
         self.verbose = bool(self.run_settings.get("verbose", False))
         self.monitor_stride = int(self.run_settings.get("monitor_stride_quick", 25))
         
-        # Apply numeric integrity settings for energy drift warnings
         if "numeric_integrity" in self.run_settings:
             ni_cfg = self.run_settings["numeric_integrity"]
-            # These need to be instance variables for NumericIntegrityMixin
             self.energy_tol = float(ni_cfg.get("energy_tol", 1e-6))
             self.quiet_warnings = bool(ni_cfg.get("quiet_warnings", False))
-            # Also update in params for the equation solver
             if "debug" not in self.run_settings:
                 self.run_settings["debug"] = {}
             self.run_settings["debug"].update({
@@ -132,28 +159,30 @@ class Tier2Harness(NumericIntegrityMixin):
                 "print_probe_steps": False,
                 "energy_tol": self.energy_tol
             })
-        # How often to print verbose status lines
-        self.verbose_stride = int(self.run_settings.get("verbose_stride", 200))
-        # How many monitor records to buffer before flushing to disk
-        self.monitor_flush_interval = int(self.run_settings.get("monitor_flush_interval", 50))
-        # Progress display (percentage). Enable with run_settings['show_progress']=True
-        self.show_progress = bool(self.run_settings.get("show_progress", True))
-        # Print progress every N percent (integer 1-100)
-        self.progress_percent_stride = int(self.run_settings.get("progress_percent_stride", 5))
-        self.xp, self.on_gpu = pick_backend(self.run_settings.get("use_gpu", False))
-        self.dtype = self.xp.float32 if self.quick else self.xp.float64
-        self.out_root = out_root
-        self.logger = LFMLogger(out_root)
-        self.logger.record_env()
-        # Set global diagnostics enabled/disabled according to run settings so
-        # diagnostic warnings only print when explicitly enabled.
-        try:
-            from lfm_console import set_diagnostics_enabled
-            dbg_cfg = self.run_settings.get("debug", {}) or {}
-            set_diagnostics_enabled(bool(dbg_cfg.get("enable_diagnostics", False)))
-        except Exception:
-            pass
-        log(f"[backend] on_gpu={self.on_gpu} (CuPy available={_HAS_CUPY})", "INFO")
+            self.verbose_stride = int(self.run_settings.get("verbose_stride", 200))
+            self.monitor_flush_interval = int(self.run_settings.get("monitor_flush_interval", 50))
+            self.show_progress = bool(self.run_settings.get("show_progress", True))
+            self.progress_percent_stride = int(self.run_settings.get("progress_percent_stride", 5))
+            self.xp, self.on_gpu = pick_backend(self.run_settings.get("use_gpu", False))
+            self.dtype = self.xp.float32 if self.quick else self.xp.float64
+            self.out_root = out_root
+            self.logger = LFMLogger(out_root)
+            self.logger.record_env()
+            try:
+                set_logger(self.logger)
+            except Exception:
+                pass
+            try:
+                log_run_config(self.cfg, self.out_root)
+            except Exception:
+                pass
+            try:
+                from lfm_console import set_diagnostics_enabled
+                dbg_cfg = self.run_settings.get("debug", {}) or {}
+                set_diagnostics_enabled(bool(dbg_cfg.get("enable_diagnostics", False)))
+            except Exception:
+                pass
+            log(f"[backend] on_gpu={self.on_gpu} (CuPy available={_HAS_CUPY})", "INFO")
 
     def run_variant(self, v: Dict) -> VariantResult:
         xp = self.xp
@@ -176,10 +205,13 @@ class Tier2Harness(NumericIntegrityMixin):
         k_mag = float(np.linalg.norm(kvec))
         center = (N//2, N//2, N//2)
 
-        test_dir = self.out_root/tid
-        diag_dir, plot_dir = test_dir/"diagnostics", test_dir/"plots"
-        for d in (test_dir, diag_dir, plot_dir): d.mkdir(parents=True, exist_ok=True)
-        log(f"→ Starting {tid}: {desc} (N={N}³, steps={steps}, quick={self.quick})","INFO")
+        test_dir = self.out_root / tid
+        diag_dir, plot_dir = test_dir / "diagnostics", test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        from lfm_console import test_start
+        test_start(tid, desc, steps)
+        log(f"Params: N={N}³, steps={steps}, quick={self.quick}", "INFO")
 
         chi_field = build_chi_field(p.get("chi_profile","linear"), N, dx, p, xp).astype(self.dtype)
         E0 = gaussian_packet(N, kvec, amplitude, width, xp).astype(self.dtype)
@@ -190,7 +222,6 @@ class Tier2Harness(NumericIntegrityMixin):
         self.check_cfl(c, dt, dx, ndim=3)
         params = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary="periodic",
                       chi=to_numpy(chi_field) if xp is np else chi_field)
-        # Propagate run-level debug and numeric_integrity settings into per-run params
         if "debug" in self.run_settings:
             params.setdefault("debug", {})
             params["debug"].update(self.run_settings.get("debug", {}))
@@ -198,45 +229,52 @@ class Tier2Harness(NumericIntegrityMixin):
             params.setdefault("numeric_integrity", {})
             params["numeric_integrity"].update(self.run_settings.get("numeric_integrity", {}))
 
-        PROBE_A, PROBE_B = center, (N//2,N//2,int(0.7*N))
+        PROBE_A, PROBE_B = center, (N//2, N//2, int(0.7 * N))
 
-        # Serial
         series_A, series_B = [], []
         # Use consistent energy tolerance across all components
         energy_tol = float(self.run_settings.get("numeric_integrity", {}).get("energy_tol", 1e-3))
         mon = EnergyMonitor(dt, dx, c, 0.0,
                            outdir=str(diag_dir),
                            label=f"{tid}_serial",
-                           threshold=energy_tol,  # Use same tolerance
+                           threshold=energy_tol,
                            flush_interval=self.monitor_flush_interval)
         E, Ep = E0.copy(), Eprev0.copy()
-        # Hoist hot callables to local variables to reduce attribute lookups
         advance_local = advance
         mon_record = mon.record
         to_numpy_local = to_numpy
         scalar_fast_local = scalar_fast
         verbose_stride = self.verbose_stride
+        monitor_stride_local = int(self.monitor_stride)
         t0 = time.time()
         # progress threshold (next percent to print)
         next_pct = self.progress_percent_stride if self.progress_percent_stride > 0 else 100
+        # only compute pct at this cadence to avoid per-iteration division
+        steps_pct_check = max(1, steps // 100)
         for n in range(steps):
             E_next = advance_local(E, params, 1)
             Ep, E = E, E_next
-            series_A.append(scalar_fast_local(E[PROBE_A]))
-            series_B.append(scalar_fast_local(E[PROBE_B]))
-            # Throttle expensive host<->device transfers done by the monitor
-            if (n % self.monitor_stride) == 0:
-                mon_record(to_numpy_local(E), to_numpy_local(Ep), n)
+            # Throttle expensive host<->device transfers: convert once on monitor steps
+            if (n % monitor_stride_local) == 0:
+                host_E = to_numpy_local(E)
+                host_Ep = to_numpy_local(Ep)
+                mon_record(host_E, host_Ep, n)
+                # extract probes from host copy (avoids additional device->host transfers)
+                series_A.append(float(host_E[PROBE_A]))
+                series_B.append(float(host_E[PROBE_B]))
+            else:
+                series_A.append(scalar_fast_local(E[PROBE_A]))
+                series_B.append(scalar_fast_local(E[PROBE_B]))
             if self.verbose and (n % verbose_stride == 0):
                 log(f"[{tid}/serial] step {n}/{steps}", "INFO")
             # percentage progress reporting (controlled by run_settings)
-            if self.show_progress:
+            if self.show_progress and (n % steps_pct_check == 0):
                 pct = int((n + 1) * 100 / max(1, steps))
                 if pct >= next_pct:
-                    log(f"[{tid}] {pct}% complete (serial)", "INFO")
+                    report_progress(tid, pct, phase="serial")
                     next_pct += self.progress_percent_stride
         mon.finalize()
-        t_serial = time.time()-t0
+        t_serial = time.time() - t0
 
         # Parallel
         series_Ap, series_Bp = [], []
@@ -245,20 +283,28 @@ class Tier2Harness(NumericIntegrityMixin):
         next_pct = self.progress_percent_stride if self.progress_percent_stride > 0 else 100
         run_lattice_local = run_lattice
         scalar_fast_local = scalar_fast
+        # reuse the same steps_pct_check for parallel progress throttling
         for n in range(steps):
             E_next = run_lattice_local(E, params, 1, tiles=tiles3)
             Ep, E = E, E_next
-            series_Ap.append(scalar_fast_local(E[PROBE_A]))
-            series_Bp.append(scalar_fast_local(E[PROBE_B]))
+            # When appropriate, convert device->host once and reuse for probes to
+            # avoid two separate small transfers; otherwise use fast scalar path.
+            if (n % monitor_stride_local) == 0:
+                host_E = to_numpy_local(E)
+                series_Ap.append(float(host_E[PROBE_A]))
+                series_Bp.append(float(host_E[PROBE_B]))
+            else:
+                series_Ap.append(scalar_fast_local(E[PROBE_A]))
+                series_Bp.append(scalar_fast_local(E[PROBE_B]))
             if self.verbose and (n % verbose_stride == 0):
-                log(f"[{tid}/par] step {n}/{steps}","INFO")
+                log(f"[{tid}/par] step {n}/{steps}", "INFO")
             # percentage progress reporting (controlled by run_settings)
-            if self.show_progress:
+            if self.show_progress and (n % steps_pct_check == 0):
                 pct = int((n + 1) * 100 / max(1, steps))
                 if pct >= next_pct:
-                    log(f"[{tid}] {pct}% complete (parallel)", "INFO")
+                    report_progress(tid, pct, phase="parallel")
                     next_pct += self.progress_percent_stride
-        t_parallel = time.time()-t0
+        t_parallel = time.time() - t0
 
         wA_s,wB_s = hann_fft_freq(series_A,dt),hann_fft_freq(series_B,dt)
         wA_p,wB_p = hann_fft_freq(series_Ap,dt),hann_fft_freq(series_Bp,dt)
@@ -288,9 +334,10 @@ class Tier2Harness(NumericIntegrityMixin):
 # --------------------------- Main ---------------------------
 def main():
     # Load config relative to this script file so running from any CWD works
-    cfg_path = Path(__file__).resolve().parent / "config" / "config_tier2_gravityanalogue.json"
-    cfg = json.load(open(cfg_path))
-    outdir = Path(__file__).resolve().parent / "results" / "Gravity"
+    cfg = load_config()
+    # Resolve output directory similar to Tier-1 harness conventions
+    script_dir = Path(__file__).resolve().parent
+    outdir = script_dir / cfg.get("run_settings", {}).get("output_dir", "results/Gravity")
     outdir.mkdir(parents=True, exist_ok=True)
     harness = Tier2Harness(cfg,outdir)
     results = harness.run()

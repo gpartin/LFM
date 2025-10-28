@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 """
 LFM Tier-1 — Relativistic Propagation & Isotropy Suite
-v2.1.0 — dual backend (CPU/GPU) with safe host↔device boundaries
+----------------------------------------------------
+Purpose:
+- Execute Tier-1 relativistic propagation and isotropy tests across CPU/GPU
+    backends, collect diagnostics, and produce standardized summaries.
 
-- Selects CuPy backend only if available AND config["run_settings"]["use_gpu"] is true.
-- Keeps arrays on-device during the step loop to avoid dtype/class bugs.
-- Converts to NumPy only when needed (estimators, diagnostics, plotting, monitor).
-- No class-based casting; uses xp.asarray / cp.asarray explicitly.
+Highlights:
+- Dual-backend support (NumPy/CuPy) selected by `run_settings.use_gpu` and
+    availability of CuPy.
+- Keeps arrays on-device during the stepping loop where possible to minimize
+    host↔device transfers and avoid mixed-type serialization bugs.
+- Converts to NumPy only for host-side diagnostics, plotting, and monitoring.
 
-This script expects a config at ./config/config_tier1_relativistic.json
+Config & output:
+- Expects configuration at `./config/config_tier1_relativistic.json`.
+- Writes per-test results under `<output_dir>/<TEST_ID>/` with
+    `summary.json`, `metrics.csv`, `diagnostics/` and `plots/`.
 """
 
 import json, math, time
@@ -18,16 +26,13 @@ from typing import Dict, List
 
 import numpy as np
 
-# Optional CuPy for GPU acceleration
 try:
-    import cupy as cp  # type: ignore
+    import cupy as cp
     _HAS_CUPY = True
 except Exception:
     cp = None
     _HAS_CUPY = False
-
-# Project utilities
-from lfm_console import log, suite_summary
+from lfm_console import log, suite_summary, set_logger, log_run_config, test_start, report_progress
 from lfm_logger import LFMLogger
 from lfm_results import save_summary, write_metadata_bundle
 from lfm_diagnostics import field_spectrum, energy_total, energy_flow, phase_corr
@@ -36,7 +41,7 @@ from energy_monitor import EnergyMonitor
 from numeric_integrity import NumericIntegrityMixin
 
 
-# ------------------------------- Config --------------------------------
+ 
 def _default_config_name() -> str:
     return "config_tier1_relativistic.json"
 
@@ -52,13 +57,12 @@ def load_config() -> Dict:
 
 def resolve_outdir(output_dir_hint: str) -> Path:
     script_dir = Path(__file__).resolve().parent
-    project_root = script_dir.parent
-    outdir = project_root / output_dir_hint
+    outdir = script_dir / output_dir_hint
     outdir.mkdir(parents=True, exist_ok=True)
     return outdir
 
 
-# ----------------------------- Utilities -------------------------------
+ 
 def to_numpy(x):
     """Return a NumPy ndarray for host-side routines."""
     if _HAS_CUPY and isinstance(x, cp.ndarray):
@@ -81,7 +85,7 @@ class TestSummary:
     k_fraction_lattice: float
 
 
-# ------------------------------ Harness --------------------------------
+ 
 class Tier1Harness(NumericIntegrityMixin):
     def __init__(self, cfg: Dict, out_root: Path):
         self.cfg = cfg
@@ -96,21 +100,34 @@ class Tier1Harness(NumericIntegrityMixin):
         self.out_root = out_root
         self.logger = LFMLogger(self.out_root)
         self.logger.record_env()
+        
+        try:
+            set_logger(self.logger)
+        except Exception:
+            pass
+        
+        try:
+            log_run_config(self.cfg, self.out_root)
+        except Exception:
+            pass
+        
+        self.show_progress = bool(self.run_settings.get("show_progress", True))
+        self.progress_percent_stride = int(self.run_settings.get("progress_percent_stride", 5))
         if self.use_gpu:
             log("[accel] Using GPU (CuPy backend).", "INFO")
         else:
             log("[accel] Using CPU (NumPy backend).", "INFO")
 
-    # -------------------------- Field init --------------------------
+    
     def init_field_variant(self, test_id: str, params: Dict, N: int, dx: float, c: float):
         xp = self.xp
         x = xp.arange(N, dtype=xp.float64) * dx
 
         k_frac = float(params.get("k_fraction", 0.1))
-        m = int(round((N * k_frac) / 2.0))  # snap to 2m/N lattice fraction
+        m = int(round((N * k_frac) / 2.0))
         k_frac_lattice = 2.0 * m / N
-        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))     # cycles / unit
-        k_ang = 2.0 * math.pi * k_cyc                   # rad / unit
+        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))
+        k_ang = 2.0 * math.pi * k_cyc
         params["_k_fraction_lattice"] = k_frac_lattice
         params["_k_ang"] = k_ang
 
@@ -131,7 +148,6 @@ class Tier1Harness(NumericIntegrityMixin):
                 noise = rng.standard_normal(N).astype(np.float64)
                 return np.ones(N, dtype=np.float64) + params.get("noise_amp", 1e-4) * noise
             else:
-                # CuPy's Generator
                 rng = cp.random.default_rng(1234)
                 noise = rng.standard_normal(N, dtype=cp.float64)
                 return cp.ones(N, dtype=cp.float64) + params.get("noise_amp", 1e-4) * noise
@@ -142,7 +158,7 @@ class Tier1Harness(NumericIntegrityMixin):
         else:
             return xp.cos(k_ang * x, dtype=xp.float64)
 
-    # -------------------------- Estimators --------------------------
+    
     def estimate_omega_proj_fft(self, series: np.ndarray, dt: float) -> float:
         data = np.asarray(series, dtype=np.float64)
         data = data - data.mean()
@@ -168,7 +184,7 @@ class Tier1Harness(NumericIntegrityMixin):
         slope, _ = np.linalg.lstsq(Aw, yw, rcond=None)[0]
         return float(abs(slope))
 
-    # -------------------------- Orchestration -----------------------
+    
     def run_variant(self, v: Dict) -> TestSummary:
         xp = self.xp
 
@@ -197,24 +213,25 @@ class Tier1Harness(NumericIntegrityMixin):
         for d in (test_dir, diag_dir, plot_dir):
             d.mkdir(parents=True, exist_ok=True)
 
-        log(f"→ Starting {tid}: {desc} (steps={steps}, quick={self.quick}, backend={'GPU' if self.use_gpu else 'CPU'})", "INFO")
+        test_start(tid, desc, steps)
+        log(f"Params: steps={steps}, quick={self.quick}, backend={'GPU' if self.use_gpu else 'CPU'}", "INFO")
         log(f"[cfg] gamma={gamma_damp} rescale={rescale_each} zero_mean={zero_mean} est={estimator}", "INFO")
 
-        # Initialize field on selected backend
+        
         E_prev = self.init_field_variant(tid, params, N, dx, c)
         E = xp.array(E_prev, copy=True)
         params["_k_ang"] = float(params.get("_k_ang", 0.0))
         params["gamma_damp"] = gamma_damp
 
-        # Integrity checks (CFL & finite field) — do on host for safety
+        
         self.check_cfl(c, dt, dx, ndim=1)
         self.validate_field(to_numpy(E), f"{tid}-E0")
 
-        # Baseline energy (compensated, host) + monitor
+        
         E0 = energy_total(to_numpy(E), to_numpy(E_prev), dt, dx, c, chi)
         mon = EnergyMonitor(dt, dx, c, chi, outdir=str(diag_dir), label=f"{tid}")
 
-        # Precompute host projection bases
+        
         x_np  = (np.arange(N) * dx).astype(np.float64)
         k_ang = float(params.get("_k_ang", 0.0))
         cos_k = np.cos(k_ang * x_np)
@@ -222,40 +239,59 @@ class Tier1Harness(NumericIntegrityMixin):
         cos_norm = float(np.dot(cos_k, cos_k) + 1e-30)
         sin_norm = float(np.dot(sin_k, sin_k) + 1e-30)
 
-        # Time stepping (on selected backend)
+        
+        # Host-side series + projection buffers
         E_series_host = [to_numpy(E)]
         proj_series: List[float] = []
         z_series: List[complex] = []
         t0 = time.time()
 
+        # Precompute scalars to avoid repeated power ops inside the loop
+        dt2 = float(dt) ** 2
+        c2 = float(c) ** 2
+        chi2 = float(chi) ** 2
+        dx2 = float(dx) ** 2
+        steps_pct_check = max(1, steps // 100)
+
         for n in range(steps):
-            # Laplacian (periodic) on backend
+            # Compute laplacian and step (keep all heavy work on xp: NumPy or CuPy)
             Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
-            lap = (Em1 - 2 * E + Ep1) / (dx**2)
-            E_next = (2 - gamma_damp) * E - (1 - gamma_damp) * E_prev + (dt ** 2) * ((c ** 2) * lap - (chi ** 2) * E)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = (2 - gamma_damp) * E - (1 - gamma_damp) * E_prev + dt2 * (c2 * lap - chi2 * E)
 
             if zero_mean:
+                # subtract mean in-place equivalent (creates a temporary on xp)
                 E_next = E_next - xp.mean(E_next)
 
             if rescale_each:
-                # Compute norm on backend, rescale to initial energy proxy
-                denom = xp.sum(E_next * E_next) + 1e-30
-                scale = math.sqrt(float(E0) / float(denom))
+                # compute norm and scale on device, convert only scalar to Python
+                denom = float(xp.sum(E_next * E_next)) + 1e-30
+                scale = math.sqrt(float(E0) / denom)
                 E_next = E_next * scale
 
-            # Roll state
+            # advance
             E_prev, E = E, E_next
 
-            # Monitor + integrity (host-side)
-            drift_now = mon.record(to_numpy(E), to_numpy(E_prev), n)
+            # Convert to host once per step and reuse for monitoring, appends and diagnostics
+            host_E = to_numpy(E)
+            host_E_prev = to_numpy(E_prev)
 
-            # Save sparsely for visuals/diagnostics (host snapshots)
+            drift_now = mon.record(host_E, host_E_prev, n)
+
+            # progress reporting throttled to precomputed stride
+            if self.show_progress and (n % steps_pct_check == 0):
+                pct = int((n + 1) * 100 / max(1, steps))
+                if pct % max(1, self.progress_percent_stride) == 0:
+                    report_progress(tid, pct)
+
+            # store host-side series at configured cadence
             if n % SAVE_EVERY == 0:
-                E_series_host.append(to_numpy(E))
+                E_series_host.append(host_E)
 
-            # Estimator streams (host)
-            arr = to_numpy(E).astype(np.float64)
-            arr = arr - (arr.mean() if zero_mean else 0.0)
+            # compute projections on host arrays (single conversion used)
+            arr = host_E.astype(np.float64)
+            if zero_mean:
+                arr = arr - arr.mean()
             proj_series.append(float(np.dot(arr, cos_k) / cos_norm))
             z_series.append(complex(np.dot(arr, cos_k), np.dot(arr, sin_k)) / (cos_norm + sin_norm))
 
@@ -264,7 +300,7 @@ class Tier1Harness(NumericIntegrityMixin):
         runtime = time.time() - t0
         mon.finalize()
 
-        # Diagnostics (host)
+        
         try:
             field_spectrum(E_series_host[-1], dx, diag_dir)
             energy_flow(E_series_host, dt, dx, c, diag_dir)
@@ -272,20 +308,19 @@ class Tier1Harness(NumericIntegrityMixin):
         except Exception as e:
             log(f"[WARN] Diagnostics failed for {tid}: {e}", "WARN")
 
-        # Visualization (host)
+        
         try:
             visualize_concept(E_series_host, tier=1, test_id=tid, outdir=plot_dir, quick=self.quick, animate=not self.quick)
         except Exception as e:
             log(f"[WARN] Visualization failed for {tid}: {e}", "WARN")
 
-        # Frequency estimation (host)
+        
         if estimator == "proj_fft":
             omega_meas = self.estimate_omega_proj_fft(np.array(proj_series, dtype=np.float64), dt)
         else:
             t_axis = np.arange(len(z_series)) * dt
             omega_meas = self.estimate_omega_phase_slope(np.array(z_series, dtype=np.complex128), t_axis)
 
-        # Lattice dispersion (discrete) with 1/2 factor
         kdx = params.get("_k_fraction_lattice", params.get("k_fraction", 0.1)) * math.pi
         omega_theory = math.sqrt(((2.0 * c / dx) ** 2) * 0.5 * (1.0 - math.cos(kdx)) + chi ** 2)
 

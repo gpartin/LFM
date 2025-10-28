@@ -17,9 +17,12 @@
     },
     "numeric_integrity": {
       "energy_tol": 1e-3,
-      "quiet_warnings": true,
-      "suppress_monitoring": true
+      "quiet_warnings": true
     }
+  },
+  "diagnostics": {
+    "energy_monitor_every": 0,
+    "diagnostics_path": "diagnostics_core.csv"
   },
   "parameters": {
     "grid_points": 64,
@@ -36,7 +39,8 @@
     "steps_quick": 3200
   },
   "tolerances": {
-    "ratio_error_max": 0.05
+    "ratio_error_max": 0.05,
+    "energy_drift": 1e-6
   },
   "variants": [
     {
