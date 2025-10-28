@@ -122,12 +122,21 @@ def local_omega_theory(c, k_mag, chi):
 def _default_config_name() -> str:
     return "config_tier2_gravityanalogue.json"
 
-def load_config() -> Dict:
+def load_config(config_path: str = None) -> Dict:
     """Search for the Tier-2 config in script `config/` (current or parent).
 
     This mirrors the Tier-1 loader behavior so running from different CWDs
     works the same across harnesses.
     """
+    if config_path:
+        # Use explicit path if provided
+        cand = Path(config_path)
+        if cand.is_file():
+            with open(cand, "r", encoding="utf-8") as f:
+                return json.load(f)
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    
+    # Default: search in standard locations
     script_dir = Path(__file__).resolve().parent
     for root in (script_dir, script_dir.parent):
         cand = root / "config" / _default_config_name()
@@ -333,17 +342,43 @@ class Tier2Harness(NumericIntegrityMixin):
 
 # --------------------------- Main ---------------------------
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Tier-2 Gravity Analogue Test Suite")
+    parser.add_argument("--test", type=str, default=None,
+                       help="Run single test by ID (e.g., GRAV-01). If omitted, runs all tests.")
+    parser.add_argument("--config", type=str, default="config/config_tier2_gravityanalogue.json",
+                       help="Path to config file")
+    args = parser.parse_args()
+    
     # Load config relative to this script file so running from any CWD works
-    cfg = load_config()
+    cfg = load_config(args.config)
     # Resolve output directory similar to Tier-1 harness conventions
     script_dir = Path(__file__).resolve().parent
     outdir = script_dir / cfg.get("run_settings", {}).get("output_dir", "results/Gravity")
     outdir.mkdir(parents=True, exist_ok=True)
-    harness = Tier2Harness(cfg,outdir)
+    
+    harness = Tier2Harness(cfg, outdir)
+    
+    # Filter to single test if requested
+    if args.test:
+        harness.variants = [v for v in harness.variants if v["test_id"] == args.test]
+        if not harness.variants:
+            log(f"[ERROR] Test '{args.test}' not found in config", "FAIL")
+            return
+        log(f"=== Running Single Test: {args.test} ===", "INFO")
+    else:
+        log(f"=== Tier-2 Gravity Analogue Suite Start ===", "INFO")
+    
     results = harness.run()
-    suite_summary(results)
-    write_metadata_bundle(outdir,"TIER2-GRAVITY",tier=2,category="Gravity")
-    log("=== Tier-2 Suite Complete ===","INFO")
+    
+    if args.test:
+        # Single test: just show result
+        log(f"=== Test {args.test} Complete ===", "INFO")
+    else:
+        # Full suite: show summary
+        suite_summary(results)
+        write_metadata_bundle(outdir, "TIER2-GRAVITY", tier=2, category="Gravity")
+        log("=== Tier-2 Suite Complete ===", "INFO")
 
 if __name__=="__main__":
     main()

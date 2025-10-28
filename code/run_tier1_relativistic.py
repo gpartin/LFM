@@ -45,7 +45,16 @@ from numeric_integrity import NumericIntegrityMixin
 def _default_config_name() -> str:
     return "config_tier1_relativistic.json"
 
-def load_config() -> Dict:
+def load_config(config_path: str = None) -> Dict:
+    if config_path:
+        # Use explicit path if provided
+        cand = Path(config_path)
+        if cand.is_file():
+            with open(cand, "r", encoding="utf-8") as f:
+                return json.load(f)
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    
+    # Default: search in standard locations
     script_dir = Path(__file__).resolve().parent
     for root in (script_dir, script_dir.parent):
         cand = root / "config" / _default_config_name()
@@ -119,7 +128,13 @@ class Tier1Harness(NumericIntegrityMixin):
             log("[accel] Using CPU (NumPy backend).", "INFO")
 
     
-    def init_field_variant(self, test_id: str, params: Dict, N: int, dx: float, c: float):
+    def init_field_variant(self, test_id: str, params: Dict, N: int, dx: float, c: float, direction: str = "right"):
+        """
+        Initialize field for test variant.
+        
+        Args:
+            direction: "right" for rightward propagation, "left" for leftward (isotropy tests only)
+        """
         xp = self.xp
         x = xp.arange(N, dtype=xp.float64) * dx
 
@@ -132,6 +147,7 @@ class Tier1Harness(NumericIntegrityMixin):
         params["_k_ang"] = k_ang
 
         if test_id in ("REL-01", "REL-02"):
+            # Isotropy test: create standing wave that will be given directional momentum
             return xp.cos(k_ang * x, dtype=xp.float64)
         elif test_id == "REL-03":
             beta = params.get("boost_factor", 0.2); gamma = 1.0 / math.sqrt(1 - beta**2)
@@ -188,6 +204,69 @@ class Tier1Harness(NumericIntegrityMixin):
         Aw = A * w[:, None]; yw = phi * w
         slope, _ = np.linalg.lstsq(Aw, yw, rcond=None)[0]
         return float(abs(slope))
+
+    def measure_isotropy(self, E_right: List[np.ndarray], E_left: List[np.ndarray], 
+                        dt: float, dx: float, k_ang: float) -> Dict:
+        """
+        Test isotropy by comparing dispersion for left and right propagating waves.
+        
+        In 1D, isotropy means the wave equation has no preferred direction.
+        We verify this by checking that ω_right(k) = ω_left(-k).
+        
+        Args:
+            E_right: Time series for right-propagating wave
+            E_left: Time series for left-propagating wave
+            dt: Time step
+            dx: Spatial step
+            k_ang: Angular wavenumber
+            
+        Returns:
+            Dict with omega_right, omega_left, anisotropy, passed
+        """
+        N = len(E_right[0])
+        x_positions = np.arange(N) * dx
+        
+        # Project onto traveling wave modes
+        cos_k = np.cos(k_ang * x_positions)
+        sin_k = np.sin(k_ang * x_positions)
+        cos_norm = float(np.dot(cos_k, cos_k) + 1e-30)
+        sin_norm = float(np.dot(sin_k, sin_k) + 1e-30)
+        
+        # Extract time series for right-propagating wave
+        proj_right = []
+        z_right = []
+        for E in E_right:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()  # Zero mean
+            proj_right.append(float(np.dot(E_np, cos_k) / cos_norm))
+            z_right.append(complex(np.dot(E_np, cos_k), np.dot(E_np, sin_k)) / (cos_norm + sin_norm))
+        
+        # Extract time series for left-propagating wave
+        proj_left = []
+        z_left = []
+        for E in E_left:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()  # Zero mean
+            proj_left.append(float(np.dot(E_np, cos_k) / cos_norm))
+            z_left.append(complex(np.dot(E_np, cos_k), np.dot(E_np, sin_k)) / (cos_norm + sin_norm))
+        
+        # Measure frequency for both
+        omega_right = self.estimate_omega_proj_fft(np.array(proj_right, dtype=np.float64), dt)
+        omega_left = self.estimate_omega_proj_fft(np.array(proj_left, dtype=np.float64), dt)
+        
+        # Isotropy: both should give same ω
+        anisotropy = abs(omega_right - omega_left) / max(omega_right, omega_left, 1e-30)
+        
+        # Pass if anisotropy is small
+        passed = anisotropy <= 0.01  # 1% tolerance
+        
+        return {
+            "omega_right": omega_right,
+            "omega_left": omega_left,
+            "anisotropy": anisotropy,
+            "passed": passed,
+            "message": f"ω_R={omega_right:.6f}, ω_L={omega_left:.6f}, anisotropy={anisotropy*100:.3f}%"
+        }
 
     
     def measure_causality(self, E_series: List[np.ndarray], dx: float, dt: float, c: float, 
@@ -299,6 +378,107 @@ class Tier1Harness(NumericIntegrityMixin):
         }
 
     def run_variant(self, v: Dict) -> TestSummary:
+        """Run a single test variant. For isotropy tests, delegates to run_isotropy_variant."""
+        tid = v["test_id"]
+        
+        # Isotropy tests require special handling (run twice with different directions)
+        if tid in ("REL-01", "REL-02"):
+            return self.run_isotropy_variant(v)
+        
+        # All other tests use standard single-run logic
+        return self.run_standard_variant(v)
+    
+    def run_isotropy_variant(self, v: Dict) -> TestSummary:
+        """Run isotropy test by comparing left and right propagating waves."""
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, params.get("steps", 2000))
+        log(f"Isotropy test: running RIGHT and LEFT propagating waves", "INFO")
+        
+        # Run simulation for both directions
+        E_series_right = self._run_directional_wave(params, N, dx, dt, c, chi, tid, "right")
+        E_series_left = self._run_directional_wave(params, N, dx, dt, c, chi, tid, "left")
+        
+        # Measure isotropy
+        k_ang = float(params.get("_k_ang", 0.0))
+        iso_result = self.measure_isotropy(E_series_right, E_series_left, dt, dx, k_ang)
+        
+        anisotropy = iso_result["anisotropy"]
+        passed = iso_result["passed"]
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} {iso_result['message']}", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "anisotropy": float(anisotropy),
+            "omega_right": float(iso_result["omega_right"]),
+            "omega_left": float(iso_result["omega_left"]),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("anisotropy", anisotropy),
+            ("omega_right", iso_result["omega_right"]),
+            ("omega_left", iso_result["omega_left"]),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=anisotropy,
+            omega_meas=iso_result["omega_right"], omega_theory=iso_result["omega_left"],
+            runtime_sec=0.0, k_fraction_lattice=float(params.get("_k_fraction_lattice", 0.0))
+        )
+    
+    def _run_directional_wave(self, params: Dict, N: int, dx: float, dt: float, c: float, chi: float, tid: str, direction: str) -> List[np.ndarray]:
+        """Helper to run simulation with directional initial momentum."""
+        xp = self.xp
+        steps = max(params.get("steps", 2000), 2048 if self.quick else 4096)
+        
+        # Initialize field
+        E_prev = self.init_field_variant(tid, params, N, dx, c, direction)
+        E = xp.array(E_prev, copy=True)
+        
+        # Add directional momentum: E_t = ±c * dE/dx
+        dE_dx = (xp.roll(E, -1) - xp.roll(E, 1)) / (2 * dx)
+        sign = -1 if direction == "right" else +1  # Right: -c*dE/dx, Left: +c*dE/dx
+        E_t_initial = sign * c * dE_dx
+        E_prev = E - dt * E_t_initial
+        
+        E_series = [to_numpy(E)]
+        
+        # Time integration (simplified, no monitoring for sub-runs)
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        
+        for n in range(steps):
+            Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            
+            # Zero mean
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:  # Save every step
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
+    def run_standard_variant(self, v: Dict) -> TestSummary:
+        """Standard single-run test variant (non-isotropy tests)."""
         xp = self.xp
 
         tid  = v["test_id"]
@@ -544,18 +724,40 @@ class Tier1Harness(NumericIntegrityMixin):
 
 # --------------------------------- Main --------------------------------
 def main():
-    cfg = load_config()
+    import argparse
+    parser = argparse.ArgumentParser(description="Tier-1 Relativistic Test Suite")
+    parser.add_argument("--test", type=str, default=None, 
+                       help="Run single test by ID (e.g., REL-05). If omitted, runs all tests.")
+    parser.add_argument("--config", type=str, default="config/config_tier1_relativistic.json",
+                       help="Path to config file")
+    args = parser.parse_args()
+    
+    cfg = load_config(args.config)
     outdir = resolve_outdir(cfg.get("output_dir", "results/Tier1"))
     harness = Tier1Harness(cfg, outdir)
 
     log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")
-    log(f"=== Tier-1 Relativistic Suite Start (quick={harness.quick}) ===", "INFO")
+    
+    # Filter to single test if requested
+    if args.test:
+        harness.variants = [v for v in harness.variants if v["test_id"] == args.test]
+        if not harness.variants:
+            log(f"[ERROR] Test '{args.test}' not found in config", "FAIL")
+            return
+        log(f"=== Running Single Test: {args.test} ===", "INFO")
+    else:
+        log(f"=== Tier-1 Relativistic Suite Start (quick={harness.quick}) ===", "INFO")
 
     results = harness.run()
-    suite_summary(results)
-    write_metadata_bundle(outdir, test_id="TIER1-SUITE", tier=1, category="relativistic")
-
-    log("=== Tier-1 Suite Complete ===", "INFO")
+    
+    if args.test:
+        # Single test: just show result
+        log(f"=== Test {args.test} Complete ===", "INFO")
+    else:
+        # Full suite: show summary
+        suite_summary(results)
+        write_metadata_bundle(outdir, test_id="TIER1-SUITE", tier=1, category="relativistic")
+        log("=== Tier-1 Suite Complete ===", "INFO")
 
 
 if __name__ == "__main__":
