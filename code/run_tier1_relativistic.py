@@ -140,17 +140,22 @@ class Tier1Harness(NumericIntegrityMixin):
             beta = params.get("boost_factor", 0.6); gamma = 1.0 / math.sqrt(1 - beta**2)
             return xp.cos(gamma * (k_ang * x - beta * k_ang * x), dtype=xp.float64)
         elif test_id == "REL-05":
-            amp = params.get("pulse_amp", 1.0); w = params.get("pulse_width", 0.1); c0 = N // 2
+            # Causality test: off-center Gaussian pulse that will propagate
+            amp = params.get("pulse_amp", 1.0); w = params.get("pulse_width", 0.1)
+            c0 = N // 4  # Start at 1/4 position, not center, so it propagates
             return amp * xp.exp(-((x - c0 * dx) ** 2) / (2 * w ** 2), dtype=xp.float64)
         elif test_id == "REL-06":
+            # Causality test: localized noise burst (not uniform background)
             if xp is np:
                 rng = np.random.default_rng(1234)
                 noise = rng.standard_normal(N).astype(np.float64)
-                return np.ones(N, dtype=np.float64) + params.get("noise_amp", 1e-4) * noise
             else:
                 rng = cp.random.default_rng(1234)
                 noise = rng.standard_normal(N, dtype=cp.float64)
-                return cp.ones(N, dtype=cp.float64) + params.get("noise_amp", 1e-4) * noise
+            # Localize noise to central region using window
+            c0 = N // 2; w = N // 8
+            window = xp.exp(-((xp.arange(N) - c0) ** 2) / (2 * w ** 2), dtype=xp.float64)
+            return params.get("noise_amp", 0.1) * noise * window
         elif test_id == "REL-07":
             return xp.sin(k_ang * x, dtype=xp.float64)
         elif test_id == "REL-08":
@@ -185,6 +190,114 @@ class Tier1Harness(NumericIntegrityMixin):
         return float(abs(slope))
 
     
+    def measure_causality(self, E_series: List[np.ndarray], dx: float, dt: float, c: float, 
+                          test_id: str, initial_center: int) -> Dict:
+        """
+        Measure propagation speed and verify causality (v ≤ c).
+        
+        For pulse (REL-05): track energy centroid movement over time
+        For noise (REL-06): track maximum extent of perturbation from initial distribution
+        
+        Returns dict with v_measured, max_violation, passed
+        """
+        N = len(E_series[0])
+        x_positions = np.arange(N) * dx
+        
+        # Determine initial center
+        if initial_center is not None:
+            x_center_initial = initial_center * dx
+        else:
+            # For noise field, compute center of mass of initial |E|²
+            E0 = E_series[0]
+            E0_squared = E0 ** 2
+            total_energy = np.sum(E0_squared)
+            if total_energy > 0:
+                x_center_initial = np.sum(x_positions * E0_squared) / total_energy
+            else:
+                x_center_initial = 0.5 * N * dx  # Default to domain center
+        
+        centroid_positions = []
+        times = []
+        max_violations = []
+        
+        for step_idx, E in enumerate(E_series):
+            t = step_idx * dt
+            if t == 0:
+                continue
+                
+            # Compute energy centroid: <x> = Σ(x * |E|²) / Σ|E|²
+            E_squared = E ** 2
+            total_energy = np.sum(E_squared)
+            
+            if total_energy > 1e-30:
+                x_centroid = np.sum(x_positions * E_squared) / total_energy
+            else:
+                x_centroid = x_center_initial
+            
+            # Distance of centroid from initial position
+            displacement = abs(x_centroid - x_center_initial)
+            
+            # Light cone limit: centroid displacement should not exceed c*t
+            light_cone_limit = c * t
+            violation = displacement - light_cone_limit
+            
+            max_violations.append(violation)
+            centroid_positions.append(displacement)
+            times.append(t)
+        
+        if len(times) < 2:
+            return {
+                "v_measured": 0.0,
+                "v_theory": c,
+                "max_violation": 0.0,
+                "rel_error": 0.0,
+                "passed": False,
+                "message": "Insufficient data points"
+            }
+        
+        # Estimate propagation speed via linear fit of centroid displacement vs time
+        times_arr = np.array(times)
+        centroid_arr = np.array(centroid_positions)
+        
+        # Linear fit: displacement = v*t + offset
+        A = np.vstack([times_arr, np.ones(len(times_arr))]).T
+        v_measured, offset = np.linalg.lstsq(A, centroid_arr, rcond=None)[0]
+        v_measured = abs(float(v_measured))
+        
+        # Maximum causality violation across all timesteps
+        max_violation = float(np.max(max_violations)) if max_violations else 0.0
+        
+        # Relative error in speed (should be ≤ c)
+        rel_error = abs(v_measured - c) / c if c > 0 else 0.0
+        
+        # Pass criteria: 
+        # 1. Measured speed should not significantly exceed c (allow small numerical error)
+        # 2. No timestep should violate light cone by more than tolerance
+        # For noise (REL-06), allow larger tolerance due to broader spectrum and dispersion
+        tolerance_factor = 10.0 if "REL-06" in test_id else 2.0
+        
+        speed_ok = v_measured <= c * 1.05  # Allow 5% numerical overshoot
+        violation_ok = max_violation <= tolerance_factor * dx  # ~2-10 grid points tolerance
+        
+        passed = speed_ok and violation_ok
+        
+        message = f"v={v_measured:.6f} (theory={c:.6f}), max_violation={max_violation:.6e}"
+        if not speed_ok:
+            message += f" [SPEED VIOLATION: v/c={v_measured/c:.3f}]"
+        if not violation_ok:
+            message += f" [LIGHT CONE VIOLATION: {max_violation/dx:.1f} grid points]"
+        
+        return {
+            "v_measured": v_measured,
+            "v_theory": c,
+            "max_violation": max_violation,
+            "rel_error": rel_error,
+            "passed": passed,
+            "message": message,
+            "centroid_positions": centroid_positions,
+            "times": times
+        }
+
     def run_variant(self, v: Dict) -> TestSummary:
         xp = self.xp
 
@@ -194,6 +307,7 @@ class Tier1Harness(NumericIntegrityMixin):
 
         IS_ISO   = tid in ("REL-01", "REL-02")
         IS_GAUGE = tid == "REL-08"
+        IS_CAUSALITY = tid in ("REL-05", "REL-06")
         SAVE_EVERY      = 1
         TARGET_SAMPLES  = 2048 if self.quick else 4096
         steps           = max(params.get("steps", 2000), TARGET_SAMPLES)
@@ -201,6 +315,8 @@ class Tier1Harness(NumericIntegrityMixin):
             gamma_damp = 0.0; rescale_each=False; zero_mean=True;  estimator="proj_fft"
         elif IS_GAUGE:
             gamma_damp = 1e-3; rescale_each=True;  zero_mean=False; estimator="phase_slope"
+        elif IS_CAUSALITY:
+            gamma_damp = 0.0; rescale_each=False; zero_mean=False; estimator="causality"
         else:
             gamma_damp = 0.0;  rescale_each=True;  zero_mean=True;  estimator="proj_fft"
 
@@ -220,6 +336,16 @@ class Tier1Harness(NumericIntegrityMixin):
         
         E_prev = self.init_field_variant(tid, params, N, dx, c)
         E = xp.array(E_prev, copy=True)
+        
+        # For causality tests, add initial rightward velocity to create propagating wave
+        if IS_CAUSALITY:
+            # E_t ≈ (E - E_prev)/dt, so E_prev = E - dt*E_t
+            # For rightward propagation: E_t ≈ -c * dE/dx
+            # Approximate with finite difference: dE/dx ≈ (E[i+1] - E[i-1])/(2*dx)
+            dE_dx = (xp.roll(E, -1) - xp.roll(E, 1)) / (2 * dx)
+            E_t_initial = -c * dE_dx  # Rightward propagation
+            E_prev = E - dt * E_t_initial
+        
         params["_k_ang"] = float(params.get("_k_ang", 0.0))
         params["gamma_damp"] = gamma_damp
 
@@ -315,40 +441,81 @@ class Tier1Harness(NumericIntegrityMixin):
             log(f"[WARN] Visualization failed for {tid}: {e}", "WARN")
 
         
-        if estimator == "proj_fft":
-            omega_meas = self.estimate_omega_proj_fft(np.array(proj_series, dtype=np.float64), dt)
-        else:
-            t_axis = np.arange(len(z_series)) * dt
-            omega_meas = self.estimate_omega_phase_slope(np.array(z_series, dtype=np.complex128), t_axis)
-
-        kdx = params.get("_k_fraction_lattice", params.get("k_fraction", 0.1)) * math.pi
-        omega_theory = math.sqrt(((2.0 * c / dx) ** 2) * 0.5 * (1.0 - math.cos(kdx)) + chi ** 2)
-
-        rel_err = abs(omega_meas - omega_theory) / max(omega_theory, 1e-30)
-        passed = bool(rel_err <= float(self.tol.get("phase_error_max", 0.02)))
-        status = "PASS ✅" if passed else "FAIL ❌"
-        level  = "INFO" if passed else "FAIL"
-        log(f"{tid} {status} (rel_err={rel_err*100:.3f}%, ω_meas={omega_meas:.6f}, ω_th={omega_theory:.6f})", level)
-
-        summary = {
-            "id": tid, "description": desc, "passed": passed,
-            "rel_err": float(rel_err), "omega_meas": float(omega_meas),
-            "omega_theory": float(omega_theory), "runtime_sec": float(runtime),
-            "k_fraction_lattice": float(params.get("_k_fraction_lattice", 0)),
-            "quick_mode": self.quick,
-            "backend": "GPU" if self.use_gpu else "CPU",
-            "params": {
-                "N": N, "dx": dx, "dt": dt, "alpha": params["alpha"], "beta": params["beta"],
-                "chi": chi, "gamma_damp": gamma_damp, "rescale_each": rescale_each,
-                "zero_mean": zero_mean, "estimator": estimator, "steps": steps
+        # Choose validation method based on test type
+        if IS_CAUSALITY:
+            # Causality validation: measure signal propagation speed
+            initial_center = N // 4 if tid == "REL-05" else N // 2  # REL-05 starts at 1/4, REL-06 at center
+            causality_result = self.measure_causality(E_series_host, dx, dt, c, tid, initial_center)
+            
+            rel_err = causality_result["rel_error"]
+            passed = causality_result["passed"]
+            omega_meas = causality_result["v_measured"]  # Store as omega_meas for consistency
+            omega_theory = causality_result["v_theory"]
+            causality_msg = causality_result["message"]
+            
+            status = "PASS ✅" if passed else "FAIL ❌"
+            level  = "INFO" if passed else "FAIL"
+            log(f"{tid} {status} {causality_msg}", level)
+            
+            summary = {
+                "id": tid, "description": desc, "passed": passed,
+                "rel_err": float(rel_err), 
+                "v_measured": float(causality_result["v_measured"]),
+                "v_theory": float(causality_result["v_theory"]),
+                "max_violation": float(causality_result["max_violation"]),
+                "runtime_sec": float(runtime),
+                "quick_mode": self.quick,
+                "backend": "GPU" if self.use_gpu else "CPU",
+                "params": {
+                    "N": N, "dx": dx, "dt": dt, "alpha": params["alpha"], "beta": params["beta"],
+                    "chi": chi, "gamma_damp": gamma_damp, "rescale_each": rescale_each,
+                    "zero_mean": zero_mean, "estimator": estimator, "steps": steps
+                }
             }
-        }
-        metrics = [
-            ("rel_err", rel_err),
-            ("omega_meas", omega_meas),
-            ("omega_theory", omega_theory),
-            ("runtime_sec", runtime),
-        ]
+            metrics = [
+                ("rel_err", rel_err),
+                ("v_measured", causality_result["v_measured"]),
+                ("v_theory", causality_result["v_theory"]),
+                ("max_violation", causality_result["max_violation"]),
+                ("runtime_sec", runtime),
+            ]
+        else:
+            # Frequency validation: measure dispersion relation
+            if estimator == "proj_fft":
+                omega_meas = self.estimate_omega_proj_fft(np.array(proj_series, dtype=np.float64), dt)
+            else:
+                t_axis = np.arange(len(z_series)) * dt
+                omega_meas = self.estimate_omega_phase_slope(np.array(z_series, dtype=np.complex128), t_axis)
+
+            kdx = params.get("_k_fraction_lattice", params.get("k_fraction", 0.1)) * math.pi
+            omega_theory = math.sqrt(((2.0 * c / dx) ** 2) * 0.5 * (1.0 - math.cos(kdx)) + chi ** 2)
+
+            rel_err = abs(omega_meas - omega_theory) / max(omega_theory, 1e-30)
+            passed = bool(rel_err <= float(self.tol.get("phase_error_max", 0.02)))
+            status = "PASS ✅" if passed else "FAIL ❌"
+            level  = "INFO" if passed else "FAIL"
+            log(f"{tid} {status} (rel_err={rel_err*100:.3f}%, ω_meas={omega_meas:.6f}, ω_th={omega_theory:.6f})", level)
+
+            summary = {
+                "id": tid, "description": desc, "passed": passed,
+                "rel_err": float(rel_err), "omega_meas": float(omega_meas),
+                "omega_theory": float(omega_theory), "runtime_sec": float(runtime),
+                "k_fraction_lattice": float(params.get("_k_fraction_lattice", 0)),
+                "quick_mode": self.quick,
+                "backend": "GPU" if self.use_gpu else "CPU",
+                "params": {
+                    "N": N, "dx": dx, "dt": dt, "alpha": params["alpha"], "beta": params["beta"],
+                    "chi": chi, "gamma_damp": gamma_damp, "rescale_each": rescale_each,
+                    "zero_mean": zero_mean, "estimator": estimator, "steps": steps
+                }
+            }
+            metrics = [
+                ("rel_err", rel_err),
+                ("omega_meas", omega_meas),
+                ("omega_theory", omega_theory),
+                ("runtime_sec", runtime),
+            ]
+        
         save_summary(test_dir, tid, summary, metrics=metrics)
 
         return TestSummary(
