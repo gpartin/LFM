@@ -233,6 +233,12 @@ def core_metrics(E, E_prev, params, E0, dbg):
     c = math.sqrt(float(params["alpha"]) / float(params["beta"]))
 
     chi_param = params.get("chi", 0.0)
+    try:
+        import cupy as _cp
+        if hasattr(chi_param, "__cuda_array_interface__"):
+            chi_param = chi_param.get()
+    except Exception:
+        pass
     en = energy_total(E_np, E_prev_np, dt, dx, c, chi_param)
 
     drift = ((en - E0) / (abs(E0) + 1e-30)) if E0 is not None else 0.0
@@ -298,6 +304,12 @@ def advance(E0, params, steps, save_every=0):
 
     # --- FIXED χ HANDLING ---
     chi_param = params.get("chi", 0.0)
+    try:
+        import cupy as _cp
+        if hasattr(chi_param, "__cuda_array_interface__"):
+            chi_param = chi_param.get()
+    except Exception:
+        pass
     E0_val = energy_total(
         _np.asarray(E.get() if _HAS_CUPY and hasattr(E, "get") else E),
         _np.asarray(E_prev.get() if _HAS_CUPY and hasattr(E_prev, "get") else E_prev),

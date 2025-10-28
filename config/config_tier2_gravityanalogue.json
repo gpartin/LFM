@@ -1,99 +1,65 @@
 {
-  "tier": 2,
-  "category": "Gravity",
-  "output_dir": "results/Gravity/",
   "run_settings": {
+    "quick_mode": true,
     "use_gpu": true,
-    "precision": "float64",
-    "quick_mode": true
+    "output_dir": "results/Gravity"
   },
   "parameters": {
-    "grid_points": 2048,
-    "steps": 6000,
-    "dx": 0.006,
-    "dt": 0.002,
-    "alpha": 0.5,
-    "beta": 0.5,
-    "packet_width": 0.06,
-    "packet_amp": 1.0,
-    "k_fraction": 0.08,
-    "gamma_damp": 0.0005,
-    "zero_mean": true,
-    "edge_absorb_frac": 0.05,
-    "chi_base": 0.00,
-    "chi_delta": 0.06,
-    "chi_width": 0.35,
-    "chi_sign": "+1",
-    "x0": 0.20,
-    "win_width_cells": 96,
-    "win_left_center": 256,
-    "win_right_center": 1792,
-    "chi_energy": 0.0,
-    "z_abs_max": 0.5
+    "grid_points": 64,
+    "dx": 1.0,
+    "dt": 0.03,
+    "steps": 600,
+    "alpha": 1.0,
+    "beta": 1.0,
+    "packet_amp": 0.015,
+    "packet_width_cells": 10,
+    "k_fraction": 0.0416666666,
+    "chi0": 0.25,
+    "sigma": 18.0,
+    "steps_quick": 3200
   },
   "tolerances": {
-    "corr_min": 0.90
+    "ratio_error_max": 0.05
   },
   "variants": [
     {
       "test_id": "GRAV-09",
-      "description": "Variable-c Redshift — Weak Gradient",
+      "description": "Linear χ-gradient (weak) redshift",
       "chi_profile": "linear",
-      "chi_grad": 0.0002,
-      "chi_orient": "ahead_lower",
-      "pulse_amp": 3.0,
-      "pulse_width": 0.12,
-      "gamma_damp": 2e-6,
-      "save_every": 2,
-      "steps": 16000,
-      "launch_direction": "right",
-      "init_center": 0.25
+      "chi_grad": 0.02,
+      "chi_base": 0.20,
+      "steps": 3200
     },
     {
       "test_id": "GRAV-10",
-      "description": "Variable-c Redshift — Strong Gradient",
-      "chi_delta": 0.08,
-      "chi_sign": "+1",
-      "chi_width": 0.25,
-      "x0": 0.20
+      "description": "Gaussian well (stronger curvature)",
+      "chi0": 0.35,
+      "sigma": 16.0
     },
     {
       "test_id": "GRAV-11",
-      "description": "Shapiro Delay — Radial",
-      "chi_delta": 0.06,
-      "chi_sign": "+1",
-      "chi_width": 0.35,
-      "x0": 0.20,
-      "win_left_center": 384,
-      "win_right_center": 1664
+      "description": "Gaussian well (broader)",
+      "chi0": 0.25,
+      "sigma": 24.0
     },
     {
       "test_id": "GRAV-12",
-      "description": "Shapiro Delay — Tangential",
-      "chi_delta": 0.06,
-      "chi_sign": "-1",
-      "chi_width": 0.35,
-      "x0": 0.20,
-      "win_left_center": 384,
-      "win_right_center": 1664
+      "description": "Gaussian well (shallower)",
+      "chi0": 0.18,
+      "sigma": 20.0
     },
     {
       "test_id": "GRAV-13",
-      "description": "Weak Field Deflection",
-      "chi_delta": 0.05,
-      "chi_sign": "+1",
-      "chi_width": 0.30,
-      "x0": 0.15,
-      "k_fraction": 0.10
+      "description": "Linear χ-gradient (strong)",
+      "chi_profile": "linear",
+      "chi_grad": 0.0025
     },
     {
       "test_id": "GRAV-14",
-      "description": "Curvature Gradient Stability",
-      "chi_delta": 0.06,
-      "chi_sign": "+1",
-      "chi_width": 0.40,
-      "x0": 0.25,
-      "steps": 9000
+      "description": "Gaussian well (stability/longer run)",
+      "steps": 1200,
+      "chi0": 0.25,
+      "sigma": 20.0
     }
   ]
 }

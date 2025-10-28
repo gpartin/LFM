@@ -49,8 +49,8 @@ def run_case(name, E0, params, parallel=False, tiles=(1, 1, 1)):
     logger = SimpleLogger()
     t0 = time.time()
     if parallel:
-        result = run_lattice(E0, params, steps=params["steps"], backend="thread",
-                             tiles=tiles, save_every=0, logger=logger)
+        result = run_lattice(E0, params, steps=params["steps"],
+                             tiles=tiles)
     else:
         result = advance(E0, params, steps=params["steps"], save_every=0)
     dt = time.time() - t0

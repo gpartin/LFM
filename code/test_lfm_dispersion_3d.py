@@ -139,7 +139,7 @@ for label, kdir in dirs.items():
 
     E0_energy_p = E0_energy  # identical init
     for n in range(steps):
-        E_next = run_lattice(E, params_p, 1, backend="thread", tiles=(2,2,2))
+        E_next = run_lattice(E, params_p, 1, tiles=(2,2,2))
         E_prev, E = E, E_next
         series_p.append(float(E[probe]))
         if (n+1) % 20 == 0:

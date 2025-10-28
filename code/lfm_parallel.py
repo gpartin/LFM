@@ -136,7 +136,11 @@ def run_lattice(E0, params:dict, steps:int,
         E_prev = E - 0.5*(dt*dt)*((c*c)*L0 - mass_term)
 
     # Baseline energy (compensated)
-    E0_energy = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
+    try:
+        chi_param = float(chi)
+    except Exception:
+        chi_param = _as_numpy(chi)
+    E0_energy = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, chi_param)
     params.setdefault("_energy_log", []).clear()
     params.setdefault("_energy_drift_log", []).clear()
     params["_energy_log"].append(E0_energy)
@@ -166,14 +170,22 @@ def run_lattice(E0, params:dict, steps:int,
 
         # Optional diagnostic projection BEFORE measuring drift
         if params.get("energy_lock", False) and _is_conservative():
-            e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
+            try:
+                _chi_pre = float(chi)
+            except Exception:
+                _chi_pre = _as_numpy(chi)
+            e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_pre)
             if abs(e_now_pre) > 0:
                 s = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
                 E *= s
                 E_prev *= s  # keep Et consistent
 
         # Measure AFTER any projection
-        e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, float(chi))
+        try:
+            _chi_now = float(chi)
+        except Exception:
+            _chi_now = _as_numpy(chi)
+        e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_now)
         drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
         params["_energy_log"].append(e_now)
         params["_energy_drift_log"].append(drift)
