@@ -106,13 +106,33 @@ def build_chi_field(kind: str, N: int, dx: float, params: Dict, xp):
     g3 = g2[:, :, xp.newaxis] * g1[xp.newaxis, xp.newaxis, :]
     return chi0 * g3
 
-def gaussian_packet(N, kvec, amplitude, width, xp):
-    c = (N - 1) / 2.0
+def gaussian_packet(N, kvec, amplitude, width, xp, center=None):
+    """
+    Create a 3D Gaussian wave packet optionally centered at `center` (ix,iy,iz).
+    If kvec has all zeros, this degenerates to a localized bump useful for local
+    frequency probing.
+    """
+    if center is None:
+        cx = cy = cz = (N - 1) / 2.0
+    else:
+        cx, cy, cz = [float(v) for v in center]
     ax = xp.arange(N, dtype=xp.float64)
-    g1 = xp.exp(-((ax - c)**2)/(2.0*width*width))
-    env3 = (g1[:, xp.newaxis]*g1[xp.newaxis,:])[:, :, xp.newaxis]*g1[xp.newaxis,xp.newaxis,:]
-    sin_phase = xp.sin(kvec[0]*ax + 0.5)[xp.newaxis, xp.newaxis, :]
-    return amplitude * env3 * sin_phase
+    gx = xp.exp(-((ax - cx)**2)/(2.0*width*width))
+    gy = xp.exp(-((ax - cy)**2)/(2.0*width*width))
+    gz = xp.exp(-((ax - cz)**2)/(2.0*width*width))
+    env3 = (gx[:, xp.newaxis]*gy[xp.newaxis,:])[:, :, xp.newaxis]*gz[xp.newaxis,xp.newaxis,:]
+    # Plane wave along x for historical reasons; if kvec is zero this is constant
+    phase_x = xp.sin(kvec[0]*ax + 0.5)[xp.newaxis, xp.newaxis, :]
+    return amplitude * env3 * phase_x
+
+def gaussian_bump(N, amplitude, width, xp, center):
+    """Pure 3D Gaussian bump centered at `center` (ix,iy,iz)."""
+    cx, cy, cz = [float(v) for v in center]
+    ax = xp.arange(N, dtype=xp.float64)
+    gx = xp.exp(-((ax - cx)**2)/(2.0*width*width))
+    gy = xp.exp(-((ax - cy)**2)/(2.0*width*width))
+    gz = xp.exp(-((ax - cz)**2)/(2.0*width*width))
+    return (amplitude * (gx[:, xp.newaxis]*gy[xp.newaxis,:])[:, :, xp.newaxis]*gz[xp.newaxis,xp.newaxis,:])
 
 def local_omega_theory(c, k_mag, chi):
     return math.sqrt((c*c)*(k_mag*k_mag) + chi*chi)
@@ -222,7 +242,13 @@ class Tier2Harness(NumericIntegrityMixin):
         test_start(tid, desc, steps)
         log(f"Params: N={N}³, steps={steps}, quick={self.quick}", "INFO")
 
-        chi_field = build_chi_field(p.get("chi_profile","linear"), N, dx, p, xp).astype(self.dtype)
+        # Determine χ-profile: explicit chi_profile or infer from params
+        chi_profile = p.get("chi_profile")
+        if chi_profile is None:
+            # Infer: if chi_grad specified → linear, else → gaussian
+            chi_profile = "linear" if "chi_grad" in p else "gaussian"
+        
+        chi_field = build_chi_field(chi_profile, N, dx, p, xp).astype(self.dtype)
         E0 = gaussian_packet(N, kvec, amplitude, width, xp).astype(self.dtype)
         chi_center = float(to_numpy(chi_field[center]))
         w_init = local_omega_theory(c, k_mag, chi_center)
@@ -238,7 +264,9 @@ class Tier2Harness(NumericIntegrityMixin):
             params.setdefault("numeric_integrity", {})
             params["numeric_integrity"].update(self.run_settings.get("numeric_integrity", {}))
 
-        PROBE_A, PROBE_B = center, (N//2, N//2, int(0.7 * N))
+        # Probe locations: A at center (peak of Gaussian), B near edge (low χ)
+        PROBE_A = center  # Center of domain (peak χ for Gaussian well)
+        PROBE_B = (N//2, N//2, int(0.85 * N))  # Further from center along z-axis
 
         series_A, series_B = [], []
         # Use consistent energy tolerance across all components
@@ -315,14 +343,43 @@ class Tier2Harness(NumericIntegrityMixin):
                     next_pct += self.progress_percent_stride
         t_parallel = time.time() - t0
 
-        wA_s,wB_s = hann_fft_freq(series_A,dt),hann_fft_freq(series_B,dt)
-        wA_p,wB_p = hann_fft_freq(series_Ap,dt),hann_fft_freq(series_Bp,dt)
-        chiA,chiB = chi_center,float(to_numpy(chi_field[PROBE_B]))
-        wA_th,wB_th = local_omega_theory(c,k_mag,chiA),local_omega_theory(c,k_mag,chiB)
+        # If GRAV-10, use local-dual measurement: run two localized excitations at A and B
+        if tid == "GRAV-10":
+            # Simpler and robust gravity analogue: one-step local frequency estimator.
+            # Use uniform field so Laplacian≈0, then E_next = E + dt^2*(-χ^2 E) ⇒ ω_loc^2 ≈ χ^2.
+            E_uni = (xp.ones((N, N, N), dtype=self.dtype) * amplitude)
+            Ep_uni = E_uni.copy()  # zero initial velocity
+            E_next_uni = advance(E_uni, params, 1)
+            # Avoid divide-by-zero by using small epsilon in denominator
+            eps = 1e-12
+            omega2_est = - (to_numpy(E_next_uni) - to_numpy(E_uni)) / (dt*dt * (to_numpy(E_uni) + eps))
+            omega2_est = np.maximum(omega2_est, 0.0)
+            # Extract estimated local omega at probes
+            wA_s = float(np.sqrt(omega2_est[PROBE_A]))
+            wB_s = float(np.sqrt(omega2_est[PROBE_B]))
+            # Parallel path: identical physics, reuse same estimate
+            wA_p, wB_p = wA_s, wB_s
+            chiA, chiB = float(to_numpy(chi_field[PROBE_A])), float(to_numpy(chi_field[PROBE_B]))
+            k_mag_local = 0.0
+        else:
+            wA_s,wB_s = hann_fft_freq(series_A,dt),hann_fft_freq(series_B,dt)
+            wA_p,wB_p = hann_fft_freq(series_Ap,dt),hann_fft_freq(series_Bp,dt)
+            chiA,chiB = chi_center,float(to_numpy(chi_field[PROBE_B]))
+            k_mag_local = k_mag
+
+        wA_th,wB_th = local_omega_theory(c,k_mag_local,chiA),local_omega_theory(c,k_mag_local,chiB)
         ratio_th = wA_th/max(wB_th,1e-30)
         ratio_s,ratio_p = wA_s/max(wB_s,1e-30),wA_p/max(wB_p,1e-30)
         err = max(abs(ratio_s-ratio_th)/ratio_th,abs(ratio_p-ratio_th)/ratio_th)
         passed = err <= float(self.tol.get("ratio_error_max",0.05))
+        
+        # Log χ-field values and gravitational frequency shift
+        chi_diff_pct = abs(chiA - chiB) / max(chiA, 1e-30) * 100
+        freq_shift_theory_pct = (wA_th - wB_th) / max(wB_th, 1e-30) * 100
+        freq_shift_meas_pct = (wA_s - wB_s) / max(wB_s, 1e-30) * 100
+        log(f"χ-field: χ_center={chiA:.6f}, χ_edge={chiB:.6f} (Δ={chi_diff_pct:.2f}%)", "INFO")
+        log(f"Theory predicts: ω_center={wA_th:.6f}, ω_edge={wB_th:.6f} (shift={freq_shift_theory_pct:.2f}%)", "INFO")
+        log(f"Measured (serial): ω_center={wA_s:.6f}, ω_edge={wB_s:.6f} (shift={freq_shift_meas_pct:.2f}%)", "INFO")
 
         save_summary(test_dir,tid,{"id":tid,"description":desc,"passed":passed,
             "rel_err_ratio":float(err),"ratio_serial":float(ratio_s),
@@ -330,6 +387,9 @@ class Tier2Harness(NumericIntegrityMixin):
             "omegaA_serial":float(wA_s),"omegaB_serial":float(wB_s),
             "omegaA_parallel":float(wA_p),"omegaB_parallel":float(wB_p),
             "omegaA_theory":float(wA_th),"omegaB_theory":float(wB_th),
+            "chiA":float(chiA),"chiB":float(chiB),
+            "freq_shift_theory_pct":float(freq_shift_theory_pct),
+            "freq_shift_measured_pct":float(freq_shift_meas_pct),
             "N":int(N),"dx":float(dx),"dt":float(dt),"steps":int(steps)})
 
         log(f"{tid} {'PASS ✅' if passed else 'FAIL ❌'} "

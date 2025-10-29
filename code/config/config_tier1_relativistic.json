@@ -1,6 +1,6 @@
 {
   "run_settings": {
-    "quick_mode": true,
+    "quick_mode": false,
     "use_gpu": true,
     "output_dir": "results/Relativistic/",
     "precision": "float64",
@@ -48,7 +48,9 @@
     { "test_id": "REL-04", "description": "Lorentz Boost — High Velocity", "boost_factor": 0.6 },
     { "test_id": "REL-05", "description": "Causality — Pulse Propagation", "pulse_width": 0.1 },
     { "test_id": "REL-06", "description": "Causality — Noise Perturbation", "noise_amp": 1e-4 },
-    { "test_id": "REL-07", "description": "Polarized Wave Propagation", "k_fraction": 0.15 },
-    { "test_id": "REL-08", "description": "Gauge Constraint Consistency", "k_fraction": 0.10 }
+    { "test_id": "REL-07", "description": "Phase Independence Test", "k_fraction": 0.15 },
+    { "test_id": "REL-08", "description": "Superposition Principle Test", "k_fraction": 0.10 },
+    { "test_id": "REL-09", "description": "3D Isotropy — Directional Equivalence", "k_fraction": 0.08, "dimensions": 3, "grid_points": 64, "steps": 1000 },
+    { "test_id": "REL-10", "description": "3D Isotropy — Spherical Symmetry", "k_fraction": 0.06, "dimensions": 3, "grid_points": 64, "steps": 800 }
   ]
 }

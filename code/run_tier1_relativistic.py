@@ -268,6 +268,212 @@ class Tier1Harness(NumericIntegrityMixin):
             "message": f"ω_R={omega_right:.6f}, ω_L={omega_left:.6f}, anisotropy={anisotropy*100:.3f}%"
         }
 
+    def measure_boost_covariance(self, E_series: List[np.ndarray], dt: float, dx: float, 
+                                  c: float, chi: float, beta: float, k_ang: float) -> Dict:
+        """
+        Test Lorentz boost covariance by verifying dispersion relation holds in boosted frame.
+        
+        The Klein-Gordon dispersion relation ω² = c²k² + χ² should be frame-independent.
+        We test this by:
+        1. Measuring ω and k in the lab frame
+        2. Computing boosted ω' and k' using Lorentz transformation
+        3. Verifying ω'² = c²k'² + χ² still holds
+        
+        Args:
+            E_series: Time series of field
+            dt: Time step
+            dx: Spatial step  
+            c: Speed of light
+            chi: Mass term
+            beta: Boost velocity (v/c)
+            k_ang: Wavenumber in lab frame
+            
+        Returns:
+            Dict with measured and expected values, covariance error, passed
+        """
+        gamma = 1.0 / math.sqrt(1 - beta**2)
+        
+        # Measure frequency in lab frame
+        N = len(E_series[0])
+        x_positions = np.arange(N) * dx
+        cos_k = np.cos(k_ang * x_positions)
+        sin_k = np.sin(k_ang * x_positions)
+        cos_norm = float(np.dot(cos_k, cos_k) + 1e-30)
+        sin_norm = float(np.dot(sin_k, sin_k) + 1e-30)
+        
+        proj_series = []
+        for E in E_series:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            proj_series.append(float(np.dot(E_np, cos_k) / cos_norm))
+        
+        omega_lab = self.estimate_omega_proj_fft(np.array(proj_series, dtype=np.float64), dt)
+        k_lab = k_ang
+        
+        # Lorentz transform to boosted frame
+        # k' = γ(k - βω/c), ω' = γ(ω - βck)
+        k_boost = gamma * (k_lab - beta * omega_lab / c)
+        omega_boost = gamma * (omega_lab - beta * c * k_lab)
+        
+        # Verify dispersion relation in boosted frame
+        omega_boost_expected = math.sqrt(c**2 * k_boost**2 + chi**2)
+        
+        # Covariance error
+        rel_err = abs(omega_boost - omega_boost_expected) / max(omega_boost_expected, 1e-30)
+        passed = rel_err <= 0.05  # 5% tolerance
+        
+        return {
+            "omega_lab": omega_lab,
+            "k_lab": k_lab,
+            "omega_boost": abs(omega_boost),
+            "omega_boost_expected": omega_boost_expected,
+            "rel_error": rel_err,
+            "beta": beta,
+            "gamma": gamma,
+            "passed": passed,
+            "message": f"ω'={abs(omega_boost):.4f}, ω'_expected={omega_boost_expected:.4f}, err={rel_err*100:.2f}%"
+        }
+
+    def measure_phase_independence(self, E_cos: List[np.ndarray], E_sin: List[np.ndarray],
+                                   dt: float, dx: float, k_ang: float) -> Dict:
+        """
+        Test phase independence by comparing dispersion for sin(kx) and cos(kx) initial conditions.
+        
+        For a linear wave equation, the phase of initial conditions should not affect
+        the dispersion relation: both sin and cos should give the same ω(k).
+        
+        Args:
+            E_cos: Time series for cos(kx) initial condition
+            E_sin: Time series for sin(kx) initial condition
+            dt: Time step
+            dx: Spatial step
+            k_ang: Angular wavenumber
+            
+        Returns:
+            Dict with omega_cos, omega_sin, phase_error, passed
+        """
+        N = len(E_cos[0])
+        x_positions = np.arange(N) * dx
+        
+        # Project onto wave modes
+        cos_k = np.cos(k_ang * x_positions)
+        sin_k = np.sin(k_ang * x_positions)
+        cos_norm = float(np.dot(cos_k, cos_k) + 1e-30)
+        sin_norm = float(np.dot(sin_k, sin_k) + 1e-30)
+        
+        # Extract time series for cos initial condition
+        proj_cos = []
+        for E in E_cos:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            # For cos initial: project onto cos mode
+            proj_cos.append(float(np.dot(E_np, cos_k) / cos_norm))
+        
+        # Extract time series for sin initial condition
+        proj_sin = []
+        for E in E_sin:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            # For sin initial: project onto sin mode
+            proj_sin.append(float(np.dot(E_np, sin_k) / sin_norm))
+        
+        # Measure frequency for both
+        omega_cos = self.estimate_omega_proj_fft(np.array(proj_cos, dtype=np.float64), dt)
+        omega_sin = self.estimate_omega_proj_fft(np.array(proj_sin, dtype=np.float64), dt)
+        
+        # Phase independence: both should give same ω
+        phase_error = abs(omega_cos - omega_sin) / max(omega_cos, omega_sin, 1e-30)
+        
+        # Pass if phase error is small
+        passed = phase_error <= 0.02  # 2% tolerance
+        
+        return {
+            "omega_cos": omega_cos,
+            "omega_sin": omega_sin,
+            "phase_error": phase_error,
+            "passed": passed,
+            "message": f"ω_cos={omega_cos:.6f}, ω_sin={omega_sin:.6f}, phase_err={phase_error*100:.3f}%"
+        }
+
+    def measure_superposition(self, E_mode1: List[np.ndarray], E_mode2: List[np.ndarray],
+                             E_superposition: List[np.ndarray], dt: float, dx: float,
+                             k1: float, k2: float, a1: float, a2: float) -> Dict:
+        """
+        Test superposition principle by verifying linearity of the wave equation.
+        
+        For a linear equation, if φ1(t) and φ2(t) are solutions, then
+        a1*φ1(t) + a2*φ2(t) must also be a solution.
+        
+        We verify this by:
+        1. Running mode1 (cos(k1*x)) alone → measure ω1
+        2. Running mode2 (sin(k2*x)) alone → measure ω2  
+        3. Running superposition a1*mode1 + a2*mode2 → verify both ω1 and ω2 present
+        
+        Args:
+            E_mode1: Time series for first mode alone
+            E_mode2: Time series for second mode alone
+            E_superposition: Time series for superposed initial condition
+            dt: Time step
+            dx: Spatial step
+            k1, k2: Wavenumbers of the two modes
+            a1, a2: Amplitudes in superposition
+            
+        Returns:
+            Dict with measured frequencies and linearity error
+        """
+        N = len(E_mode1[0])
+        x_positions = np.arange(N) * dx
+        
+        # Measure ω1 from mode1
+        cos_k1 = np.cos(k1 * x_positions)
+        cos_norm1 = float(np.dot(cos_k1, cos_k1) + 1e-30)
+        proj1 = []
+        for E in E_mode1:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            proj1.append(float(np.dot(E_np, cos_k1) / cos_norm1))
+        omega1 = self.estimate_omega_proj_fft(np.array(proj1, dtype=np.float64), dt)
+        
+        # Measure ω2 from mode2
+        sin_k2 = np.sin(k2 * x_positions)
+        sin_norm2 = float(np.dot(sin_k2, sin_k2) + 1e-30)
+        proj2 = []
+        for E in E_mode2:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            proj2.append(float(np.dot(E_np, sin_k2) / sin_norm2))
+        omega2 = self.estimate_omega_proj_fft(np.array(proj2, dtype=np.float64), dt)
+        
+        # Project superposition onto both modes
+        proj_super1 = []
+        proj_super2 = []
+        for E in E_superposition:
+            E_np = to_numpy(E).astype(np.float64)
+            E_np = E_np - E_np.mean()
+            proj_super1.append(float(np.dot(E_np, cos_k1) / cos_norm1))
+            proj_super2.append(float(np.dot(E_np, sin_k2) / sin_norm2))
+        
+        # Measure frequencies in superposition
+        omega_super1 = self.estimate_omega_proj_fft(np.array(proj_super1, dtype=np.float64), dt)
+        omega_super2 = self.estimate_omega_proj_fft(np.array(proj_super2, dtype=np.float64), dt)
+        
+        # Linearity: each mode in superposition should have same ω as when run alone
+        error1 = abs(omega_super1 - omega1) / max(omega1, 1e-30)
+        error2 = abs(omega_super2 - omega2) / max(omega2, 1e-30)
+        linearity_error = max(error1, error2)
+        
+        passed = linearity_error <= 0.05  # 5% tolerance
+        
+        return {
+            "omega1": omega1,
+            "omega2": omega2,
+            "omega_super1": omega_super1,
+            "omega_super2": omega_super2,
+            "linearity_error": linearity_error,
+            "passed": passed,
+            "message": f"ω1={omega1:.4f}→{omega_super1:.4f}, ω2={omega2:.4f}→{omega_super2:.4f}, err={linearity_error*100:.2f}%"
+        }
+
     
     def measure_causality(self, E_series: List[np.ndarray], dx: float, dt: float, c: float, 
                           test_id: str, initial_center: int) -> Dict:
@@ -378,12 +584,31 @@ class Tier1Harness(NumericIntegrityMixin):
         }
 
     def run_variant(self, v: Dict) -> TestSummary:
-        """Run a single test variant. For isotropy tests, delegates to run_isotropy_variant."""
+        """Run a single test variant. Dispatches to specialized methods for isotropy and boost tests."""
         tid = v["test_id"]
         
         # Isotropy tests require special handling (run twice with different directions)
         if tid in ("REL-01", "REL-02"):
             return self.run_isotropy_variant(v)
+        
+        # Lorentz boost tests require special validation
+        if tid in ("REL-03", "REL-04"):
+            return self.run_boost_variant(v)
+        
+        # Phase independence test (REL-07)
+        if tid == "REL-07":
+            return self.run_phase_independence_variant(v)
+        
+        # Superposition test (REL-08)
+        if tid == "REL-08":
+            return self.run_superposition_variant(v)
+        
+        # 3D isotropy tests
+        if tid == "REL-09":
+            return self.run_3d_directional_isotropy_variant(v)
+        
+        if tid == "REL-10":
+            return self.run_3d_spherical_isotropy_variant(v)
         
         # All other tests use standard single-run logic
         return self.run_standard_variant(v)
@@ -442,6 +667,297 @@ class Tier1Harness(NumericIntegrityMixin):
             runtime_sec=0.0, k_fraction_lattice=float(params.get("_k_fraction_lattice", 0.0))
         )
     
+    def run_boost_variant(self, v: Dict) -> TestSummary:
+        """Run Lorentz boost test by verifying frame-independent dispersion."""
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        beta = params.get("boost_factor", 0.2)
+        steps = max(params.get("steps", 2000), 2048 if self.quick else 4096)
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"Lorentz boost test: β={beta:.2f}, verifying frame covariance", "INFO")
+        
+        # Initialize field (standard wave, not boosted initial conditions)
+        E_prev = self.init_field_variant(tid, params, N, dx, c, "right")
+        E = xp.array(E_prev, copy=True)
+        k_ang = float(params.get("_k_ang", 0.0))
+        
+        E_series = [to_numpy(E)]
+        
+        # Time integration
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        
+        for n in range(steps):
+            Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            
+            # Apply energy rescaling and zero mean
+            denom = float(xp.sum(E_next * E_next)) + 1e-30
+            E0 = 1.0  # Initial energy
+            scale = math.sqrt(float(E0) / denom)
+            E_next = E_next * scale
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:
+                E_series.append(to_numpy(E))
+        
+        # Measure boost covariance
+        boost_result = self.measure_boost_covariance(E_series, dt, dx, c, chi, beta, k_ang)
+        
+        rel_err = boost_result["rel_error"]
+        passed = boost_result["passed"]
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} {boost_result['message']}", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "rel_error": float(rel_err),
+            "omega_lab": float(boost_result["omega_lab"]),
+            "omega_boost": float(boost_result["omega_boost"]),
+            "omega_boost_expected": float(boost_result["omega_boost_expected"]),
+            "beta": float(beta),
+            "gamma": float(boost_result["gamma"]),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("rel_error", rel_err),
+            ("omega_lab", boost_result["omega_lab"]),
+            ("omega_boost", boost_result["omega_boost"]),
+            ("omega_boost_expected", boost_result["omega_boost_expected"]),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=rel_err,
+            omega_meas=boost_result["omega_boost"], omega_theory=boost_result["omega_boost_expected"],
+            runtime_sec=0.0, k_fraction_lattice=float(params.get("_k_fraction_lattice", 0.0))
+        )
+    
+    def run_phase_independence_variant(self, v: Dict) -> TestSummary:
+        """Run phase independence test by comparing sin and cos initial conditions."""
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, params.get("steps", 2000))
+        log(f"Phase independence test: comparing cos(kx) and sin(kx) initial conditions", "INFO")
+        
+        # Run simulation for both phases
+        E_series_cos = self._run_wave_evolution(params, N, dx, dt, c, chi, tid, "cos")
+        E_series_sin = self._run_wave_evolution(params, N, dx, dt, c, chi, tid, "sin")
+        
+        # Measure phase independence
+        k_ang = float(params.get("_k_ang", 0.0))
+        phase_result = self.measure_phase_independence(E_series_cos, E_series_sin, dt, dx, k_ang)
+        
+        phase_error = phase_result["phase_error"]
+        passed = phase_result["passed"]
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} {phase_result['message']}", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "phase_error": float(phase_error),
+            "omega_cos": float(phase_result["omega_cos"]),
+            "omega_sin": float(phase_result["omega_sin"]),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("phase_error", phase_error),
+            ("omega_cos", phase_result["omega_cos"]),
+            ("omega_sin", phase_result["omega_sin"]),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=phase_error,
+            omega_meas=phase_result["omega_cos"], omega_theory=phase_result["omega_sin"],
+            runtime_sec=0.0, k_fraction_lattice=float(params.get("_k_fraction_lattice", 0.0))
+        )
+    
+    def run_superposition_variant(self, v: Dict) -> TestSummary:
+        """Run superposition test by verifying linearity with multi-mode initial condition."""
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, params.get("steps", 2000))
+        log(f"Superposition test: verifying linearity with cos(kx) + 0.5*sin(2kx)", "INFO")
+        
+        # Get wavenumbers
+        k_frac = float(params.get("k_fraction", 0.1))
+        m = int(round((N * k_frac) / 2.0))
+        k_frac_lattice = 2.0 * m / N
+        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))
+        k1 = 2.0 * math.pi * k_cyc
+        k2 = 2 * k1  # Second mode at 2k
+        a1, a2 = 1.0, 0.5  # Amplitudes
+        
+        # Run each mode separately
+        E_series_mode1 = self._run_single_mode(params, N, dx, dt, c, chi, k1, "cos", 1.0)
+        E_series_mode2 = self._run_single_mode(params, N, dx, dt, c, chi, k2, "sin", 1.0)
+        
+        # Run superposition
+        E_series_super = self._run_superposition_modes(params, N, dx, dt, c, chi, k1, k2, a1, a2)
+        
+        # Measure superposition
+        super_result = self.measure_superposition(E_series_mode1, E_series_mode2, E_series_super,
+                                                  dt, dx, k1, k2, a1, a2)
+        
+        linearity_error = super_result["linearity_error"]
+        passed = super_result["passed"]
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} {super_result['message']}", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "linearity_error": float(linearity_error),
+            "omega1": float(super_result["omega1"]),
+            "omega2": float(super_result["omega2"]),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("linearity_error", linearity_error),
+            ("omega1", super_result["omega1"]),
+            ("omega2", super_result["omega2"]),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=linearity_error,
+            omega_meas=super_result["omega1"], omega_theory=super_result["omega2"],
+            runtime_sec=0.0, k_fraction_lattice=float(params.get("_k_fraction_lattice", 0.0))
+        )
+    
+    def _run_single_mode(self, params: Dict, N: int, dx: float, dt: float, c: float, chi: float,
+                        k: float, mode_type: str, amplitude: float) -> List[np.ndarray]:
+        """Helper to run simulation with a single mode."""
+        xp = self.xp
+        steps = max(params.get("steps", 2000), 2048 if self.quick else 4096)
+        
+        x = xp.arange(N, dtype=xp.float64) * dx
+        if mode_type == "cos":
+            E_prev = amplitude * xp.cos(k * x, dtype=xp.float64)
+        else:  # sin
+            E_prev = amplitude * xp.sin(k * x, dtype=xp.float64)
+        
+        E = xp.array(E_prev, copy=True)
+        E_series = [to_numpy(E)]
+        
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        
+        for n in range(steps):
+            Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            E_next = E_next - xp.mean(E_next)
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
+    def _run_superposition_modes(self, params: Dict, N: int, dx: float, dt: float, c: float, chi: float,
+                                k1: float, k2: float, a1: float, a2: float) -> List[np.ndarray]:
+        """Helper to run simulation with superposition of modes."""
+        xp = self.xp
+        steps = max(params.get("steps", 2000), 2048 if self.quick else 4096)
+        
+        x = xp.arange(N, dtype=xp.float64) * dx
+        E_prev = a1 * xp.cos(k1 * x, dtype=xp.float64) + a2 * xp.sin(k2 * x, dtype=xp.float64)
+        
+        E = xp.array(E_prev, copy=True)
+        E_series = [to_numpy(E)]
+        
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        
+        for n in range(steps):
+            Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            E_next = E_next - xp.mean(E_next)
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
+    def _run_wave_evolution(self, params: Dict, N: int, dx: float, dt: float, c: float, chi: float, tid: str, phase: str) -> List[np.ndarray]:
+        """Helper to run simulation with specified phase (cos or sin)."""
+        xp = self.xp
+        steps = max(params.get("steps", 2000), 2048 if self.quick else 4096)
+        
+        # Initialize field based on phase
+        x = xp.arange(N, dtype=xp.float64) * dx
+        k_ang = float(params.get("_k_ang", 0.0))
+        if phase == "cos":
+            E_prev = xp.cos(k_ang * x, dtype=xp.float64)
+        else:  # sin
+            E_prev = xp.sin(k_ang * x, dtype=xp.float64)
+        
+        E = xp.array(E_prev, copy=True)
+        E_series = [to_numpy(E)]
+        
+        # Time integration (simplified, no monitoring for sub-runs)
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        
+        for n in range(steps):
+            Em1 = xp.roll(E, -1); Ep1 = xp.roll(E, 1)
+            lap = (Em1 - 2 * E + Ep1) / dx2
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            
+            # Zero mean
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:  # Save every step
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
     def _run_directional_wave(self, params: Dict, N: int, dx: float, dt: float, c: float, chi: float, tid: str, direction: str) -> List[np.ndarray]:
         """Helper to run simulation with directional initial momentum."""
         xp = self.xp
@@ -476,6 +992,321 @@ class Tier1Harness(NumericIntegrityMixin):
                 E_series.append(to_numpy(E))
         
         return E_series
+    
+    def run_3d_directional_isotropy_variant(self, v: Dict) -> TestSummary:
+        """
+        REL-09: 3D Isotropy — Directional Equivalence
+        
+        Test that plane waves propagating along x, y, and z axes have identical dispersion.
+        For an isotropic equation, ω(kx, 0, 0) = ω(0, ky, 0) = ω(0, 0, kz).
+        """
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # 3D grid parameters
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        steps = max(params.get("steps", 1000), 1024 if self.quick else 2048)
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"3D Directional Isotropy: comparing x, y, z axis propagation", "INFO")
+        
+        # Run three simulations with waves along each axis
+        k_frac = float(params.get("k_fraction", 0.08))
+        m = int(round((N * k_frac) / 2.0))
+        k_frac_lattice = 2.0 * m / N
+        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))
+        k_ang = 2.0 * math.pi * k_cyc
+        
+        log(f"k_ang = {k_ang:.6f}, k_frac = {k_frac_lattice:.6f}", "INFO")
+        
+        # X-axis propagation
+        log("Running X-axis wave...", "INFO")
+        E_series_x = self._run_3d_plane_wave(params, N, dx, dt, c, chi, k_ang, axis='x', steps=steps)
+        omega_x = self._measure_omega_3d(E_series_x, dt, dx, k_ang, axis='x')
+        
+        # Y-axis propagation
+        log("Running Y-axis wave...", "INFO")
+        E_series_y = self._run_3d_plane_wave(params, N, dx, dt, c, chi, k_ang, axis='y', steps=steps)
+        omega_y = self._measure_omega_3d(E_series_y, dt, dx, k_ang, axis='y')
+        
+        # Z-axis propagation
+        log("Running Z-axis wave...", "INFO")
+        E_series_z = self._run_3d_plane_wave(params, N, dx, dt, c, chi, k_ang, axis='z', steps=steps)
+        omega_z = self._measure_omega_3d(E_series_z, dt, dx, k_ang, axis='z')
+        
+        # Measure directional anisotropy
+        omega_mean = (omega_x + omega_y + omega_z) / 3.0
+        aniso_x = abs(omega_x - omega_mean) / max(omega_mean, 1e-30)
+        aniso_y = abs(omega_y - omega_mean) / max(omega_mean, 1e-30)
+        aniso_z = abs(omega_z - omega_mean) / max(omega_mean, 1e-30)
+        anisotropy = max(aniso_x, aniso_y, aniso_z)
+        
+        passed = anisotropy <= 0.01  # 1% tolerance
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} ωx={omega_x:.6f}, ωy={omega_y:.6f}, ωz={omega_z:.6f}, aniso={anisotropy*100:.3f}%", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "anisotropy": float(anisotropy),
+            "omega_x": float(omega_x),
+            "omega_y": float(omega_y),
+            "omega_z": float(omega_z),
+            "omega_mean": float(omega_mean),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("anisotropy", anisotropy),
+            ("omega_x", omega_x),
+            ("omega_y", omega_y),
+            ("omega_z", omega_z),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=anisotropy,
+            omega_meas=omega_mean, omega_theory=omega_mean,
+            runtime_sec=0.0, k_fraction_lattice=k_frac_lattice
+        )
+    
+    def run_3d_spherical_isotropy_variant(self, v: Dict) -> TestSummary:
+        """
+        REL-10: 3D Isotropy — Spherical Symmetry
+        
+        Test that a radially symmetric initial condition produces a spherically symmetric
+        propagating wave. For isotropy, the dispersion relation should only depend on |k|,
+        not on the direction of k.
+        """
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # 3D grid parameters
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        steps = max(params.get("steps", 800), 800 if self.quick else 1500)
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"3D Spherical Isotropy: testing radial wave symmetry", "INFO")
+        
+        # Run simulation with radially symmetric initial condition
+        k_frac = float(params.get("k_fraction", 0.06))
+        m = int(round((N * k_frac) / 2.0))
+        k_frac_lattice = 2.0 * m / N
+        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))
+        k_ang = 2.0 * math.pi * k_cyc
+        
+        log(f"k_ang = {k_ang:.6f}, radial pulse width ~ {1.0/k_ang:.4f}", "INFO")
+        
+        E_series = self._run_3d_radial_wave(params, N, dx, dt, c, chi, k_ang, steps=steps)
+        
+        # Measure spherical symmetry by comparing radial profiles in different directions
+        symmetry_error = self._measure_spherical_symmetry(E_series[-1], dx)
+        
+        passed = symmetry_error <= 0.05  # 5% tolerance
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} spherical_error={symmetry_error*100:.3f}%", level)
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "spherical_error": float(symmetry_error),
+            "backend": "GPU" if self.use_gpu else "CPU",
+        }
+        metrics = [
+            ("spherical_error", symmetry_error),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=symmetry_error,
+            omega_meas=0.0, omega_theory=0.0,
+            runtime_sec=0.0, k_fraction_lattice=k_frac_lattice
+        )
+    
+    def _run_3d_plane_wave(self, params: Dict, N: int, dx: float, dt: float, c: float, 
+                           chi: float, k_ang: float, axis: str, steps: int) -> List[np.ndarray]:
+        """Run 3D simulation with plane wave along specified axis."""
+        xp = self.xp
+        
+        # Create 3D grid
+        x = xp.arange(N, dtype=xp.float64) * dx
+        y = xp.arange(N, dtype=xp.float64) * dx
+        z = xp.arange(N, dtype=xp.float64) * dx
+        
+        # Initialize plane wave along specified axis
+        if axis == 'x':
+            E_prev = xp.cos(k_ang * x)[:, None, None] * xp.ones((N, N, N), dtype=xp.float64)
+        elif axis == 'y':
+            E_prev = xp.cos(k_ang * y)[None, :, None] * xp.ones((N, N, N), dtype=xp.float64)
+        elif axis == 'z':
+            E_prev = xp.cos(k_ang * z)[None, None, :] * xp.ones((N, N, N), dtype=xp.float64)
+        else:
+            raise ValueError(f"Invalid axis: {axis}")
+        
+        # Apply Hann window to avoid sharp edges
+        hann_np = hann_vec(N)
+        hann = xp.asarray(hann_np, dtype=xp.float64)  # Convert to correct backend
+        if axis == 'x':
+            E_prev = E_prev * hann[:, None, None]
+        elif axis == 'y':
+            E_prev = E_prev * hann[None, :, None]
+        elif axis == 'z':
+            E_prev = E_prev * hann[None, None, :]
+        
+        E_prev = E_prev - xp.mean(E_prev)
+        E = xp.array(E_prev, copy=True)
+        
+        # Time integration (3D Klein-Gordon)
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        E_series = [to_numpy(E)]
+        
+        for n in range(steps):
+            # 3D Laplacian (2nd order)
+            lap = (xp.roll(E, 1, axis=2) + xp.roll(E, -1, axis=2) +
+                   xp.roll(E, 1, axis=1) + xp.roll(E, -1, axis=1) +
+                   xp.roll(E, 1, axis=0) + xp.roll(E, -1, axis=0) - 6 * E) / dx2
+            
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
+    def _run_3d_radial_wave(self, params: Dict, N: int, dx: float, dt: float, c: float,
+                            chi: float, k_ang: float, steps: int) -> List[np.ndarray]:
+        """Run 3D simulation with radially symmetric Gaussian pulse."""
+        xp = self.xp
+        
+        # Create 3D grid centered at domain center
+        center = N // 2
+        x = (xp.arange(N, dtype=xp.float64) - center) * dx
+        y = (xp.arange(N, dtype=xp.float64) - center) * dx
+        z = (xp.arange(N, dtype=xp.float64) - center) * dx
+        
+        X, Y, Z = xp.meshgrid(x, y, z, indexing='ij')
+        R = xp.sqrt(X**2 + Y**2 + Z**2)
+        
+        # Gaussian pulse with characteristic width
+        width = 1.0 / k_ang
+        E_prev = xp.exp(-0.5 * (R / width) ** 2)
+        E_prev = E_prev - xp.mean(E_prev)
+        E = xp.array(E_prev, copy=True)
+        
+        # Time integration (3D Klein-Gordon)
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        E_series = [to_numpy(E)]
+        
+        for n in range(steps):
+            # 3D Laplacian (2nd order)
+            lap = (xp.roll(E, 1, axis=2) + xp.roll(E, -1, axis=2) +
+                   xp.roll(E, 1, axis=1) + xp.roll(E, -1, axis=1) +
+                   xp.roll(E, 1, axis=0) + xp.roll(E, -1, axis=0) - 6 * E) / dx2
+            
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if n % 1 == 0:
+                E_series.append(to_numpy(E))
+        
+        return E_series
+    
+    def _measure_omega_3d(self, E_series: List[np.ndarray], dt: float, dx: float, 
+                          k_ang: float, axis: str) -> float:
+        """Measure frequency from 3D plane wave by projecting onto mode."""
+        N = E_series[0].shape[0]
+        
+        # Create projection mode along specified axis
+        if axis == 'x':
+            x = np.arange(N) * dx
+            mode = np.cos(k_ang * x)[:, None, None] * np.ones((N, N, N), dtype=np.float64)
+        elif axis == 'y':
+            y = np.arange(N) * dx
+            mode = np.cos(k_ang * y)[None, :, None] * np.ones((N, N, N), dtype=np.float64)
+        elif axis == 'z':
+            z = np.arange(N) * dx
+            mode = np.cos(k_ang * z)[None, None, :] * np.ones((N, N, N), dtype=np.float64)
+        else:
+            raise ValueError(f"Invalid axis: {axis}")
+        
+        mode_norm = float(np.sum(mode * mode) + 1e-30)
+        
+        # Project each snapshot onto mode
+        proj_series = []
+        for E in E_series:
+            E_np = E.astype(np.float64)
+            E_np = E_np - E_np.mean()
+            proj_series.append(float(np.sum(E_np * mode) / mode_norm))
+        
+        # FFT to extract frequency
+        omega = self.estimate_omega_proj_fft(np.array(proj_series, dtype=np.float64), dt)
+        return omega
+    
+    def _measure_spherical_symmetry(self, E: np.ndarray, dx: float) -> float:
+        """
+        Measure deviation from spherical symmetry by comparing radial profiles
+        along different directions.
+        
+        Returns: maximum relative deviation between directional radial profiles
+        """
+        N = E.shape[0]
+        center = N // 2
+        
+        # Sample radial profiles along three axes
+        # X-axis: E[center+r, center, center]
+        # Y-axis: E[center, center+r, center]
+        # Z-axis: E[center, center, center+r]
+        
+        r_max = min(N // 4, 20)  # Sample up to quarter domain or 20 points
+        
+        profile_x = []
+        profile_y = []
+        profile_z = []
+        
+        for r in range(1, r_max):
+            if center + r < N:
+                profile_x.append(abs(float(E[center + r, center, center])))
+                profile_y.append(abs(float(E[center, center + r, center])))
+                profile_z.append(abs(float(E[center, center, center + r])))
+        
+        # Convert to arrays
+        profile_x = np.array(profile_x)
+        profile_y = np.array(profile_y)
+        profile_z = np.array(profile_z)
+        
+        # Compute mean profile
+        profile_mean = (profile_x + profile_y + profile_z) / 3.0
+        
+        # Measure maximum deviation
+        dev_x = np.max(np.abs(profile_x - profile_mean) / (np.abs(profile_mean) + 1e-30))
+        dev_y = np.max(np.abs(profile_y - profile_mean) / (np.abs(profile_mean) + 1e-30))
+        dev_z = np.max(np.abs(profile_z - profile_mean) / (np.abs(profile_mean) + 1e-30))
+        
+        return float(max(dev_x, dev_y, dev_z))
     
     def run_standard_variant(self, v: Dict) -> TestSummary:
         """Standard single-run test variant (non-isotropy tests)."""
