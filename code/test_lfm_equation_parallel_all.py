@@ -9,17 +9,22 @@ Runs:
   4️⃣  3-D Threaded
 
 Outputs:
-  • diagnostics_2d_serial.csv
-  • diagnostics_2d_parallel.csv
-  • diagnostics_3d_serial.csv
-  • diagnostics_3d_parallel.csv
+  • results/Tests/diagnostics/diagnostics_2d_serial.csv
+  • results/Tests/diagnostics/diagnostics_2d_parallel.csv
+  • results/Tests/diagnostics/diagnostics_3d_serial.csv
+  • results/Tests/diagnostics/diagnostics_3d_parallel.csv
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 import time, json, os
+from pathlib import Path
 from lfm_equation import advance
 from lfm_parallel import run_lattice
+
+# Ensure diagnostics directory exists
+DIAG_DIR = Path(__file__).parent / "results" / "Tests" / "diagnostics"
+DIAG_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ---------------------------------------------------------------------
@@ -86,7 +91,7 @@ base_params = {
 # ---------------------------------------------------------------------
 E0_2d = make_field((64, 64))
 params_2d_serial = dict(base_params)
-params_2d_serial["diagnostics_path"] = "diagnostics_2d_serial.csv"
+params_2d_serial["diagnostics_path"] = str(DIAG_DIR / "diagnostics_2d_serial.csv")
 E_final_2d_serial = run_case("2-D SERIAL", E0_2d, params_2d_serial, parallel=False)
 
 
@@ -95,7 +100,7 @@ E_final_2d_serial = run_case("2-D SERIAL", E0_2d, params_2d_serial, parallel=Fal
 # ---------------------------------------------------------------------
 E0_2d = make_field((64, 64))
 params_2d_par = dict(base_params)
-params_2d_par["diagnostics_path"] = "diagnostics_2d_parallel.csv"
+params_2d_par["diagnostics_path"] = str(DIAG_DIR / "diagnostics_2d_parallel.csv")
 params_2d_par["threads"] = 4
 params_2d_par["debug"]["enable_halo_diag"] = True
 E_final_2d_par = run_case("2-D PARALLEL", E0_2d, params_2d_par, parallel=True, tiles=(2, 2, 1))
@@ -106,7 +111,7 @@ E_final_2d_par = run_case("2-D PARALLEL", E0_2d, params_2d_par, parallel=True, t
 # ---------------------------------------------------------------------
 E0_3d = make_field((32, 32, 32))
 params_3d_serial = dict(base_params)
-params_3d_serial["diagnostics_path"] = "diagnostics_3d_serial.csv"
+params_3d_serial["diagnostics_path"] = str(DIAG_DIR / "diagnostics_3d_serial.csv")
 E_final_3d_serial = run_case("3-D SERIAL", E0_3d, params_3d_serial, parallel=False)
 
 
@@ -115,7 +120,7 @@ E_final_3d_serial = run_case("3-D SERIAL", E0_3d, params_3d_serial, parallel=Fal
 # ---------------------------------------------------------------------
 E0_3d = make_field((32, 32, 32))
 params_3d_par = dict(base_params)
-params_3d_par["diagnostics_path"] = "diagnostics_3d_parallel.csv"
+params_3d_par["diagnostics_path"] = str(DIAG_DIR / "diagnostics_3d_parallel.csv")
 params_3d_par["threads"] = 4
 params_3d_par["debug"]["enable_halo_diag"] = True
 E_final_3d_par = run_case("3-D PARALLEL", E0_3d, params_3d_par, parallel=True, tiles=(2, 2, 2))
@@ -132,4 +137,4 @@ ax[1].set_title("Final Field (2-D Serial)")
 plt.tight_layout()
 plt.show()
 
-print("\nAll four test cases executed. Check diagnostics_*.csv for drift/CFL logs.\n")
+print(f"\nAll four test cases executed. Check {DIAG_DIR / 'diagnostics_*.csv'} for drift/CFL logs.\n")

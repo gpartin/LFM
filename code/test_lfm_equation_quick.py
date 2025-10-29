@@ -24,6 +24,10 @@ from pathlib import Path
 # Import core pieces
 from lfm_equation import lattice_step, core_metrics, energy_total
 
+# Ensure results directory exists
+RESULTS_DIR = Path(__file__).parent / "results" / "Tests" / "diagnostics"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
 # ---------------------------- Config ---------------------------------
 nx = 200
 x = np.linspace(-10.0, 10.0, nx)
@@ -50,7 +54,7 @@ params = {
         "enable_diagnostics": True,
         "energy_tol": 1e-3,
         "profile_steps": 50,
-        "diagnostics_path": "diagnostics_core.csv",
+        "diagnostics_path": str(RESULTS_DIR / "diagnostics_core.csv"),
     },
 }
 
@@ -112,7 +116,7 @@ print(f"Energy drift: {met_final['drift']:+.3e}")
 print(f"Max |E|     : {met_final['max_abs']:.3e}")
 print(f"CFL ratio   : {cfl:.3f}")
 print(f"Grad ratio  : {met_final.get('grad_ratio','N/A')}")
-print(f"Diagnostics : {dbg.get('diagnostics_path','diagnostics_core.csv')}")
+print(f"Diagnostics : {RESULTS_DIR / 'diagnostics_core.csv'}")
 
 print("\nDrift trend (sampled checkpoints):")
 for step_i, d in drift_samples:

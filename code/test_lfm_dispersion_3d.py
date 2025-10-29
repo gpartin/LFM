@@ -29,6 +29,7 @@ Notes
 import math, time, csv
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from lfm_equation import advance, core_metrics, energy_total
 from lfm_parallel import run_lattice
 
@@ -43,6 +44,10 @@ alpha, beta = 1.0, 1.0
 chi = 0.0
 amplitude = 1e-1          # small enough for linear regime
 SHOW_PLOTS = True         # set False to suppress figures
+
+# Ensure results directory exists
+RESULTS_DIR = Path(__file__).parent / "results" / "Tests" / "diagnostics"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 dirs = {
     "x": np.array([1,0,0], float),
@@ -214,11 +219,11 @@ iso  = np.std([r["omega_meas_serial"]   for r in results]) / np.mean([r["omega_m
 isoP = np.std([r["omega_meas_parallel"] for r in results]) / np.mean([r["omega_meas_parallel"] for r in results])
 print(f"\nIsotropy CoV  serial={iso*100:.3f}%   parallel={isoP*100:.3f}%")
 
-with open("dispersion_results_3d.csv", "w", newline="") as f:
+with open(RESULTS_DIR / "dispersion_results_3d.csv", "w", newline="") as f:
     fields = [
         "dir","omega_theory","omega_meas_serial","omega_meas_parallel",
         "rel_err_serial","rel_err_parallel","backend_gap","serial_t","parallel_t"
     ]
     w = csv.DictWriter(f, fieldnames=fields)
     w.writeheader(); w.writerows(results)
-print("\nWrote dispersion_results_3d.csv")
+print(f"\nWrote {RESULTS_DIR / 'dispersion_results_3d.csv'}")

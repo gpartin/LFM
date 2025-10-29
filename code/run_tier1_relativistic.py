@@ -1564,7 +1564,7 @@ def main():
     args = parser.parse_args()
     
     cfg = load_config(args.config)
-    outdir = resolve_outdir(cfg.get("output_dir", "results/Tier1"))
+    outdir = resolve_outdir(cfg.get("output_dir", "results/Relativistic"))
     harness = Tier1Harness(cfg, outdir)
 
     log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")

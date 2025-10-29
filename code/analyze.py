@@ -8,6 +8,9 @@ to ensure numerical equivalence after backend changes.
 import pandas as pd
 from pathlib import Path
 
+# Results directory
+RESULTS_DIR = Path(__file__).parent / "results" / "Tests" / "diagnostics"
+
 def compare_pair(serial_file, parallel_file, label, tol=1e-3):
     if not Path(serial_file).exists() or not Path(parallel_file).exists():
         print(f"⚠️ Missing diagnostics for {label} ({serial_file}, {parallel_file})")
@@ -36,17 +39,17 @@ def compare_pair(serial_file, parallel_file, label, tol=1e-3):
 
 def main():
     pairs = [
-        ("diagnostics_2d_serial.csv", "diagnostics_2d_parallel.csv", "2D"),
-        ("diagnostics_3d_serial.csv", "diagnostics_3d_parallel.csv", "3D"),
+        (RESULTS_DIR / "diagnostics_2d_serial.csv", RESULTS_DIR / "diagnostics_2d_parallel.csv", "2D"),
+        (RESULTS_DIR / "diagnostics_3d_serial.csv", RESULTS_DIR / "diagnostics_3d_parallel.csv", "3D"),
     ]
     results = []
     for s, p, lbl in pairs:
-        r = compare_pair(s, p, lbl)
+        r = compare_pair(str(s), str(p), lbl)
         if r:
             results.append(r)
 
     if not results:
-        print("No diagnostics found. Run test_lfm_equation_parallel_all.py first.")
+        print(f"No diagnostics found in {RESULTS_DIR}. Run test_lfm_equation_parallel_all.py first.")
         return
 
     print("\n=== Parallel Regression Summary ===")
