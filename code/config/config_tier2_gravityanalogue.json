@@ -44,39 +44,41 @@
   },
   "variants": [
     {
-      "test_id": "GRAV-09",
+      "test_id": "GRAV-01",
       "description": "Linear χ-gradient (weak) redshift",
       "chi_profile": "linear",
       "chi_grad": 0.02,
       "chi_base": 0.20,
-      "steps": 3200
+      "steps": 3200,
+      "local_freq_test": true
     },
     {
-      "test_id": "GRAV-10",
+      "test_id": "GRAV-02",
       "description": "Gaussian well (stronger curvature)",
       "chi0": 0.35,
-      "sigma": 16.0
+      "sigma": 16.0,
+      "local_freq_test": true
     },
     {
-      "test_id": "GRAV-11",
+      "test_id": "GRAV-03",
       "description": "Gaussian well (broader)",
       "chi0": 0.25,
       "sigma": 24.0
     },
     {
-      "test_id": "GRAV-12",
+      "test_id": "GRAV-04",
       "description": "Gaussian well (shallower)",
       "chi0": 0.18,
       "sigma": 20.0
     },
     {
-      "test_id": "GRAV-13",
+      "test_id": "GRAV-05",
       "description": "Linear χ-gradient (strong)",
       "chi_profile": "linear",
       "chi_grad": 0.0025
     },
     {
-      "test_id": "GRAV-14",
+      "test_id": "GRAV-06",
       "description": "Gaussian well (stability/longer run)",
       "steps": 1200,
       "chi0": 0.25,

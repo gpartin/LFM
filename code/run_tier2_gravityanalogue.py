@@ -343,8 +343,8 @@ class Tier2Harness(NumericIntegrityMixin):
                     next_pct += self.progress_percent_stride
         t_parallel = time.time() - t0
 
-        # If GRAV-10, use local-dual measurement: run two localized excitations at A and B
-        if tid == "GRAV-10":
+        # If local-freq mode is enabled, estimate ω locally from one-step update
+        if bool(p.get("local_freq_test", False)):
             # Simpler and robust gravity analogue: one-step local frequency estimator.
             # Use uniform field so Laplacian≈0, then E_next = E + dt^2*(-χ^2 E) ⇒ ω_loc^2 ≈ χ^2.
             E_uni = (xp.ones((N, N, N), dtype=self.dtype) * amplitude)

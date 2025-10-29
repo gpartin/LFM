@@ -1,0 +1,21 @@
+{
+  "run_settings": {
+    "use_gpu": true,
+    "quick_mode": false,
+    "output_dir": "results/Unification/UNIF-00"
+  },
+  "parameters": {
+    "grid_points": 96,
+    "dx": 1.0,
+  "dt": 0.01,
+    "alpha": 1.0,
+    "beta": 1.0,
+    "steps": 2000,
+    "chi_well_A": 1.0,
+    "chi_well_B": 1.2,
+  "chi_well_width": 20.0,
+    "packet_amplitude": 0.01,
+    "packet_width": 6.0
+  },
+  "description": "Core unification principle test: demonstrates EM-like, mass-like, and gravity-like behavior from single wave equation"
+}
