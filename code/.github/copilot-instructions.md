@@ -26,6 +26,49 @@ Outputs are written under the project `results/` tree (e.g. `results/Tier1/<TEST
 python -m pytest -q
 ```
 
+### Diagnostic verification before running tests (MANDATORY)
+**Before executing any test harness or individual test, ALWAYS verify the configuration file has appropriate diagnostics enabled for troubleshooting.**
+
+Critical diagnostic settings to check in config files (e.g., `config/config_tier2_gravityanalogue.json`):
+- `diagnostics.track_packet` — Should be `true` for time_delay tests (tracks packet position for propagation debugging)
+- `diagnostics.save_time_series` — Should be `true` for time_dilation tests (saves probe data for FFT analysis)
+- `diagnostics.log_packet_stride` — Controls how often packet position is logged (default 100 steps)
+- `diagnostics.energy_monitor_every` — Set to >0 (e.g., 25-100) to track per-step energy drift; 0 disables
+- `debug.enable_diagnostics` — Set to `true` to enable CFL checks, NaN detection, edge effects monitoring
+- `debug.quiet_run` — Set to `false` for verbose debugging output
+- `run_settings.verbose` — Set to `true` for detailed per-step logging
+
+**Standard diagnostic configurations by test mode:**
+1. **Local frequency tests** (GRAV-01-06): Minimal diagnostics needed (single-step measurement)
+   - `enable_diagnostics: false` (optional)
+   - `energy_monitor_every: 0` (not critical)
+   
+2. **Time dilation tests** (GRAV-07-10): Time series required
+   - `save_time_series: true` ✅ REQUIRED
+   - `enable_diagnostics: true` (recommended for FFT validation)
+   - `energy_monitor_every: 100` (recommended)
+
+3. **Time delay tests** (GRAV-11-12): Packet tracking required
+   - `track_packet: true` ✅ REQUIRED
+   - `log_packet_stride: 100` (or smaller for high-resolution tracking)
+   - `enable_diagnostics: true` (recommended to catch NaN/Inf during propagation)
+   - `energy_monitor_every: 100` (recommended for conservation checks)
+
+**Action required before every test run:**
+1. Read the relevant config file section for the test being run
+2. Identify the test mode (local_frequency, time_dilation, or time_delay)
+3. Verify the diagnostics section has appropriate settings for that mode
+4. If diagnostics are insufficient for troubleshooting, inform the user and suggest enabling:
+   - For propagation issues: `track_packet`, `enable_diagnostics`, `energy_monitor_every`
+   - For frequency analysis issues: `save_time_series`, `print_probe_steps`
+   - For numerical stability issues: `enable_diagnostics`, `energy_monitor_every`, `check_nan`
+5. Document what diagnostics will be available in test outputs (e.g., "Will generate packet_tracking CSVs for serial and parallel runs")
+
+**If running tests in debug mode after failures:**
+- Enable full diagnostics: `enable_diagnostics: true`, `energy_monitor_every: 25`
+- Reduce `quiet_run: false` and `verbose: true` for maximum visibility
+- Consider reducing step count (`steps_quick`) for faster iteration
+
 ### Integration points & extension notes
 - GPU acceleration: optional CuPy (`cupy`) — code checks availability and chooses backend only when `run_settings.use_gpu` (or harness `use_gpu`) is set. Keep device allocations and `.get()` usage consistent.
 - Energy/diagnostics hooks: `EnergyMonitor` is frequently used to record per-step energy and to create diagnostics CSVs. If adding diagnostics, integrate with `params["debug"]` and `params["_energy_log"]` so tooling downstream can consume them.
