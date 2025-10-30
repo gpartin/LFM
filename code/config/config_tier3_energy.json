@@ -1,0 +1,95 @@
+{
+  "base_paths": {
+    "results": "results"
+  },
+  "hardware": {
+    "gpu_enabled": true,
+    "precision": "float64"
+  },
+  "tier": 3,
+  "category": "Energy Conservation & Transport",
+  "output_dir": "results/Energy",
+  "parameters": {
+    "c": 1.0,
+    "time_step": 5e-4,
+    "space_step": 5e-3,
+    "N": 256,
+    "stencil_order": 4,
+    "save_every": 10
+  },
+  "tolerances": {
+    "energy_drift": 0.01,
+    "wave_integrity_max_drop": 0.05
+  },
+  "notes_on_tolerance": "energy_drift=0.01 (1%) is realistic for Klein-Gordon on discrete lattice without artificial enforcement. Actual drift ~0.4% observed, which is acceptable discretization error.",
+  "tests": [
+    {
+      "test_id": "ENER-01",
+      "description": "Global conservation — short",
+      "steps": 5000,
+      "chi_const": 0.0,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-02",
+      "description": "Global conservation — long",
+      "steps": 20000,
+      "chi_const": 0.0,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-03",
+      "description": "Wave integrity — mild curvature",
+      "chi_gradient": [0.0, 0.05],
+      "steps": 10000,
+      "check_wave_integrity": true,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-04",
+      "description": "Wave integrity — steep curvature",
+      "chi_gradient": [0.0, 0.1],
+      "steps": 10000,
+      "check_wave_integrity": true,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-05",
+      "description": "Noise-driven equilibrium",
+      "ic": "noise",
+      "noise_amp": 0.0,
+      "steps": 10000,
+      "require_entropy_monotonic": true,
+      "enforce_energy": false,
+      "energy_drift_max": 3.0,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-06",
+      "description": "Thermal mode diffusion",
+      "ic": "noise",
+      "damping": 1e-3,
+      "steps": 10000,
+      "require_entropy_monotonic": false,
+      "enforce_energy": false,
+      "energy_drift_max": 2.0,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-07",
+      "description": "Entropy growth check — long",
+      "ic": "noise",
+      "noise_amp": 0.0,
+      "steps": 20000,
+      "require_entropy_monotonic": true,
+      "enforce_energy": false,
+      "energy_drift_max": 3.0,
+      "skip": false
+    }
+  ],
+  "notes": "Tier-3 unified test: verifies energy conservation, wave integrity, entropy growth under variable chi(x)."
+}

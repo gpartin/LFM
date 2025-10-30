@@ -34,7 +34,7 @@ except Exception:
     _HAS_CUPY = False
 from lfm_console import log, suite_summary, set_logger, log_run_config, test_start, report_progress
 from lfm_logger import LFMLogger
-from lfm_results import save_summary, write_metadata_bundle
+from lfm_results import save_summary, write_metadata_bundle, write_csv
 from lfm_diagnostics import field_spectrum, energy_total, energy_flow, phase_corr
 from lfm_visualizer import visualize_concept
 from energy_monitor import EnergyMonitor
@@ -609,6 +609,10 @@ class Tier1Harness(NumericIntegrityMixin):
         
         if tid == "REL-10":
             return self.run_3d_spherical_isotropy_variant(v)
+        
+        # Dispersion relation tests (REL-11-14)
+        if tid in ("REL-11", "REL-12", "REL-13", "REL-14"):
+            return self.run_dispersion_relation_variant(v)
         
         # All other tests use standard single-run logic
         return self.run_standard_variant(v)
@@ -1308,6 +1312,157 @@ class Tier1Harness(NumericIntegrityMixin):
         
         return float(max(dev_x, dev_y, dev_z))
     
+    def run_dispersion_relation_variant(self, v: Dict) -> TestSummary:
+        """
+        REL-11-14: Dispersion Relation Tests
+        
+        Directly measure ω²/k² and compare to theory: ω²/k² = 1 + (χ/k)²
+        This explicitly validates the relativistic energy-momentum relation E² = (pc)² + (mc²)²
+        in natural units (c=1, ℏ=1).
+        
+        Theory: For Klein-Gordon equation, ω² = k² + χ²
+        Therefore: ω²/k² = 1 + (χ/k)²
+        
+        Test regimes:
+        - REL-11: Non-relativistic χ/k≈10 → ω²/k² ≈ 101
+        - REL-12: Weakly relativistic χ/k≈1 → ω²/k² ≈ 2
+        - REL-13: Relativistic χ/k≈0.5 → ω²/k² ≈ 1.25
+        - REL-14: Ultra-relativistic χ/k≈0.1 → ω²/k² ≈ 1.01
+        """
+        xp = self.xp
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # Extract parameters
+        N = params["grid_points"]; dx = params["dx"]; dt = params["dt"]
+        chi = params["chi"]; c = math.sqrt(params["alpha"] / params["beta"])
+        steps = params.get("steps", 4000)
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        
+        # Compute wavenumber
+        k_frac = float(params.get("k_fraction", 0.05))
+        m = int(round((N * k_frac) / 2.0))
+        k_frac_lattice = 2.0 * m / N
+        k_cyc = k_frac_lattice * (1.0 / (2.0 * dx))
+        k_ang = 2.0 * math.pi * k_cyc
+        
+        # Theory prediction: ω² = k² + χ²
+        omega_theory = math.sqrt(k_ang**2 + chi**2)
+        omega2_over_k2_theory = (k_ang**2 + chi**2) / (k_ang**2 + 1e-30)
+        chi_over_k = chi / (k_ang + 1e-30)
+        
+        log(f"k = {k_ang:.6f}, χ = {chi:.6f}, χ/k = {chi_over_k:.4f}", "INFO")
+        log(f"Theory: ω = {omega_theory:.6f}, ω²/k² = {omega2_over_k2_theory:.6f}", "INFO")
+        
+        # Initialize plane wave: E(x,t=0) = cos(kx)
+        x = xp.arange(N, dtype=xp.float64) * dx
+        E_prev = xp.cos(k_ang * x)
+        
+        # Apply Hann window and zero-mean
+        hann = xp.asarray(hann_vec(N), dtype=xp.float64)
+        E_prev = E_prev * hann
+        E_prev = E_prev - xp.mean(E_prev)
+        E = xp.array(E_prev, copy=True)
+        
+        # Projection mode for frequency measurement
+        mode = xp.cos(k_ang * x)
+        mode_norm = float(xp.sum(mode * mode) + 1e-30)
+        
+        # Time evolution
+        dt2 = dt ** 2; c2 = c ** 2; chi2 = chi ** 2; dx2 = dx ** 2
+        proj_series = []
+        
+        for n in range(steps):
+            # Project onto mode
+            E_zm = E - xp.mean(E)
+            proj = float(xp.sum(E_zm * mode) / mode_norm)
+            proj_series.append(proj)
+            
+            # 1D Laplacian
+            lap = (xp.roll(E, 1) + xp.roll(E, -1) - 2 * E) / dx2
+            
+            # Klein-Gordon step
+            E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+            E_next = E_next - xp.mean(E_next)
+            
+            E_prev, E = E, E_next
+            
+            if (n + 1) % (steps // 20) == 0:
+                report_progress(tid, int(100 * (n + 1) / steps))
+        
+        # Measure frequency from projection series
+        proj_arr = np.array(proj_series, dtype=np.float64)
+        omega_meas = self.estimate_omega_proj_fft(proj_arr, dt)
+        
+        # Compute measured ω²/k²
+        omega2_over_k2_meas = (omega_meas**2) / (k_ang**2 + 1e-30)
+        
+        # Relative error in ω²/k²
+        rel_err = abs(omega2_over_k2_meas - omega2_over_k2_theory) / (omega2_over_k2_theory + 1e-30)
+        
+        # Pass criterion: <5% error
+        passed = rel_err < 0.05
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        log(f"{tid} {status} (ω²/k²_meas={omega2_over_k2_meas:.6f}, "
+            f"ω²/k²_theory={omega2_over_k2_theory:.6f}, err={rel_err*100:.3f}%)", level)
+        
+        # Save diagnostics
+        diag_csv = diag_dir / "dispersion_measurement.csv"
+        with open(diag_csv, "w", encoding="utf-8") as f:
+            f.write("quantity,measured,theory,error_pct\n")
+            f.write(f"omega,{omega_meas:.10e},{omega_theory:.10e},{abs(omega_meas-omega_theory)/omega_theory*100:.6f}\n")
+            f.write(f"omega2_over_k2,{omega2_over_k2_meas:.10e},{omega2_over_k2_theory:.10e},{rel_err*100:.6f}\n")
+            f.write(f"chi_over_k,{chi_over_k:.10e},{chi_over_k:.10e},0.0\n")
+        
+        # Save projection time series
+        ts_csv = diag_dir / "projection_series.csv"
+        with open(ts_csv, "w", encoding="utf-8") as f:
+            f.write("t,projection\n")
+            for i, proj in enumerate(proj_series):
+                f.write(f"{i*dt:.8f},{proj:.10e}\n")
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "rel_err": float(rel_err),
+            "omega_meas": float(omega_meas),
+            "omega_theory": float(omega_theory),
+            "omega2_over_k2_meas": float(omega2_over_k2_meas),
+            "omega2_over_k2_theory": float(omega2_over_k2_theory),
+            "k_ang": float(k_ang),
+            "chi": float(chi),
+            "chi_over_k": float(chi_over_k),
+            "runtime_sec": 0.0,
+            "backend": "GPU" if self.use_gpu else "CPU",
+            "params": {
+                "N": N, "dx": dx, "dt": dt, "steps": steps,
+                "alpha": params["alpha"], "beta": params["beta"], "chi": chi
+            }
+        }
+        metrics = [
+            ("rel_err", rel_err),
+            ("omega_meas", omega_meas),
+            ("omega_theory", omega_theory),
+            ("omega2_over_k2_meas", omega2_over_k2_meas),
+            ("omega2_over_k2_theory", omega2_over_k2_theory),
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=rel_err,
+            omega_meas=omega_meas, omega_theory=omega_theory,
+            runtime_sec=0.0, k_fraction_lattice=k_frac_lattice
+        )
+    
     def run_standard_variant(self, v: Dict) -> TestSummary:
         """Standard single-run test variant (non-isotropy tests)."""
         xp = self.xp
@@ -1585,8 +1740,12 @@ def main():
         # Single test: just show result
         log(f"=== Test {args.test} Complete ===", "INFO")
     else:
-        # Full suite: show summary
+        # Full suite: show summary and write CSV
         suite_summary(results)
+        suite_rows = [[r["test_id"], r["description"], r["passed"], r["rel_err"],
+                       r["omega_meas"], r["omega_theory"], r["runtime_sec"]] for r in results]
+        write_csv(outdir/"suite_summary.csv", suite_rows,
+                  ["test_id","description","passed","rel_err","omega_meas","omega_theory","runtime_sec"])
         write_metadata_bundle(outdir, test_id="TIER1-SUITE", tier=1, category="relativistic")
         log("=== Tier-1 Suite Complete ===", "INFO")
 

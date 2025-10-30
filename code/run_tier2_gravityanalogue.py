@@ -38,7 +38,7 @@ except Exception:
 
 from lfm_console import log, suite_summary, set_logger, log_run_config, report_progress
 from lfm_logger import LFMLogger
-from lfm_results import save_summary, write_metadata_bundle
+from lfm_results import save_summary, write_metadata_bundle, write_csv
 from lfm_diagnostics import energy_total
 from lfm_visualizer import visualize_concept
 from numeric_integrity import NumericIntegrityMixin
@@ -219,6 +219,33 @@ def build_chi_field(kind: str, shape_or_N, dx: float, params: Dict, xp, ndim: in
             return chi_1d
         else:
             return xp.broadcast_to(chi_1d, (N, N, N))
+    if kind == "radial_well":
+        # Radial χ-profile mimicking Schwarzschild-like metric
+        # χ(r) = χ_center at r=0, asymptoting to χ_infinity at large r
+        # Use smooth transition: χ(r) = χ_∞ + (χ_center - χ_∞)/(1 + (r/r_scale)²)
+        if ndim == 1:
+            raise ValueError("radial_well profile only supported in 3D")
+        Nx, Ny, Nz = (shape if isinstance(shape, tuple) and len(shape) == 3 else (N, N, N))
+        chi_center = float(params.get("chi_center", 0.35))
+        chi_infinity = float(params.get("chi_infinity", 0.10))
+        r_scale = float(params.get("r_scale", 15.0))
+        
+        # Center point
+        cx, cy, cz = Nx//2, Ny//2, Nz//2
+        
+        ax = xp.arange(Nx, dtype=xp.float64) - cx
+        ay = xp.arange(Ny, dtype=xp.float64) - cy
+        az = xp.arange(Nz, dtype=xp.float64) - cz
+        
+        # Compute radial distance from center
+        r2 = (ax[:, xp.newaxis, xp.newaxis]**2 + 
+              ay[xp.newaxis, :, xp.newaxis]**2 + 
+              az[xp.newaxis, xp.newaxis, :]**2)
+        r = xp.sqrt(r2 + 1e-12)  # Avoid division by zero at center
+        
+        # Smooth transition from chi_center to chi_infinity
+        chi = chi_infinity + (chi_center - chi_infinity) / (1.0 + (r / r_scale)**2)
+        return chi
     # Gaussian fallback
     chi0 = float(params.get("chi0", params.get("chi_delta", 0.25)))
     sigma = float(params.get("sigma", params.get("chi_width", 18.0)))
@@ -442,6 +469,21 @@ class Tier2Harness(NumericIntegrityMixin):
             barrier_z = int(barrier_z_frac * shape[2])
             PROBE_A = (shape[0]//2, shape[1]//2, barrier_z + 20)  # On-axis behind barrier
             PROBE_B = (shape[0]//2, shape[1]//2, int(0.80 * shape[2]))  # Far field
+        elif mode == "redshift":
+            # Redshift mode: measure frequency at two locations with different χ
+            # Configuration depends on chi_profile
+            if p.get("chi_profile") == "linear":
+                # Linear gradient: avoid extreme boundaries but maintain span
+                PROBE_A = (N//2, N//2, int(0.156 * N))  # Lower region (z≈10)
+                PROBE_B = (N//2, N//2, int(0.844 * N))  # Upper region (z≈54)
+            elif p.get("chi_profile") == "radial_well":
+                # Radial: center (high χ) vs edge (low χ)
+                PROBE_A = (N//2, N//2, N//2)  # Center
+                PROBE_B = (N//2, N//2, int(0.85 * N))  # Edge
+            else:
+                # Gaussian well (default): center vs edge
+                PROBE_A = (N//2, N//2, N//2)  # Center
+                PROBE_B = (N//2, N//2, int(0.85 * N))  # Edge
         else:
             # For local_frequency: default to center and near-edge (3D only)
             PROBE_A = (N//2, N//2, N//2)
@@ -474,7 +516,8 @@ class Tier2Harness(NumericIntegrityMixin):
         # Extract χ values at probe locations for theory comparison
         chiA = float(to_numpy(chi_field[PROBE_A]))
         chiB = float(to_numpy(chi_field[PROBE_B]))
-        
+        log(f"χ values: PROBE_A={PROBE_A} → χ_A={chiA:.4f}, PROBE_B={PROBE_B} → χ_B={chiB:.4f}", "INFO")
+
         # Initial conditions depend on test mode
         if mode == "time_dilation":
             # Time dilation mode: bound states trapped in potential wells (3D only)
@@ -1595,6 +1638,39 @@ class Tier2Harness(NumericIntegrityMixin):
             err = 0.0
             passed = True
             log(f"Double-slit 3D: saved {len(snapshots_3d)} snapshots, runtime={t_serial:.1f}s", "INFO")
+        elif mode == "redshift":
+            # Redshift mode: measure frequency shift between two regions with different χ
+            # Theory: ω(x) = χ(x) for k≈0 (localized oscillations)
+            # Gravitational redshift: ω_deep/ω_shallow = χ_deep/χ_shallow
+            
+            # Use same single-step measurement as local_frequency
+            E_test = (xp.ones((N, N, N), dtype=self.dtype) * amplitude)
+            Ep_test = E_test.copy()
+            E_next_test = advance(E_test, params, 1)
+            eps = 1e-12
+            omega2_field = -(to_numpy(E_next_test) - to_numpy(E_test)) / (dt*dt * (to_numpy(E_test) + eps))
+            omega2_field = np.maximum(omega2_field, 0.0)
+            
+            wA_s = float(np.sqrt(omega2_field[PROBE_A]))
+            wB_s = float(np.sqrt(omega2_field[PROBE_B]))
+            wA_p, wB_p = wA_s, wB_s  # Parallel gives same local frequencies
+            
+            # Theory: for k=0, ω = χ exactly
+            k_mag_local = 0.0
+            wA_th = local_omega_theory(c, k_mag_local, chiA)
+            wB_th = local_omega_theory(c, k_mag_local, chiB)
+            
+            # Redshift ratio: frequency at location A vs location B
+            ratio_th = wA_th/max(wB_th,1e-30)
+            ratio_s,ratio_p = wA_s/max(wB_s,1e-30),wA_p/max(wB_p,1e-30)
+            err = max(abs(ratio_s-ratio_th)/ratio_th,abs(ratio_p-ratio_th)/ratio_th)
+            passed = err <= float(self.tol.get("ratio_error_max", 0.02))
+            
+            # Compute actual redshift: Δω/ω
+            redshift_theory = (wA_th - wB_th) / max(wB_th, 1e-30)
+            redshift_measured = (wA_s - wB_s) / max(wB_s, 1e-30)
+            
+            log(f"Gravitational redshift: Δω/ω_theory={redshift_theory*100:.2f}%, Δω/ω_measured={redshift_measured*100:.2f}%", "INFO")
         else:
             # Local frequency mode: single-step measurement
             # For uniform E-field: E_next = E - dt²χ²E (Laplacian≈0)
@@ -1712,8 +1788,12 @@ def main():
         # Single test: just show result
         log(f"=== Test {args.test} Complete ===", "INFO")
     else:
-        # Full suite: show summary
+        # Full suite: show summary and write CSV
         suite_summary(results)
+        suite_rows = [[r["test_id"], r["description"], r["passed"], r["rel_err_ratio"],
+                       r["ratio_meas_serial"], r["ratio_meas_parallel"], r["ratio_theory"], r["runtime_sec"]] for r in results]
+        write_csv(outdir/"suite_summary.csv", suite_rows,
+                  ["test_id","description","passed","rel_err_ratio","ratio_meas_serial","ratio_meas_parallel","ratio_theory","runtime_sec"])
         write_metadata_bundle(outdir, "TIER2-GRAVITY", tier=2, category="Gravity")
         log("=== Tier-2 Suite Complete ===", "INFO")
 

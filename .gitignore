@@ -28,6 +28,7 @@ logs/
 packages/
 *.tmp
 *.bak
+**/*.md
 
 # Config caches
 *.json.lock

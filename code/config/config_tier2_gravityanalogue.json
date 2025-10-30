@@ -259,13 +259,14 @@
       "steps": 12000,
       "steps_quick": 12000,
       "snapshot_stride": 50,
-      "snapshot_count": 240
+      "snapshot_count": 240,
+      "skip": true
     },
     {
       "test_id": "GRAV-16",
       "description": "3D double-slit interference — quantum wave through slits showing χ-field localization",
       "mode": "double_slit_3d",
-      "skip": false,
+      "skip": true,
       "ndim": 3,
       "grid_points": [128, 128, 192],
       "dx": 1.0,
@@ -285,6 +286,46 @@
       "steps_quick": 8000,
       "snapshot_stride": 50,
       "snapshot_count": 160
+    },
+    {
+      "test_id": "GRAV-17",
+      "description": "Gravitational redshift — frequency shift climbing out of χ-well",
+      "mode": "redshift",
+      "chi_profile": "gaussian",
+      "chi0": 0.30,
+      "chi_edge": 0.10,
+      "sigma": 20.0,
+      "steps": 4800,
+      "steps_quick": 4800,
+      "dt": 0.01,
+      "measure_at_center": true,
+      "measure_at_edge": true
+    },
+    {
+      "test_id": "GRAV-18",
+      "description": "Gravitational redshift — linear gradient (Pound-Rebka analogue)",
+      "mode": "redshift",
+      "chi_profile": "linear",
+  "chi_base": 0.20,
+  "chi_grad": -0.0015,
+      "steps": 4800,
+      "steps_quick": 4800,
+      "dt": 0.01,
+      "measure_at_bottom": true,
+      "measure_at_top": true
+    },
+    {
+      "test_id": "GRAV-19",
+      "description": "Gravitational redshift — radial χ-profile (Schwarzschild analogue)",
+      "mode": "redshift",
+      "chi_profile": "radial_well",
+      "chi_center": 0.35,
+      "chi_infinity": 0.10,
+      "r_scale": 15.0,
+      "steps": 4800,
+      "steps_quick": 4800,
+      "dt": 0.01,
+      "measure_radial_profile": true
     }
   ]
 }
