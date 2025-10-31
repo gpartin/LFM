@@ -628,6 +628,10 @@ class Tier1Harness(NumericIntegrityMixin):
         if tid in ("REL-11", "REL-12", "REL-13", "REL-14"):
             return self.run_dispersion_relation_variant(v)
         
+        # Space-like correlation test (REL-15)
+        if tid == "REL-15":
+            return self.run_spacelike_correlation_variant(v)
+        
         # All other tests use standard single-run logic
         return self.run_standard_variant(v)
     
@@ -1478,6 +1482,375 @@ class Tier1Harness(NumericIntegrityMixin):
             id=tid, description=desc, passed=passed, rel_err=rel_err,
             omega_meas=omega_meas, omega_theory=omega_theory,
             runtime_sec=0.0, k_fraction_lattice=k_frac_lattice
+        )
+    
+    def run_spacelike_correlation_variant(self, v: Dict) -> TestSummary:
+        """
+        Test causality by measuring space-like correlations.
+        Perturb field at x=0, t=0 and measure correlation C(x,t) = <E(x,t)E(0,0)>.
+        Verify that C ≈ 0 for points outside the light cone (x > ct).
+        """
+        xp = self.xp
+        to_numpy = lambda arr: arr.get() if hasattr(arr, 'get') else arr
+        
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # Parameters
+        N = params["grid_points"]
+        dx = params["dx"]
+        dt = params["dt"]
+        steps = params["steps"]
+        c = math.sqrt(params["alpha"] / params["beta"])
+        
+        pert_amp = float(v.get("perturbation_amp", 0.1))
+        pert_width = float(v.get("perturbation_width", 2.0))
+        corr_threshold = float(v.get("correlation_threshold", 1e-6))
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"Space-like correlation test: perturbing at x=0, measuring correlation outside light cone", "INFO")
+        
+        # Initial condition: localized perturbation at x=0
+        x = xp.arange(N, dtype=xp.float64) * dx
+        x_center = 0.0
+        E0 = pert_amp * xp.exp(-((x - x_center)**2) / (2.0 * pert_width**2 * dx**2), dtype=xp.float64)
+        Eprev0 = E0.copy()  # Start from rest
+        
+        E_ref = float(to_numpy(E0[0]))  # Reference value at x=0, t=0
+        
+        # Evolve and measure correlations
+        from lfm_equation import lattice_step
+        
+        run_params = {
+            "dt": dt, "dx": dx,
+            "alpha": params["alpha"], "beta": params["beta"],
+            "chi": params.get("chi", 0.0),
+            "boundary": "periodic",
+            "precision": "float64",
+            "debug": {"quiet_run": True, "enable_diagnostics": False}
+        }
+        
+        E_prev = xp.array(Eprev0, copy=True)
+        E_curr = xp.array(E0, copy=True)
+        
+        correlation_data = []  # (step, t, x_pos, correlation, inside_lightcone)
+        
+        # Sample every few steps
+        sample_stride = max(1, steps // 20)
+        
+        for n in range(steps):
+            E_next = lattice_step(E_curr, E_prev, run_params)
+            E_prev, E_curr = E_curr, E_next
+            
+            if n % sample_stride == 0 and n > 0:
+                t = n * dt
+                light_cone_radius = c * t
+                
+                # Measure correlation at various positions
+                E_snapshot = to_numpy(E_curr)
+                
+                # Sample a few positions
+                test_positions = [N//4, N//2, 3*N//4]
+                
+                for idx in test_positions:
+                    x_pos = idx * dx
+                    E_val = E_snapshot[idx]
+                    correlation = abs(E_val * E_ref)  # Simple correlation measure
+                    inside_lightcone = x_pos <= light_cone_radius
+                    
+                    correlation_data.append((n, t, x_pos, correlation, inside_lightcone))
+        
+        # Analysis: check for violations (significant correlation outside light cone)
+        violations = []
+        max_violation = 0.0
+        
+        for step, t, x_pos, corr, inside in correlation_data:
+            if not inside and corr > corr_threshold:
+                violations.append((step, t, x_pos, corr))
+                max_violation = max(max_violation, corr)
+        
+        # Pass if no significant correlations outside light cone
+        passed = len(violations) == 0
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        
+        if passed:
+            log(f"{tid} {status} No correlations outside light cone (threshold={corr_threshold:.2e})", level)
+        else:
+            log(f"{tid} {status} Found {len(violations)} violations, max_correlation={max_violation:.2e}", level)
+        
+        # Save correlation data
+        corr_csv = diag_dir / "correlation_data.csv"
+        with open(corr_csv, "w", encoding="utf-8") as f:
+            f.write("step,time,x_pos,correlation,inside_lightcone,lightcone_radius\n")
+            for step, t, x_pos, corr, inside in correlation_data:
+                lightcone_r = c * t
+                f.write(f"{step},{t:.6f},{x_pos:.6f},{corr:.10e},{inside},{lightcone_r:.6f}\n")
+        
+        # Save violations
+        if violations:
+            viol_csv = diag_dir / "violations.csv"
+            with open(viol_csv, "w", encoding="utf-8") as f:
+                f.write("step,time,x_pos,correlation\n")
+                for step, t, x_pos, corr in violations:
+                    f.write(f"{step},{t:.6f},{x_pos:.6f},{corr:.10e}\n")
+        
+        # Plot correlation vs distance
+        try:
+            import matplotlib.pyplot as plt
+            import numpy as np
+            
+            # Group by time
+            times = sorted(set([t for _, t, _, _, _ in correlation_data]))
+            
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+            for t_val in times[::2]:  # Plot every other time
+                points = [(x_pos, corr) for step, t, x_pos, corr, inside in correlation_data if abs(t - t_val) < 1e-9]
+                if points:
+                    xs, cs = zip(*points)
+                    lightcone_r = c * t_val
+                    ax.semilogy(xs, cs, 'o-', label=f't={t_val:.2f}, cone={lightcone_r:.2f}', alpha=0.7)
+                    ax.axvline(lightcone_r, color='red', linestyle='--', alpha=0.3)
+            
+            ax.axhline(corr_threshold, color='black', linestyle=':', label='Threshold')
+            ax.set_xlabel('Position x')
+            ax.set_ylabel('|Correlation|')
+            ax.set_title(f'{tid}: Space-like Correlation Test')
+            ax.legend(fontsize=8)
+            ax.grid(True, alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig(plot_dir / f"correlation_vs_distance_{tid}.png", dpi=140)
+            plt.close()
+            log("Saved correlation plot", "INFO")
+        except Exception as e:
+            log(f"Plotting skipped ({type(e).__name__}: {e})", "WARN")
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "num_violations": len(violations),
+            "max_violation": float(max_violation),
+            "threshold": corr_threshold,
+            "light_speed": float(c),
+            "runtime_sec": 0.0,
+            "backend": "GPU" if self.use_gpu else "CPU"
+        }
+        metrics = [
+            ("num_violations", len(violations)),
+            ("max_violation", max_violation),
+            ("threshold", corr_threshold)
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=max_violation,
+            omega_meas=float(max_violation), omega_theory=float(corr_threshold),
+            runtime_sec=0.0, k_fraction_lattice=0.0
+        )
+    
+    def run_momentum_conservation_variant(self, v: Dict) -> TestSummary:
+        """
+        Test momentum conservation via two-packet collision.
+        Launch two counter-propagating wave packets and measure total momentum before/after.
+        Momentum density: p(x) = E_t * E_x (from stress-energy tensor T^{0i})
+        Total momentum: P = ∫ p(x) dx
+        """
+        import numpy as np
+        xp = self.xp
+        to_numpy = lambda arr: arr.get() if hasattr(arr, 'get') else arr
+        
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # Parameters
+        N = params["grid_points"]
+        dx = params["dx"]
+        dt = params["dt"]
+        steps = params["steps"]
+        c = math.sqrt(params["alpha"] / params["beta"])
+        
+        packet1_pos = float(v.get("packet1_pos", 0.3)) * N
+        packet2_pos = float(v.get("packet2_pos", 0.7)) * N
+        packet1_k = float(v.get("packet1_k", 2.0))
+        packet2_k = float(v.get("packet2_k", -2.0))
+        packet_width = float(v.get("packet_width", 0.05)) * N
+        momentum_tol = float(v.get("momentum_tolerance", 0.01))
+        amplitude = 0.1
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"Momentum conservation: two packets colliding, k1={packet1_k:.2f}, k2={packet2_k:.2f}", "INFO")
+        
+        # Create two counter-propagating wave packets
+        x = xp.arange(N, dtype=xp.float64)
+        
+        # Packet 1: rightward (+k)
+        env1 = xp.exp(-((x - packet1_pos)**2) / (2.0 * packet_width**2))
+        cos1 = xp.cos(packet1_k * x * dx)
+        sin1 = xp.sin(packet1_k * x * dx)
+        chi = params.get("chi", 0.0)
+        omega1 = math.sqrt(c*c * packet1_k*packet1_k + chi*chi)
+        
+        # Packet 2: leftward (-k)
+        env2 = xp.exp(-((x - packet2_pos)**2) / (2.0 * packet_width**2))
+        cos2 = xp.cos(packet2_k * x * dx)
+        sin2 = xp.sin(packet2_k * x * dx)
+        omega2 = math.sqrt(c*c * packet2_k*packet2_k + chi*chi)
+        
+        # Superpose both packets
+        E0 = amplitude * (env1 * cos1 + env2 * cos2)
+        E_dot = amplitude * (env1 * omega1 * sin1 + env2 * omega2 * sin2)
+        Eprev0 = E0 - dt * E_dot
+        
+        # Compute initial momentum: p(x) = E_t * E_x
+        E0_np = to_numpy(E0)
+        Eprev0_np = to_numpy(Eprev0)
+        E_t_init = (E0_np - Eprev0_np) / dt
+        E_x_init = np.gradient(E0_np, dx)
+        p_initial = E_t_init * E_x_init
+        P_initial = np.sum(p_initial) * dx
+        
+        # Evolve system
+        from lfm_equation import lattice_step
+        
+        run_params = {
+            "dt": dt, "dx": dx,
+            "alpha": params["alpha"], "beta": params["beta"],
+            "chi": chi,
+            "boundary": "periodic",
+            "precision": "float64",
+            "debug": {"quiet_run": True, "enable_diagnostics": False}
+        }
+        
+        E_prev = xp.array(Eprev0, copy=True)
+        E_curr = xp.array(E0, copy=True)
+        
+        momentum_history = [(0, P_initial)]
+        
+        # Sample momentum periodically
+        sample_stride = max(1, steps // 50)
+        
+        log(f"Initial momentum: P = {P_initial:.6e}", "INFO")
+        
+        for n in range(steps):
+            E_next = lattice_step(E_curr, E_prev, run_params)
+            E_prev, E_curr = E_curr, E_next
+            
+            if n % sample_stride == 0 and n > 0:
+                E_curr_np = to_numpy(E_curr)
+                E_prev_np = to_numpy(E_prev)
+                E_t = (E_curr_np - E_prev_np) / dt
+                E_x = np.gradient(E_curr_np, dx)
+                p_dens = E_t * E_x
+                P_current = np.sum(p_dens) * dx
+                momentum_history.append((n, P_current))
+        
+    # Compute final momentum
+        E_curr_np = to_numpy(E_curr)
+        E_prev_np = to_numpy(E_prev)
+        E_t_final = (E_curr_np - E_prev_np) / dt
+        E_x_final = np.gradient(E_curr_np, dx)
+        p_final = E_t_final * E_x_final
+        P_final = np.sum(p_final) * dx
+        
+        # Conservation check
+        momentum_change = abs(P_final - P_initial)
+        rel_change = momentum_change / max(abs(P_initial), 1e-10)
+        
+        passed = rel_change < momentum_tol
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        
+        log(f"{tid} {status} Momentum: initial={P_initial:.6e}, final={P_final:.6e}, change={rel_change*100:.4f}%", level)
+        
+        # Save momentum history
+        mom_csv = diag_dir / "momentum_history.csv"
+        with open(mom_csv, "w", encoding="utf-8") as f:
+            f.write("step,time,momentum\n")
+            for step, P_val in momentum_history:
+                t = step * dt
+                f.write(f"{step},{t:.6f},{P_val:.10e}\n")
+        
+        # Save momentum density profiles
+        density_csv = diag_dir / "momentum_density.csv"
+        with open(density_csv, "w", encoding="utf-8") as f:
+            f.write("x,p_initial,p_final\n")
+            x_arr = np.arange(N) * dx
+            for i in range(N):
+                f.write(f"{x_arr[i]:.6f},{p_initial[i]:.10e},{p_final[i]:.10e}\n")
+        
+        # Plot
+        try:
+            import matplotlib.pyplot as plt
+            import numpy as np
+            
+            fig, axes = plt.subplots(2, 1, figsize=(12, 8))
+            
+            # Momentum vs time
+            steps_hist, P_hist = zip(*momentum_history)
+            times_hist = np.array(steps_hist) * dt
+            axes[0].plot(times_hist, P_hist, 'b-', linewidth=1.5)
+            axes[0].axhline(P_initial, color='r', linestyle='--', label=f'Initial P={P_initial:.3e}')
+            axes[0].set_xlabel('Time')
+            axes[0].set_ylabel('Total Momentum P')
+            axes[0].set_title(f'{tid}: Momentum Conservation (change={rel_change*100:.4f}%)')
+            axes[0].legend()
+            axes[0].grid(True, alpha=0.3)
+            
+            # Momentum density profiles
+            x_arr = np.arange(N) * dx
+            axes[1].plot(x_arr, p_initial, 'g-', label='Initial p(x)', alpha=0.7)
+            axes[1].plot(x_arr, p_final, 'b-', label='Final p(x)', alpha=0.7)
+            axes[1].set_xlabel('Position x')
+            axes[1].set_ylabel('Momentum Density p(x)')
+            axes[1].set_title(f'{tid}: Momentum Density Distribution')
+            axes[1].legend()
+            axes[1].grid(True, alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig(plot_dir / f"momentum_conservation_{tid}.png", dpi=140)
+            plt.close()
+            log("Saved momentum conservation plots", "INFO")
+        except Exception as e:
+            log(f"Plotting skipped ({type(e).__name__}: {e})", "WARN")
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "momentum_initial": float(P_initial),
+            "momentum_final": float(P_final),
+            "momentum_change": float(momentum_change),
+            "relative_change": float(rel_change),
+            "tolerance": momentum_tol,
+            "runtime_sec": 0.0,
+            "backend": "GPU" if self.use_gpu else "CPU"
+        }
+        metrics = [
+            ("momentum_initial", P_initial),
+            ("momentum_final", P_final),
+            ("relative_change", rel_change)
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=rel_change,
+            omega_meas=float(P_final), omega_theory=float(P_initial),
+            runtime_sec=0.0, k_fraction_lattice=0.0
         )
     
     def run_standard_variant(self, v: Dict) -> TestSummary:

@@ -400,6 +400,42 @@
       "chi_update_every": 1,
       "c_chi": 1.0,
       "comment": "Fully coupled E ↔ χ evolution with wave equation for χ"
+    },
+    {
+      "test_id": "GRAV-24",
+      "description": "Gravitational wave propagation — oscillating source radiates χ-waves, validate 1/r decay and propagation speed",
+      "mode": "gravitational_wave",
+      "skip": false,
+      "ndim": 1,
+      "grid_points": 512,
+      "dx": 0.5,
+      "dt": 0.01,
+      "chi_bg": 0.05,
+      "G_coupling": 0.10,
+      "source_frequency": 0.05,
+      "source_amplitude": 0.30,
+      "source_width": 5.0,
+      "steps": 1200,
+      "steps_quick": 1200,
+      "c_chi": 1.0,
+      "decay_tolerance": 0.30,
+      "comment": "Oscillating energy source → radiating χ-waves, measure amplitude decay ~1/r and wave speed (tuned: lower freq, more steps)"
+    },
+    {
+      "test_id": "GRAV-25",
+      "description": "Light bending — ray tracing through χ-gradient, measure deflection angle",
+      "mode": "light_bending",
+      "ndim": 1,
+      "grid_points": 1024,
+      "steps": 800,
+      "dt": 0.005,
+      "dx": 0.05,
+      "chi_gradient": 0.02,
+      "k_fraction": 0.10,
+      "packet_width_cells": 8.0,
+      "impact_parameter": 0.2,
+      "deflection_tolerance": 0.15,
+      "comment": "Wave packet trajectory through χ-gradient (tuned: gentler gradient, longer domain, smaller dt)"
     }
   ]
 }
