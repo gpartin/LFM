@@ -381,6 +381,25 @@
       "k_fraction": 0.10,
       "steps": 100,
       "steps_quick": 100
+    },
+    {
+      "test_id": "GRAV-23",
+      "description": "Dynamic χ-field evolution — full wave equation □χ=-4πGρ with causal propagation (gravitational wave analogue)",
+      "mode": "dynamic_chi_wave",
+      "skip": false,
+      "ndim": 1,
+      "grid_points": 256,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_bg": 0.20,
+      "G_coupling": 0.05,
+      "E_amp": 0.50,
+      "E_sigma_cells": 2.0,
+      "steps": 400,
+      "steps_quick": 400,
+      "chi_update_every": 1,
+      "c_chi": 1.0,
+      "comment": "Fully coupled E ↔ χ evolution with wave equation for χ"
     }
   ]
 }
