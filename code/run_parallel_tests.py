@@ -23,7 +23,7 @@ from datetime import datetime
 
 import psutil  # system memory info
 
-from test_metrics import TestMetrics, load_test_configs
+from lfm_test_metrics import TestMetrics, load_test_configs
 
 
 def run_single_test(test_id: str, tier: int, timeout_sec: int) -> Tuple[str, int, Dict]:

@@ -310,7 +310,7 @@ def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
         4: "config/config_tier4_quantization.json"
     }
     
-    config_path = Path(__file__).parent / tier_files.get(tier)
+    config_path = Path(__file__).parent.parent / tier_files.get(tier)
     if not config_path.exists():
         return []
     

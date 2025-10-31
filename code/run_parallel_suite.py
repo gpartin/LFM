@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import List, Tuple, Dict
 
-from test_metrics import TestMetrics, load_test_configs
+from lfm_test_metrics import TestMetrics, load_test_configs
 from adaptive_scheduler import AdaptiveScheduler
 
 
