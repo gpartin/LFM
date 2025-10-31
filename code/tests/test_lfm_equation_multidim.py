@@ -7,9 +7,6 @@ LFM Multi-Dimensional Regression — v1.3.7-monitor-integrated
 - Integrates EnergyMonitor (serial + parallel) and NumericIntegrityMixin checks.
 """
 
-import pytest
-pytest.skip("Moved to tests/test_lfm_equation_multidim.py; module skipped", allow_module_level=True)
-
 import math, time, csv, numpy as np
 from pathlib import Path
 from lfm_equation import laplacian, lattice_step

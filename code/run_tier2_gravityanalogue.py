@@ -29,19 +29,12 @@ from typing import Dict, List
 from pathlib import Path
 import numpy as np
 
-try:
-    import cupy as cp
-    _HAS_CUPY = True
-except Exception:
-    cp = None
-    _HAS_CUPY = False
-
-from lfm_console import log, suite_summary, set_logger, log_run_config, report_progress
-from lfm_logger import LFMLogger
+from lfm_backend import to_numpy
+from lfm_console import log, suite_summary, report_progress
 from lfm_results import save_summary, write_metadata_bundle, write_csv
 from lfm_diagnostics import energy_total
 from lfm_visualizer import visualize_concept
-from numeric_integrity import NumericIntegrityMixin
+from lfm_test_harness import BaseTierHarness
 from energy_monitor import EnergyMonitor
 from lfm_equation import advance, lattice_step
 try:
@@ -51,39 +44,11 @@ except Exception:
     compute_chi_from_energy_poisson = None
 from lfm_parallel import run_lattice
 
- 
-def pick_backend(use_gpu_flag: bool):
-    on_gpu = bool(use_gpu_flag and _HAS_CUPY)
-    return (cp if on_gpu else np), on_gpu
-
-def to_numpy(x):
-    if _HAS_CUPY and isinstance(x, cp.ndarray):
-        return cp.asnumpy(x)
-    return np.asarray(x)
-
 def scalar_fast(v):
     try:
         return float(v.item())
     except Exception:
         return float(v)
-
-def hann_fft_freq(series: List[float], dt: float) -> float:
-    x = np.asarray(series, float)
-    x = x - x.mean()
-    if len(x) < 16:
-        return 0.0
-    w = np.hanning(len(x))
-    X = np.fft.rfft(x * w)
-    f = np.fft.rfftfreq(len(x), dt)
-    mag = np.abs(X)
-    k = int(np.argmax(mag[1:])) + 1
-    if k <= 0 or k >= len(mag) - 1:
-        return 2 * math.pi * f[k]
-    y1, y2, y3 = np.log(mag[k-1]+1e-30), np.log(mag[k]+1e-30), np.log(mag[k+1]+1e-30)
-    denom = y1 - 2*y2 + y3
-    delta = 0.0 if abs(denom) < 1e-12 else 0.5*(y1 - y3)/denom
-    k_refined = k + np.clip(delta, -0.5, 0.5)
-    return 2*math.pi*np.interp(k_refined, np.arange(len(f)), f)
 
 @dataclass
 class VariantResult:
@@ -319,37 +284,12 @@ def local_omega_theory(c, k_mag, chi):
 def _default_config_name() -> str:
     return "config_tier2_gravityanalogue.json"
 
-def load_config(config_path: str = None) -> Dict:
-    """Search for the Tier-2 config in script `config/` (current or parent).
-
-    This mirrors the Tier-1 loader behavior so running from different CWDs
-    works the same across harnesses.
-    """
-    if config_path:
-        # Use explicit path if provided
-        cand = Path(config_path)
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-        raise FileNotFoundError(f"Config file not found: {config_path}")
-    
-    # Default: search in standard locations
-    script_dir = Path(__file__).resolve().parent
-    for root in (script_dir, script_dir.parent):
-        cand = root / "config" / _default_config_name()
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-    raise FileNotFoundError(f"Tier-2 config not found (expected config/{_default_config_name()}).")
-
  
-class Tier2Harness(NumericIntegrityMixin):
+class Tier2Harness(BaseTierHarness):
     def __init__(self, cfg: Dict, out_root: Path):
-        self.cfg = cfg
-        self.run_settings = cfg["run_settings"]
-        self.base = cfg["parameters"]
-        self.tol = cfg["tolerances"]
+        super().__init__(cfg, out_root, config_name="config_tier2_gravityanalogue.json")
         self.variants = cfg["variants"]
+        
         # Optional per-variant skip flag: allow config to disable expensive or redundant cases
         try:
             before = len(self.variants)
@@ -361,7 +301,7 @@ class Tier2Harness(NumericIntegrityMixin):
         except Exception:
             # Be permissive: if variant objects aren't dict-like, just proceed
             pass
-        self.quick = bool(self.run_settings.get("quick_mode", False))
+        
         self.verbose = bool(self.run_settings.get("verbose", False))
         self.monitor_stride = int(self.run_settings.get("monitor_stride_quick", 25))
         
@@ -376,30 +316,19 @@ class Tier2Harness(NumericIntegrityMixin):
                 "print_probe_steps": False,
                 "energy_tol": self.energy_tol
             })
-            self.verbose_stride = int(self.run_settings.get("verbose_stride", 200))
-            self.monitor_flush_interval = int(self.run_settings.get("monitor_flush_interval", 50))
-            self.show_progress = bool(self.run_settings.get("show_progress", True))
-            self.progress_percent_stride = int(self.run_settings.get("progress_percent_stride", 5))
-            self.xp, self.on_gpu = pick_backend(self.run_settings.get("use_gpu", False))
-            self.dtype = self.xp.float32 if self.quick else self.xp.float64
-            self.out_root = out_root
-            self.logger = LFMLogger(out_root)
-            self.logger.record_env()
-            try:
-                set_logger(self.logger)
-            except Exception:
-                pass
-            try:
-                log_run_config(self.cfg, self.out_root)
-            except Exception:
-                pass
-            try:
-                from lfm_console import set_diagnostics_enabled
-                dbg_cfg = self.run_settings.get("debug", {}) or {}
-                set_diagnostics_enabled(bool(dbg_cfg.get("enable_diagnostics", False)))
-            except Exception:
-                pass
-            log(f"[backend] on_gpu={self.on_gpu} (CuPy available={_HAS_CUPY})", "INFO")
+        
+        self.verbose_stride = int(self.run_settings.get("verbose_stride", 200))
+        self.monitor_flush_interval = int(self.run_settings.get("monitor_flush_interval", 50))
+        self.dtype = self.xp.float32 if self.quick else self.xp.float64
+        self.on_gpu = self.use_gpu  # Alias for compatibility
+        
+        # Set diagnostics if available
+        try:
+            from lfm_console import set_diagnostics_enabled
+            dbg_cfg = self.run_settings.get("debug", {}) or {}
+            set_diagnostics_enabled(bool(dbg_cfg.get("enable_diagnostics", False)))
+        except Exception:
+            pass
 
     def run_variant(self, v: Dict) -> VariantResult:
         xp = self.xp
@@ -578,7 +507,7 @@ class Tier2Harness(NumericIntegrityMixin):
             # Build probe time series at center
             center_idx = int(x0)
             sig = [float(s[center_idx]) for s in series]
-            w_meas = hann_fft_freq(sig, dt)
+            w_meas = self.estimate_omega_fft(np.array(sig, dtype=np.float64), dt)
             chi_local = abs(float(chi_from_energy[center_idx]))
 
             # Compare measured frequency to local |chi| (k≈0 for localized bump center)
@@ -599,7 +528,7 @@ class Tier2Harness(NumericIntegrityMixin):
             ratio_profile = []
             for i in idxs:
                 sig_i = [float(s[i]) for s in series]
-                w_i = hann_fft_freq(sig_i, dt)
+                w_i = self.estimate_omega_fft(np.array(sig_i, dtype=np.float64), dt)
                 chi_i = abs(float(chi_from_energy[i]))
                 r_i = w_i / max(chi_i, 1e-12)
                 x_pos = i * dx
@@ -1817,10 +1746,10 @@ class Tier2Harness(NumericIntegrityMixin):
             # Time dilation mode: FFT analysis of oscillator time series
             # Series are collected every step, so use dt directly
             log(f"Analyzing time series with FFT (dt={dt}, {len(series_A)} samples)...", "INFO")
-            wA_s = hann_fft_freq(series_A, dt)
-            wB_s = hann_fft_freq(series_B, dt)
-            wA_p = hann_fft_freq(series_Ap, dt)
-            wB_p = hann_fft_freq(series_Bp, dt)
+            wA_s = self.estimate_omega_fft(np.array(series_A, dtype=np.float64), dt)
+            wB_s = self.estimate_omega_fft(np.array(series_B, dtype=np.float64), dt)
+            wA_p = self.estimate_omega_fft(np.array(series_Ap, dtype=np.float64), dt)
+            wB_p = self.estimate_omega_fft(np.array(series_Bp, dtype=np.float64), dt)
             
             # Theory: localized oscillators with k≈0 (no spatial propagation)
             # Each bump oscillates at its local frequency ω ≈ χ
@@ -2581,12 +2510,9 @@ def main():
                        help="Path to config file")
     args = parser.parse_args()
     
-    # Load config relative to this script file so running from any CWD works
-    cfg = load_config(args.config)
-    # Resolve output directory similar to Tier-1 harness conventions
-    script_dir = Path(__file__).resolve().parent
-    outdir = script_dir / cfg.get("run_settings", {}).get("output_dir", "results/Gravity")
-    outdir.mkdir(parents=True, exist_ok=True)
+    # Load config using base harness method
+    cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
+    outdir = BaseTierHarness.resolve_outdir(cfg.get("run_settings", {}).get("output_dir", "results/Gravity"))
     
     harness = Tier2Harness(cfg, outdir)
     

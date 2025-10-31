@@ -26,9 +26,6 @@ Notes
   i.e., the peak sits very close to DC; generic FFT plots can hide it.
 """
 
-import pytest
-pytest.skip("Moved to tests/test_lfm_dispersion_3d.py; module skipped", allow_module_level=True)
-
 import math, time, csv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -49,7 +46,7 @@ amplitude = 1e-1          # small enough for linear regime
 SHOW_PLOTS = True         # set False to suppress figures
 
 # Ensure results directory exists
-RESULTS_DIR = Path(__file__).parent / "results" / "Tests" / "diagnostics"
+RESULTS_DIR = Path(__file__).parent.parent / "results" / "Tests" / "diagnostics"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 dirs = {

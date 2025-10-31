@@ -30,6 +30,8 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 import numpy as np
+import matplotlib.pyplot as plt
+
 try:
     import cupy as cp
     _HAS_CUPY = True
@@ -37,45 +39,13 @@ except Exception:
     cp = None
     _HAS_CUPY = False
 
-import matplotlib.pyplot as plt
-
-from lfm_console import log, suite_summary, set_logger, log_run_config
-from lfm_logger import LFMLogger
+from lfm_backend import to_numpy, get_array_module
+from lfm_console import log, suite_summary
 from lfm_results import save_summary, write_metadata_bundle, write_csv, ensure_dirs
+from lfm_test_harness import BaseTierHarness
 
-# ------------------------------- Config Loader ------------------------------
-def load_config(config_path: str = None) -> Dict:
-    """Load config from explicit path or default location."""
-    if config_path:
-        cand = Path(config_path)
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-        raise FileNotFoundError(f"Config file not found: {config_path}")
-    
-    # Default: search in standard locations
-    script_dir = Path(__file__).resolve().parent
-    cfg_name = "config_tier3_energy.json"
-    for root in (script_dir, script_dir.parent):
-        cand = root / "config" / cfg_name
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-    raise FileNotFoundError(f"Tier-3 config not found (expected config/{cfg_name}).")
-
-# ------------------------------ Backend helpers -----------------------------
-def pick_backend(use_gpu_flag: bool):
-    """Select NumPy or CuPy backend based on config and availability."""
-    on_gpu = bool(use_gpu_flag and _HAS_CUPY)
-    if use_gpu_flag and not _HAS_CUPY:
-        log("GPU requested but CuPy not available; falling back to NumPy", "WARN")
-    return (cp if on_gpu else np), on_gpu
-
-def to_numpy(x):
-    """Convert array to NumPy for host-side operations."""
-    if _HAS_CUPY and isinstance(x, cp.ndarray):
-        return cp.asnumpy(x)
-    return np.asarray(x)
+def _default_config_name() -> str:
+    return "config_tier3_energy.json"
 
 @dataclass
 class TestResult:
@@ -91,7 +61,7 @@ class TestResult:
 def laplacian(E, dx, order=4, xp=None):
     """Compute Laplacian using specified backend (NumPy or CuPy)."""
     if xp is None:
-        xp = cp if (_HAS_CUPY and isinstance(E, cp.ndarray)) else np
+        xp = get_array_module(E)
     if order == 2:
         return (
             xp.roll(E,  1, 0) + xp.roll(E, -1, 0) +
@@ -108,7 +78,7 @@ def laplacian(E, dx, order=4, xp=None):
 def grad_sq(E, dx, xp=None):
     """Compute gradient squared using specified backend."""
     if xp is None:
-        xp = cp if (_HAS_CUPY and isinstance(E, cp.ndarray)) else np
+        xp = get_array_module(E)
     Ex = (xp.roll(E, -1, 1) - xp.roll(E, 1, 1)) / (2*dx)
     Ey = (xp.roll(E, -1, 0) - xp.roll(E, 1, 0)) / (2*dx)
     return Ex*Ex + Ey*Ey
@@ -116,7 +86,7 @@ def grad_sq(E, dx, xp=None):
 def energy_total(E, E_prev, dt, dx, c, chi, xp=None):
     """Compute total energy using specified backend."""
     if xp is None:
-        xp = cp if (_HAS_CUPY and isinstance(E, cp.ndarray)) else np
+        xp = get_array_module(E)
     Et = (E - E_prev) / dt
     dens = 0.5*(Et*Et + (c*c)*grad_sq(E, dx, xp) + (chi*chi)*(E*E))
     return float(xp.sum(dens) * dx*dx)
@@ -413,10 +383,11 @@ def main():
                        help="Path to config file")
     args = parser.parse_args()
     
-    cfg = load_config(args.config)
+    cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
     p, tol, tests = cfg["parameters"], cfg["tolerances"], cfg["tests"]
     
     # Resolve backend
+    from lfm_backend import pick_backend
     use_gpu = cfg["hardware"].get("gpu_enabled", True)
     xp, on_gpu = pick_backend(use_gpu)
     if on_gpu and _HAS_CUPY:
@@ -434,6 +405,8 @@ def main():
     ensure_dirs(out_base)
     
     # Set up logging
+    from lfm_logger import LFMLogger
+    from lfm_console import set_logger, log_run_config
     logger = LFMLogger(out_base)
     set_logger(logger)
     log_run_config(cfg, out_base)

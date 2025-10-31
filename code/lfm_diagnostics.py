@@ -14,20 +14,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# Optional CuPy
-try:
-    import cupy as cp  # type: ignore
-    _HAS_CUPY = True
-except Exception:
-    cp = np
-    _HAS_CUPY = False
+from lfm_backend import to_numpy
 
 def ensure_dirs(p): Path(p).mkdir(parents=True, exist_ok=True)
-
-def to_numpy(x):
-    if _HAS_CUPY and hasattr(x, "get"):
-        return x.get()
-    return np.asarray(x)
 
 # ------------------------- 1) Discrete energy -------------------------
 def energy_total(E, E_prev, dt, dx, c, chi):

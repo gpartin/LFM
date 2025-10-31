@@ -39,13 +39,7 @@ from pathlib import Path
 from typing import Dict, Tuple
 import numpy as np
 
-try:
-    import cupy as cp
-    _HAS_CUPY = True
-except Exception:
-    cp = None
-    _HAS_CUPY = False
-
+from lfm_backend import pick_backend, to_numpy
 from lfm_console import log, set_logger
 from lfm_logger import LFMLogger
 from lfm_results import save_summary
@@ -53,15 +47,6 @@ from lfm_equation import advance, lattice_step, energy_total
 from lfm_parallel import run_lattice
 from energy_monitor import EnergyMonitor
 from numeric_integrity import NumericIntegrityMixin
-
-def pick_backend(use_gpu: bool):
-    on_gpu = bool(use_gpu and _HAS_CUPY)
-    return (cp if on_gpu else np), on_gpu
-
-def to_numpy(x):
-    if _HAS_CUPY and isinstance(x, cp.ndarray):
-        return cp.asnumpy(x)
-    return np.asarray(x)
 
 class UnificationTest(NumericIntegrityMixin):
     """

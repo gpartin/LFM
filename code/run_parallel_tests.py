@@ -229,7 +229,7 @@ def parse_args():
     parser.add_argument("--workers", type=int, default=None,
                        help="Number of parallel workers (default: CPU count - 2)")
     parser.add_argument("--timeout", type=int, default=7200,
-                       help="Timeout per test in seconds (default: 7200 = 120 min)")
+                       help="Minimum per-test timeout in seconds (default: 7200 = 120 min). Adaptive estimates may increase this for long tests.")
     
     return parser.parse_args()
 
@@ -306,7 +306,8 @@ def update_master_test_status():
             summary_file = test_dir / "summary.json"
             if summary_file.exists():
                 try:
-                    with open(summary_file, 'r') as f:
+                    # Read JSON summaries as UTF-8 to support non-ASCII characters
+                    with open(summary_file, 'r', encoding='utf-8') as f:
                         summary = json.load(f)
                     
                     test_id = summary.get("test_id", test_dir.name)
@@ -400,7 +401,8 @@ def update_master_test_status():
     
     # Write to file
     output_file = results_dir / "MASTER_TEST_STATUS.csv"
-    with open(output_file, 'w') as f:
+    # Write CSV with UTF-8 BOM so it's Excel-friendly on Windows and avoids cp1252 encode errors
+    with open(output_file, 'w', encoding='utf-8-sig', newline='') as f:
         f.write('\n'.join(lines))
     
     print(f"\n✓ Updated {output_file}")
@@ -486,10 +488,12 @@ def main():
     for test_id, tier in tests:
         cfg = test_configs.get(test_id)
         est = test_metrics.get_estimate(test_id, cfg)
-        # Dynamic timeout: use adaptive multiplier from estimate (default 3x), clamped [600, 7200]
-        est_rt = float(est.get("runtime_sec", 300.0))
+        # Timeout policy: NEVER less than --timeout (default 7200s)
+        # If an estimate exists, allow larger than default; but do not go below default
+        est_rt = float(est.get("runtime_sec", 0.0))
         timeout_mult = float(est.get("timeout_multiplier", 3.0))
-        timeout_sec = int(max(600.0, min(7200.0, est_rt * timeout_mult)))
+        estimated_timeout = int(est_rt * timeout_mult) if est_rt > 0 else int(args.timeout)
+        timeout_sec = max(int(args.timeout), estimated_timeout)
         prio = test_metrics.get_priority(test_id)
         
         # Add metadata for metrics tracking

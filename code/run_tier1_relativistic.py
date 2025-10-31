@@ -26,60 +26,18 @@ from typing import Dict, List
 
 import numpy as np
 
-try:
-    import cupy as cp
-    _HAS_CUPY = True
-except Exception:
-    cp = None
-    _HAS_CUPY = False
-from lfm_console import log, suite_summary, set_logger, log_run_config, test_start, report_progress
-from lfm_logger import LFMLogger
+from lfm_backend import to_numpy
+from lfm_console import log, suite_summary, test_start, report_progress
 from lfm_results import save_summary, write_metadata_bundle, write_csv
 from lfm_diagnostics import field_spectrum, energy_total, energy_flow, phase_corr
 from lfm_visualizer import visualize_concept
 from energy_monitor import EnergyMonitor
-from numeric_integrity import NumericIntegrityMixin
+from lfm_test_harness import BaseTierHarness
 
 
  
 def _default_config_name() -> str:
     return "config_tier1_relativistic.json"
-
-def load_config(config_path: str = None) -> Dict:
-    if config_path:
-        # Use explicit path if provided
-        cand = Path(config_path)
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-        raise FileNotFoundError(f"Config file not found: {config_path}")
-    
-    # Default: search in standard locations
-    script_dir = Path(__file__).resolve().parent
-    for root in (script_dir, script_dir.parent):
-        cand = root / "config" / _default_config_name()
-        if cand.is_file():
-            with open(cand, "r", encoding="utf-8") as f:
-                return json.load(f)
-    raise FileNotFoundError("Tier-1 config not found (expected config/config_tier1_relativistic.json).")
-
-
-def resolve_outdir(output_dir_hint: str) -> Path:
-    script_dir = Path(__file__).resolve().parent
-    outdir = script_dir / output_dir_hint
-    outdir.mkdir(parents=True, exist_ok=True)
-    return outdir
-
-
- 
-def to_numpy(x):
-    """Return a NumPy ndarray for host-side routines."""
-    if _HAS_CUPY and isinstance(x, cp.ndarray):
-        return x.get()
-    return np.asarray(x)
-
-def hann_vec(x_len: int) -> np.ndarray:
-    return np.hanning(x_len) if x_len else np.array([], dtype=np.float64)
 
 
 @dataclass
@@ -95,37 +53,10 @@ class TestSummary:
 
 
  
-class Tier1Harness(NumericIntegrityMixin):
+class Tier1Harness(BaseTierHarness):
     def __init__(self, cfg: Dict, out_root: Path):
-        self.cfg = cfg
-        self.run_settings = cfg["run_settings"]
-        self.base = cfg["parameters"]
-        self.tol  = cfg["tolerances"]
+        super().__init__(cfg, out_root, config_name="config_tier1_relativistic.json")
         self.variants = cfg["variants"]
-        self.quick = bool(self.run_settings.get("quick_mode", False))
-        self.use_gpu = bool(self.run_settings.get("use_gpu", False)) and _HAS_CUPY
-        self.xp = cp if self.use_gpu else np
-
-        self.out_root = out_root
-        self.logger = LFMLogger(self.out_root)
-        self.logger.record_env()
-        
-        try:
-            set_logger(self.logger)
-        except Exception:
-            pass
-        
-        try:
-            log_run_config(self.cfg, self.out_root)
-        except Exception:
-            pass
-        
-        self.show_progress = bool(self.run_settings.get("show_progress", True))
-        self.progress_percent_stride = int(self.run_settings.get("progress_percent_stride", 5))
-        if self.use_gpu:
-            log("[accel] Using GPU (CuPy backend).", "INFO")
-        else:
-            log("[accel] Using CPU (NumPy backend).", "INFO")
 
     
     def init_field_variant(self, test_id: str, params: Dict, N: int, dx: float, c: float, direction: str = "right"):
@@ -162,12 +93,11 @@ class Tier1Harness(NumericIntegrityMixin):
             return amp * xp.exp(-((x - c0 * dx) ** 2) / (2 * w ** 2), dtype=xp.float64)
         elif test_id == "REL-06":
             # Causality test: localized noise burst (not uniform background)
+            rng = xp.random.default_rng(1234)
             if xp is np:
-                rng = np.random.default_rng(1234)
                 noise = rng.standard_normal(N).astype(np.float64)
             else:
-                rng = cp.random.default_rng(1234)
-                noise = rng.standard_normal(N, dtype=cp.float64)
+                noise = rng.standard_normal(N, dtype=xp.float64)
             # Localize noise to central region using window
             c0 = N // 2; w = N // 8
             window = xp.exp(-((xp.arange(N) - c0) ** 2) / (2 * w ** 2), dtype=xp.float64)
@@ -181,29 +111,8 @@ class Tier1Harness(NumericIntegrityMixin):
 
     
     def estimate_omega_proj_fft(self, series: np.ndarray, dt: float) -> float:
-        data = np.asarray(series, dtype=np.float64)
-        data = data - data.mean()
-        w = hann_vec(len(data))
-        dw = data * w
-        spec = np.abs(np.fft.rfft(dw))
-        pk = int(np.argmax(spec[1:])) + 1 if len(spec) > 1 else 0
-        if 1 <= pk < len(spec) - 1:
-            s1, s2, s3 = np.log(spec[pk-1] + 1e-30), np.log(spec[pk] + 1e-30), np.log(spec[pk+1] + 1e-30)
-            denom = s1 - 2*s2 + s3
-            delta = 0.0 if abs(denom) < 1e-12 else 0.5 * (s1 - s3) / denom
-        else:
-            delta = 0.0
-        df = 1.0 / (len(dw) * dt)
-        f_peak = (pk + delta) * df
-        return 2.0 * math.pi * abs(f_peak)
-
-    def estimate_omega_phase_slope(self, z_complex: np.ndarray, t_axis: np.ndarray) -> float:
-        phi = np.unwrap(np.angle(z_complex)).astype(np.float64)
-        w = hann_vec(len(phi))
-        A = np.vstack([t_axis, np.ones_like(t_axis)]).T
-        Aw = A * w[:, None]; yw = phi * w
-        slope, _ = np.linalg.lstsq(Aw, yw, rcond=None)[0]
-        return float(abs(slope))
+        """Estimate omega from projected time series using FFT."""
+        return self.estimate_omega_fft(series, dt, method="parabolic")
 
     def measure_isotropy(self, E_right: List[np.ndarray], E_left: List[np.ndarray], 
                         dt: float, dx: float, k_ang: float) -> Dict:
@@ -1188,7 +1097,7 @@ class Tier1Harness(NumericIntegrityMixin):
             raise ValueError(f"Invalid axis: {axis}")
         
         # Apply Hann window to avoid sharp edges
-        hann_np = hann_vec(N)
+        hann_np = self.hann_window(N)
         hann = xp.asarray(hann_np, dtype=xp.float64)  # Convert to correct backend
         if axis == 'x':
             E_prev = E_prev * hann[:, None, None]
@@ -1388,7 +1297,7 @@ class Tier1Harness(NumericIntegrityMixin):
         E_prev = xp.cos(k_ang * x)
         
         # Apply Hann window and zero-mean
-        hann = xp.asarray(hann_vec(N), dtype=xp.float64)
+        hann = xp.asarray(self.hann_window(N), dtype=xp.float64)
         E_prev = E_prev * hann
         E_prev = E_prev - xp.mean(E_prev)
         E = xp.array(E_prev, copy=True)
@@ -2108,8 +2017,8 @@ def main():
                        help="Path to config file")
     args = parser.parse_args()
     
-    cfg = load_config(args.config)
-    outdir = resolve_outdir(cfg.get("output_dir", "results/Relativistic"))
+    cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
+    outdir = BaseTierHarness.resolve_outdir(cfg.get("output_dir", "results/Relativistic"))
     harness = Tier1Harness(cfg, outdir)
 
     log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")

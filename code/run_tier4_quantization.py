@@ -12,18 +12,12 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 import numpy as np
-try:
-    import cupy as cp
-    _HAS_CUPY = True
-except Exception:
-    cp = None
-    _HAS_CUPY = False
-
 import matplotlib.pyplot as plt
 
+from lfm_backend import to_numpy, get_array_module
 from lfm_results import ensure_dirs, write_csv, save_summary
-from lfm_console import log, set_logger, log_run_config
-from lfm_logger import LFMLogger
+from lfm_console import log
+from lfm_test_harness import BaseTierHarness
 
 @dataclass
 class TestResult:
@@ -33,29 +27,14 @@ class TestResult:
     metrics: Dict
     runtime_sec: float
 
-# ------------------------------ Config Loader ------------------------------
-def load_config(config_path: str = None) -> Dict:
-    if config_path:
-        p = Path(config_path)
-        with open(p, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    # default
-    p = Path(__file__).resolve().parent / 'config' / 'config_tier4_quantization.json'
-    with open(p, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-# ------------------------------ Backend select -----------------------------
-def pick_backend(use_gpu: bool):
-    on_gpu = bool(use_gpu and _HAS_CUPY)
-    if use_gpu and not _HAS_CUPY:
-        log("GPU requested but CuPy not available; using NumPy", "WARN")
-    return (cp if on_gpu else np), on_gpu
+def _default_config_name() -> str:
+    return "config_tier4_quantization.json"
 
 # ------------------------------- 1D helpers --------------------------------
 def laplacian_1d(E, dx, order=2, xp=None):
     """1D Laplacian with periodic boundaries (will be overridden by apply_dirichlet if needed)"""
     if xp is None:
-        xp = cp if (_HAS_CUPY and isinstance(E, cp.ndarray)) else np
+        xp = get_array_module(E)
     if order == 2:
         return (xp.roll(E, -1) - 2*E + xp.roll(E, 1)) / (dx*dx)
     elif order == 4:
@@ -67,11 +46,6 @@ def apply_dirichlet(E):
     """Force E=0 at boundaries for Dirichlet conditions"""
     E[0] = 0.0
     E[-1] = 0.0
-
-def to_numpy(x):
-    if _HAS_CUPY and isinstance(x, cp.ndarray):
-        return cp.asnumpy(x)
-    return np.asarray(x)
 
 # --------------------------- Cavity spectroscopy ---------------------------
 def run_cavity_spectroscopy(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
@@ -443,15 +417,18 @@ def main():
     parser.add_argument('--config', type=str, default='config/config_tier4_quantization.json')
     args = parser.parse_args()
 
-    cfg = load_config(args.config)
+    cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
     p, tol, tests = cfg['parameters'], cfg['tolerances'], cfg['tests']
 
+    from lfm_backend import pick_backend
     xp, on_gpu = pick_backend(cfg.get('hardware', {}).get('gpu_enabled', True))
     dtype = xp.float64 if cfg.get('hardware', {}).get('precision', 'float64') == 'float64' else xp.float32
 
     # Prepare output and logger
-    base = (Path(__file__).resolve().parent / cfg['output_dir']).resolve()
+    base = BaseTierHarness.resolve_outdir(cfg['output_dir'])
     ensure_dirs(base)
+    from lfm_logger import LFMLogger
+    from lfm_console import set_logger, log_run_config
     logger = LFMLogger(base)
     set_logger(logger)
     log_run_config(cfg, base)

@@ -1,9 +1,6 @@
 """
 Test script for double slit scenario - validates before deploying to interactive app
 """
-import pytest
-pytest.skip("Moved to tests/test_double_slit_scenario.py; module skipped", allow_module_level=True)
-
 import numpy as np
 from lfm_equation import lattice_step, energy_total
 import matplotlib.pyplot as plt

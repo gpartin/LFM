@@ -12,23 +12,18 @@ Now includes:
 
 import os
 import numpy as np
-try:
-    import cupy as cp  # type: ignore
-except Exception:
-    import numpy as cp  # type: ignore
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from pathlib import Path
 from datetime import datetime
+
+from lfm_backend import to_numpy
 
 # ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 def ensure_dirs(path):
     Path(path).mkdir(parents=True, exist_ok=True)
-
-def to_numpy(x):
-    return x.get() if hasattr(x, "get") else np.asarray(x)
 
 def timestamp():
     return datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
