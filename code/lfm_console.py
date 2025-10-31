@@ -5,7 +5,11 @@ Handles runtime verbosity, per-test status lines, and end summaries.
 """
 
 import sys
-import time
+import io
+# Force UTF-8 encoding for stdout
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from datetime import datetime
 
 # ---------------------------------------------------------------------
@@ -76,7 +80,7 @@ def log_run_config(cfg: dict, out_dir=None):
 # Progress / status utilities
 # ---------------------------------------------------------------------
 def test_start(test_id, desc, steps=None):
-    log(f"→ Starting {test_id}: {desc} ({steps or '?'} steps)", "INFO")
+    log(f"-> Starting {test_id}: {desc} ({steps or '?'} steps)", "INFO")
     if _GLOBAL_LOGGER is not None:
         try:
             _GLOBAL_LOGGER.log_json({"event": "test_start", "test_id": test_id, "description": desc, "steps": steps})
@@ -84,13 +88,13 @@ def test_start(test_id, desc, steps=None):
             pass
 
 def test_pass(test_id, metric=None):
-    msg = f"{test_id} PASS ✅"
+    msg = f"{test_id} PASS [OK]"
     if metric:
         msg += f" ({metric})"
     log(msg, "PASS")
 
 def test_fail(test_id, reason=None):
-    msg = f"{test_id} FAIL ❌"
+    msg = f"{test_id} FAIL [X]"
     if reason:
         msg += f" ({reason})"
     log(msg, "FAIL")

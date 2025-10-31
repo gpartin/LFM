@@ -1,0 +1,55 @@
+{
+  "run_settings": {
+    "quick_mode": true,
+    "use_gpu": true,
+    "output_dir": "results/Relativistic/",
+    "precision": "float64",
+    "show_progress": true,
+    "progress_percent_stride": 5,
+    "debug": {
+      "enable_diagnostics": false,
+      "energy_tol": 1e-06,
+      "quiet_run": true,
+      "print_probe_steps": false
+    },
+    "numeric_integrity": {
+      "energy_tol": 1e-06,
+      "quiet_warnings": true
+    }
+  },
+  "diagnostics": {
+    "energy_monitor_every": 0,
+    "diagnostics_path": "diagnostics_core.csv"
+  },
+  "parameters": {
+    "grid_points": 512,
+    "steps": 6000,
+    "dx": 0.008,
+    "dt": 0.0025,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "chi": 0.0,
+    "stencil_order": 4,
+    "boundary": "absorbing",
+    "tiles": [
+      1,
+      1,
+      1
+    ],
+    "absorb_width": 1,
+    "absorb_factor": 1.0
+  },
+  "tolerances": {
+    "energy_drift": 1e-06,
+    "anisotropy_max": 0.01,
+    "phase_error_max": 0.02,
+    "ratio_error_max": 0.05
+  },
+  "variants": [
+    {
+      "test_id": "REL-03",
+      "description": "Lorentz Boost \u00e2\u20ac\u201d Low Velocity",
+      "boost_factor": 0.2
+    }
+  ]
+}

@@ -121,6 +121,27 @@ def energy_total(E, E_prev, dt, dx, c, chi, xp=None):
     dens = 0.5*(Et*Et + (c*c)*grad_sq(E, dx, xp) + (chi*chi)*(E*E))
     return float(xp.sum(dens) * dx*dx)
 
+def energy_components(E, E_prev, dt, dx, c, chi, xp=None):
+    """
+    Compute Hamiltonian energy components: KE, GE, PE.
+    
+    Returns (KE, GE, PE) where:
+    - KE (kinetic):   ½ ∫ (∂E/∂t)² dV
+    - GE (gradient):  ½ ∫ c²(∇E)² dV  
+    - PE (potential): ½ ∫ χ²E² dV
+    
+    H_total = KE + GE + PE should be conserved.
+    """
+    if xp is None:
+        xp = cp if (_HAS_CUPY and isinstance(E, cp.ndarray)) else np
+    
+    Et = (E - E_prev) / dt
+    KE = float(0.5 * xp.sum(Et * Et) * dx*dx)
+    GE = float(0.5 * (c*c) * xp.sum(grad_sq(E, dx, xp)) * dx*dx)
+    PE = float(0.5 * xp.sum((chi*chi) * (E*E)) * dx*dx)
+    
+    return KE, GE, PE
+
 def entropy_shannon(E, xp=None):
     """Compute Shannon entropy using specified backend."""
     if xp is None:
@@ -200,8 +221,10 @@ def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
     noise_amp = float(test.get("noise_amp", 0.0))
     damping   = float(test.get("damping",   0.0))
     enforce_energy = bool(test.get("enforce_energy", False))
+    track_components = bool(test.get("track_hamiltonian_components", False))
 
     energy_trace, entropy_trace, times = [], [], []
+    KE_trace, GE_trace, PE_trace = [], [], []
     t0 = time.time()
 
     for t in range(steps):
@@ -219,6 +242,12 @@ def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
             energy_trace.append(Etot)
             entropy_trace.append(H)
             times.append(t*dt)
+            
+            if track_components:
+                KE, GE, PE = energy_components(E, E_prev, dt, dx, c, chi, xp)
+                KE_trace.append(KE)
+                GE_trace.append(GE)
+                PE_trace.append(PE)
 
         # Advance one leapfrog step
         lap = laplacian(E, dx, order=stencil_order, xp=xp)
@@ -271,11 +300,67 @@ def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
     plt.grid(True); plt.tight_layout()
     plt.savefig(out_dir/"plots"/"entropy_vs_time.png", dpi=150); plt.close()
 
+    # --- Hamiltonian component visualization ---
+    if track_components and len(KE_trace) > 0:
+        KE_np = np.array(KE_trace)
+        GE_np = np.array(GE_trace)
+        PE_np = np.array(PE_trace)
+        H_total = KE_np + GE_np + PE_np
+        
+        # Stacked area chart showing energy flow between components
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
+        
+        # Top: Stacked area showing component breakdown
+        ax1.fill_between(times_np, 0, KE_np, label='Kinetic (∂E/∂t)²', alpha=0.7, color='#e74c3c')
+        ax1.fill_between(times_np, KE_np, KE_np+GE_np, label='Gradient (∇E)²', alpha=0.7, color='#3498db')
+        ax1.fill_between(times_np, KE_np+GE_np, H_total, label='Potential (χE)²', alpha=0.7, color='#2ecc71')
+        ax1.plot(times_np, H_total, 'k-', linewidth=2, label='Total H', alpha=0.8)
+        ax1.set_ylabel('Energy density')
+        ax1.set_title(f'Hamiltonian Partitioning: H = KE + GE + PE (conserved)')
+        ax1.legend(loc='upper right')
+        ax1.grid(True, alpha=0.3)
+        
+        # Bottom: Individual components showing energy "slosh"
+        ax2.plot(times_np, KE_np / H_total[0], label='KE fraction', color='#e74c3c', linewidth=2)
+        ax2.plot(times_np, GE_np / H_total[0], label='GE fraction', color='#3498db', linewidth=2)
+        ax2.plot(times_np, PE_np / H_total[0], label='PE fraction', color='#2ecc71', linewidth=2)
+        ax2.set_xlabel('Time')
+        ax2.set_ylabel('Fractional energy')
+        ax2.set_title('Energy flow between Hamiltonian modes')
+        ax2.legend(loc='upper right')
+        ax2.grid(True, alpha=0.3)
+        ax2.set_ylim([0, 1.1])
+        
+        plt.tight_layout()
+        plt.savefig(out_dir/"plots"/"hamiltonian_components.png", dpi=150)
+        plt.close()
+        
+        # Additional: Total H conservation verification
+        H_drift = abs(H_total[-1] - H_total[0]) / max(H_total[0], 1e-30)
+        plt.figure(figsize=(8, 5))
+        plt.plot(times_np, H_total, 'k-', linewidth=2)
+        plt.xlabel('Time')
+        plt.ylabel('Total Hamiltonian H')
+        plt.title(f'Hamiltonian Conservation: H(t) (drift={H_drift:.3e})')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(out_dir/"plots"/"hamiltonian_total.png", dpi=150)
+        plt.close()
+
     # --- Output CSVs ---
     diagnostics_dir = out_dir / "diagnostics"
     ensure_dirs(diagnostics_dir)
     write_csv(diagnostics_dir/"energy_trace.csv",  list(zip(times_np, energy_trace_np)), ["time","energy"])
     write_csv(diagnostics_dir/"entropy_trace.csv", list(zip(times_np, entropy_np)),      ["time","entropy"])
+    
+    if track_components and len(KE_trace) > 0:
+        KE_np = np.array(KE_trace)
+        GE_np = np.array(GE_trace)
+        PE_np = np.array(PE_trace)
+        H_total = KE_np + GE_np + PE_np
+        write_csv(diagnostics_dir/"hamiltonian_components.csv",
+                 list(zip(times_np, KE_np, GE_np, PE_np, H_total)),
+                 ["time", "KE", "GE", "PE", "H_total"])
 
     # --- Hardware info ---
     if on_gpu and _HAS_CUPY:

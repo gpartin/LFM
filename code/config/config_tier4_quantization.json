@@ -1,0 +1,106 @@
+{
+  "tier": 4,
+  "category": "Quantization & Spectra",
+  "output_dir": "results/Quantization",
+  "hardware": {
+    "gpu_enabled": true,
+    "precision": "float64"
+  },
+  "parameters": {
+    "dt": 0.01,
+    "dx": 0.1,
+    "N": 1024,
+    "steps": 16000,
+    "save_every": 20,
+    "chi_uniform": 0.25
+  },
+  "tolerances": {
+    "spectral_err_coarse": 0.02,
+    "spectral_err_fine": 0.005,
+    "threshold_err": 0.30,
+    "uncertainty_tol_frac": 0.05
+  },
+  "tests": [
+    {
+      "test_id": "QUAN-01",
+      "description": "Two-mode resonant exchange — weak coupling (Rabi-like)",
+      "skip": true
+    },
+    {
+      "test_id": "QUAN-02",
+      "description": "Two-mode exchange — amplitude scaling (linearity)",
+      "skip": true
+    },
+    {
+      "test_id": "QUAN-03",
+      "description": "Cavity spectroscopy — coarse grid",
+      "mode": "cavity_spectroscopy",
+      "N": 512,
+      "dx": 0.2,
+      "dt": 0.01,
+      "steps": 20000,
+      "save_every": 10,
+      "chi_uniform": 0.20,
+      "num_peaks": 5,
+      "skip": false
+    },
+    {
+      "test_id": "QUAN-04",
+      "description": "Cavity spectroscopy — fine grid",
+      "mode": "cavity_spectroscopy",
+      "N": 1024,
+      "dx": 0.1,
+      "dt": 0.005,
+      "steps": 40000,
+      "save_every": 8,
+      "chi_uniform": 0.20,
+      "num_peaks": 8,
+      "skip": false
+    },
+    {
+      "test_id": "QUAN-05",
+      "description": "Linearity — AM→PM leakage vs noise (sweep)",
+      "skip": true
+    },
+    {
+      "test_id": "QUAN-06",
+      "description": "Superposition stress test — A+B principle",
+      "skip": true
+    },
+    {
+      "test_id": "QUAN-07",
+      "description": "Threshold test — transmission vs ω around χ",
+      "mode": "threshold",
+      "chi_uniform": 0.25,
+      "freq_start": 0.18,
+      "freq_end": 0.32,
+      "freq_steps": 15,
+      "drive_amp": 0.01,
+      "drive_width_cells": 4,
+      "detector_x_frac": 0.75,
+      "steps_per_freq": 4000,
+      "N": 1024,
+      "dx": 0.1,
+      "dt": 0.005,
+      "skip": false
+    },
+    {
+      "test_id": "QUAN-08",
+      "description": "Stability stress — Nyquist/CFL envelope",
+      "skip": true
+    },
+    {
+      "test_id": "QUAN-09",
+      "description": "Heisenberg uncertainty — Δx·Δk ≈ 1/2",
+      "mode": "uncertainty",
+      "dx": 0.1,
+      "dt": 0.005,
+      "N": 1024,
+      "chi_uniform": 0.20,
+      "sigma_x_list": [2.0, 3.0, 4.0, 6.0, 8.0],
+      "steps": 1,
+      "save_every": 1,
+      "skip": false
+    }
+  ]
+}
