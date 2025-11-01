@@ -42,11 +42,12 @@ import numpy as np
 from lfm_backend import pick_backend, to_numpy
 from lfm_console import log, set_logger
 from lfm_logger import LFMLogger
-from lfm_results import save_summary
+from lfm_results import save_summary, update_master_test_status
 from lfm_equation import advance, lattice_step, energy_total
 from lfm_parallel import run_lattice
 from energy_monitor import EnergyMonitor
 from numeric_integrity import NumericIntegrityMixin
+from lfm_test_metrics import TestMetrics
 
 class UnificationTest(NumericIntegrityMixin):
     """
@@ -822,6 +823,21 @@ def main():
     
     test = UnificationTest(cfg, outdir)
     results = test.run()
+    
+    # Update master test status and metrics database
+    update_master_test_status()
+    
+    # Record metrics for resource tracking
+    test_metrics = TestMetrics()
+    metrics_data = {
+        "exit_code": 0 if results["passed"] else 1,
+        "runtime_sec": results.get("runtime_sec", 0.0),
+        "peak_cpu_percent": 0.0,
+        "peak_memory_mb": 0.0,
+        "peak_gpu_memory_mb": 0.0,
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    }
+    test_metrics.record_run("UNIF-00", metrics_data)
     
     return 0 if results["passed"] else 1
 

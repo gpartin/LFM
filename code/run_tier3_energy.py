@@ -41,8 +41,9 @@ except Exception:
 
 from lfm_backend import to_numpy, get_array_module
 from lfm_console import log, suite_summary
-from lfm_results import save_summary, write_metadata_bundle, write_csv, ensure_dirs
+from lfm_results import save_summary, write_metadata_bundle, write_csv, ensure_dirs, update_master_test_status
 from lfm_test_harness import BaseTierHarness
+from lfm_test_metrics import TestMetrics
 
 def _default_config_name() -> str:
     return "config_tier3_energy.json"
@@ -424,12 +425,28 @@ def main():
     # Run tests
     results = []
     t_suite = time.time()
+    
+    # Import resource tracking
+    from resource_tracking import create_resource_tracker
+    
     for test in tests:
         if test.get("skip", False):
             log(f"[{test.get('test_id', '?')}] SKIPPED: {test.get('description', '')}", "WARN")
             continue
+        
         test_dirname = test.get('test_id', f'ENER-??')
+        
+        # Start resource tracking
+        tracker = create_resource_tracker()
+        tracker.start(background=True)
+        
+        # Run test
         result = run_test(p, tol, test, out_base / test_dirname, dtype, xp, on_gpu)
+        
+        # Stop tracking and get metrics
+        tracker.stop()
+        metrics = tracker.get_metrics()
+        
         results.append({
             "test_id": result.test_id,
             "description": result.description,
@@ -437,7 +454,10 @@ def main():
             "energy_drift": result.energy_drift,
             "entropy_monotonic": result.entropy_monotonic,
             "wave_drop": result.wave_drop,
-            "runtime_sec": result.runtime_sec
+            "runtime_sec": metrics["runtime_sec"],
+            "peak_cpu_percent": metrics["peak_cpu_percent"],
+            "peak_memory_mb": metrics["peak_memory_mb"],
+            "peak_gpu_memory_mb": metrics["peak_gpu_memory_mb"],
         })
 
     # Suite summary
@@ -446,6 +466,22 @@ def main():
                    r["entropy_monotonic"], r["wave_drop"], r["runtime_sec"]] for r in results]
     write_csv(out_base/"suite_summary.csv", suite_rows,
               ["test_id","description","passed","energy_rel_drift","entropy_monotonic","wave_max_drop","runtime_sec"])
+    
+    # Update master test status and metrics database
+    update_master_test_status()
+    
+    # Record metrics for resource tracking (now with REAL metrics!)
+    test_metrics = TestMetrics()
+    for r in results:
+        metrics_data = {
+            "exit_code": 0 if r["passed"] else 1,
+            "runtime_sec": r["runtime_sec"],
+            "peak_cpu_percent": r["peak_cpu_percent"],
+            "peak_memory_mb": r["peak_memory_mb"],
+            "peak_gpu_memory_mb": r["peak_gpu_memory_mb"],
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        test_metrics.record_run(r["test_id"], metrics_data)
     
     if args.test:
         # Single test: just show result

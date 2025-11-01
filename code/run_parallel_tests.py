@@ -24,6 +24,7 @@ from datetime import datetime
 import psutil  # system memory info
 
 from lfm_test_metrics import TestMetrics, load_test_configs
+from lfm_results import update_master_test_status
 
 
 def run_single_test(test_id: str, tier: int, timeout_sec: int) -> Tuple[str, int, Dict]:
@@ -278,134 +279,7 @@ def get_specific_tests(test_ids: List[str]) -> List[Tuple[str, int]]:
     return tests
 
 
-def update_master_test_status():
-    """
-    Scan results directory and update MASTER_TEST_STATUS.csv with current test results.
-    """
-    results_dir = Path("results")
-    
-    # Test categories and expected counts
-    categories = {
-        1: {"name": "Relativistic", "prefix": "REL", "expected": 15},
-        2: {"name": "Gravity Analogue", "prefix": "GRAV", "expected": 25},
-        3: {"name": "Energy Conservation", "prefix": "ENRG", "expected": 11},
-        4: {"name": "Quantization", "prefix": "QUANT", "expected": 9},
-    }
-    
-    # Scan all summary.json files
-    all_tests = {}
-    for tier, cat_info in categories.items():
-        cat_dir = results_dir / cat_info["name"].replace(" ", "")
-        if not cat_dir.exists():
-            continue
-            
-        for test_dir in cat_dir.iterdir():
-            if not test_dir.is_dir():
-                continue
-                
-            summary_file = test_dir / "summary.json"
-            if summary_file.exists():
-                try:
-                    # Read JSON summaries as UTF-8 to support non-ASCII characters
-                    with open(summary_file, 'r', encoding='utf-8') as f:
-                        summary = json.load(f)
-                    
-                    test_id = summary.get("test_id", test_dir.name)
-                    status = summary.get("status", "UNKNOWN")
-                    description = summary.get("description", "")
-                    notes = summary.get("notes", "")
-                    
-                    all_tests[test_id] = {
-                        "tier": tier,
-                        "description": description,
-                        "status": status,
-                        "notes": notes
-                    }
-                except (json.JSONDecodeError, KeyError) as e:
-                    print(f"Warning: Could not read {summary_file}: {e}")
-    
-    # Generate CSV content
-    lines = []
-    lines.append("MASTER TEST STATUS REPORT - LFM Lattice Field Model")
-    lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append("Validation Rule: Suite marked NOT RUN if any test missing from CSV")
-    lines.append("")
-    lines.append("CATEGORY SUMMARY")
-    lines.append("Tier,Category,Expected_Tests,Tests_In_CSV,Status,Pass_Rate")
-    
-    # Category summaries
-    for tier in sorted(categories.keys()):
-        cat_info = categories[tier]
-        prefix = cat_info["prefix"]
-        expected = cat_info["expected"]
-        
-        # Find all tests for this category
-        tier_tests = {tid: info for tid, info in all_tests.items() if info["tier"] == tier}
-        tests_in_csv = len(tier_tests)
-        
-        # Count statuses
-        passed = sum(1 for t in tier_tests.values() if t["status"] == "PASS")
-        failed = sum(1 for t in tier_tests.values() if t["status"] == "FAIL")
-        skipped = sum(1 for t in tier_tests.values() if t["status"] in ["SKIP", "SKIPPED"])
-        unknown = sum(1 for t in tier_tests.values() if t["status"] not in ["PASS", "FAIL", "SKIP", "SKIPPED"])
-        missing = expected - tests_in_csv
-        
-        # Determine overall status
-        if tests_in_csv == 0 or missing > expected // 2:
-            status = "NOT RUN"
-        elif passed == tests_in_csv:
-            status = "PASS"
-        elif passed > 0:
-            status = "PARTIAL"
-        else:
-            status = "FAIL"
-        
-        # Build pass rate string
-        parts = []
-        if passed > 0:
-            parts.append(f"{passed}/{tests_in_csv} passed")
-        if skipped > 0:
-            parts.append(f"{skipped} skipped")
-        if missing > 0:
-            parts.append(f"{missing} missing")
-        if unknown > 0:
-            parts.append(f"{unknown} unknown")
-        
-        pass_rate = " - ".join(parts) if parts else f"{passed}/{tests_in_csv} (100%)"
-        
-        lines.append(f"Tier {tier},{cat_info['name']},{expected},{tests_in_csv},{status},{pass_rate}")
-    
-    lines.append("")
-    lines.append("DETAILED TEST RESULTS")
-    lines.append("")
-    
-    # Detailed results by tier
-    for tier in sorted(categories.keys()):
-        cat_info = categories[tier]
-        tier_tests = {tid: info for tid, info in all_tests.items() if info["tier"] == tier}
-        
-        if not tier_tests:
-            continue
-            
-        lines.append(f"TIER {tier} - {cat_info['name'].upper()} ({len(tier_tests)}/{cat_info['expected']} tests)")
-        lines.append("Test_ID,Description,Status,Notes")
-        
-        # Sort by test ID
-        for test_id in sorted(tier_tests.keys()):
-            info = tier_tests[test_id]
-            desc = info["description"].replace(",", ";")  # Escape commas
-            notes = info["notes"].replace(",", ";")  # Escape commas
-            lines.append(f"{test_id},{desc},{info['status']},{notes}")
-        
-        lines.append("")
-    
-    # Write to file
-    output_file = results_dir / "MASTER_TEST_STATUS.csv"
-    # Write CSV with UTF-8 BOM so it's Excel-friendly on Windows and avoids cp1252 encode errors
-    with open(output_file, 'w', encoding='utf-8-sig', newline='') as f:
-        f.write('\n'.join(lines))
-    
-    print(f"\n✓ Updated {output_file}")
+# update_master_test_status() moved to lfm_results.py for sharing across all test harnesses
 
 
 def main():
@@ -752,13 +626,55 @@ def main():
                     
                     all_results.append(res)
                     completed_count += 1
-                    status = "✓ PASS" if exit_code == 0 else "✗ FAIL"
+                    
+                    # Check actual test status from summary.json if available
+                    # Map tier to output category
+                    tier_categories = {
+                        1: "Relativistic",
+                        2: "Gravity",
+                        3: "Energy",
+                        4: "Quantization"
+                    }
+                    category = tier_categories.get(tier_done, f"Tier{tier_done}")
+                    
+                    actual_status = None
+                    summary_path = Path(f"results/{category}/{test_id_done}/summary.json")
+                    if summary_path.exists():
+                        try:
+                            import json
+                            with open(summary_path, encoding='utf-8') as f:
+                                summary = json.load(f)
+                                # Handle different status field names
+                                actual_status = summary.get("status", summary.get("passed"))
+                                # Convert boolean to string
+                                if isinstance(actual_status, bool):
+                                    actual_status = "Passed" if actual_status else "Failed"
+                        except:
+                            pass  # If can't read, fall back to exit code
+                    
+                    # Determine display status
+                    if actual_status in ("Passed", "Pass", "PASS"):
+                        status = "✓ PASS"
+                    elif actual_status in ("Failed", "Fail", "FAIL"):
+                        status = "✗ FAIL"
+                    else:
+                        # Fall back to exit code if no summary or unrecognized status
+                        status = "✓ PASS" if exit_code == 0 else "✗ FAIL"
+                    
                     runtime = metrics.get("runtime_sec", 0.0)
                     print(f"  {status} {test_id_done} ({runtime:.1f}s)", flush=True)
     
     total_time = time.time() - start_time
     
-    # Record metrics and count pass/fail
+    # Record metrics and count pass/fail based on actual test status
+    # Map tier to output category
+    tier_categories = {
+        1: "Relativistic",
+        2: "Gravity",
+        3: "Energy",
+        4: "Quantization"
+    }
+    
     passed = 0
     failed = 0
     failed_tests = []
@@ -767,8 +683,32 @@ def main():
         # Always record to database (even timeouts/errors provide timing data)
         test_metrics.record_run(test_id, metrics)
         
+        # Check actual test status from summary.json
+        category = tier_categories.get(tier, f"Tier{tier}")
+        summary_path = Path(f"results/{category}/{test_id}/summary.json")
+        test_passed = None
+        
+        if summary_path.exists():
+            try:
+                import json
+                with open(summary_path, encoding='utf-8') as f:
+                    summary = json.load(f)
+                    # Handle different status field names
+                    actual_status = summary.get("status", summary.get("passed"))
+                    # Convert to boolean
+                    if isinstance(actual_status, bool):
+                        test_passed = actual_status
+                    elif isinstance(actual_status, str):
+                        test_passed = actual_status in ("Passed", "Pass", "PASS")
+            except:
+                pass
+        
+        # Fall back to exit code if no summary available
+        if test_passed is None:
+            test_passed = (metrics["exit_code"] == 0)
+        
         # Count results
-        if metrics["exit_code"] == 0:
+        if test_passed:
             passed += 1
         else:
             failed += 1

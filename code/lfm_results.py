@@ -120,3 +120,148 @@ def write_metadata_bundle(base_dir, test_id, tier, category, hardware_info=None)
     }
     write_json(Path(base_dir) / "metadata.json", bundle)
     return bundle
+
+# ---------------------------------------------------------------------
+# Master test status tracking
+# ---------------------------------------------------------------------
+def update_master_test_status(results_dir: Path = None):
+    """
+    Scan results directory and update MASTER_TEST_STATUS.csv with current test results.
+    Should be called after any test completes (individual, tier, or parallel suite).
+    
+    Args:
+        results_dir: Path to results directory (default: ./results)
+    """
+    if results_dir is None:
+        results_dir = Path("results")
+    else:
+        results_dir = Path(results_dir)
+    
+    # Test categories and expected counts
+    categories = {
+        1: {"name": "Relativistic", "prefix": "REL", "expected": 15, "dir": "Relativistic"},
+        2: {"name": "Gravity Analogue", "prefix": "GRAV", "expected": 25, "dir": "Gravity"},
+        3: {"name": "Energy Conservation", "prefix": "ENRG", "expected": 11, "dir": "Energy"},
+        4: {"name": "Quantization", "prefix": "QUANT", "expected": 9, "dir": "Quantization"},
+    }
+    
+    # Scan all summary.json files
+    all_tests = {}
+    for tier, cat_info in categories.items():
+        cat_dir = results_dir / cat_info["dir"]
+        if not cat_dir.exists():
+            continue
+            
+        for test_dir in cat_dir.iterdir():
+            if not test_dir.is_dir():
+                continue
+                
+            summary_file = test_dir / "summary.json"
+            if summary_file.exists():
+                try:
+                    # Read JSON summaries as UTF-8 to support non-ASCII characters
+                    with open(summary_file, 'r', encoding='utf-8') as f:
+                        summary = json.load(f)
+                    
+                    test_id = summary.get("test_id", summary.get("id", test_dir.name))
+                    # Determine status from various possible field names
+                    if "status" in summary:
+                        status = summary["status"]
+                    elif "passed" in summary:
+                        status = "PASS" if summary["passed"] else "FAIL"
+                    else:
+                        status = "UNKNOWN"
+                    description = summary.get("description", "")
+                    notes = summary.get("notes", "")
+                    
+                    all_tests[test_id] = {
+                        "tier": tier,
+                        "description": description,
+                        "status": status,
+                        "notes": notes
+                    }
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"Warning: Could not read {summary_file}: {e}")
+    
+    # Generate CSV content
+    lines = []
+    lines.append("MASTER TEST STATUS REPORT - LFM Lattice Field Model")
+    lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append("Validation Rule: Suite marked NOT RUN if any test missing from CSV")
+    lines.append("")
+    lines.append("CATEGORY SUMMARY")
+    lines.append("Tier,Category,Expected_Tests,Tests_In_CSV,Status,Pass_Rate")
+    
+    # Category summaries
+    for tier in sorted(categories.keys()):
+        cat_info = categories[tier]
+        prefix = cat_info["prefix"]
+        expected = cat_info["expected"]
+        
+        # Find all tests for this category
+        tier_tests = {tid: info for tid, info in all_tests.items() if info["tier"] == tier}
+        tests_in_csv = len(tier_tests)
+        
+        # Count statuses
+        passed = sum(1 for t in tier_tests.values() if t["status"] == "PASS")
+        failed = sum(1 for t in tier_tests.values() if t["status"] == "FAIL")
+        skipped = sum(1 for t in tier_tests.values() if t["status"] in ["SKIP", "SKIPPED"])
+        unknown = sum(1 for t in tier_tests.values() if t["status"] not in ["PASS", "FAIL", "SKIP", "SKIPPED"])
+        missing = expected - tests_in_csv
+        
+        # Determine overall status
+        if tests_in_csv == 0 or missing > expected // 2:
+            status = "NOT RUN"
+        elif passed == tests_in_csv:
+            status = "PASS"
+        elif passed > 0:
+            status = "PARTIAL"
+        else:
+            status = "FAIL"
+        
+        # Build pass rate string
+        parts = []
+        if passed > 0:
+            parts.append(f"{passed}/{tests_in_csv} passed")
+        if skipped > 0:
+            parts.append(f"{skipped} skipped")
+        if missing > 0:
+            parts.append(f"{missing} missing")
+        if unknown > 0:
+            parts.append(f"{unknown} unknown")
+        
+        pass_rate = " - ".join(parts) if parts else f"{passed}/{tests_in_csv} (100%)"
+        
+        lines.append(f"Tier {tier},{cat_info['name']},{expected},{tests_in_csv},{status},{pass_rate}")
+    
+    lines.append("")
+    lines.append("DETAILED TEST RESULTS")
+    lines.append("")
+    
+    # Detailed results by tier
+    for tier in sorted(categories.keys()):
+        cat_info = categories[tier]
+        tier_tests = {tid: info for tid, info in all_tests.items() if info["tier"] == tier}
+        
+        if not tier_tests:
+            continue
+            
+        lines.append(f"TIER {tier} - {cat_info['name'].upper()} ({len(tier_tests)}/{cat_info['expected']} tests)")
+        lines.append("Test_ID,Description,Status,Notes")
+        
+        # Sort by test ID
+        for test_id in sorted(tier_tests.keys()):
+            info = tier_tests[test_id]
+            desc = info["description"].replace(",", ";")  # Escape commas
+            notes = info["notes"].replace(",", ";")  # Escape commas
+            lines.append(f"{test_id},{desc},{info['status']},{notes}")
+        
+        lines.append("")
+    
+    # Write to file
+    output_file = results_dir / "MASTER_TEST_STATUS.csv"
+    # Write CSV with UTF-8 BOM so it's Excel-friendly on Windows and avoids cp1252 encode errors
+    with open(output_file, 'w', encoding='utf-8-sig', newline='') as f:
+        f.write('\n'.join(lines))
+    
+    return output_file

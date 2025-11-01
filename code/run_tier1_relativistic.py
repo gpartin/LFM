@@ -28,11 +28,12 @@ import numpy as np
 
 from lfm_backend import to_numpy
 from lfm_console import log, suite_summary, test_start, report_progress
-from lfm_results import save_summary, write_metadata_bundle, write_csv
+from lfm_results import save_summary, write_metadata_bundle, write_csv, update_master_test_status
 from lfm_diagnostics import field_spectrum, energy_total, energy_flow, phase_corr
 from lfm_visualizer import visualize_concept
 from energy_monitor import EnergyMonitor
 from lfm_test_harness import BaseTierHarness
+from lfm_test_metrics import TestMetrics
 
 
  
@@ -50,6 +51,9 @@ class TestSummary:
     omega_theory: float
     runtime_sec: float
     k_fraction_lattice: float
+    peak_cpu_percent: float = 0.0
+    peak_memory_mb: float = 0.0
+    peak_gpu_memory_mb: float = 0.0
 
 
  
@@ -1993,7 +1997,15 @@ class Tier1Harness(BaseTierHarness):
     def run(self) -> List[Dict]:
         results = []
         for v in self.variants:
+            # Start resource tracking for this test
+            self.start_test_tracking(background=True)
+            
+            # Run the test
             res = self.run_variant(v)
+            
+            # Stop tracking and collect metrics
+            metrics = self.stop_test_tracking()
+            
             results.append({
                 "test_id": res.id,
                 "description": res.description,
@@ -2001,8 +2013,11 @@ class Tier1Harness(BaseTierHarness):
                 "rel_err": res.rel_err,
                 "omega_meas": res.omega_meas,
                 "omega_theory": res.omega_theory,
-                "runtime_sec": res.runtime_sec,
+                "runtime_sec": metrics["runtime_sec"],  # Use tracked runtime
                 "k_fraction_lattice": res.k_fraction_lattice,
+                "peak_cpu_percent": metrics["peak_cpu_percent"],
+                "peak_memory_mb": metrics["peak_memory_mb"],
+                "peak_gpu_memory_mb": metrics["peak_gpu_memory_mb"],
             })
         return results
 
@@ -2034,6 +2049,22 @@ def main():
         log(f"=== Tier-1 Relativistic Suite Start (quick={harness.quick}) ===", "INFO")
 
     results = harness.run()
+    
+    # Update master test status and metrics database
+    update_master_test_status()
+    
+    # Record metrics for resource tracking (now with REAL metrics!)
+    test_metrics = TestMetrics()
+    for r in results:
+        metrics_data = {
+            "exit_code": 0 if r["passed"] else 1,
+            "runtime_sec": r["runtime_sec"],
+            "peak_cpu_percent": r["peak_cpu_percent"],
+            "peak_memory_mb": r["peak_memory_mb"],
+            "peak_gpu_memory_mb": r["peak_gpu_memory_mb"],
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        test_metrics.record_run(r["test_id"], metrics_data)
     
     if args.test:
         # Single test: just show result

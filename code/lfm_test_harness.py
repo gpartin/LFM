@@ -31,6 +31,7 @@ from lfm_backend import pick_backend
 from lfm_console import log, set_logger, log_run_config
 from lfm_logger import LFMLogger
 from numeric_integrity import NumericIntegrityMixin
+from resource_tracking import create_resource_tracker
 
 
 class BaseTierHarness(NumericIntegrityMixin):
@@ -99,6 +100,12 @@ class BaseTierHarness(NumericIntegrityMixin):
         self.progress_percent_stride = int(
             self.run_settings.get("progress_percent_stride", 5)
         )
+        
+        # Resource tracking
+        self.enable_resource_tracking = bool(
+            self.run_settings.get("enable_resource_tracking", True)
+        )
+        self._current_tracker = None  # Active tracker for current test
         
         # Log backend info
         backend_name = "GPU (CuPy)" if self.use_gpu else "CPU (NumPy)"
@@ -303,6 +310,66 @@ class BaseTierHarness(NumericIntegrityMixin):
         
         slope, _ = np.linalg.lstsq(Aw, yw, rcond=None)[0]
         return float(abs(slope))
+    
+    def start_test_tracking(self, background: bool = False):
+        """
+        Start resource tracking for current test.
+        
+        Args:
+            background: If True, use background thread for continuous monitoring
+        
+        Example:
+            >>> harness.start_test_tracking(background=True)
+            >>> # ... run test ...
+            >>> metrics = harness.stop_test_tracking()
+        """
+        if not self.enable_resource_tracking:
+            return
+        
+        self._current_tracker = create_resource_tracker(sample_interval=0.5)
+        self._current_tracker.start(background=background)
+    
+    def sample_test_resources(self):
+        """
+        Manually sample current resource usage.
+        
+        Call this periodically during test execution if not using background mode.
+        
+        Example:
+            >>> harness.start_test_tracking(background=False)
+            >>> for step in range(steps):
+            >>>     # ... compute ...
+            >>>     if step % 100 == 0:
+            >>>         harness.sample_test_resources()
+        """
+        if self._current_tracker:
+            self._current_tracker.sample()
+    
+    def stop_test_tracking(self) -> Dict:
+        """
+        Stop resource tracking and return metrics.
+        
+        Returns:
+            Dict with resource metrics (cpu, memory, gpu, runtime)
+            Returns zeros if tracking disabled
+        
+        Example:
+            >>> metrics = harness.stop_test_tracking()
+            >>> print(f"Peak CPU: {metrics['peak_cpu_percent']:.1f}%")
+        """
+        if not self._current_tracker:
+            # Return empty metrics if tracking not started
+            return {
+                "peak_cpu_percent": 0.0,
+                "peak_memory_mb": 0.0,
+                "peak_gpu_memory_mb": 0.0,
+                "runtime_sec": 0.0
+            }
+        
+        self._current_tracker.stop()
+        metrics = self._current_tracker.get_metrics()
+        self._current_tracker = None
+        return metrics
     
     def log_test_start(self, test_id: str, description: str, steps: int):
         """

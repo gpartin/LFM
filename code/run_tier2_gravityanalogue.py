@@ -31,12 +31,13 @@ import numpy as np
 
 from lfm_backend import to_numpy
 from lfm_console import log, suite_summary, report_progress
-from lfm_results import save_summary, write_metadata_bundle, write_csv
+from lfm_results import save_summary, write_metadata_bundle, write_csv, update_master_test_status
 from lfm_diagnostics import energy_total
 from lfm_visualizer import visualize_concept
 from lfm_test_harness import BaseTierHarness
 from energy_monitor import EnergyMonitor
 from lfm_equation import advance, lattice_step
+from lfm_test_metrics import TestMetrics
 try:
     # Optional: χ from energy density (Poisson approach, 1D)
     from chi_field_equation import compute_chi_from_energy_poisson
@@ -61,6 +62,9 @@ class VariantResult:
     ratio_theory: float
     runtime_sec: float
     on_gpu: bool
+    peak_cpu_percent: float = 0.0
+    peak_memory_mb: float = 0.0
+    peak_gpu_memory_mb: float = 0.0
 
  
 def build_chi_field(kind: str, shape_or_N, dx: float, params: Dict, xp, ndim: int = 3):
@@ -2498,7 +2502,25 @@ class Tier2Harness(BaseTierHarness):
                              t_serial+t_parallel,self.on_gpu)
 
     def run(self)->List[Dict]:
-        return [self.run_variant(v).__dict__ for v in self.variants]
+        results = []
+        for v in self.variants:
+            # Start resource tracking for this test
+            self.start_test_tracking(background=True)
+            
+            # Run the test
+            res = self.run_variant(v)
+            
+            # Stop tracking and collect metrics
+            metrics = self.stop_test_tracking()
+            
+            # Update result with actual metrics
+            res.runtime_sec = metrics["runtime_sec"]
+            res.peak_cpu_percent = metrics["peak_cpu_percent"]
+            res.peak_memory_mb = metrics["peak_memory_mb"]
+            res.peak_gpu_memory_mb = metrics["peak_gpu_memory_mb"]
+            
+            results.append(res.__dict__)
+        return results
 
 # --------------------------- Main ---------------------------
 def main():
@@ -2527,6 +2549,22 @@ def main():
         log(f"=== Tier-2 Gravity Analogue Suite Start ===", "INFO")
     
     results = harness.run()
+    
+    # Update master test status and metrics database
+    update_master_test_status()
+    
+    # Record metrics for resource tracking (now with REAL metrics!)
+    test_metrics = TestMetrics()
+    for r in results:
+        metrics_data = {
+            "exit_code": 0 if r["passed"] else 1,
+            "runtime_sec": r["runtime_sec"],
+            "peak_cpu_percent": r["peak_cpu_percent"],
+            "peak_memory_mb": r["peak_memory_mb"],
+            "peak_gpu_memory_mb": r["peak_gpu_memory_mb"],
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        test_metrics.record_run(r["test_id"], metrics_data)
     
     if args.test:
         # Single test: just show result
