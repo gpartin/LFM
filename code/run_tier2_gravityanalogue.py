@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: gpartin@gmail.com
+
 """
 LFM Tier-2 — Gravity Analogue Suite
 -----------------------------------
@@ -341,6 +347,8 @@ class Tier2Harness(BaseTierHarness):
         p = {**self.base, **v}
         mode = p.get("mode", "local_frequency")  # local_frequency | time_dilation | time_delay | phase_delay(_diff) | energy_dispersion_3d | double_slit_3d | redshift | self_consistency
         ndim = int(p.get("ndim", 3))  # 1D or 3D simulation (default 3 for backward compatibility)
+        # Extra fields to augment summary with post-processed metrics (e.g., interference visibility)
+        extra_fields = {}
         
         # Support both cubic (grid_points: int) and non-cubic (grid_points: [Nx,Ny,Nz]) grids
         grid_pts = p.get("grid_points", 64)
@@ -1617,6 +1625,83 @@ class Tier2Harness(BaseTierHarness):
                     snap_grp[f'step_{step:06d}'].attrs['time'] = t
             log(f"Saved double-slit 3D snapshots to {h5_path.name} ({h5_path.stat().st_size / (1024**2):.1f} MB)", "INFO")
             t_parallel = 0.0
+
+            # Post-process: generate interference pattern image and 1D intensity profile CSV
+            try:
+                import matplotlib.pyplot as plt
+                from scipy.signal import find_peaks
+                # Use the last snapshot as steady-state approximation
+                if len(snapshots_3d) > 0:
+                    last_field = snapshots_3d[-1][2]
+                    # Choose a screen plane near far-field
+                    z_screen = int(0.85 * shape[2])
+                    z_screen = max(0, min(shape[2]-1, z_screen))
+                    intensity_plane = np.abs(last_field[:, :, z_screen])**2
+
+                    # Compute a 1D profile along y at center x band (average over a band to reduce noise)
+                    band_half = max(1, shape[0] // 20)  # ~10% width band
+                    x0 = max(0, cx - band_half)
+                    x1 = min(shape[0], cx + band_half)
+                    profile_y = intensity_plane[x0:x1, :].mean(axis=0)
+
+                    # Compute simple visibility metric in the profile region
+                    Imax = float(np.max(profile_y))
+                    Imin = float(np.min(profile_y))
+                    denom = Imax + Imin if (Imax + Imin) > 1e-20 else 1e-20
+                    visibility = (Imax - Imin) / denom
+
+                    # Estimate fringe count (peaks) for reporting
+                    peaks, _ = find_peaks(profile_y, prominence=0.05 * max(Imax, 1e-20))
+                    fringe_count = int(len(peaks))
+                    extra_fields.update({
+                        "interference_visibility": float(visibility),
+                        "fringe_count": fringe_count,
+                        "screen_z_index": int(z_screen)
+                    })
+
+                    # Save profile CSV
+                    ensure_dir = (lambda p: p.mkdir(parents=True, exist_ok=True))
+                    diag_dir_path = Path(diag_dir)
+                    plots_dir_path = Path(plot_dir)
+                    ensure_dir(diag_dir_path)
+                    ensure_dir(plots_dir_path)
+                    prof_csv = diag_dir_path / f"interference_profile_{tid}.csv"
+                    with open(prof_csv, 'w', encoding='utf-8') as f:
+                        f.write('y_index,y_pos,intensity\n')
+                        for iy in range(intensity_plane.shape[1]):
+                            y_pos = iy * dx
+                            f.write(f"{iy},{y_pos:.8f},{profile_y[iy]:.10e}\n")
+
+                    # Plot intensity plane and profile
+                    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
+                    im = axes[0].imshow(
+                        intensity_plane.T,
+                        origin='lower',
+                        cmap='magma',
+                        aspect='auto'
+                    )
+                    axes[0].set_title(f'Interference at z={z_screen} (far field)')
+                    axes[0].set_xlabel('x index')
+                    axes[0].set_ylabel('y index')
+                    fig.colorbar(im, ax=axes[0], fraction=0.046, pad=0.04, label='Intensity')
+
+                    y_axis = np.arange(intensity_plane.shape[1]) * dx
+                    axes[1].plot(y_axis, profile_y, 'w-', linewidth=1.5, label='Intensity profile')
+                    axes[1].set_title(f'Profile: visibility={visibility:.3f}, fringes={fringe_count}')
+                    axes[1].legend(loc='best', fontsize=8)
+                    axes[1].set_xlabel('y (physical units)')
+                    axes[1].set_ylabel('Intensity (avg over x-band)')
+                    axes[1].grid(True, alpha=0.3)
+
+                    plt.tight_layout()
+                    out_png = plots_dir_path / f"interference_pattern_{tid}.png"
+                    plt.savefig(out_png, dpi=140)
+                    plt.close()
+                    log(f"Saved interference pattern and profile: {out_png.name}, {prof_csv.name}", "INFO")
+                else:
+                    log("No snapshots captured; skipping interference post-processing", "WARN")
+            except Exception as e:
+                log(f"Interference post-processing failed ({type(e).__name__}: {e})", "WARN")
         else:
             # For other modes: run standard serial and parallel simulations
             series_A, series_B = [], []
@@ -2494,7 +2579,8 @@ class Tier2Harness(BaseTierHarness):
             "chiA":float(chiA),"chiB":float(chiB),
             "freq_shift_theory_pct":float(freq_shift_theory_pct),
             "freq_shift_measured_pct":float(freq_shift_meas_pct),
-            "N":int(N),"dx":float(dx),"dt":float(dt),"steps":int(steps)})
+            "N":int(N),"dx":float(dx),"dt":float(dt),"steps":int(steps),
+            **extra_fields})
 
         log(f"{tid} {'PASS ✅' if passed else 'FAIL ❌'} "
             f"(ratio_err={err*100:.2f}%)","INFO" if passed else "FAIL")

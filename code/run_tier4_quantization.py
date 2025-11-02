@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: gpartin@gmail.com
+
 """
 Tier-4 — Quantization & Spectra Tests
 - Famous-equation test implemented: Heisenberg uncertainty Δx·Δk ≈ 1/2 (natural units)
@@ -1910,6 +1916,43 @@ def run_bound_state_quantization(params, tol, test, out_dir: Path, xp, on_gpu) -
     plt.tight_layout()
     plt.savefig(out_dir / "plots" / "mode_evolution.png", dpi=150)
     plt.close()
+
+    # Plot theoretical bound-state mode shapes ψ_n(x) and save CSV
+    try:
+        M = min(5, num_modes)  # show up to 5 lowest modes
+        x_plot = x_np
+        psi = []
+        for n in range(1, M + 1):
+            k_n = n * np.pi / L
+            psi_n = np.sqrt(2.0 / L) * np.sin(k_n * x_plot)
+            psi.append(psi_n)
+        psi = np.array(psi)  # shape (M, N)
+
+        # Save mode shapes CSV
+        ensure_dirs(out_dir / "diagnostics")
+        shapes_csv = out_dir / "diagnostics" / "mode_shapes.csv"
+        with open(shapes_csv, 'w', encoding='utf-8') as f:
+            header = ["x"] + [f"psi_{n}" for n in range(1, M + 1)]
+            f.write(",".join(header) + "\n")
+            for i in range(len(x_plot)):
+                row = [f"{x_plot[i]:.10e}"] + [f"{psi[n-1, i]:.10e}" for n in range(1, M + 1)]
+                f.write(",".join(row) + "\n")
+
+        # Plot
+        plt.figure(figsize=(12, 6))
+        for n in range(1, M + 1):
+            plt.plot(x_plot, psi[n-1], label=f"ψ_{n}(x)")
+        plt.xlabel('Position x', fontsize=12)
+        plt.ylabel('Mode shape ψ_n(x)', fontsize=12)
+        plt.title(f'{test_id}: Bound-state mode shapes (Dirichlet)')
+        plt.legend(ncol=2)
+        plt.grid(True, alpha=0.3)
+        ensure_dirs(out_dir / "plots")
+        plt.tight_layout()
+        plt.savefig(out_dir / "plots" / "bound_state_modes.png", dpi=150)
+        plt.close()
+    except Exception as e:
+        log(f"Plotting mode shapes skipped ({type(e).__name__}: {e})", "WARN")
     
     summary = {
         "tier": 4,

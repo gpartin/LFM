@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: gpartin@gmail.com
+
 """
 LFM Tier-1 — Dispersion Curve Diagnostic (4th-Order Stencil, Discrete-Theory)
 - Correct leapfrog + stencil discrete dispersion

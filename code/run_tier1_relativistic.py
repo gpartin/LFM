@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: gpartin@gmail.com
+
 """
 LFM Tier-1 — Relativistic Propagation & Isotropy Suite
 ----------------------------------------------------
@@ -1364,6 +1370,47 @@ class Tier1Harness(BaseTierHarness):
             f.write("t,projection\n")
             for i, proj in enumerate(proj_series):
                 f.write(f"{i*dt:.8f},{proj:.10e}\n")
+        
+        # Generate dispersion plots: projection spectrum with measured/theory ω, and comparison of ω²/k²
+        try:
+            import matplotlib.pyplot as plt
+            # Prepare spectrum of projection series
+            proj_arr = np.array(proj_series, dtype=np.float64)
+            # Apply Hann window to reduce leakage
+            window = np.hanning(len(proj_arr))
+            proj_win = proj_arr * window
+            fft_vals = np.fft.rfft(proj_win)
+            freq_hz = np.fft.rfftfreq(len(proj_arr), d=dt)  # cycles per unit time
+            omega_axis = 2.0 * math.pi * freq_hz             # angular frequency
+            spec = np.abs(fft_vals)
+
+            fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
+            # Left: Spectrum with markers
+            axes[0].plot(omega_axis, spec, 'b-')
+            axes[0].axvline(omega_meas, color='orange', linestyle='--', linewidth=2, label=f"measured ω={omega_meas:.4f}")
+            axes[0].axvline(omega_theory, color='green', linestyle=':', linewidth=2, label=f"theory ω={omega_theory:.4f}")
+            axes[0].set_xlim(0, max(omega_theory*2.0, omega_meas*2.0))
+            axes[0].set_xlabel('Angular frequency ω')
+            axes[0].set_ylabel('|FFT(projection)|')
+            axes[0].set_title(f'{tid}: Projection spectrum')
+            axes[0].legend(fontsize=9)
+            axes[0].grid(True, alpha=0.3)
+
+            # Right: ω²/k² comparison as bars
+            labels = ['measured', 'theory']
+            values = [omega2_over_k2_meas, omega2_over_k2_theory]
+            axes[1].bar(labels, values, color=['tab:orange','tab:green'], alpha=0.8)
+            axes[1].set_ylabel('ω² / k²')
+            axes[1].set_title(f'χ/k = {chi_over_k:.3f}, rel_err = {rel_err*100:.2f}%')
+            for i, v in enumerate(values):
+                axes[1].text(i, v, f"{v:.3f}", ha='center', va='bottom', fontsize=9)
+            axes[1].grid(True, axis='y', alpha=0.3)
+
+            plt.tight_layout()
+            plt.savefig(plot_dir / f"dispersion_{tid}.png", dpi=140)
+            plt.close()
+        except Exception as e:
+            log(f"Plotting dispersion skipped ({type(e).__name__}: {e})", "WARN")
         
         summary = {
             "id": tid, "description": desc, "passed": passed,

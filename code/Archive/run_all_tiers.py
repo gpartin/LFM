@@ -1,3 +1,9 @@
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: gpartin@gmail.com
+
 """
 LFM Phase-1 Runner — v2.1 (Auto-Discovery + Single Run Mode)
 Automatically runs all Tier scripts or one specific script.
