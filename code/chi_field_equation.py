@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
-# Minimal chi-field helpers for Tier-2 GRAV tests (1D support)
-# Copyright (c) 2025 Greg D. Partin.
-# Licensed under CC BY-NC-ND 4.0.
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: latticefieldmediumresearch@gmail.com
+
+"""
+Chi-Field Evolution Module
+==========================
+Minimal chi-field helpers for Tier-2 GRAV tests (1D support)
+Provides coupled field evolution for gravitational analogue simulations.
+"""
 
 from __future__ import annotations
 import numpy as np

@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: latticefieldmediumresearch@gmail.com
+
 """
 Build the Master document (DOCX/PDF) for upload from canonical Markdown sources.
 - Concatenate docs/Executive_Summary.md, LFM_Master.md, LFM_Core_Equations.md, LFM_Phase1_Test_Design.md

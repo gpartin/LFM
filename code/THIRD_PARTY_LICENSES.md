@@ -1,5 +1,12 @@
 # Third-Party Licenses and Attribution
 
+<!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
+<!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
+<!-- See LICENSE file in project root for full license text. -->
+<!-- Commercial use prohibited without explicit written permission. -->
+<!-- Contact: latticefieldmediumresearch@gmail.com -->
+
+
 This document provides attribution and license information for all third-party open-source libraries used in the Lattice Field Medium (LFM) project.
 
 For how to cite these libraries in academic work, see docs/REFERENCES.md (with BibTeX in docs/references.bib).

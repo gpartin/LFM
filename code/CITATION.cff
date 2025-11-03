@@ -1,9 +1,21 @@
 cff-version: 1.2.0
 message: If you use this software, please cite it as below.
-title: Lattice Field Medium (LFM)
+title: "LFM: Lattice Field Medium Simulator"
 authors:
-  - name: LFM Research
+  - family-names: Partin
+    given-names: Greg D.
+    orcid: https://orcid.org/0009-0004-0327-6528
+    email: latticefieldmediumresearch@gmail.com
+    affiliation: LFM Research
+version: 1.0.0
 doi: 10.5281/zenodo.17510124
 url: https://zenodo.org/records/17510124
+repository-code: https://github.com/gpartin/LFM
 license: CC-BY-NC-ND-4.0
-date-released: 2025-11-02
+date-released: 2025-11-01
+keywords:
+  - physics simulation
+  - Klein-Gordon equation
+  - lattice field theory
+  - unified physics
+  - computational physics

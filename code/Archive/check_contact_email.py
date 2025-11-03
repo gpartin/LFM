@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Greg D. Partin. All rights reserved.
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+# See LICENSE file in project root for full license text.
+# Commercial use prohibited without explicit written permission.
+# Contact: latticefieldmediumresearch@gmail.com
+
 """
 check_contact_email.py — Guardrail to prevent old contact email from reappearing in source.
 

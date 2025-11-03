@@ -1,5 +1,12 @@
 # Pre-Public Release IP & Legal Audit Report
 
+<!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
+<!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
+<!-- See LICENSE file in project root for full license text. -->
+<!-- Commercial use prohibited without explicit written permission. -->
+<!-- Contact: latticefieldmediumresearch@gmail.com -->
+
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17478758.svg)](https://doi.org/10.5281/zenodo.17478758)
 [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
 

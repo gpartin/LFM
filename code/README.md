@@ -1,10 +1,22 @@
-# LFM — Lattice Field Medium Simulator
+# LFM Code Documentation — Technical Implementation
+
+<!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
+<!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
+<!-- See LICENSE file in project root for full license text. -->
+<!-- Commercial use prohibited without explicit written permission. -->
+<!-- Contact: latticefieldmediumresearch@gmail.com -->
 
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Status: Research](https://img.shields.io/badge/status-research-yellow.svg)]()
 
-High-performance Klein-Gordon wave equation solver with GPU acceleration for exploring relativistic wave phenomena, gravity analogues, and quantum behavior in discrete spacetime.
+**Technical documentation for the LFM Klein-Gordon wave equation solver implementation.**
+
+This directory contains the complete LFM framework codebase, user interfaces, and validation infrastructure. 
+
+**📍 New to LFM?** Start with the [main project README](../README.md) for overview and quick start instructions.
+
+**👨‍💻 Developer/Researcher?** This document covers technical implementation details, test procedures, and code structure.
 
 **Author:** Greg D. Partin | LFM Research — Los Angeles, CA USA  
 **ORCID:** [https://orcid.org/0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)  
@@ -15,23 +27,32 @@ High-performance Klein-Gordon wave equation solver with GPU acceleration for exp
 
 ---
 
-## Features
+## Implementation Overview
 
-- **Relativistic Propagation** (Tier 1): 15 tests validating Lorentz invariance, causality, dispersion relations — 100% passing
-- **Gravity Analogue** (Tier 2): 25 tests simulating time dilation, redshift, light bending, gravitational waves — 84% passing
-- **Energy Conservation** (Tier 3): 11 tests tracking Hamiltonian partitioning, dissipation, thermalization — 91% passing  
-- **Quantum Phenomena** (Tier 4): 14 tests demonstrating bound states, tunneling, uncertainty, wave-particle duality — 100% passing
+LFM implements a high-performance Klein-Gordon wave equation solver with spatially-varying χ-field for exploring unified physics phenomena through computational simulation.
+
+**Core Equation:**
+```
+∂²E/∂t² = c²∇²E - χ²(x,t)E
+```
+
+**Key Features:**
 - **Backend Abstraction**: Seamless CPU (NumPy) / GPU (CuPy) switching
-- **Parallel Execution**: Threaded tile-based runner for multi-core performance
-- **Comprehensive Diagnostics**: Energy tracking, numeric integrity checks, detailed logging
-- **Scientific Visualization**: Dispersion curves, interference patterns, 3D field evolution
+- **Parallel Execution**: Multi-threaded tile-based processing
+- **Comprehensive Validation**: 55 tests across 4 physics tiers (93% pass rate)
+- **User Interfaces**: GUI, console, and CLI modes
+- **Scientific Visualization**: Dispersion curves, interference patterns, 3D evolution
 
-[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17510124.svg)](https://doi.org/10.5281/zenodo.17510124)
-[![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
+---
 
-**Test Status:** 51/55 tests passing (93% success rate) | **Production Ready:** 90%
+## Navigation
+
+- **🏠 [Project Overview](../README.md)** — Main project page with quick start
+- **📋 [Installation Guide](INSTALL.md)** — Complete setup instructions  
+- **🧪 [Testing](#testing)** — Run validation tests
+- **📊 [Results](#visualization-examples)** — View simulation outputs
+- **🔧 [Configuration](#configuration)** — Customize parameters
+- **📚 [Documentation](#documentation)** — Detailed technical docs
 
 ---
 
@@ -51,19 +72,37 @@ High-performance Klein-Gordon wave equation solver with GPU acceleration for exp
 
 ### Installation
 
+#### Quick Start (All Platforms)
 ```bash
-# Navigate to code directory
-cd c:/LFM/code
+# Windows: Run quick_setup_windows.bat
+# macOS/Linux: ./quick_setup_unix.sh
+# Or use the automated installer:
+python setup_lfm.py
+```
 
-# Install dependencies (CPU only)
+#### Manual Installation
+```bash
+# Install dependencies
 pip install numpy>=1.24.0 matplotlib>=3.7.0 scipy>=1.10.0 h5py>=3.8.0 pytest>=7.3.0
 
 # Optional: GPU acceleration (requires CUDA 12.x)
 pip install cupy-cuda12x
 ```
 
+📋 **Need help?** See the complete [Installation Guide](INSTALL.md) for detailed instructions, troubleshooting, and platform-specific setup.
+
 ### Run Your First Test
 
+#### Using the Graphical Interface (Easiest)
+```bash
+# Windows GUI interface (point-and-click)
+python lfm_gui.py
+
+# Or console interface (menu-driven)
+python lfm_control_center.py
+```
+
+#### Using Command Line Directly
 ```bash
 # Single test (completes in ~5 seconds)
 python run_tier1_relativistic.py --test REL-01
@@ -102,6 +141,9 @@ python run_tier1_relativistic.py --quick
 
 ```
 LFM/code/
+├── setup_lfm.py                 # Automated installer for all platforms
+├── lfm_control_center.py        # Console interface (menu-driven)
+├── lfm_gui.py                   # Windows GUI interface (point-and-click)
 ├── run_tier1_relativistic.py    # Tier 1 test harness
 ├── run_tier2_gravityanalogue.py # Tier 2 test harness
 ├── run_tier3_energy.py          # Tier 3 test harness
@@ -189,6 +231,12 @@ c·dt/dx ≤ 1/√D  (D = spatial dimensions)
 - **Uncertainty**: Δx·Δk ≥ 0.5 confirmed across wave packets
 - **Zero-Point Energy**: Ground state E₀ = ½ℏω ≠ 0 (vacuum fluctuations)
 
+### 🔬 Emergence Validation — Critical Evidence ✅
+- **Spontaneous χ-Field Formation**: 29% enhancement from uniform initial conditions
+- **Self-Consistent Coupling**: Energy density drives χ-field structure without pre-programming
+- **Genuine Emergence Confirmed**: Refutes "circular validation" criticism
+- **Evidence Location**: `docs/evidence/emergence_validation/` ([See README](docs/evidence/emergence_validation/README.md))
+
 ---
 
 ## Configuration
@@ -257,11 +305,12 @@ Animated volumetric rendering of radial wave propagation.
 
 ## Documentation
 
-- **[Installation Guide](docs/INSTALL.md)** — Detailed setup instructions (Coming Soon)
+- **[Installation Guide](INSTALL.md)** — Complete setup instructions for all platforms
 - **[Production Readiness Analysis](docs/PRODUCTION_READINESS_ANALYSIS.md)** — Comprehensive project assessment
 - **[Production Roadmap](docs/PRODUCTION_ROADMAP.md)** — Path to production-ready release
 - **[Test Coverage](results/MASTER_TEST_STATUS.csv)** — Detailed test status report
 - **[Analysis Reports](docs/analysis/)** — Output requirements, test coverage, tier standardization
+- **[Emergence Validation Evidence](docs/evidence/emergence_validation/)** — Critical proof of genuine physics emergence
 
 ---
 
@@ -299,6 +348,68 @@ python -c "import cupy as cp; print(f'GPU: {cp.cuda.Device().name}')"
 ```
 
 **Performance:** 3D simulations (64³ grid) run ~10-50x faster on GPU depending on test.
+
+---
+
+## User Interfaces
+
+LFM provides three ways to interact with the framework:
+
+### 1. Graphical Interface (`lfm_gui.py`)
+**Best for:** New users, visual interaction, Windows environments
+- 🖱️ Point-and-click operation
+- 📊 Real-time progress monitoring  
+- 🗂️ Visual results browser
+- 🔧 Built-in system diagnostics
+- 💾 Export functionality
+
+```bash
+python lfm_gui.py
+```
+
+**Features:**
+- **Test Execution Tab:** Run individual tests or full tiers with progress bars
+- **Results Viewer Tab:** Browse test outputs with folder tree and file preview
+- **Tools Tab:** System status, emergence validation, report generation
+- **Background Processing:** Tests run without blocking the interface
+
+### 2. Console Interface (`lfm_control_center.py`)
+**Best for:** Terminal users, remote access, automation
+- 🎯 Menu-driven navigation
+- 🌈 Color-coded output
+- ⚡ Fast execution
+- 📋 Integrated results viewer
+- 🔄 Progress monitoring
+
+```bash
+python lfm_control_center.py
+```
+
+**Menu Options:**
+1. Run Fast Tests (4 core validation tests)
+2. Run Single Tier (choose Tier 1-4)
+3. Run Specific Test (by test ID)
+4. Run All Tiers (full 55-test suite)
+5. View Test Results (browse outputs)
+6. Run Emergence Validation (critical proof)
+7. Generate Reports (status summaries)
+8. System Status (GPU detection, dependencies)
+
+### 3. Command Line Interface (Original)
+**Best for:** Scripting, automation, expert users
+- 🔧 Direct script execution
+- ⚙️ Full parameter control
+- 🚀 Maximum performance
+- 📝 Detailed logging
+
+```bash
+# Examples
+python run_tier1_relativistic.py --test REL-01
+python run_tier2_gravityanalogue.py --quick
+python run_parallel_tests.py --config config/tier1.json
+```
+
+**Cross-Platform Compatibility:** All interfaces work on Windows, macOS, and Linux with standard Python installations.
 
 ---
 
