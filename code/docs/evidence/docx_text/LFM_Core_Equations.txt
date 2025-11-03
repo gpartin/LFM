@@ -4,9 +4,23 @@ Greg D. Partin | LFM Research — Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
 Note: This version supersedes all prior releases (v1.x and v2.x) and adds No-Derivatives restrictions and defensive-publication language for intellectual property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
 Abstract
-This document defines the governing equations of the Lattice-Field Medium (LFM) and their continuum, discrete, and variational forms. It establishes the connection between the lattice update law and the variable-mass Klein–Gordon equation, outlines how Lorentz invariance emerges naturally in the continuum limit, and shows how quantization and gravitational analogues arise through the curvature field χ(x,t).
+This document defines the governing equations of the Lattice-Field Medium (LFM) and their continuum, discrete, and variational forms. It establishes the connection between the lattice update law and the variable-mass Klein–Gordon equation (Klein, 1926; Gordon, 1926), outlines how Lorentz invariance emerges naturally in the continuum limit, and shows how quantization and gravitational analogues arise through the curvature field χ(x,t).
 1 Introduction and Scope
 The Lattice-Field Medium (LFM) treats spacetime as a discrete lattice of interacting energy cells. Each cell holds an energy amplitude E(x,t) and curvature parameter χ(x,t). The purpose of this document is to define the mathematical foundation of LFM, connecting the discrete rule to its continuum form and providing validation targets used in Tier 1–3 testing.
+
+1.1 Physics Foundation
+LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Gordon in 1926:
+
+Standard Klein-Gordon: ∂²φ/∂t² = c²∇²φ - m²φ
+
+LFM's Innovation: We implement a spatially-varying mass term χ²(x,t):
+Modified Klein-Gordon: ∂²E/∂t² = c²∇²E - χ²(x,t)E
+
+This spatial variation enables emergence of gravitational and quantum phenomena through discrete field interactions while preserving the fundamental relativistic structure.
+
+References:
+- Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. Zeitschrift für Physik, 37(12), 895-906.
+- Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. Zeitschrift für Physik, 40(1-2), 117-133.
 2 Canonical Field Equation
 The canonical continuum form of the LFM equation is:
 ∂²E/∂t² = c² ∇²E − χ²(x,t) E, with c² = α/β.

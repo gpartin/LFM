@@ -40,14 +40,20 @@ Citation format (BibTeX):
 
 @software{lfm_simulator,
   author = {Partin, Greg D.},
-  title = {LFM: Lattice Field Medium Simulator},
+  title = {LFM: Lattice Field Medium Simulator - Klein-Gordon Solver with Spatially-Varying χ-Field},
   year = {2025},
   publisher = {LFM Research},
   license = {CC BY-NC 4.0},
   doi = {10.5281/zenodo.17478758},
   url = {https://zenodo.org/records/17478758},
-  repository = {https://osf.io/6agn8}
+  repository = {https://osf.io/6agn8},
+  note = {Implementation based on Klein-Gordon equation (Klein, 1926; Gordon, 1926)}
 }
+
+PHYSICS FOUNDATION:
+This software builds upon the Klein-Gordon equation developed by Oskar Klein 
+and Walter Gordon in 1926. LFM's specific innovation is the implementation of 
+spatially-varying χ-field modifications for unified physics simulation.
 
 ================================================================================
 PRIOR ART AND DEFENSIVE PUBLICATION

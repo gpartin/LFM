@@ -736,6 +736,37 @@ def verify_manifest(strict: bool = False) -> tuple[int, int]:
     return (checked, mismatched)
 
 
+def generate_comprehensive_pdf() -> str | None:
+    """Generate comprehensive PDF using the separate build_comprehensive_pdf.py tool.
+    
+    Returns relative path of generated PDF or None if generation failed.
+    """
+    tool_path = ROOT / 'tools' / 'build_comprehensive_pdf.py'
+    if not tool_path.exists():
+        print("[WARN] build_comprehensive_pdf.py tool not found")
+        return None
+        
+    try:
+        # Run the comprehensive PDF builder
+        import runpy
+        runpy.run_path(str(tool_path), run_name='__main__')
+        
+        # Find the generated PDF
+        stamp = datetime.now().strftime('%Y%m%d')
+        pdf_name = f'LFM_Comprehensive_Report_{stamp}.pdf'
+        pdf_path = UPLOAD / pdf_name
+        
+        if pdf_path.exists():
+            return pdf_name
+        else:
+            print(f"[WARN] Expected comprehensive PDF not found: {pdf_name}")
+            return None
+            
+    except Exception as e:
+        print(f"[WARN] Comprehensive PDF generation failed: {e}")
+        return None
+
+
 def main():
     parser = argparse.ArgumentParser(description='Build OSF/Zenodo upload package (dry-run)')
     parser.add_argument('--no-zip', action='store_true', help='Do not create a ZIP bundle of payload files')

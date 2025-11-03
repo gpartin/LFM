@@ -35,8 +35,12 @@ docs/upload_backup_*/
 docs/upload_ref*/
 docs/upload_ref2_*/
 
-# Evidence extracted text (keep headers/templates and summary tracked)
-docs/evidence/docx_text/
+# Legacy .docx files (use markdown workflow instead)
+*.docx
+!docs/evidence/docx_archive/*.zip
+
+# Evidence extracted text is now SOURCE OF TRUTH - keep tracked
+# docs/evidence/docx_text/ - REMOVED from gitignore, these are maintained files
 
 # Python and tooling caches
 .pytest_cache/

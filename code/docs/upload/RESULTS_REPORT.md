@@ -63,10 +63,13 @@ This report summarizes the contents of the results/ tree at build time and aggre
 | Gravity\GRAV-08 | yes | yes | id=GRAV-08, description=Time dilation — uniform χ diagnostic (isolate grid dispersion), passed=True, rel_err_ratio=0.028800802497585876, ratio_serial=1.0288008024975859 |
 | Gravity\GRAV-08\diagnostics | no | no |  |
 | Gravity\GRAV-08\plots | no | no |  |
+| Gravity\GRAV-09 | yes | yes | id=GRAV-09, description=Time dilation — 2x refined grid (N=128, dx=0.5), passed=True, rel_err_ratio=0.004397059740349736, ratio_serial=1.020491800101535 |
+| Gravity\GRAV-09\diagnostics | no | no |  |
+| Gravity\GRAV-09\plots | no | no |  |
 | Gravity\GRAV-10 | yes | yes | id=GRAV-10, description=Gravitational redshift — measure frequency shift in 1D potential well, passed=True, rel_err_ratio=3.6013456829938594e-12, ratio_serial=4.0653506658414 |
 | Gravity\GRAV-10\diagnostics | no | no |  |
 | Gravity\GRAV-10\plots | no | no |  |
-| Gravity\GRAV-11 | yes | yes | id=GRAV-11, description=Time delay — packet through χ slab (Shapiro-like) (NEEDS DEBUG: Packet tracking measurement issues), passed=False, rel_err_ratio=1.603339920838107, ratio_serial=-0.5800000000000018 |
+| Gravity\GRAV-11 | yes | yes | id=GRAV-11, description=Time delay — packet through χ slab (Shapiro-like), passed=True, rel_err_ratio=0.2198190678817605, ratio_serial=0.75 |
 | Gravity\GRAV-11\diagnostics | no | no |  |
 | Gravity\GRAV-11\plots | no | no |  |
 | Gravity\GRAV-12 | yes | yes | id=GRAV-12, description=Phase delay — continuous wave through χ slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!), passed=True, rel_err_ratio=0.2255448579330829, ratio_serial=6.492153236849944 |
@@ -75,7 +78,7 @@ This report summarizes the contents of the results/ tree at build time and aggre
 | Gravity\GRAV-13 | yes | yes | id=GRAV-13, description=Local frequency — double well (ω∝χ verification), passed=True, rel_err_ratio=6.810374244951658e-12, ratio_serial=2.1428572188688815 |
 | Gravity\GRAV-13\diagnostics | no | no |  |
 | Gravity\GRAV-13\plots | no | no |  |
-| Gravity\GRAV-14 | yes | yes | id=GRAV-14, description=Group delay — differential timing with vs without slab (NEEDS DEBUG: Signal too weak to measure delay), passed=False, rel_err_ratio=1.0, ratio_serial=0.0 |
+| Gravity\GRAV-14 | yes | yes | id=GRAV-14, description=Group delay — differential timing with vs without slab, passed=True, rel_err_ratio=0.06252043773308959, ratio_serial=11.700000000000003 |
 | Gravity\GRAV-14\diagnostics | no | no |  |
 | Gravity\GRAV-14\plots | no | no |  |
 | Gravity\GRAV-15 | yes | yes | id=GRAV-15, description=3D radial energy dispersion visualizer — central excitation, volumetric snapshots for MP4, passed=True, rel_err_ratio=0.0, ratio_serial=1.0 |

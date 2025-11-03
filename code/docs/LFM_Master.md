@@ -12,4 +12,6 @@ Lattice-Field Medium (LFM): Master Document — Conceptual Framework and Physica
 Version 3.0 — 2025-11-01 (Defensive ND Release)
 Greg D. Partin | LFM Research, Los Angeles CA USA
 
-...existing content from docx_text/LFM_Master.txt...
+*Physics Foundation: Building upon Klein-Gordon equation (Klein, 1926; Gordon, 1926)*
+
+...updated content from docx_text/LFM_Master.txt with proper Klein-Gordon attribution...

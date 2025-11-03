@@ -189,21 +189,31 @@ def build_combined_markdown(pandoc_exe: Path) -> Path:
     parts.append('---')
     parts.append('')
     
-    # Governing DOCX contents
-    docx_files = [
-        ('Executive_Summary.docx', 'Executive Summary'),
-        ('LFM_Master.docx', 'Master Document'),
-        ('LFM_Core_Equations.docx', 'Core Equations'),
-        ('LFM_Phase1_Test_Design.docx', 'Phase 1 Test Design'),
+    # Use canonical text sources instead of DOCX files
+    text_sources = [
+        ('Executive_Summary.txt', 'Executive Summary'),
+        ('LFM_Master.txt', 'Master Document'),
+        ('LFM_Core_Equations.txt', 'Core Equations'),
+        ('LFM_Phase1_Test_Design.txt', 'Phase 1 Test Design'),
     ]
     
-    for filename, title in docx_files:
-        docx_path = EVIDENCE / filename
-        if docx_path.exists():
+    text_dir = ROOT / 'docs' / 'text'
+    
+    for filename, title in text_sources:
+        text_path = text_dir / filename
+        if text_path.exists():
             parts.append(f'# {title}')
             parts.append('')
-            md_content = convert_docx_to_md(docx_path, pandoc_exe)
-            parts.append(md_content)
+            # Read the text content directly
+            text_content = text_path.read_text(encoding='utf-8')
+            parts.append(text_content)
+            parts.append('')
+            parts.append('---')
+            parts.append('')
+        else:
+            parts.append(f'# {title}')
+            parts.append('')
+            parts.append(f'> Error: Source file {filename} not found')
             parts.append('')
             parts.append('---')
             parts.append('')

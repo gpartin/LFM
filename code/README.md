@@ -10,7 +10,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Status: Research](https://img.shields.io/badge/status-research-yellow.svg)]()
 
-**Technical documentation for the LFM Klein-Gordon wave equation solver implementation.**
+**Technical documentation for the LFM Klein-Gordon solver with spatially-varying χ-field implementation.**
 
 This directory contains the complete LFM framework codebase, user interfaces, and validation infrastructure. 
 
@@ -30,6 +30,25 @@ This directory contains the complete LFM framework codebase, user interfaces, an
 ## Implementation Overview
 
 LFM implements a high-performance Klein-Gordon wave equation solver with spatially-varying χ-field for exploring unified physics phenomena through computational simulation.
+
+## Physics Foundation
+
+LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Gordon in 1926. The standard relativistic Klein-Gordon equation describes scalar field dynamics:
+
+**Standard Klein-Gordon:** `∂²φ/∂t² = c²∇²φ - m²φ`
+
+**LFM's Innovation:** We implement a modified version with spatially-varying mass term χ²(x,t):
+
+**Modified Klein-Gordon:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
+
+This spatial variation of the χ-field enables:
+- **Gravity analogue effects** through χ-gradients
+- **Quantum behavior emergence** via χ-potential wells  
+- **Unified physics simulation** on discrete spacetime lattice
+
+**Foundational References:**
+- Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. *Zeitschrift für Physik*, 37(12), 895-906.
+- Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. *Zeitschrift für Physik*, 40(1-2), 117-133.
 
 **Core Equation:**
 ```
@@ -148,7 +167,7 @@ LFM/code/
 ├── run_tier2_gravityanalogue.py # Tier 2 test harness
 ├── run_tier3_energy.py          # Tier 3 test harness
 ├── run_tier4_quantization.py    # Tier 4 test harness
-├── lfm_equation.py              # Core Klein-Gordon solver
+├── lfm_equation.py              # Modified Klein-Gordon solver
 ├── lfm_parallel.py              # Parallel tile-based runner
 ├── energy_monitor.py            # Energy conservation tracking
 ├── numeric_integrity.py         # CFL checks, NaN detection
@@ -179,7 +198,7 @@ LFM/code/
 
 ## Core Physics
 
-LFM implements the discrete Klein-Gordon equation:
+LFM implements the discrete Klein-Gordon equation with spatially-varying χ-field:
 
 ```
 ∂²E/∂t² = c² ∇²E - (χ²c⁴/ℏ²) E
@@ -433,13 +452,39 @@ If you use LFM in your research, please cite:
 ```bibtex
 @software{lfm_simulator,
   author = {Partin, Greg D.},
-  title = {LFM: Lattice Field Medium Simulator},
+  title = {LFM: Lattice Field Medium Simulator - Klein-Gordon Solver with Spatially-Varying χ-Field},
   year = {2025},
   publisher = {LFM Research},
   license = {CC BY-NC-ND 4.0},
   doi = {10.5281/zenodo.17510124},
   url = {https://zenodo.org/records/17510124},
-  repository = {https://osf.io/6agn8}
+  repository = {https://osf.io/6agn8},
+  note = {Implementation based on Klein-Gordon equation (Klein, 1926; Gordon, 1926)}
+}
+```
+
+**Foundational Physics References:**
+```bibtex
+@article{klein1926,
+  title={Quantentheorie und fünfdimensionale Relativitätstheorie},
+  author={Klein, Oskar},
+  journal={Zeitschrift für Physik},
+  volume={37},
+  number={12},
+  pages={895--906},
+  year={1926},
+  publisher={Springer}
+}
+
+@article{gordon1926,
+  title={Der Comptoneffekt nach der Schrödingerschen Theorie},
+  author={Gordon, Walter},
+  journal={Zeitschrift für Physik},
+  volume={40},
+  number={1-2},
+  pages={117--133},
+  year={1926},
+  publisher={Springer}
 }
 ```
 

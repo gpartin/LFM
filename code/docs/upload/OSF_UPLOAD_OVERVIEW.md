@@ -4,21 +4,25 @@ This is a dry-run staging area. Upload the following files to OSF:
 
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
-| evidence_docx/Executive_Summary.docx | 30381 | `132a99bf08d7c4f842e8c2eade18d11e13e251e14dd76f73294a022ca96197c6` |
-| evidence_docx/LFM_Core_Equations.docx | 34594 | `827e63a8a0f4f70b580e0c695fa93969465db13618d30fd681d27cf75aba3d3d` |
-| evidence_docx/LFM_Master.docx | 33647 | `a1aea18a3fba1a78a6be367a023478e565a4c40bf54ca52946b1d08fcd19d61d` |
-| evidence_docx/LFM_Phase1_Test_Design.docx | 32960 | `1a5372002bbce68db8fb497c76c002b2f2409d4357f70005252e92352d4f6f53` |
+| _LFM_Master_combined.md | 53843 | `9ba2cc0f8546a1aaa88b39eace69409d211add50c0760a06b77cf4e0b3f98b12` |
 | evidence_docx/README.txt | 146 | `097367e6b71b562e5fda3233f7a8746874c797b70faf01b6048286ab3e460914` |
+| evidence_docx/README_CLEANED.md | 756 | `4f69c1f366c69ef4cbd361935aed2f920ca6fa60a74f6ab8fbf57061bacf36d3` |
 | Executive_Summary.md | 5501 | `e66bb326d493b2e62b1a59fd0681042d5aeb9ac65d1fcb857c93faecf0855e11` |
-| LFM_Comprehensive_Report_20251102.docx | 33133 | `07c18612468cc62d5e844804ee9e16b10328666e3dd481cccb7869860dbd700c` |
 | LFM_Comprehensive_Report_20251102.md | 48168 | `537f633eb0d2482b9245166fd2750a45d4f6567a13f32766e362a61ff5b99f20` |
 | LFM_Comprehensive_Report_20251102.pdf | 351363 | `abe300d46264640b36b509288b6d63ac24fe28fdece6fea19f15c4adda6f053c` |
-| LICENSE | 19050 | `5898502f7a04ee889dedc7bf2e387fb383c5e3591918ff209e3726321f452fe1` |
+| LFM_Comprehensive_Report_20251103.docx | 29462 | `bd8f94921dcd5db7b8b943cda60d3f797279c0d37351653640e7bdcfb1e540f0` |
+| LFM_Comprehensive_Report_20251103.md | 48180 | `6644c7a7ea224274d9dea89b67df0c5effb878d05fe17dd4bfa3aabe11ab7e00` |
+| LFM_Comprehensive_Report_20251103.pdf | 303251 | `afa970253e7864dccc4a5533b1ba69583d54785cb8dad033bf587da0a5e24314` |
+| LFM_Master_20251103_v1.docx | 28432 | `1c8985245859702648ed332de468d130f0cf0c3653387751859a9a6f383e61f9` |
+| LFM_Master_20251103_v1.pdf | 293547 | `c204443e4e2f1a65d645736147c34481a8ed2077ae37793bacdf47942e70197e` |
+| LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
+| MANIFEST.md | 10870 | `bc9b19fb110257109329cf3f98f2a9ddb33de3ed4d571c63f71a4ce566589739` |
 | md/Executive_Summary.md | 5501 | `e66bb326d493b2e62b1a59fd0681042d5aeb9ac65d1fcb857c93faecf0855e11` |
 | md/LFM_Core_Equations.md | 9520 | `a94a8f7a5670ae8acd696dc8176fb3486b769b00efb51cb24f3e55f5b5e6a339` |
 | md/LFM_Master.md | 9917 | `731431590816a7ff11875f0bc8e234f3a1b6a30bd596abdebc72bece76f5f800` |
 | md/LFM_Phase1_Test_Design.md | 7576 | `04ea7aaee53e0e58b2e71ec9334bbdfd94ac34a7e88e5f57d55363b24ce34329` |
-| NOTICE | 5466 | `9c13f686a0301b3f3196b388b9ded769536159d6200e9bb76a82ca0e10e942e0` |
+| NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
+| OSF_UPLOAD_OVERVIEW.md | 10474 | `b7e6b958abc9e48b25aaef1a7f35763b9bea8a81ecbb9b372f9da3d81fe2d42e` |
 | plots/Energy/ENER-01/energy_vs_time.png | 58268 | `3005f25d5e6538bab7bc65e0d78cfedef51bd1ca2f3935d3fe430feb63d9c82b` |
 | plots/Energy/ENER-01/entropy_vs_time.png | 44919 | `cdd1d11963ac94bfc5938ee97da441ad65a49a1280ee22f7931e3b3115116aa3` |
 | plots/Energy/ENER-02/energy_vs_time.png | 63140 | `f60e4e2cac2ab2fd7ef1d41747e6aec2404e233f0ec4765f2f31c7c832658130` |
@@ -76,12 +80,12 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Relativistic/REL-14/dispersion_REL-14.png | 54570 | `050c8ab13fdda1f038ef8cda247e761bd4c687efa84eeb0e2b71a6db0087a039` |
 | plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | PLOTS_OVERVIEW.md | 5692 | `9c206034e5f1f7b047bace00a55b72a9925693a87527256fee72d26d2d33babe` |
-| PRE_PUBLIC_AUDIT_REPORT.md | 16601 | `72d89e04811648e0dfdbb5dc3c2a8403796f91fe06d6e9746500be4dc9cd9c52` |
+| PRE_PUBLIC_AUDIT_REPORT.md | 17863 | `9b9ce5d3e4f606d62799df050421d5562d4e3e777076b23c9cda218c2728acf5` |
 | README.md | 9880 | `947d6759551caaf8a9a69cd5b102f4aabc31d50e081292f7fa8f2e577db72df1` |
-| results_MASTER_TEST_STATUS.csv | 5710 | `8d3148d892c579e573a22bf17a71d2ea188c5b9f92cb66d0dd5467273f3e8d6d` |
-| RESULTS_REPORT.md | 17723 | `f91d45e7abbb7881955537e6133cf426072e70cb00aad4035b769829a18710d4` |
+| results_MASTER_TEST_STATUS.csv | 5721 | `5a4e10972b6f268c80788c328bc09256ecd483e65a587a539e22113f1e95b013` |
+| RESULTS_REPORT.md | 17916 | `2de3c67ef1177da89e7fa1be159a589b0ad3e4c0f654cd712adf98136ff2ab93` |
 | txt/Executive_Summary.txt | 5832 | `542b4acc7638b003de2d56bf7cf23f8d0b0ca912f2c7c1b402afa04c82f07c79` |
 | txt/LFM_Core_Equations.txt | 9642 | `069c154c345f992b51c6555304d3ca4b61363beda781693cce55632971174849` |
 | txt/LFM_Master.txt | 10440 | `bb7f86b22e453f6a7f5c1d006a01e38694b0c2faf1874690fbb0c0fd012c787d` |
 | txt/LFM_Phase1_Test_Design.txt | 9087 | `2215afe329779750b535e773b0981ad1c34f345110c079f5aa4428475b901e28` |
-| LFM_upload_bundle_20251102_v1.zip | 5293896 | `f3d228bc3056d1942bc959f140763c41ac5084c64a745ba79ed7584c07c00fa6` |
+| LFM_upload_bundle_20251103_v1.zip | 5743241 | `7ed83c5365dadb9a363c777ec272c045bd315cfa54589a2f6ac730afcccc54af` |

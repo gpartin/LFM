@@ -4,14 +4,14 @@ Greg D. Partin | LFM Research, Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
 Note: This version supersedes all prior releases (v2.x and earlier) and adds No-Derivatives restrictions and defensive-publication language for intellectual property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
 Abstract
-The Lattice-Field Medium (LFM) proposes that spacetime arises from a deterministic lattice of locally coupled energy cells. Each cell evolves according to a single discrete update rule that yields, in the continuum limit, a variable-mass Klein–Gordon equation. This master document provides the conceptual framework and interpretation of that rule, showing how classical, relativistic, gravitational, quantum, and cosmological behaviors all emerge as consequences of one substrate law.
+The Lattice-Field Medium (LFM) proposes that spacetime arises from a deterministic lattice of locally coupled energy cells. Each cell evolves according to a single discrete update rule that yields, in the continuum limit, a variable-mass Klein–Gordon equation (Klein, 1926; Gordon, 1926). This master document provides the conceptual framework and interpretation of that rule, showing how classical, relativistic, gravitational, quantum, and cosmological behaviors all emerge as consequences of one substrate law.
 1 Purpose and Scope
 This document defines the conceptual framework of the Lattice-Field Medium (LFM) and connects it to the formal equations and numerical tests in the companion Core Equations and Phase 1 Test Design documents. Its goal is to describe how physical laws emerge from local lattice dynamics and to outline the interpretive consequences for relativity, gravitation, and quantization.
 2 Canonical Framework
 At the foundation of the LFM is a local deterministic equation that governs the evolution of the energy field E(x,t) and curvature field χ(x,t):
 ∂²E/∂t² = c² ∇²E − χ(x,t)² E, with c² = α/β.
 This is the same canonical law implemented in the discrete leapfrog form defined in the companion LFM Core Equations (v1.1).
-This relation represents a Lorentz-symmetric, locally causal wave equation. In the continuum limit, it reproduces the structure of a variable-mass Klein–Gordon field. All macroscopic behaviors—classical, relativistic, and quantum—arise from this same rule.
+This relation represents a Lorentz-symmetric, locally causal wave equation. In the continuum limit, it reproduces the structure of a variable-mass Klein–Gordon field (building upon the foundational Klein-Gordon equation developed by Klein, 1926; Gordon, 1926). All macroscopic behaviors—classical, relativistic, and quantum—arise from this same rule.
 3 Foundational Properties
 Structural Feature
 Physical Outcome
@@ -116,4 +116,10 @@ They are not granted for reuse, adaptation, or redistribution in derivative simu
 without written permission of the author.
 Citation (Zenodo Record):
 Partin, G. D. (2025). Lattice-Field Medium (LFM): A Deterministic Lattice Framework for Emergent Relativity, Gravitation, and Quantization — Phase 1 Conceptual Hypothesis v1.0. Zenodo. https://doi.org/10.5281/zenodo.17478758
+
+Physics Foundation References:
+Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. Zeitschrift für Physik, 37(12), 895-906.
+Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. Zeitschrift für Physik, 40(1-2), 117-133.
+
+Note: LFM builds upon the foundational Klein-Gordon equation with novel spatially-varying χ-field implementation.
 Contact: latticefieldmediumresearch@gmail.com

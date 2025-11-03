@@ -1,5 +1,12 @@
 # Pre-Public Release IP & Legal Audit Report
 
+<!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
+<!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
+<!-- See LICENSE file in project root for full license text. -->
+<!-- Commercial use prohibited without explicit written permission. -->
+<!-- Contact: latticefieldmediumresearch@gmail.com -->
+
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17478758.svg)](https://doi.org/10.5281/zenodo.17478758)
 [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
 
@@ -448,7 +455,38 @@ No pinned versions that leak internal environment details. Users can install lat
 
 ---
 
-## 14. Audit Conclusion
+## 14. Final Cleanup and Publication Readiness (2025-11-02)
+
+### 14.1 Workspace Cleanup
+**Status:** ✅ COMPLETE
+
+**Actions Taken:**
+- Removed temporary upload backup directories
+- Archived one-time legal/audit setup documents to `archive/`
+- Archived one-time migration scripts to `archive/`
+- Removed stray diagnostic files
+- Updated documentation cross-references
+
+### 14.2 Citations and References
+**Status:** ✅ COMPLETE
+
+**Actions Taken:**
+- Created `docs/REFERENCES.md` and `docs/references.bib`
+- Added citation guidance to README
+- Created `CITATION.cff` for GitHub
+- Added DOI/OSF badges across documentation
+
+### 14.3 Final Validation
+**Status:** ✅ PASS
+
+- Upload package rebuild: ✅ PASS
+- Manifest verification: 81 entries, 0 mismatches
+- Pipeline validation: ✅ PASS
+- Bundle: `LFM_upload_bundle_20251102_v1.zip` (5.3 MB)
+
+---
+
+## 15. Audit Conclusion
 
 **Overall Assessment:** ✅ **READY FOR PUBLIC RELEASE** (with recommended cleanup)
 

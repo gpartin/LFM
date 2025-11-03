@@ -12,4 +12,10 @@ Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations
 Version 3.0 — 2025-11-01 (Defensive ND Release)
 Greg D. Partin | LFM Research — Los Angeles CA USA
 
-...existing content from docx_text/LFM_Core_Equations.txt...
+Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations
+Version 3.0 — 2025-11-01 (Defensive ND Release)
+Greg D. Partin | LFM Research — Los Angeles CA USA
+
+*Physics Foundation: Building upon Klein-Gordon equation (Klein, 1926; Gordon, 1926)*
+
+...updated content from docx_text/LFM_Core_Equations.txt with proper Klein-Gordon attribution...

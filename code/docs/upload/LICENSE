@@ -117,14 +117,25 @@ Suggested citation format (BibTeX):
 
 @software{lfm_simulator,
   author = {Partin, Greg D.},
-  title = {LFM: Lattice Field Medium Simulator},
+  title = {LFM: Lattice Field Medium Simulator - Klein-Gordon Solver with Spatially-Varying χ-Field},
   year = {2025},
   publisher = {LFM Research},
    license = {CC BY-NC-ND 4.0},
   doi = {10.5281/zenodo.17478758},
   url = {https://zenodo.org/records/17478758},
-  repository = {https://osf.io/6agn8}
+  repository = {https://osf.io/6agn8},
+  note = {Implementation based on Klein-Gordon equation (Klein, 1926; Gordon, 1926)}
 }
+
+PHYSICS FOUNDATION:
+This work builds upon the Klein-Gordon equation developed by:
+- Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. 
+  Zeitschrift für Physik, 37(12), 895-906.
+- Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. 
+  Zeitschrift für Physik, 40(1-2), 117-133.
+
+LFM's specific contribution is the implementation of spatially-varying χ-field
+modifications to enable unified physics simulation on discrete spacetime.
 
 --------------------------------------------------------------------------------
 PATENT GRANT AND PRIOR ART NOTICE

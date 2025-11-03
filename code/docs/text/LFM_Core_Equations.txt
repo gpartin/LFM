@@ -7,9 +7,11 @@ Abstract
 This document defines the governing equations of the Lattice-Field
 Medium (LFM) and their continuum, discrete, and variational forms. It
 establishes the connection between the lattice update law and the
-variable-mass Klein–Gordon equation, outlines how Lorentz invariance
-emerges naturally in the continuum limit, and shows how quantization and
-gravitational analogues arise through the curvature field χ(x,t).
+variable-mass Klein–Gordon equation (Klein, 1926; Gordon, 1926), outlines
+how Lorentz invariance emerges naturally in the continuum limit, and shows
+how quantization and gravitational analogues arise through the curvature
+field χ(x,t). Building upon foundational relativistic field theory, this
+work extends the Klein-Gordon framework to spatially-varying mass terms.
 
 1 Introduction and Scope
 

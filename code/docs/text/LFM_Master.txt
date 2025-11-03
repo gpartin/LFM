@@ -14,10 +14,11 @@ Abstract
 The Lattice-Field Medium (LFM) proposes that spacetime arises from a
 deterministic lattice of locally coupled energy cells. Each cell evolves
 according to a single discrete update rule that yields, in the continuum
-limit, a variable-mass Klein–Gordon equation. This master document
-provides the conceptual framework and interpretation of that rule,
-showing how classical, relativistic, gravitational, quantum, and
-cosmological behaviors all emerge as consequences of one substrate law.
+limit, a variable-mass Klein–Gordon equation (Klein, 1926; Gordon, 1926).
+Building upon this foundational framework in relativistic field theory,
+this master document provides the conceptual framework and interpretation
+of that rule, showing how classical, relativistic, gravitational, quantum,
+and cosmological behaviors all emerge as consequences of one substrate law.
 
 1 Purpose and Scope
 

@@ -82,12 +82,50 @@ Below are recommended citations with copy‑paste BibTeX where available.
 
 ---
 
-## Domain Literature (fill in as appropriate)
+## Domain Literature (Foundational Physics)
 
-If your work draws on specific physical models, derivations, or prior art, please add citations here. Examples might include:
+### Klein-Gordon Equation (Foundational)
 
-- Klein–Gordon equation derivations and discretizations
-- CFL stability analyses for wave equations
+LFM builds upon the Klein-Gordon equation first developed by Oskar Klein and Walter Gordon in 1926:
+
+- **Klein, Oskar (1926)**. Quantentheorie und fünfdimensionale Relativitätstheorie. *Zeitschrift für Physik*, 37(12), 895-906.
+
+  ```bibtex
+  @article{klein1926,
+    title={Quantentheorie und fünfdimensionale Relativitätstheorie},
+    author={Klein, Oskar},
+    journal={Zeitschrift für Physik},
+    volume={37},
+    number={12},
+    pages={895--906},
+    year={1926},
+    publisher={Springer},
+    doi={10.1007/BF01397481}
+  }
+  ```
+
+- **Gordon, Walter (1926)**. Der Comptoneffekt nach der Schrödingerschen Theorie. *Zeitschrift für Physik*, 40(1-2), 117-133.
+
+  ```bibtex
+  @article{gordon1926,
+    title={Der Comptoneffekt nach der Schrödingerschen Theorie},
+    author={Gordon, Walter},
+    journal={Zeitschrift für Physik},
+    volume={40},
+    number={1-2},
+    pages={117--133},
+    year={1926},
+    publisher={Springer},
+    doi={10.1007/BF01390840}
+  }
+  ```
+
+### Additional Relevant Literature
+
+If your work draws on specific physical models, derivations, or prior art related to:
+- Klein–Gordon equation discretizations and numerical methods
+- CFL stability analyses for wave equations  
 - Gravity analogues and optical metrics references
+- Lattice field theory computational approaches
 
 Consider maintaining a project-wide `docs/references.bib` and citing from there.

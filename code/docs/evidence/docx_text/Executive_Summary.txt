@@ -4,7 +4,7 @@ Greg D. Partin | LFM Research — Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
 Note: This version supersedes all prior releases (v3.0 and earlier) and adds No-Derivatives restrictions and defensive-publication language for intellectual-property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
 Overview
-The Lattice-Field Medium (LFM) proposes that spacetime itself is a discrete, deterministic lattice of locally interacting cells. Each cell carries an energy amplitude E(x,t) and a curvature parameter χ(x,t) that modulates its local stiffness. The governing relation ∂²E/∂t² = c²∇²E − χ²(x,t)E, with c² = α/β, represents a Lorentz-symmetric, locally causal wave law. By allowing χ to vary across space and time, this single rule reproduces classical mechanics, relativity, gravitation, quantization, and cosmological expansion as emergent phenomena of one underlying field.
+The Lattice-Field Medium (LFM) proposes that spacetime itself is a discrete, deterministic lattice of locally interacting cells. Each cell carries an energy amplitude E(x,t) and a curvature parameter χ(x,t) that modulates its local stiffness. The governing relation ∂²E/∂t² = c²∇²E − χ²(x,t)E, with c² = α/β, represents a Lorentz-symmetric, locally causal wave law building upon the Klein-Gordon equation (Klein, 1926; Gordon, 1926). By allowing χ to vary across space and time, this single rule reproduces classical mechanics, relativity, gravitation, quantization, and cosmological expansion as emergent phenomena of one underlying field.
 Key Structural Features
 Feature
 Consequence
