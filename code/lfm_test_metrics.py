@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 LFM Test Metrics Database - Resource usage tracking and estimation
@@ -180,40 +180,60 @@ class TestMetrics:
 		}
 
 def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
-	tier_files = {
+	"""Load test configurations for a tier using the central registry.
+
+	Supports schema types:
+	- "variants": list of variants + parameters (tiers 1–2 style)
+	- "tests": list of tests + parameters (tiers 3–4 style)
+	"""
+	try:
+		from lfm_tiers import get_tier_by_number
+	except Exception:
+		get_tier_by_number = None
+
+	# Fallback legacy mapping if registry isn't available
+	legacy_map = {
 		1: "config/config_tier1_relativistic.json",
 		2: "config/config_tier2_gravityanalogue.json",
 		3: "config/config_tier3_energy.json",
-		4: "config/config_tier4_quantization.json"
+		4: "config/config_tier4_quantization.json",
 	}
-	config_path = Path(__file__).parent / tier_files.get(tier)
-	if not config_path.exists():
+	if get_tier_by_number:
+		tdef = get_tier_by_number(int(tier))
+		if not tdef:
+			return []
+		config_rel = tdef.get("config")
+		schema = tdef.get("config_schema", "variants")
+		config_path = Path(__file__).parent / config_rel if config_rel else None
+	else:
+		config_path = Path(__file__).parent / legacy_map.get(tier)
+		schema = "variants" if tier in (1, 2) else "tests"
+
+	if not config_path or not config_path.exists():
 		return []
 	with open(config_path, 'r', encoding='utf-8') as f:
 		cfg = json.load(f)
-	tests = []
-	if tier == 1:
+
+	tests: List[Tuple[str, Dict]] = []
+	params = cfg.get("parameters", {})
+	if schema == "variants":
 		variants = cfg.get("variants", [])
-		params = cfg.get("parameters", {})
 		for v in variants:
-			test_id = v["test_id"]
+			test_id = v.get("test_id")
+			if not test_id:
+				continue
 			test_cfg = {**params, **v}
-			test_cfg["use_gpu"] = cfg.get("run_settings", {}).get("use_gpu", True)
+			# Harmonize GPU flag
+			test_cfg["use_gpu"] = cfg.get("run_settings", {}).get("use_gpu", cfg.get("hardware", {}).get("gpu_enabled", True))
 			tests.append((test_id, test_cfg))
-	elif tier == 2:
-		variants = cfg.get("variants", [])
-		params = cfg.get("parameters", {})
-		for v in variants:
-			test_id = v["test_id"]
-			test_cfg = {**params, **v}
-			test_cfg["use_gpu"] = cfg.get("run_settings", {}).get("use_gpu", True)
-			tests.append((test_id, test_cfg))
-	elif tier in (3, 4):
+	else:  # schema == "tests"
 		test_list = cfg.get("tests", [])
-		params = cfg.get("parameters", {})
 		for t in test_list:
-			test_id = t["test_id"]
+			test_id = t.get("test_id")
+			if not test_id:
+				continue
 			test_cfg = {**params, **t}
-			test_cfg["gpu_enabled"] = cfg.get("hardware", {}).get("gpu_enabled", True)
+			# Harmonize GPU flag
+			test_cfg["gpu_enabled"] = cfg.get("hardware", {}).get("gpu_enabled", cfg.get("run_settings", {}).get("use_gpu", True))
 			tests.append((test_id, test_cfg))
 	return tests

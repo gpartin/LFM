@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 LFM Tier-2 — Gravity Analogue Suite
@@ -44,9 +44,11 @@ from lfm_test_harness import BaseTierHarness
 from energy_monitor import EnergyMonitor
 from lfm_equation import advance, lattice_step
 from lfm_test_metrics import TestMetrics
+# Optional: χ from energy density (Poisson approach, 1D) — dynamic import to avoid hard dependency
 try:
-    # Optional: χ from energy density (Poisson approach, 1D)
-    from chi_field_equation import compute_chi_from_energy_poisson
+    import importlib as _importlib
+    _chi_mod = _importlib.import_module('chi_field_equation')
+    compute_chi_from_energy_poisson = getattr(_chi_mod, 'compute_chi_from_energy_poisson', None)
 except Exception:
     compute_chi_from_energy_poisson = None
 from lfm_parallel import run_lattice
@@ -634,7 +636,11 @@ class Tier2Harness(BaseTierHarness):
             if ndim != 1:
                 raise ValueError("dynamic_chi_wave mode currently supports 1D only")
             try:
-                from chi_field_equation import evolve_coupled_fields
+                import importlib as _importlib
+                _chi_mod = _importlib.import_module('chi_field_equation')
+                evolve_coupled_fields = getattr(_chi_mod, 'evolve_coupled_fields', None)
+                if evolve_coupled_fields is None:
+                    raise ImportError('evolve_coupled_fields not found')
             except ImportError:
                 raise RuntimeError("chi_field_equation module not available; cannot run dynamic_chi_wave")
 
@@ -795,7 +801,11 @@ class Tier2Harness(BaseTierHarness):
             if ndim != 1:
                 raise ValueError("gravitational_wave mode currently supports 1D only")
             try:
-                from chi_field_equation import evolve_coupled_fields
+                import importlib as _importlib
+                _chi_mod = _importlib.import_module('chi_field_equation')
+                evolve_coupled_fields = getattr(_chi_mod, 'evolve_coupled_fields', None)
+                if evolve_coupled_fields is None:
+                    raise ImportError('evolve_coupled_fields not found')
             except ImportError:
                 raise RuntimeError("chi_field_equation module not available; cannot run gravitational_wave")
 
@@ -2616,10 +2626,30 @@ def main():
                        help="Run single test by ID (e.g., GRAV-01). If omitted, runs all tests.")
     parser.add_argument("--config", type=str, default="config/config_tier2_gravityanalogue.json",
                        help="Path to config file")
+    # Optional post-run hooks
+    parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
+                        help='Run validator after the suite: "tier" validates Tier 2 + master status; "all" runs end-to-end')
+    parser.add_argument('--strict-validate', action='store_true',
+                        help='In strict mode, warnings cause validation to fail')
+    parser.add_argument('--quiet-validate', action='store_true',
+                        help='Reduce validator verbosity')
+    parser.add_argument('--update-upload', action='store_true',
+                        help='Rebuild docs/upload package (refresh status, stage docs, comprehensive PDF, manifest)')
+    parser.add_argument('--deterministic', action='store_true',
+                        help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
     
     # Load config using base harness method
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
+    # Enforce diagnostics policy minimally (non-destructive, in-memory)
+    try:
+        from tools.diagnostics_policy import enforce_for_cfg  # type: ignore
+        cfg, _notes = enforce_for_cfg(cfg)
+        if _notes:
+            for _n in _notes:
+                log(f"[Diagnostics] {_n}", "INFO")
+    except Exception:
+        pass
     outdir = BaseTierHarness.resolve_outdir(cfg.get("run_settings", {}).get("output_dir", "results/Gravity"))
     
     harness = Tier2Harness(cfg, outdir)
@@ -2651,6 +2681,50 @@ def main():
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
         test_metrics.record_run(r["test_id"], metrics_data)
+
+    # Optional: post-run validation
+    if args.post_validate:
+        try:
+            from tools.validate_results_pipeline import PipelineValidator  # type: ignore
+            v = PipelineValidator(strict=args.strict_validate, verbose=not args.quiet_validate)
+            ok = True
+            if args.post_validate == 'tier':
+                ok = v.validate_tier_results(2) and v.validate_master_status_integrity()
+            elif args.post_validate == 'all':
+                ok = v.validate_end_to_end()
+            exit_code = v.report()
+            if exit_code != 0:
+                if args.strict_validate:
+                    log(f"[TIER2] Post-validation failed (exit_code={exit_code})", "FAIL")
+                    raise SystemExit(exit_code)
+                else:
+                    log(f"[TIER2] Post-validation completed with warnings (exit_code={exit_code})", "WARN")
+            else:
+                log("[TIER2] Post-validation passed", "PASS")
+        except Exception as e:
+            log(f"[TIER2] Validator error: {type(e).__name__}: {e}", "WARN")
+
+    # Optional: rebuild upload package (dry-run staging under docs/upload)
+    if args.update_upload:
+        try:
+            from tools import build_upload_package as bup  # type: ignore
+            bup.refresh_results_artifacts(deterministic=args.deterministic, build_master=False)
+            bup.stage_evidence_docx(include=True)
+            bup.export_txt_from_evidence(include=True)
+            bup.export_md_from_evidence()
+            bup.stage_result_plots(limit_per_dir=6)
+            pdf_rel = bup.generate_comprehensive_pdf()
+            if pdf_rel:
+                log(f"[TIER2] Generated comprehensive PDF: {pdf_rel}", "INFO")
+            entries = bup.stage_and_list_files()
+            zip_rel, _size, _sha = bup.create_zip_bundle(entries, label=None, deterministic=args.deterministic)
+            entries_with_zip = entries + [(zip_rel, (bup.UPLOAD / zip_rel).stat().st_size, bup.sha256_file(bup.UPLOAD / zip_rel))]
+            bup.write_manifest(entries_with_zip, deterministic=args.deterministic)
+            bup.write_zenodo_metadata(entries_with_zip, deterministic=args.deterministic)
+            bup.write_osf_metadata(entries_with_zip)
+            log("[TIER2] Upload package refreshed under docs/upload (manifest and metadata written)", "INFO")
+        except Exception as e:
+            log(f"[TIER2] Upload package build encountered an error: {type(e).__name__}: {e}", "WARN")
     
     if args.test:
         # Single test: just show result

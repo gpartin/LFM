@@ -17,16 +17,16 @@ from pathlib import Path
 
 # Copyright header template
 COPYRIGHT_HEADER = """# Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 """
 
 def has_copyright_header(content: str) -> bool:
     """Check if file already has copyright header."""
     return "Copyright (c) 2025 Greg D. Partin" in content or \
-           "Licensed under CC BY-NC 4.0" in content
+           "Licensed under CC BY-NC-ND 4.0" in content
 
 def add_header_to_file(filepath: Path) -> tuple[bool, str]:
     """

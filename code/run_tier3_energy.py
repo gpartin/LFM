@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 LFM Tier-3 — Energy Conservation Tests (2-D, Unified)
@@ -388,6 +388,17 @@ def main():
                        help="Run single test by ID (e.g., ENER-01). If omitted, runs all tests.")
     parser.add_argument("--config", type=str, default="config/config_tier3_energy.json",
                        help="Path to config file")
+    # Optional post-run hooks
+    parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
+                        help='Run validator after the suite: "tier" validates Tier 3 + master status; "all" runs end-to-end')
+    parser.add_argument('--strict-validate', action='store_true',
+                        help='In strict mode, warnings cause validation to fail')
+    parser.add_argument('--quiet-validate', action='store_true',
+                        help='Reduce validator verbosity')
+    parser.add_argument('--update-upload', action='store_true',
+                        help='Rebuild docs/upload package (refresh status, stage docs, comprehensive PDF, manifest)')
+    parser.add_argument('--deterministic', action='store_true',
+                        help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
     
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
@@ -488,6 +499,50 @@ def main():
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
         test_metrics.record_run(r["test_id"], metrics_data)
+
+    # Optional: post-run validation
+    if args.post_validate:
+        try:
+            from tools.validate_results_pipeline import PipelineValidator  # type: ignore
+            v = PipelineValidator(strict=args.strict_validate, verbose=not args.quiet_validate)
+            ok = True
+            if args.post_validate == 'tier':
+                ok = v.validate_tier_results(3) and v.validate_master_status_integrity()
+            elif args.post_validate == 'all':
+                ok = v.validate_end_to_end()
+            exit_code = v.report()
+            if exit_code != 0:
+                if args.strict_validate:
+                    log(f"[TIER3] Post-validation failed (exit_code={exit_code})", "FAIL")
+                    raise SystemExit(exit_code)
+                else:
+                    log(f"[TIER3] Post-validation completed with warnings (exit_code={exit_code})", "WARN")
+            else:
+                log("[TIER3] Post-validation passed", "PASS")
+        except Exception as e:
+            log(f"[TIER3] Validator error: {type(e).__name__}: {e}", "WARN")
+
+    # Optional: rebuild upload package (dry-run staging under docs/upload)
+    if args.update_upload:
+        try:
+            from tools import build_upload_package as bup  # type: ignore
+            bup.refresh_results_artifacts(deterministic=args.deterministic, build_master=False)
+            bup.stage_evidence_docx(include=True)
+            bup.export_txt_from_evidence(include=True)
+            bup.export_md_from_evidence()
+            bup.stage_result_plots(limit_per_dir=6)
+            pdf_rel = bup.generate_comprehensive_pdf()
+            if pdf_rel:
+                log(f"[TIER3] Generated comprehensive PDF: {pdf_rel}", "INFO")
+            entries = bup.stage_and_list_files()
+            zip_rel, _size, _sha = bup.create_zip_bundle(entries, label=None, deterministic=args.deterministic)
+            entries_with_zip = entries + [(zip_rel, (bup.UPLOAD / zip_rel).stat().st_size, bup.sha256_file(bup.UPLOAD / zip_rel))]
+            bup.write_manifest(entries_with_zip, deterministic=args.deterministic)
+            bup.write_zenodo_metadata(entries_with_zip, deterministic=args.deterministic)
+            bup.write_osf_metadata(entries_with_zip)
+            log("[TIER3] Upload package refreshed under docs/upload (manifest and metadata written)", "INFO")
+        except Exception as e:
+            log(f"[TIER3] Upload package build encountered an error: {type(e).__name__}: {e}", "WARN")
     
     if args.test:
         # Single test: just show result

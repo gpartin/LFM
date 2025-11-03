@@ -1,0 +1,20 @@
+Lattice-Field Medium (LFM): OSF Methods and Reproducibility Appendix
+Version 2.0 — 2025-10-24 | Greg D. Partin | LFM Research — Los Angeles CA USA
+Test Environment
+Hardware: MSI Katana A15 AI (Ryzen 7 8845HS / RTX 4060 8 GB / 32 GB RAM)
+Software: Python 3.11.9, CuPy 12.x, NumPy, SciPy, Matplotlib
+Platform: Windows 11 x64
+Configuration Architecture
+Folder structure:
+C:\LFM\code — kernels
+C:\LFM\config — JSON configs
+C:\LFM\results — numerical outputs
+C:\LFM\packages — proof packets
+Validation Framework
+Tier 1: Lorentz isotropy — Δv/c < 1 %, energy drift < 1e−12
+Tier 2: Gravitational redshift — correlation > 0.95 with analytic model
+Tier 3: Energy conservation — |ΣΔE| / ΣE < 1e−12
+Orchestration
+run_all_tiers.py executes all tiers or specified ones using orchestration.json. Each variant logs configuration, runtime metrics, and summary results.
+Reproducibility
+Each proof packet (LFM_ProofPacket_<campaign>_vX.Y.zip) includes configs, logs, code snapshots, and hash manifests. All runs use deterministic seeds and consistent hardware settings.

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 Parallel test runner using multiprocessing for maximum speed.
@@ -30,6 +30,7 @@ from datetime import datetime
 import psutil  # system memory info
 
 from lfm_test_metrics import TestMetrics, load_test_configs
+from lfm_tiers import get_tier_by_number, get_by_prefix
 from lfm_results import update_master_test_status
 
 
@@ -38,15 +39,9 @@ def run_single_test(test_id: str, tier: int, timeout_sec: int) -> Tuple[str, int
     Run a single test in a subprocess with real-time resource monitoring.
     Returns (test_id, tier, result_dict).
     """
-    # Map tier to runner script
-    runners = {
-        1: "run_tier1_relativistic.py",
-        2: "run_tier2_gravityanalogue.py",
-        3: "run_tier3_energy.py",
-        4: "run_tier4_quantization.py"
-    }
-    
-    runner = runners.get(tier)
+    # Resolve runner from central registry
+    tier_def = get_tier_by_number(tier)
+    runner = tier_def.get("runner") if tier_def else None
     if not runner:
         return (test_id, tier, {
             "exit_code": -1,
@@ -237,6 +232,17 @@ def parse_args():
                        help="Number of parallel workers (default: CPU count - 2)")
     parser.add_argument("--timeout", type=int, default=7200,
                        help="Minimum per-test timeout in seconds (default: 7200 = 120 min). Adaptive estimates may increase this for long tests.")
+    # Optional post-run hooks
+    parser.add_argument('--post-validate', choices=['tiers', 'all'], default=None,
+                        help='Run validator after all tests: "tiers" validates the selected tiers + master status; "all" runs end-to-end')
+    parser.add_argument('--strict-validate', action='store_true',
+                        help='In strict mode, warnings cause validation to fail')
+    parser.add_argument('--quiet-validate', action='store_true',
+                        help='Reduce validator verbosity')
+    parser.add_argument('--update-upload', action='store_true',
+                        help='Rebuild docs/upload package (refresh status, stage docs, comprehensive PDF, manifest)')
+    parser.add_argument('--deterministic', action='store_true',
+                        help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     
     return parser.parse_args()
 
@@ -265,18 +271,11 @@ def get_tests_from_tiers(tiers: List[int]) -> List[Tuple[str, int]]:
 
 def get_specific_tests(test_ids: List[str]) -> List[Tuple[str, int]]:
     """Get specific tests by ID."""
-    # Map test prefixes to tiers
-    tier_map = {
-        "REL": 1,
-        "GRAV": 2,
-        "ENRG": 3,
-        "QUANT": 4
-    }
-    
     tests = []
     for test_id in test_ids:
         prefix = test_id.split("-")[0]
-        tier = tier_map.get(prefix)
+        tdef = get_by_prefix(prefix)
+        tier = int(tdef["tier"]) if tdef else None
         if tier:
             tests.append((test_id, tier))
         else:
@@ -744,11 +743,59 @@ def main():
         for test_id, _ in failed_tests:
             print(f"  python run_tier*_*.py --test {test_id}")
         
+        # Optional: post-run validation and upload build even when failures occurred
+        if args.post_validate:
+            try:
+                from tools.post_run_hooks import run_validation  # type: ignore
+                if args.post_validate == 'all':
+                    run_validation('all', strict=args.strict_validate, quiet=args.quiet_validate)
+                elif args.post_validate == 'tiers':
+                    if args.fast:
+                        tiers_to_validate = [1, 2]
+                    elif args.tiers:
+                        tiers_to_validate = [int(t.strip()) for t in args.tiers.split(",")]
+                    elif args.tests:
+                        tiers_to_validate = sorted(list({tier for _, tier in tests}))
+                    else:
+                        tiers_to_validate = []
+                    run_validation('tiers', tiers=tiers_to_validate, strict=args.strict_validate, quiet=args.quiet_validate)
+            except Exception:
+                pass
+        if args.update_upload:
+            try:
+                from tools.post_run_hooks import rebuild_upload  # type: ignore
+                rebuild_upload(deterministic=args.deterministic)
+            except Exception:
+                pass
         sys.exit(1)
     else:
         speedup = sum(m["runtime_sec"] for _, _, m in all_results if "runtime_sec" in m) / total_time
         print(f"\n✓ All tests passed!")
         print(f"Speedup: {speedup:.1f}x vs sequential")
+        # Optional: post-run validation and upload build on success
+        if args.post_validate:
+            try:
+                from tools.post_run_hooks import run_validation  # type: ignore
+                if args.post_validate == 'all':
+                    run_validation('all', strict=args.strict_validate, quiet=args.quiet_validate)
+                elif args.post_validate == 'tiers':
+                    if args.fast:
+                        tiers_to_validate = [1, 2]
+                    elif args.tiers:
+                        tiers_to_validate = [int(t.strip()) for t in args.tiers.split(",")]
+                    elif args.tests:
+                        tiers_to_validate = sorted(list({tier for _, tier in tests}))
+                    else:
+                        tiers_to_validate = []
+                    run_validation('tiers', tiers=tiers_to_validate, strict=args.strict_validate, quiet=args.quiet_validate)
+            except Exception:
+                pass
+        if args.update_upload:
+            try:
+                from tools.post_run_hooks import rebuild_upload  # type: ignore
+                rebuild_upload(deterministic=args.deterministic)
+            except Exception:
+                pass
         sys.exit(0)
 
 

@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: Lattice Field Medium (LFM)
+authors:
+  - name: LFM Research
+doi: 10.5281/zenodo.17478758
+url: https://zenodo.org/records/17478758
+license: CC-BY-NC-ND-4.0
+date-released: 2025-11-02

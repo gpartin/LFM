@@ -1,0 +1,20 @@
+Lattice-Field Medium (LFM): Unified Theoretical and Conceptual Paper
+Version 2.0 — 2025-10-24
+Greg D. Partin | LFM Research, Los Angeles CA USA
+License: This work is licensed under the Creative Commons Attribution–NonCommercial 4.0 International License (CC BY-NC-ND 4.0).
+Abstract
+The Lattice-Field Medium (LFM) posits that spacetime is a deterministic lattice of interacting energy cells. Each cell evolves according to a discrete update rule whose continuum limit reproduces a variable-mass Klein–Gordon equation. This document unifies the conceptual framework and mathematical derivation of LFM, showing that classical, relativistic, gravitational, and quantum behaviors all emerge from one substrate law.
+1. Conceptual Framework
+Spacetime arises from local cell interactions where energy amplitude E(x,t) and curvature χ(x,t) evolve deterministically. The governing relation is ∂²E/∂t² = c²∇²E − χ²(x,t)E, with c² = α/β. Lorentz invariance and conservation arise intrinsically.
+2. Core Equation and Physical Mapping
+The canonical equation links field curvature and local stiffness, producing emergent relativistic and gravitational phenomena. In the continuum limit, χ acts as an effective mass or potential, yielding gravitational redshift, lensing, and quantized oscillations.
+3. Derived Relations
+Lorentz analogue: ω² = c²k² + χ²(x,t)
+Energy conservation: ΣE(t+1) − ΣE(t) = 0
+Quantized exchange: ΔE = nℏ_eff, ℏ_eff = ΔE_minΔt
+4. Simulation Framework
+Tier 1–3 simulations verify isotropy, Lorentz symmetry, and conservation with numerical precision. Phase 1 Test Design defines reproducibility protocols, orchestration logic, and proof-packet archives.
+5. Physical Implications
+LFM offers a deterministic substrate where relativity, quantization, and gravitation emerge naturally. Its χ-feedback mechanism provides a new lens on cosmic expansion and may reduce dependence on the cosmological constant.
+6. Summary
+Unified results from the Master and Core Equations show that a single discrete rule can generate all major field behaviors. Phase 1 validation confirms Lorentz isotropy, energy stability, and gravitational analogues, establishing a reproducible foundation.

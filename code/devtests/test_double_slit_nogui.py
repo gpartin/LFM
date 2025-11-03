@@ -1,8 +1,8 @@
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 Headless test of double slit scenario physics
@@ -11,7 +11,9 @@ No pygame, no matplotlib GUI - just numerical validation
 
 import numpy as np
 import sys
-sys.path.insert(0, 'c:\\LFM\\code')
+import os
+# Add project root to path dynamically
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lfm_equation import lattice_step
 
 def test_double_slit():

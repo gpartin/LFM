@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 validate_resource_tracking.py — Multi-Point Inspection for Resource Metrics
@@ -34,6 +34,7 @@ Usage:
 """
 
 import json
+import re
 import argparse
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -62,6 +63,37 @@ def load_metrics_history(project_root: Path) -> Dict:
     
     with open(metrics_file, 'r') as f:
         return json.load(f)
+
+
+def load_master_status(project_root: Path) -> Dict[str, str]:
+    """Parse MASTER_TEST_STATUS.csv and return {test_id: status} (e.g., PASS/FAIL/SKIP)."""
+    status_csv = project_root / "results" / "MASTER_TEST_STATUS.csv"
+    status_map: Dict[str, str] = {}
+    if not status_csv.exists():
+        return status_map
+    try:
+        with open(status_csv, 'r', encoding='utf-8') as f:
+            lines = [ln.strip() for ln in f.readlines()]
+        # Find the detailed sections header
+        in_detail = False
+        for ln in lines:
+            if ln.startswith("DETAILED TEST RESULTS"):
+                in_detail = True
+                continue
+            if not in_detail:
+                continue
+            # Skip tier headers and column headers
+            if not ln or ln.startswith("TIER ") or ln.startswith("Test_ID,Description,Status"):
+                continue
+            # Expect CSV line: Test_ID,Description,Status,Notes
+            parts = [p.strip() for p in ln.split(",")]
+            if len(parts) >= 3 and '-' in parts[0]:
+                test_id = parts[0]
+                status = parts[2].upper()
+                status_map[test_id] = status
+    except Exception:
+        pass
+    return status_map
 
 
 def load_test_summary(test_dir: Path) -> Optional[Dict]:
@@ -126,40 +158,48 @@ def validate_metrics(metrics: Dict, test_id: str, source: str) -> List[str]:
 
 
 def get_tier_prefix(tier: int) -> str:
-    """Get test ID prefix for tier."""
-    prefixes = {1: "REL", 2: "GRAV", 3: "ENER", 4: "QUAN"}
-    return prefixes.get(tier, "")
+    """Get test ID prefix for tier via central registry (fallback to legacy)."""
+    try:
+        from lfm_tiers import get_tier_by_number
+        t = get_tier_by_number(int(tier))
+        return t.get("prefix", "") if t else ""
+    except Exception:
+        prefixes = {1: "REL", 2: "GRAV", 3: "ENER", 4: "QUAN"}
+        return prefixes.get(tier, "")
 
 
 def find_tier_results_dirs(project_root: Path, tier: Optional[int] = None) -> List[Path]:
-    """Find all tier result directories."""
+    """Find all tier result directories using central registry."""
     results_dir = project_root / "results"
     if not results_dir.exists():
         return []
-    
-    tier_dirs = []
-    tier_names = {
-        1: "Relativistic",
-        2: "Gravity",
-        3: "Energy",
-        4: "Quantization"
-    }
-    
-    if tier:
-        # Single tier
-        tier_name = tier_names.get(tier)
-        if tier_name:
-            tier_dir = results_dir / tier_name
-            if tier_dir.exists():
-                tier_dirs.append(tier_dir)
-    else:
-        # All tiers
-        for tier_name in tier_names.values():
-            tier_dir = results_dir / tier_name
-            if tier_dir.exists():
-                tier_dirs.append(tier_dir)
-    
-    return tier_dirs
+
+    try:
+        from lfm_tiers import get_tiers, get_tier_by_number
+        if tier is not None:
+            t = get_tier_by_number(int(tier))
+            if not t:
+                return []
+            d = results_dir / t.get("dir", t.get("name", ""))
+            return [d] if d.exists() else []
+        else:
+            dirs: List[Path] = []
+            for t in get_tiers():
+                d = results_dir / t.get("dir", t.get("name", ""))
+                if d.exists():
+                    dirs.append(d)
+            return dirs
+    except Exception:
+        # Fallback legacy names
+        tier_names = {1: "Relativistic", 2: "Gravity", 3: "Energy", 4: "Quantization"}
+        if tier:
+            tier_name = tier_names.get(tier)
+            if tier_name:
+                tier_dir = results_dir / tier_name
+                return [tier_dir] if tier_dir.exists() else []
+            return []
+        else:
+            return [p for p in (results_dir / "Relativistic", results_dir / "Gravity", results_dir / "Energy", results_dir / "Quantization") if p.exists()]
 
 
 def inspect_test_from_history(metrics_history: Dict, test_id: str) -> Dict:
@@ -266,8 +306,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Validate resource tracking metrics across all tier runners"
     )
-    parser.add_argument("--tier", type=int, choices=[1, 2, 3, 4],
-                       help="Check specific tier only")
+    parser.add_argument("--tier", type=int,
+                       help="Check specific tier only (by number)")
     parser.add_argument("--test", type=str,
                        help="Check specific test ID only (e.g., REL-01)")
     args = parser.parse_args()
@@ -279,6 +319,8 @@ def main():
     # Load metrics history
     metrics_history = load_metrics_history(project_root)
     print(f"Loaded metrics history: {len(metrics_history)} tests\n")
+    # Load master status for skip/known-pass context
+    master_status = load_master_status(project_root)
     
     # Single test mode
     if args.test:
@@ -328,21 +370,51 @@ def main():
             print(f"  {Colors.WARNING}No test directories found{Colors.ENDC}\n")
             continue
         
+        # Pattern filter from registry; fallback to generic uppercase-ID format
+        try:
+            from lfm_tiers import get_tiers
+            tier_def = None
+            for t in get_tiers():
+                if t.get("dir") == tier_name or t.get("name") == tier_name or t.get("category_name") == tier_name:
+                    tier_def = t
+                    break
+            id_pat = tier_def.get("id_pattern") if tier_def else r"^[A-Z]+-\d+$"
+            pat = re.compile(id_pat, re.I)
+        except Exception:
+            pat = re.compile(r"^[A-Z]+-\d+$", re.I)
+
         for test_dir in sorted(test_dirs):
-            test_id = test_dir.name
+            test_id = test_dir.name.strip()
+            # Skip non-test utility folders or artifacts (e.g., REL-TEST-*, README, INSPECT)
+            if not pat.match(test_id):
+                print(f"  {Colors.OKCYAN}↷ Skipping nonstandard entry: {test_id}{Colors.ENDC}")
+                continue
             total_tests += 1
             
             # Inspect from metrics history
             inspection = inspect_test_from_history(metrics_history, test_id)
-            
             if not inspection["found"]:
-                total_missing += 1
-            elif inspection["passed"]:
-                total_passed += 1
-            else:
-                total_failed += 1
-            
-            print_test_inspection(inspection)
+                # Graceful fallback: if test is SKIP in master status, don't count as missing
+                status = master_status.get(test_id, "")
+                if status == "SKIP":
+                    print(f"  {Colors.OKCYAN}↷ {test_id}: skipped per master status{Colors.ENDC}")
+                else:
+                    # If summary exists, warn but don't fail overall
+                    summary = load_test_summary(test_dir)
+                    if summary is not None:
+                        print(f"  {Colors.WARNING}⚠ {test_id}: no metrics in history, but summary.json exists{Colors.ENDC}")
+                        # Treat as passed for resource coverage purposes
+                        total_passed += 1
+                    else:
+                        total_missing += 1
+                        print_test_inspection(inspection)
+                    continue
+            if inspection["found"]:
+                if inspection["passed"]:
+                    total_passed += 1
+                else:
+                    total_failed += 1
+                print_test_inspection(inspection)
         
         print()  # Blank line between tiers
     

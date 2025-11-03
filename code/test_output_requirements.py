@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
-# Licensed under CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International).
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: gpartin@gmail.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 test_output_requirements.py — Tier Test Output Requirements & Validation
@@ -56,6 +56,10 @@ CORE_REQUIREMENTS = {
             "peak_memory_mb",
             "peak_gpu_memory_mb"
         ]
+    },
+    "readme.txt": {
+        "description": "Human-readable summary of this result folder",
+        "type": "file"
     },
     "test_metrics_history.json": {
         "description": "Global test metrics database entry",
@@ -353,6 +357,13 @@ def check_core_requirements(test_dir: Path, test_id: str) -> Tuple[List[str], Li
     else:
         failures.append("summary.json not found")
     
+    # Check readme.txt presence
+    readme_file = test_dir / "readme.txt"
+    if readme_file.exists():
+        passes.append("readme.txt exists")
+    else:
+        failures.append("readme.txt not found")
+
     # Check directories
     for dir_name in ["diagnostics", "plots"]:
         dir_path = test_dir / dir_name
