@@ -382,14 +382,24 @@ This work is licensed under the **Creative Commons Attribution-NonCommercial-NoD
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. (Coming Soon)
+⚠️ **This is a read-only research repository under CC BY-NC-ND 4.0 (NoDerivatives).**
 
-**Areas of interest:**
-- Performance optimizations
-- Additional physics tests
-- Documentation improvements
-- Bug reports and fixes
-- Visualization enhancements
+**External modifications are not accepted.** This repository serves as:
+- A reference implementation for the published research
+- A defensive publication establishing prior art
+- An archival record linked to DOI 10.5281/zenodo.17478758
+
+**You may:**
+- ✅ Report bugs via email (latticefieldmediumresearch@gmail.com)
+- ✅ Request clarifications or discuss results via email
+- ✅ Use the code for non-commercial research (with attribution and restrictions—see LICENSE)
+
+**You may NOT:**
+- ❌ Submit pull requests (will be closed)
+- ❌ Create derivative works (license violation)
+- ❌ Fork for commercial purposes
+
+For collaboration inquiries or commercial licensing, contact latticefieldmediumresearch@gmail.com
 
 ---
 
