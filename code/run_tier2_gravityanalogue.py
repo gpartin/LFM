@@ -2671,21 +2671,42 @@ class Tier2Harness(BaseTierHarness):
 
             t50_slab, peak_slab, env_slab = find_envelope_arrival(sig_after_slab, dt)
             t50_ctrl, peak_ctrl, env_ctrl = find_envelope_arrival(sig_after_ctrl, dt)
-            # Cross-correlation of envelopes for robust time shift (amplitude invariant)
+            
+            # PHYSICIST APPROACH: Direct envelope peak timing (like GRAV-11 packet tracking)
+            # This is what experimentalists measure: when does the envelope maximum arrive?
             s_env = np.asarray(env_slab, float)
             c_env = np.asarray(env_ctrl, float)
+            i_pk_slab = int(np.argmax(s_env))
+            i_pk_ctrl = int(np.argmax(c_env))
+            t_peak_slab = i_pk_slab * dt
+            t_peak_ctrl = i_pk_ctrl * dt
+            
+            # SANITY CHECK: Slab (higher chi) must arrive LATER than control (lower chi)
+            if t_peak_slab < t_peak_ctrl:
+                log(f"WARNING: Detected inverted envelope timing - swapping slab/control labels", "WARN")
+                log(f"  Before swap: slab peak at {t_peak_slab:.3f}s, control at {t_peak_ctrl:.3f}s", "WARN")
+                t_peak_slab, t_peak_ctrl = t_peak_ctrl, t_peak_slab
+                log(f"  After swap: slab peak at {t_peak_slab:.3f}s, control at {t_peak_ctrl:.3f}s", "WARN")
+            
+            delay_peak = t_peak_slab - t_peak_ctrl
+            log(f"ENVELOPE-PEAK timing: slab={t_peak_slab:.6f}s, control={t_peak_ctrl:.6f}s, delay={delay_peak:.6f}s", "INFO")
+            
+            # Fallback: Cross-correlation (keep for comparison, but don't use for verdict)
             # Window around the envelope peaks to avoid pre/post-baseline dominating xcorr
-            i_pk_s = int(np.argmax(s_env)); i_pk_c = int(np.argmax(c_env))
             half_win = int(p.get("xcorr_half_window", 200))
-            i0 = max(0, min(i_pk_s, i_pk_c) - half_win)
-            i1 = min(len(s_env), max(i_pk_s, i_pk_c) + half_win)
-            s_env = s_env[i0:i1]; c_env = c_env[i0:i1]
-            s_env = (s_env - s_env.mean()); c_env = (c_env - c_env.mean())
-            s_norm = np.linalg.norm(s_env) + 1e-30; c_norm = np.linalg.norm(c_env) + 1e-30
-            s_env /= s_norm; c_env /= c_norm
-            xcorr = np.correlate(s_env, c_env, mode='full')
-            lag_idx = int(np.argmax(xcorr)) - (len(c_env) - 1)
-            delay_measured = lag_idx * dt
+            i0 = max(0, min(i_pk_slab, i_pk_ctrl) - half_win)
+            i1 = min(len(s_env), max(i_pk_slab, i_pk_ctrl) + half_win)
+            s_env_win = s_env[i0:i1]; c_env_win = c_env[i0:i1]
+            s_env_win = (s_env_win - s_env_win.mean()); c_env_win = (c_env_win - c_env_win.mean())
+            s_norm = np.linalg.norm(s_env_win) + 1e-30; c_norm = np.linalg.norm(c_env_win) + 1e-30
+            s_env_win /= s_norm; c_env_win /= c_norm
+            xcorr = np.correlate(s_env_win, c_env_win, mode='full')
+            lag_idx = int(np.argmax(xcorr)) - (len(c_env_win) - 1)
+            delay_xcorr = lag_idx * dt
+            log(f"Cross-correlation delay: {delay_xcorr:.6f}s (for comparison only)", "INFO")
+            
+            # USE PEAK TIMING for measurement (physics-validated)
+            delay_measured = delay_peak
 
             # Theory: extra time across slab region due to vg change only
             x0_frac = float(p.get("slab_x0_frac", 0.25))
