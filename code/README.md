@@ -28,7 +28,7 @@ High-performance Klein-Gordon wave equation solver with GPU acceleration for exp
 
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17478758.svg)](https://doi.org/10.5281/zenodo.17478758)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17510124.svg)](https://doi.org/10.5281/zenodo.17510124)
 [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
 
 **Test Status:** 51/55 tests passing (93% success rate) | **Production Ready:** 90%
@@ -326,8 +326,8 @@ If you use LFM in your research, please cite:
   year = {2025},
   publisher = {LFM Research},
   license = {CC BY-NC-ND 4.0},
-  doi = {10.5281/zenodo.17478758},
-  url = {https://zenodo.org/records/17478758},
+  doi = {10.5281/zenodo.17510124},
+  url = {https://zenodo.org/records/17510124},
   repository = {https://osf.io/6agn8}
 }
 ```
@@ -370,7 +370,7 @@ This work is licensed under the **Creative Commons Attribution-NonCommercial-NoD
 
 **Third-Party Dependencies:** This project uses open-source libraries (NumPy, Matplotlib, SciPy, h5py, pytest, CuPy) under permissive licenses. See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for complete attribution.
 
-**Prior Art Notice:** This work has been publicly disclosed on OSF ([osf.io/6agn8](https://osf.io/6agn8)) and Zenodo ([DOI: 10.5281/zenodo.17478758](https://zenodo.org/records/17478758)), establishing prior art and preventing patent claims by third parties on the disclosed methods and algorithms.
+**Prior Art Notice:** This work has been publicly disclosed on OSF ([osf.io/6agn8](https://osf.io/6agn8)) and Zenodo ([DOI: 10.5281/zenodo.17510124](https://zenodo.org/records/17510124)), establishing prior art and preventing patent claims by third parties on the disclosed methods and algorithms.
 
 **Anti-Circumvention:** Creating "clean room" reimplementations of the disclosed algorithms to avoid the non-commercial restriction is prohibited and may constitute license violation and/or trade secret misappropriation.
 
