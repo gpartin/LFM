@@ -28,7 +28,9 @@
     "log_packet_stride": 100,
     "log_packet_positions": false,
     "save_detector_signals": true,
-    "arrival_threshold_frac": 0.6
+    "arrival_threshold_frac": 0.6,
+    "arrival_search_halfwidth": 300,
+    "arrival_energy_halfwidth": 100
   },
   "parameters": {
     "grid_points": 64,
@@ -230,21 +232,21 @@
       "ndim": 1,
       "grid_points": 64,
       "dx": 2.0,
-      "chi_profile": "slab_x",
+      "chi_profile": "slab_x_taper",
       "chi_bg": 0.01,
       "chi_slab": 0.20,
       "slab_x0_frac": 0.25,
       "slab_x1_frac": 0.40,
-      "taper_cells": 0,
+  "taper_cells": 10,
       "source_x_frac": 0.02,
-      "detector_after_frac": 0.50,
+  "detector_after_frac": 0.62,
       "wave_frequency": 0.30,
-      "wave_amplitude": 0.08,
-      "envelope_width": 8.0,
-      "measurement_steps": 1500,
+    "wave_amplitude": 0.08,
+  "envelope_width": 24.0,
+  "measurement_steps": 3000,
       "dt": 0.10,
-      "steps": 1500,
-      "steps_quick": 1500
+  "steps": 3000,
+  "steps_quick": 3000
     },
     {
       "test_id": "GRAV-15",

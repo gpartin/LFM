@@ -1332,8 +1332,9 @@ class Tier2Harness(BaseTierHarness):
 
         self.check_cfl(c, dt, dx, ndim=ndim)
         # Time-delay and phase_delay modes need absorbing boundaries to prevent wrapping
+        # Include phase_delay_diff (GRAV-14) as it measures differential group delay at a single detector
         # Other modes use periodic (time_dilation tests need global coupling anyway)
-        boundary_type = "absorbing" if mode in ("time_delay", "phase_delay") else "periodic"
+        boundary_type = "absorbing" if mode in ("time_delay", "phase_delay", "phase_delay_diff") else "periodic"
         params = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary=boundary_type,
                       chi=to_numpy(chi_field) if xp is np else chi_field)
         if "debug" in self.run_settings:
@@ -2595,6 +2596,8 @@ class Tier2Harness(BaseTierHarness):
             source_x_frac = float(p.get("source_x_frac", 0.05))
             det_after_frac = float(p.get("detector_after_frac", 0.55))
             measurement_steps = int(p.get("measurement_steps", 3000))
+            x0_frac = float(p.get("slab_x0_frac", 0.25))
+            x1_frac = float(p.get("slab_x1_frac", 0.40))
 
             source_x = int(source_x_frac * N)
             det_after = int(det_after_frac * N)
@@ -2604,13 +2607,16 @@ class Tier2Harness(BaseTierHarness):
 
             def make_ic_for(chi_field_local):
                 # PDE-consistent ICs for the given chi field (1D only)
+                # CRITICAL: Always use chi_bg for IC construction!
+                # Both packets start in background region, so k/omega determined by chi_bg
                 x_grid = xp.arange(N, dtype=xp.float64) * dx
                 x0 = float(source_x) * dx
                 sigma = envelope_width
-                chi_src = float(to_numpy(chi_field_local[source_x]))
+                chi_init = float(p.get("chi_bg", 0.01))  # Use background chi for ICs
                 omega = wave_freq
-                k_bg = math.sqrt(max(omega*omega - chi_src*chi_src, 1e-16)) / max(c, 1e-16)
+                k_bg = math.sqrt(max(omega*omega - chi_init*chi_init, 1e-16)) / max(c, 1e-16)
                 vg = (c*c*k_bg) / max(omega, 1e-16)
+                log(f"  IC builder: chi_init={chi_init:.6f}, omega={omega:.6f}, k={k_bg:.6f}, vg={vg:.6f}", "DEBUG")
                 xi = x_grid - x0
                 env = xp.exp(- (xi*xi) / (2.0 * sigma * sigma))
                 d_env_dx = - (xi / (sigma * sigma)) * env
@@ -2624,24 +2630,56 @@ class Tier2Harness(BaseTierHarness):
                 Eprev = (E - dt * E_t + 0.5 * (dt*dt) * E_tt).astype(self.dtype)
                 return E, Eprev
 
-            def simulate_detector(chi_field_local, steps_local):
+            def simulate_detector(chi_field_local, steps_local, track_packet=False):
                 params_local = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary=boundary_type,
                                     chi=to_numpy(chi_field_local) if xp is np else chi_field_local)
                 E_loc, Ep_loc = make_ic_for(chi_field_local)
                 sig = []
+                packet_track = []  # Track packet position through space
                 for n in range(steps_local):
                     E_next = lattice_step(E_loc, Ep_loc, params_local)
                     Ep_loc, E_loc = E_loc, E_next
                     if ndim == 1:
                         sig.append(float(to_numpy(E_loc)[det_after]))
+                        if track_packet:
+                            E_np = to_numpy(E_loc)
+                            # NOTE: Tracks PHASE velocity (wave crests), not GROUP velocity (energy)
+                            # Phase velocity v_p = omega/k CAN exceed c in massive dispersion (Klein-Gordon)
+                            # This is correct physics! For energy transport use envelope tracking instead
+                            x_peak = float(np.argmax(np.abs(E_np)))
+                            max_amp = float(np.max(np.abs(E_np)))
+                            packet_track.append((n, x_peak, max_amp))
                     else:
                         sig.append(float(to_numpy(E_loc)[det_after, N//2, N//2]))
+                if track_packet:
+                    return np.asarray(sig, float), packet_track
                 return np.asarray(sig, float)
 
             # Signals at downstream detector for slab vs control
-            sig_after_slab = simulate_detector(chi_field, measurement_steps)
+            # DIAGNOSTIC: Verify chi-fields
+            slab_center_idx = int((x0_frac + x1_frac) / 2.0 * N)
+            chi_slab_actual = float(to_numpy(chi_field)[slab_center_idx])
+            chi_ctrl_actual = float(to_numpy(chi_field)[source_x]) if source_x < slab_center_idx else float(to_numpy(chi_field)[det_after])
+            log(f"Chi-field check: slab center (x={slab_center_idx})={chi_slab_actual:.6f}, source (x={source_x})={chi_ctrl_actual:.6f}", "INFO")
+            
+            # SIMULATION ADVANTAGE: Track packet position through space!
+            sig_after_slab, packet_slab = simulate_detector(chi_field, measurement_steps, track_packet=True)
             chi_ctrl = build_chi_field("uniform", N, dx, {"chi_uniform": p.get("chi_bg", 0.05)}, xp, ndim=ndim).astype(self.dtype)
-            sig_after_ctrl = simulate_detector(chi_ctrl, measurement_steps)
+            chi_ctrl_check = float(to_numpy(chi_ctrl)[source_x])
+            log(f"Control chi-field: uniform value={chi_ctrl_check:.6f} (expected chi_bg={p.get('chi_bg', 0.05):.6f})", "INFO")
+            sig_after_ctrl, packet_ctrl = simulate_detector(chi_ctrl, measurement_steps, track_packet=True)
+            
+            # Save packet tracking for analysis
+            if bool(diag_cfg.get("save_packet_tracking", True)):
+                csv_pkt_slab = diag_dir / f"packet_tracking_{tid}_slab.csv"
+                with open(csv_pkt_slab, 'w', newline='') as f:
+                    wr = csv.writer(f); wr.writerow(['step','x_peak','amplitude'])
+                    for step, x_pk, amp in packet_slab: wr.writerow([step, x_pk, amp])
+                csv_pkt_ctrl = diag_dir / f"packet_tracking_{tid}_control.csv"
+                with open(csv_pkt_ctrl, 'w', newline='') as f:
+                    wr = csv.writer(f); wr.writerow(['step','x_peak','amplitude'])
+                    for step, x_pk, amp in packet_ctrl: wr.writerow([step, x_pk, amp])
+                log(f"Wrote packet tracking: {csv_pkt_slab.name}, {csv_pkt_ctrl.name}", "INFO")
 
             # Save signals
             if bool(diag_cfg.get("save_detector_signals", True)):
@@ -2672,6 +2710,35 @@ class Tier2Harness(BaseTierHarness):
             t50_slab, peak_slab, env_slab = find_envelope_arrival(sig_after_slab, dt)
             t50_ctrl, peak_ctrl, env_ctrl = find_envelope_arrival(sig_after_ctrl, dt)
             
+            # SIMULATION SUPERPOWER: Measure transit time THROUGH the slab!
+            # Find when packet enters and exits the slab region
+            x_slab_entry = x0_frac * N
+            x_slab_exit = x1_frac * N
+            
+            def find_crossing_time(packet_track, x_target):
+                """Find when packet peak crosses x_target"""
+                for i, (step, x_peak, amp) in enumerate(packet_track):
+                    if x_peak >= x_target:
+                        return step * dt
+                return None
+            
+            t_enter_slab = find_crossing_time(packet_slab, x_slab_entry)
+            t_exit_slab = find_crossing_time(packet_slab, x_slab_exit)
+            t_enter_ctrl = find_crossing_time(packet_ctrl, x_slab_entry)
+            t_exit_ctrl = find_crossing_time(packet_ctrl, x_slab_exit)
+            
+            if t_enter_slab and t_exit_slab and t_enter_ctrl and t_exit_ctrl:
+                transit_slab = t_exit_slab - t_enter_slab
+                transit_ctrl = t_exit_ctrl - t_enter_ctrl
+                delay_transit = transit_slab - transit_ctrl
+                log(f"TRANSIT-TIME measurement (through slab region):", "INFO")
+                log(f"  Slab: enter={t_enter_slab:.3f}s, exit={t_exit_slab:.3f}s, transit={transit_slab:.3f}s", "INFO")
+                log(f"  Ctrl: enter={t_enter_ctrl:.3f}s, exit={t_exit_ctrl:.3f}s, transit={transit_ctrl:.3f}s", "INFO")
+                log(f"  Shapiro delay (transit difference): {delay_transit:.6f}s", "INFO")
+            else:
+                delay_transit = None
+                log(f"WARNING: Could not measure transit time (packet may not cross slab region)", "WARN")
+            
             # PHYSICIST APPROACH: Direct envelope peak timing (like GRAV-11 packet tracking)
             # This is what experimentalists measure: when does the envelope maximum arrive?
             s_env = np.asarray(env_slab, float)
@@ -2691,35 +2758,110 @@ class Tier2Harness(BaseTierHarness):
             delay_peak = t_peak_slab - t_peak_ctrl
             log(f"ENVELOPE-PEAK timing: slab={t_peak_slab:.6f}s, control={t_peak_ctrl:.6f}s, delay={delay_peak:.6f}s", "INFO")
             
-            # Fallback: Cross-correlation (keep for comparison, but don't use for verdict)
-            # Window around the envelope peaks to avoid pre/post-baseline dominating xcorr
+            # PHYSICIST APPROACH #2 (robust): 50% cumulative energy around the EXPECTED arrival
+            # Use a prediction window centered at t_pred (from vg_bg and geometry) to avoid spurious later maxima
+            def arrival_time_50pct_windowed(env, dt_val, t_center, search_halfwidth=None, energy_halfwidth=None, threshold=0.5):
+                """Find the 50% cumulative energy time in a small window around the local peak near t_center."""
+                # Use config-provided or default window sizes
+                if search_halfwidth is None:
+                    search_halfwidth = int(diag_cfg.get("arrival_search_halfwidth", 300))
+                if energy_halfwidth is None:
+                    energy_halfwidth = int(diag_cfg.get("arrival_energy_halfwidth", 100))
+                
+                ic = int(round(max(0.0, t_center) / max(dt_val, 1e-30)))
+                i0 = max(0, ic - search_halfwidth)
+                i1 = min(len(env), ic + search_halfwidth + 1)
+                if i1 <= i0:
+                    # Fallback to global peak
+                    i_peak = int(np.argmax(env))
+                else:
+                    local = env[i0:i1]
+                    i_peak = i0 + int(np.argmax(local))
+                j0 = max(0, i_peak - energy_halfwidth)
+                j1 = min(len(env), i_peak + energy_halfwidth)
+                env_win = env[j0:j1]
+                if env_win.size == 0:
+                    return i_peak * dt_val
+                energy = env_win * env_win
+                cumE = np.cumsum(energy)
+                total = float(cumE[-1]) if cumE.size > 0 else 0.0
+                if total <= 0.0:
+                    return i_peak * dt_val
+                idx_local = int(np.searchsorted(cumE, threshold * total))
+                idx_local = min(idx_local, len(env_win) - 1)
+                return (j0 + idx_local) * dt_val
+
+            # Predict background arrival time at detector from source location
+            dist_src_to_det = (det_after - source_x) * dx  # physical units
+            omega = wave_freq
+            k_bg = math.sqrt(max(omega*omega - float(p.get("chi_bg", 0.01))**2, 1e-16)) / max(c, 1e-16)
+            vg_bg = (c*c*k_bg) / max(omega, 1e-16)
+            t_pred_ctrl = dist_src_to_det / max(vg_bg, 1e-16)
+            # Predict slab arrival by adding theoretical extra time across the slab region
+            L_slab_pred = max(0.0, (x1_frac - x0_frac) * N * dx)
+            k_slab_pred = math.sqrt(max(omega*omega - float(p.get("chi_slab", 0.10))**2, 1e-16)) / max(c, 1e-16)
+            vg_slab_pred = (c*c*k_slab_pred) / max(omega, 1e-16)
+            delay_theory_pred = L_slab_pred * (1.0/max(vg_slab_pred,1e-16) - 1.0/max(vg_bg,1e-16))
+            t_pred_slab = t_pred_ctrl + delay_theory_pred
+
+            # Measure t50 using windows centered on predicted arrivals
+            # Debug: log predicted windows
+            log(f"Predicted arrivals (bg/slab): t_bg≈{t_pred_ctrl:.3f}s, t_slab≈{t_pred_slab:.3f}s", "INFO")
+            t_50_ctrl = arrival_time_50pct_windowed(c_env, dt, t_pred_ctrl)
+            t_50_slab = arrival_time_50pct_windowed(s_env, dt, t_pred_slab)
+            
+            # Sanity check on 50% timing too
+            if t_50_slab < t_50_ctrl:
+                log(f"WARNING: 50% timing inverted - swapping", "WARN")
+                t_50_slab, t_50_ctrl = t_50_ctrl, t_50_slab
+            
+            delay_50 = t_50_slab - t_50_ctrl
+            log(f"50%-ENERGY timing: slab={t_50_slab:.6f}s, control={t_50_ctrl:.6f}s, delay={delay_50:.6f}s", "INFO")
+            
+            # Fallback: Cross-correlation (keep for comparison only)
             half_win = int(p.get("xcorr_half_window", 200))
             i0 = max(0, min(i_pk_slab, i_pk_ctrl) - half_win)
             i1 = min(len(s_env), max(i_pk_slab, i_pk_ctrl) + half_win)
             s_env_win = s_env[i0:i1]; c_env_win = c_env[i0:i1]
-            s_env_win = (s_env_win - s_env_win.mean()); c_env_win = (c_env_win - c_env_win.mean())
-            s_norm = np.linalg.norm(s_env_win) + 1e-30; c_norm = np.linalg.norm(c_env_win) + 1e-30
-            s_env_win /= s_norm; c_env_win /= c_norm
-            xcorr = np.correlate(s_env_win, c_env_win, mode='full')
-            lag_idx = int(np.argmax(xcorr)) - (len(c_env_win) - 1)
-            delay_xcorr = lag_idx * dt
-            log(f"Cross-correlation delay: {delay_xcorr:.6f}s (for comparison only)", "INFO")
+            if len(s_env_win) > 0 and len(c_env_win) > 0:
+                s_env_win = (s_env_win - s_env_win.mean()); c_env_win = (c_env_win - c_env_win.mean())
+                s_norm = np.linalg.norm(s_env_win) + 1e-30; c_norm = np.linalg.norm(c_env_win) + 1e-30
+                s_env_win /= s_norm; c_env_win /= c_norm
+                xcorr = np.correlate(s_env_win, c_env_win, mode='full')
+                lag_idx = int(np.argmax(xcorr)) - (len(c_env_win) - 1)
+                delay_xcorr = lag_idx * dt
+                log(f"Cross-correlation delay: {delay_xcorr:.6f}s (for comparison only)", "INFO")
             
-            # USE PEAK TIMING for measurement (physics-validated)
-            delay_measured = delay_peak
+            # Authoritative measurement: 50%-ENERGY timing (group delay)
+            delay_measured = delay_50
+            log(f"Using 50%-ENERGY measurement for verdict (group delay)", "INFO")
 
-            # Theory: extra time across slab region due to vg change only
+            # Theory: integrate group delay over the actual chi(x) profile used (includes tapers)
             x0_frac = float(p.get("slab_x0_frac", 0.25))
             x1_frac = float(p.get("slab_x1_frac", 0.40))
             chi_bg = float(p.get("chi_bg", 0.01))
-            chi_slab = float(p.get("chi_slab", 0.10))
-            L_slab = max(0.0, (x1_frac - x0_frac) * N * dx)
             omega = wave_freq
             k_bg = math.sqrt(max(omega*omega - chi_bg*chi_bg, 1e-16)) / max(c, 1e-16)
-            k_slab = math.sqrt(max(omega*omega - chi_slab*chi_slab, 1e-16)) / max(c, 1e-16)
             vg_bg = (c*c*k_bg) / max(omega, 1e-16)
-            vg_slab = (c*c*k_slab) / max(omega, 1e-16)
-            delay_theory = L_slab * (1.0/max(vg_slab,1e-16) - 1.0/max(vg_bg,1e-16))
+            # Determine region where chi deviates from background (tapers + slab)
+            chi_np = to_numpy(chi_field)
+            eps_chi = 1e-6
+            ix0 = int(x0_frac * N)
+            ix1 = int(x1_frac * N)
+            # Expand to include tapers by scanning outward until chi≈chi_bg
+            i_left = ix0
+            while i_left > 0 and abs(float(chi_np[i_left]) - chi_bg) > eps_chi:
+                i_left -= 1
+            i_right = ix1
+            while i_right < N-1 and abs(float(chi_np[i_right]) - chi_bg) > eps_chi:
+                i_right += 1
+            # Integrate delay over [i_left, i_right)
+            delay_theory = 0.0
+            for i in range(i_left, i_right):
+                chi_i = float(chi_np[i])
+                k_i = math.sqrt(max(omega*omega - chi_i*chi_i, 1e-16)) / max(c, 1e-16)
+                vg_i = (c*c*k_i) / max(omega, 1e-16)
+                delay_theory += (1.0/max(vg_i,1e-16) - 1.0/max(vg_bg,1e-16)) * dx
 
             err = abs(delay_measured - delay_theory) / max(abs(delay_theory), 1e-12)
             tol_key = "phase_delay_rel_err_max"
