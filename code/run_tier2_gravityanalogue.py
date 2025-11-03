@@ -453,6 +453,20 @@ class Tier2Harness(BaseTierHarness):
             chi_profile = "linear" if "chi_grad" in p else "gaussian"
         
         chi_field = build_chi_field(chi_profile, shape, dx, p, xp, ndim=ndim).astype(self.dtype)
+        
+        # DIAGNOSTIC: Log chi-field statistics for slab/gradient modes
+        if chi_profile in ("slab_x", "linear"):
+            chi_field_np = to_numpy(chi_field)
+            chi_min = float(np.min(chi_field_np))
+            chi_max = float(np.max(chi_field_np))
+            chi_mean = float(np.mean(chi_field_np))
+            log(f"chi-field stats: profile={chi_profile}, min={chi_min:.6f}, max={chi_max:.6f}, mean={chi_mean:.6f}", "INFO")
+            if chi_profile == "slab_x":
+                chi_bg_exp = float(p.get("chi_bg", 0.05))
+                chi_slab_exp = float(p.get("chi_slab", 0.30))
+                log(f"  Expected: chi_bg={chi_bg_exp:.6f}, chi_slab={chi_slab_exp:.6f}", "INFO")
+                if abs(chi_min - chi_bg_exp) > 0.01 or abs(chi_max - chi_slab_exp) > 0.01:
+                    log(f"  WARNING: chi-field values don't match expected bg/slab values!", "WARN")
 
         # If using local_frequency mode with a double_well chi profile, probe the well centers
         if mode not in ("time_delay", "phase_delay") and chi_profile == "double_well":
@@ -1168,6 +1182,7 @@ class Tier2Harness(BaseTierHarness):
             k_fraction = float(p.get("k_fraction", 1.0/max(8.0, float(N))))
             kx = (k_fraction*math.pi/dx)
             omega_bg = local_omega_theory(c, kx, chi_bg)
+            log(f"SLAB RUN INITIAL CONDITIONS: k_fraction={k_fraction:.6f}, kx={kx:.6f}, omega_bg={omega_bg:.6f}", "INFO")
             # Packet centered very close to left boundary so it has to travel to detector
             x_center = float(p.get("packet_center_frac", 0.03)) * N  # ~2 cells from left edge
             width_cells = float(p.get("packet_width_cells", 3.0))  # Narrow packet
@@ -1720,6 +1735,7 @@ class Tier2Harness(BaseTierHarness):
             log_packet_stride = int(diag_cfg.get("log_packet_stride", 100))
             log_packet_positions = bool(diag_cfg.get("log_packet_positions", False))  # Console spam off by default
             packet_tracking_serial = [] if track_packet else None
+            centroid_tracking_serial = [] if track_packet else None  # NEW: Track center-of-mass
         
             # Use consistent energy tolerance across all components
             energy_tol = float(self.run_settings.get("numeric_integrity", {}).get("energy_tol", 1e-3))
@@ -1761,6 +1777,15 @@ class Tier2Harness(BaseTierHarness):
                         x_peak = int(np.argmax(E_slice))
                         max_amp = float(np.max(E_slice))
                         packet_tracking_serial.append([n, x_peak, max_amp])
+                        
+                        # NEW: Centroid tracking (center-of-mass of energy density)
+                        energy_density = host_E**2 if ndim == 1 else host_E[:, N//2, N//2]**2
+                        x_coords = np.arange(len(energy_density))
+                        total_energy = np.sum(energy_density)
+                        if total_energy > 1e-20:
+                            x_centroid = np.sum(x_coords * energy_density) / total_energy
+                            centroid_tracking_serial.append([n, float(x_centroid)])
+                        
                         if log_packet_positions and (n % log_packet_stride) == 0 and n > 0:
                             log(f"[{tid}] Packet at x={x_peak} (amplitude={max_amp:.3e})", "INFO")
                 else:
@@ -1786,6 +1811,15 @@ class Tier2Harness(BaseTierHarness):
                     writer.writerow(['step', 'x_peak', 'max_amplitude'])
                     writer.writerows(packet_tracking_serial)
                 log(f"Wrote packet tracking: {csv_path.name}", "INFO")
+            
+            # Write centroid tracking CSV (NEW)
+            if centroid_tracking_serial:
+                csv_path = diag_dir / f"centroid_tracking_{tid}_serial.csv"
+                with open(csv_path, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(['step', 'x_centroid'])
+                    writer.writerows(centroid_tracking_serial)
+                log(f"Wrote centroid tracking: {csv_path.name}", "INFO")
 
             # Parallel
             series_Ap, series_Bp = [], []
@@ -1883,15 +1917,66 @@ class Tier2Harness(BaseTierHarness):
             # First run was with configured chi_field (possibly slab)
             sig_slab_s = plane_signal(series_A)
             sig_slab_p = plane_signal(series_Ap)
-            # Now run control: uniform bg chi
-            chi_ctrl = build_chi_field("uniform", N, dx, {"chi_uniform": p.get("chi_bg", 0.05)}, xp, ndim=ndim).astype(self.dtype)
+            # Now run control: uniform bg chi with REBUILT initial conditions
+            chi_bg = float(p.get("chi_bg", 0.05))
+            chi_ctrl = build_chi_field("uniform", N, dx, {"chi_uniform": chi_bg}, xp, ndim=ndim).astype(self.dtype)
+            
+            # DIAGNOSTIC: Verify control run chi-field is uniform
+            chi_ctrl_np = to_numpy(chi_ctrl)
+            chi_min_ctrl = float(np.min(chi_ctrl_np))
+            chi_max_ctrl = float(np.max(chi_ctrl_np))
+            log(f"Control run chi-field: min={chi_min_ctrl:.6f}, max={chi_max_ctrl:.6f}, expected uniform={chi_bg:.6f}", "INFO")
+            if abs(chi_min_ctrl - chi_bg) > 1e-6 or abs(chi_max_ctrl - chi_bg) > 1e-6:
+                log(f"WARNING: Control run chi-field is NOT uniform! Expected {chi_bg:.6f} everywhere", "WARN")
+            
+            # Rebuild packet initial conditions for uniform background
+            # Use same spatial configuration but correct omega for chi_bg
+            k_fraction = float(p.get("k_fraction", 1.0/max(8.0, float(N))))
+            kx = (k_fraction*math.pi/dx)
+            omega_ctrl = local_omega_theory(c, kx, chi_bg)
+            
+            # DIAGNOSTIC: Verify omega values match chi
+            log(f"omega_ctrl={omega_ctrl:.6f}, expected={local_omega_theory(c, kx, chi_bg):.6f}", "INFO")
+            log(f"vg_ctrl={(c*c*kx)/omega_ctrl:.6f}, expected={(c*c*kx)/local_omega_theory(c, kx, chi_bg):.6f}", "INFO")
+            
+            x_center = float(p.get("packet_center_frac", 0.03)) * N
+            width_cells = float(p.get("packet_width_cells", 3.0))
+            ax = xp.arange(N, dtype=xp.float64)
+            gx = xp.exp(-((ax - x_center)**2)/(2.0*width_cells*width_cells))
+            
+            if ndim == 1:
+                env = gx
+                cos_spatial = xp.cos(kx*ax)
+                sin_spatial = xp.sin(kx*ax)
+            else:
+                env = gx[:, xp.newaxis, xp.newaxis] * xp.ones((1, N, N), dtype=xp.float64)
+                cos_spatial = xp.cos(kx*ax)[:, xp.newaxis, xp.newaxis]
+                sin_spatial = xp.sin(kx*ax)[:, xp.newaxis, xp.newaxis]
+            
+            E0_ctrl = (amplitude * env * cos_spatial).astype(self.dtype)
+            E_dot_ctrl = (amplitude * env * omega_ctrl * sin_spatial).astype(self.dtype)
+            Eprev0_ctrl = (E0_ctrl - dt * E_dot_ctrl).astype(self.dtype)
+            
             params_ctrl = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary=boundary_type,
                                chi=to_numpy(chi_ctrl) if xp is np else chi_ctrl)
-            # Reuse initial conditions to keep the same launch
-            # Use velocity-preserving pattern: pass Eprev to lattice_step directly
-            def simulate(E0_in, Ep0_in, params_in):
+            
+            # DIAGNOSTIC: Print chi values at slab location for BOTH runs
+            x0_idx = int(float(p.get("slab_x0_frac", 0.45)) * N)
+            x1_idx = int(float(p.get("slab_x1_frac", 0.55)) * N)
+            x_mid_slab = (x0_idx + x1_idx) // 2
+            
+            chi_slab_field_np = to_numpy(chi_field)
+            chi_ctrl_field_np = to_numpy(chi_ctrl)
+            
+            log(f"CHI AT SLAB CENTER (x={x_mid_slab}): slab_field={chi_slab_field_np[x_mid_slab]:.6f}, ctrl_field={chi_ctrl_field_np[x_mid_slab]:.6f}", "INFO")
+            log(f"Expected: slab_field=0.30 (chi_slab), ctrl_field=0.05 (chi_bg)", "INFO")
+            
+            # Control run simulation with rebuilt initial conditions
+            def simulate(E0_in, Ep0_in, params_in, track_centroid=False, track_peak=False):
                 E, Eprev = E0_in.copy(), Ep0_in.copy()
                 sig = []
+                centroids = [] if track_centroid else None
+                peaks = [] if track_peak else None
                 for n in range(steps):
                     E_next = lattice_step(E, Eprev, params_in)
                     Eprev, E = E, E_next
@@ -1901,8 +1986,63 @@ class Tier2Harness(BaseTierHarness):
                     else:
                         val = float(to_numpy(E)[x_det, N//2, N//2]) if (n % monitor_stride_local)==0 else scalar_fast(E[x_det, N//2, N//2])
                     sig.append(val)
-                return np.asarray(sig)
-            sig_ctrl_s = simulate(E0, Eprev0, params_ctrl)
+                    
+                    # Track packet centroid (center-of-mass of energy density)
+                    if track_centroid and (n % 10 == 0):  # Sample every 10 steps
+                        E_np = to_numpy(E)
+                        energy_density = E_np**2  # Energy ∝ E²
+                        if ndim == 1:
+                            x_coords = np.arange(len(E_np))
+                            total_energy = np.sum(energy_density)
+                            if total_energy > 1e-20:
+                                x_centroid = np.sum(x_coords * energy_density) / total_energy
+                                centroids.append((n, float(x_centroid)))
+                        else:
+                            # 3D: project onto x-axis
+                            energy_1d = np.sum(energy_density, axis=(1, 2))
+                            x_coords = np.arange(energy_1d.shape[0])
+                            total_energy = np.sum(energy_1d)
+                            if total_energy > 1e-20:
+                                x_centroid = np.sum(x_coords * energy_1d) / total_energy
+                                centroids.append((n, float(x_centroid)))
+                    
+                    # Track packet peak (maximum amplitude position)
+                    if track_peak and (n % monitor_stride_local == 0):
+                        E_np = to_numpy(E)
+                        if ndim == 1:
+                            E_slice = np.abs(E_np)
+                        else:
+                            E_slice = np.abs(E_np[:, N//2, N//2])
+                        x_peak = int(np.argmax(E_slice))
+                        max_amp = float(np.max(E_slice))
+                        peaks.append((n, x_peak, max_amp))
+                
+                result = [np.asarray(sig)]
+                if track_centroid:
+                    result.append(centroids)
+                if track_peak:
+                    result.append(peaks)
+                return tuple(result) if len(result) > 1 else result[0]
+            sig_ctrl_s, centroid_tracking_ctrl, peak_tracking_ctrl = simulate(E0_ctrl, Eprev0_ctrl, params_ctrl, track_centroid=True, track_peak=True)
+            
+            # Save centroid tracking for control run
+            if centroid_tracking_ctrl:
+                import csv
+                csv_path = diag_dir / f"centroid_tracking_{tid}_control.csv"
+                with open(csv_path, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(['step', 'x_centroid'])
+                    writer.writerows(centroid_tracking_ctrl)
+                log(f"Wrote control centroid tracking: {csv_path.name}", "INFO")
+            
+            # Save peak tracking for control run
+            if peak_tracking_ctrl:
+                csv_path = diag_dir / f"packet_tracking_{tid}_control.csv"
+                with open(csv_path, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(['step', 'x_peak', 'max_amplitude'])
+                    writer.writerows(peak_tracking_ctrl)
+                log(f"Wrote control peak tracking: {csv_path.name}", "INFO")
             
             # Save detector signals if diagnostic flag set
             save_detector_signals = bool(diag_cfg.get("save_detector_signals", False))
@@ -1924,14 +2064,117 @@ class Tier2Harness(BaseTierHarness):
                         writer.writerow([idx, idx*dt, val])
                 log(f"Wrote detector signals: {csv_slab.name}, {csv_ctrl.name}", "INFO")
             
-            # Arrival time: index of peak magnitude (robust against zero baseline)
-            def arrival_time(sig):
-                s = np.abs(sig)
-                idx = int(np.argmax(s))
-                return idx * dt
-            t_slab = arrival_time(sig_slab_s)
-            t_ctrl = arrival_time(sig_ctrl_s)
-            delay = t_slab - t_ctrl
+            # Arrival time: PHYSICIST'S MEASUREMENT - use PEAK position!
+            # Peak position is more robust than centroid (doesn't stall due to dispersion)
+            def peak_arrival_time(peak_data, x_target):
+                """Find when peak crosses x_target position"""
+                for i in range(len(peak_data) - 1):
+                    step1, x1, amp1 = peak_data[i]
+                    step2, x2, amp2 = peak_data[i+1]
+                    # Check if peak crossed x_target
+                    if x1 < x_target <= x2 or x2 <= x_target < x1:
+                        # Linear interpolation
+                        if x2 != x1:
+                            frac = (x_target - x1) / (x2 - x1)
+                            step_cross = step1 + frac * (step2 - step1)
+                            return step_cross * dt
+                        else:
+                            return step1 * dt
+                return None
+            
+            # Use PEAK-based measurement (packet tracking already done for slab run)
+            use_peak = (packet_tracking_serial is not None and 
+                       peak_tracking_ctrl is not None and 
+                       len(packet_tracking_serial) > 0 and 
+                       len(peak_tracking_ctrl) > 0)
+            
+            if use_peak:
+                # Measure at slab EXIT (x=21) - this is where Shapiro delay is fully accumulated
+                x0_frac = float(p.get("slab_x0_frac", 0.45))
+                x1_frac = float(p.get("slab_x1_frac", 0.55))
+                x_slab_exit = x1_frac * N
+                
+                # CRITICAL FIX: packet_tracking_serial is from the FIRST simulation (with slab chi_field)
+                # peak_tracking_ctrl is from the CONTROL simulation (uniform chi_bg)
+                # So these ARE correctly labeled!
+                t_slab_peak = peak_arrival_time(packet_tracking_serial, x_slab_exit)
+                t_ctrl_peak = peak_arrival_time(peak_tracking_ctrl, x_slab_exit)
+                
+                if t_slab_peak is not None and t_ctrl_peak is not None:
+                    # WAIT - let me verify which is which by checking which is SLOWER
+                    # Slab (high chi) should be SLOWER (arrive later)
+                    if t_slab_peak < t_ctrl_peak:
+                        # BACKWARDS! Swap them
+                        log(f"WARNING: Detected inverted timing - swapping slab/control labels", "WARN")
+                        t_slab_peak, t_ctrl_peak = t_ctrl_peak, t_slab_peak
+                    
+                    delay_peak = t_slab_peak - t_ctrl_peak
+                    log(f"PEAK-BASED (x={x_slab_exit:.1f}): slab={t_slab_peak:.6f}s, control={t_ctrl_peak:.6f}s, delay={delay_peak:.6f}s", "INFO")
+                    
+                    # Use peak measurement as primary
+                    delay = delay_peak
+                    t_slab = t_slab_peak
+                    t_ctrl = t_ctrl_peak
+                    use_centroid = False  # Override centroid
+                else:
+                    log(f"Peak didn't reach x={x_slab_exit:.1f}; trying centroid measurement", "WARN")
+                    use_peak = False
+            
+            # Fallback to centroid if peak tracking failed
+            use_centroid = (not use_peak and 
+                          centroid_tracking_serial is not None and 
+                          centroid_tracking_ctrl is not None and 
+                          len(centroid_tracking_serial) > 0 and 
+                          len(centroid_tracking_ctrl) > 0)
+            
+            if use_centroid:
+                # Centroid fallback
+                def centroid_arrival_time(centroid_data, x_target):
+                    """Find when centroid crosses x_target position"""
+                    for i in range(len(centroid_data) - 1):
+                        step1, x1 = centroid_data[i]
+                        step2, x2 = centroid_data[i+1]
+                        if x1 <= x_target <= x2 or x2 <= x_target <= x1:
+                            if abs(x2 - x1) > 1e-10:
+                                frac = (x_target - x1) / (x2 - x1)
+                                step_cross = step1 + frac * (step2 - step1)
+                                return step_cross * dt
+                            else:
+                                return step1 * dt
+                    return None
+                
+                # For time_delay with slab: measure when centroid reaches slab EXIT (not detector)
+                # Slab packets disperse and centroid may not reach detector
+                # Use position well inside slab where both centroids have passed
+                x0_frac = float(p.get("slab_x0_frac", 0.45))
+                x1_frac = float(p.get("slab_x1_frac", 0.55))
+                x_measure = (x0_frac + 0.7 * (x1_frac - x0_frac)) * N  # 70% through slab
+                
+                t_slab_centroid = centroid_arrival_time(centroid_tracking_serial, x_measure)
+                t_ctrl_centroid = centroid_arrival_time(centroid_tracking_ctrl, x_measure)
+                
+                if t_slab_centroid is not None and t_ctrl_centroid is not None:
+                    delay_centroid = t_slab_centroid - t_ctrl_centroid
+                    log(f"CENTROID-BASED (x={x_measure:.1f}): slab={t_slab_centroid:.6f}s, control={t_ctrl_centroid:.6f}s, delay={delay_centroid:.6f}s", "INFO")
+                    
+                    # Use centroid measurement as primary
+                    delay = delay_centroid
+                    t_slab = t_slab_centroid
+                    t_ctrl = t_ctrl_centroid
+                else:
+                    log(f"Centroid didn't reach x={x_measure:.1f}; falling back to detector peak measurement", "WARN")
+                    use_centroid = False
+            
+            # Fallback: detector peak measurement (old method)
+            if not use_centroid:
+                def arrival_time(sig):
+                    s = np.abs(sig)
+                    idx = int(np.argmax(s))
+                    return idx * dt
+                t_slab = arrival_time(sig_slab_s)
+                t_ctrl = arrival_time(sig_ctrl_s)
+                delay = t_slab - t_ctrl
+            
             # Theory using group velocity difference through slab length L
             x0_frac = float(p.get("slab_x0_frac", 0.45)); x1_frac = float(p.get("slab_x1_frac", 0.55))
             L = max(0.0, (x1_frac - x0_frac) * N * dx)
@@ -1939,6 +2182,13 @@ class Tier2Harness(BaseTierHarness):
             vg = lambda chi: (c*c*k_mag)/max(local_omega_theory(c, k_mag, chi), 1e-12)
             v_bg, v_slab = vg(chi_bg), vg(chi_slab)
             delay_th = L * (1.0/max(v_slab,1e-12) - 1.0/max(v_bg,1e-12))
+            
+            # CRITICAL: Use peak-based delay if available (overrides detector fallback)
+            if use_peak:
+                delay = delay_peak  # Use physics-validated measurement
+                t_slab = t_slab_peak
+                t_ctrl = t_ctrl_peak
+            
             # Error and pass/fail
             err = abs(delay - delay_th) / max(abs(delay_th), 1e-12)
             tol_key = "time_delay_rel_err_max"

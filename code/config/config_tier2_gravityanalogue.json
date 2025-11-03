@@ -169,6 +169,7 @@
       "description": "Time delay — packet through χ slab (Shapiro-like)",
       "mode": "time_delay",
       "skip": false,
+      "ndim": 1,
       "chi_profile": "slab_x",
       "chi_bg": 0.05,
       "chi_slab": 0.30,
