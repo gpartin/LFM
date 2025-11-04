@@ -62,9 +62,14 @@ def read_master_status() -> str:
 
 
 def read_tier_descriptions() -> str:
-    """Read tier and per-test descriptions from results directories."""
+    """Read tier and per-test descriptions from results directories.
+
+    This auto-discovers tiers from results/* and uses optional config/tier_metadata.json
+    to control ordering, titles, and descriptions. Falls back to directory names.
+    """
     lines = ['# Tier and Test Descriptions', '']
-    # Presentation overrides (optional): tests to be shown as SKIP and extra notes
+
+    # Optional presentation overrides
     overrides_path = ROOT / 'config' / 'presentation_overrides.json'
     overrides = {}
     try:
@@ -74,34 +79,65 @@ def read_tier_descriptions() -> str:
         overrides = {}
     skip_overrides = set(overrides.get('skip_tests', []))
     note_overrides = overrides.get('notes', {})
-    
-    tier_dirs = {
-        'Relativistic': 'Tier 1 — Relativistic (Lorentz invariance, isotropy, causality)',
-        'Gravity': 'Tier 2 — Gravity Analogue (χ-field gradients, redshift, lensing)',
-        'Energy': 'Tier 3 — Energy Conservation (Hamiltonian partitioning, dissipation)',
-        'Quantization': 'Tier 4 — Quantization (Discrete exchange, spectral linearity, uncertainty)',
-    }
-    
-    for tier_name, tier_desc in tier_dirs.items():
+
+    # Optional tier metadata for ordering and pretty titles
+    tier_meta_path = ROOT / 'config' / 'tier_metadata.json'
+    tier_order: list[str] = []
+    tier_titles: dict[str, str] = {}
+    try:
+        if tier_meta_path.exists():
+            meta = json.loads(tier_meta_path.read_text(encoding='utf-8'))
+            tier_order = meta.get('order', [])
+            tiers = meta.get('tiers', {})
+            for key, info in tiers.items():
+                title = info.get('title', key)
+                desc = info.get('description')
+                tier_titles[key] = f"{title} ({desc})" if desc else title
+    except Exception:
+        pass
+
+    # Discover available tier directories under results/*
+    discovered = [p.name for p in RESULTS.iterdir() if p.is_dir()]
+    # Filter out non-tier dirs if needed
+    ignore = {'.git', '__pycache__'}
+    discovered = [d for d in discovered if d not in ignore]
+
+    # Build final ordered list: configured order first, then remaining
+    ordered_tiers = [t for t in tier_order if t in discovered]
+    ordered_tiers += [t for t in discovered if t not in ordered_tiers]
+
+    # Include results root overview if present
+    results_readme = RESULTS / 'README.md'
+    if results_readme.exists():
+        try:
+            lines.append('## Results Overview')
+            lines.append('')
+            lines.append(results_readme.read_text(encoding='utf-8'))
+            lines.append('')
+        except Exception:
+            pass
+
+    for tier_name in ordered_tiers:
         tier_dir = RESULTS / tier_name
         if not tier_dir.exists():
             continue
+        tier_desc = tier_titles.get(tier_name, tier_name)
         lines.append(f'## {tier_desc}')
         lines.append('')
-        
+
         # Read test directories and their readme.txt or summary.json
         for test_dir in sorted(tier_dir.glob('*')):
             if not test_dir.is_dir():
                 continue
             test_id = test_dir.name
-            
+
             # Try to read description from readme.txt or summary.json
             readme = test_dir / 'readme.txt'
             summary_json = test_dir / 'summary.json'
-            
+
             desc = 'No description available'
             status = 'UNKNOWN'
-            
+
             if summary_json.exists():
                 try:
                     data = json.loads(summary_json.read_text(encoding='utf-8'))
@@ -115,7 +151,7 @@ def read_tier_descriptions() -> str:
                         status_raw = 'PASS' if data['passed'] else 'FAIL'
                     else:
                         status_raw = 'UNKNOWN'
-                    
+
                     # Normalize status to uppercase
                     status_upper = str(status_raw).upper()
                     if status_upper in ['PASSED', 'PASS', 'TRUE']:
@@ -136,22 +172,25 @@ def read_tier_descriptions() -> str:
                         desc += f" (Skipped: {data.get('skip_reason')})"
                 except Exception:
                     pass
-            
+
             if readme.exists():
                 try:
                     txt = readme.read_text(encoding='utf-8')
-                    # Extract description from readme
+                    # Extract description from readme or include first paragraph
+                    extracted = None
                     for line in txt.splitlines():
                         if line.startswith('- description:'):
-                            desc = line.split(':', 1)[1].strip()
+                            extracted = line.split(':', 1)[1].strip()
                             break
+                    if extracted:
+                        desc = extracted
                 except Exception:
                     pass
-            
+
             lines.append(f'### {test_id}: {desc}')
             lines.append(f'**Status:** {status}')
             lines.append('')
-    
+
     return '\n'.join(lines)
 
 
@@ -224,8 +263,28 @@ def build_combined_markdown(pandoc_exe: Path) -> Path:
     parts.append('---')
     parts.append('')
     
-    # Tier and test descriptions
+    # Tier and test descriptions (now includes Electromagnetic Tier 5)
     parts.append(read_tier_descriptions())
+
+    # Dedicated Electromagnetic Achievements section (if available)
+    em_doc = UPLOAD / 'ELECTROMAGNETIC_ACHIEVEMENTS.md'
+    if em_doc.exists():
+        parts.append('')
+        parts.append('---')
+        parts.append('')
+        parts.append('# Electromagnetic Achievements (Tier 5)')
+        parts.append('')
+        try:
+            parts.append(em_doc.read_text(encoding='utf-8'))
+        except Exception:
+            parts.append('> Unable to include electromagnetic achievements document.')
+    else:
+        # Fallback notice if the EM achievements doc is not present
+        parts.append('')
+        parts.append('---')
+        parts.append('')
+        parts.append('# Electromagnetic Achievements (Tier 5)')
+        parts.append('> Electromagnetic achievements document not found in upload directory.')
     
     combined = '\n'.join(parts)
     out_md = UPLOAD / f'{OUT_BASENAME}.md'

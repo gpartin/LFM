@@ -146,8 +146,8 @@ If you encounter issues:
 ## Next Steps
 
 After installation:
-1. **Run your first test:** REL-01 (relativistic propagation)
-2. **View the results:** Check `results/Relativistic/REL-01/`
+1. **Run your first test:** REL-01 (relativistic propagation) or EM-01 (Coulomb's law)
+2. **View the results:** Check `results/Relativistic/REL-01/` or `results/Electromagnetic/EM-01/`
 3. **Try the GUI:** Launch `lfm_gui.py` for visual interface
 4. **Explore:** Browse the full 55-test validation suite
 5. **Read:** Check `README.md` for complete documentation

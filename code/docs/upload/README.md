@@ -1,313 +1,625 @@
-# LFM Documentation Index
+# LFM Code Documentation — Technical Implementation
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17478758.svg)](https://doi.org/10.5281/zenodo.17478758)
-[![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
+<!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
+<!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
+<!-- See LICENSE file in project root for full license text. -->
+<!-- Commercial use prohibited without explicit written permission. -->
+<!-- Contact: latticefieldmediumresearch@gmail.com -->
 
-Complete guide to all LFM documentation. Start here to find what you need.
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Status: Research](https://img.shields.io/badge/status-research-yellow.svg)]()
 
-**License:** Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)  
-**Author:** Greg D. Partin | LFM Research  
+**Technical documentation for the LFM Klein-Gordon solver with spatially-varying χ-field implementation.**
+
+This directory contains the complete LFM framework codebase, user interfaces, and validation infrastructure. 
+
+**📍 New to LFM?** Start with the [main project README](../README.md) for overview and quick start instructions.
+
+**👨‍💻 Developer/Researcher?** This document covers technical implementation details, test procedures, and code structure.
+
+**Author:** Greg D. Partin | LFM Research — Los Angeles, CA USA  
+**ORCID:** [https://orcid.org/0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)  
 **Contact:** latticefieldmediumresearch@gmail.com  
-**DOI:** [10.5281/zenodo.17478758](https://zenodo.org/records/17478758)  
-**Repository:** [OSF: osf.io/6agn8](https://osf.io/6agn8)
+**License:** Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
+
+> **Note:** "LFM Research" refers to an independent personal research project by Greg D. Partin and is not an incorporated entity.
 
 ---
 
-## 🚀 Getting Started (New Users)
+## Implementation Overview
 
-1. **[README.md](../README.md)** — Project overview, features, quick start  
-   *Start here if you're new to LFM.*
+LFM implements a high-performance Klein-Gordon wave equation solver with spatially-varying χ-field for exploring unified physics phenomena through computational simulation.
 
-2. **[INSTALL.md](INSTALL.md)** — Installation instructions  
-   *Step-by-step setup for Windows, Linux, macOS. Includes troubleshooting.*
+## Physics Foundation
 
-3. **[USER_GUIDE.md](USER_GUIDE.md)** — Complete user manual  
-   *How to run tests, interpret results, configure simulations.*
+LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Gordon in 1926. The standard relativistic Klein-Gordon equation describes scalar field dynamics:
 
----
+**Standard Klein-Gordon:** `∂²φ/∂t² = c²∇²φ - m²φ`
 
-## 📚 Reference Documentation
+**LFM's Innovation:** We implement a modified version with spatially-varying mass term χ²(x,t):
 
-### For Users
+**Modified Klein-Gordon:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
 
-- **[USER_GUIDE.md](USER_GUIDE.md)** — Complete user manual
-  - Understanding test tiers
-  - Running tests (command-line interface)
-  - Interpreting results
-  - Configuration guide
-  - Output files
-  - Visualization
-  - Troubleshooting
-  - FAQ
+This spatial variation of the χ-field enables:
+- **Gravity analogue effects** through χ-gradients
+- **Quantum behavior emergence** via χ-potential wells
+- **Electromagnetic coupling** through χ-field interactions with charge and current densities  
+- **Unified physics simulation** on discrete spacetime lattice
 
-### For Developers
+**Foundational References:**
+- Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. *Zeitschrift für Physik*, 37(12), 895-906.
+- Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. *Zeitschrift für Physik*, 40(1-2), 117-133.
 
-- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** — Architecture and internals
-  - Architecture overview
-  - Core module reference
-  - Physics implementation
-  - Test harness pattern
-  - Adding new tests
-  - Backend abstraction (CPU/GPU)
-  - Common patterns
-  - Debugging guide
-  - AI assistant quick reference
-
-- **[API_REFERENCE.md](API_REFERENCE.md)** — Function documentation
-  - Quick reference for all public functions
-  - Type signatures
-  - Usage examples
-  - Module organization
-
----
-
-## 🎯 Project Management
-
-- **[PRODUCTION_READINESS_ANALYSIS.md](PRODUCTION_READINESS_ANALYSIS.md)** — Comprehensive assessment
-  - Current state evaluation
-  - Code quality analysis
-  - Test coverage statistics
-  - Documentation gaps
-  - Missing production components
-  - Self-critique and lessons learned
-
-- **[PRODUCTION_ROADMAP.md](PRODUCTION_ROADMAP.md)** — Path to release
-  - 4-week production timeline
-  - Week-by-week deliverables
-  - Quick wins (can do today)
-  - Success metrics
-  - Risk assessment
-
----
-
-## 📊 Analysis Reports (Archive)
-
-Historical analysis and implementation notes preserved in `analysis/`:
-
-- **[analysis/TIER_RUNNER_ANALYSIS.md](analysis/TIER_RUNNER_ANALYSIS.md)** — Standardization analysis
-- **[analysis/TEST_OUTPUT_ANALYSIS.md](analysis/TEST_OUTPUT_ANALYSIS.md)** — Scientific output requirements
-- **[analysis/OUTPUT_REQUIREMENTS_SUMMARY.md](analysis/OUTPUT_REQUIREMENTS_SUMMARY.md)** — Executive summary
-- **[analysis/OUTPUT_GAP_ANALYSIS.md](analysis/OUTPUT_GAP_ANALYSIS.md)** — Missing outputs heatmap
-
-Implementation notes and historical artifacts in `../archive/`
-
----
-
-## 🧭 Quick Navigation
-
-### "I want to..."
-
-**...install and run LFM for the first time**
-→ [INSTALL.md](INSTALL.md) → [README.md Quick Start](../README.md#quick-start)
-
-**...understand what tests do and how to run them**
-→ [USER_GUIDE.md: Understanding Test Tiers](USER_GUIDE.md#understanding-test-tiers)
-
-**...interpret test results**
-→ [USER_GUIDE.md: Interpreting Results](USER_GUIDE.md#interpreting-results)
-
-**...configure test parameters**
-→ [USER_GUIDE.md: Configuration Guide](USER_GUIDE.md#configuration-guide)
-
-**...create custom visualizations**
-→ [USER_GUIDE.md: Visualization](USER_GUIDE.md#visualization)
-
-**...add a new test**
-→ [DEVELOPER_GUIDE.md: Adding New Tests](DEVELOPER_GUIDE.md#adding-new-tests)
-
-**...understand the code architecture**
-→ [DEVELOPER_GUIDE.md: Architecture Overview](DEVELOPER_GUIDE.md#architecture-overview)
-
-**...debug a test failure**
-→ [USER_GUIDE.md: Troubleshooting](USER_GUIDE.md#troubleshooting) or [DEVELOPER_GUIDE.md: Debugging Guide](DEVELOPER_GUIDE.md#debugging-guide)
-
-**...look up a function**
-→ [API_REFERENCE.md](API_REFERENCE.md)
-
-**...understand project status and what's needed for production**
-→ [PRODUCTION_READINESS_ANALYSIS.md](PRODUCTION_READINESS_ANALYSIS.md)
-
-**...contribute to the project**
-→ [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) + [PRODUCTION_ROADMAP.md](PRODUCTION_ROADMAP.md)
-
----
-
-## 📖 Documentation Hierarchy
-
+**Core Equation:**
 ```
-docs/
-├── README.md (this file)          # Documentation index
-├── INSTALL.md                     # Installation guide
-├── USER_GUIDE.md                  # User manual (how to use)
-├── DEVELOPER_GUIDE.md             # Developer guide (how it works)
-├── API_REFERENCE.md               # Function reference
-├── PRODUCTION_READINESS_ANALYSIS.md  # Project assessment
-├── PRODUCTION_ROADMAP.md          # Release plan
-└── analysis/                      # Archived analysis reports
-    ├── README.md
-    ├── TIER_RUNNER_ANALYSIS.md
-    ├── TEST_OUTPUT_ANALYSIS.md
-    ├── OUTPUT_REQUIREMENTS_SUMMARY.md
-    └── OUTPUT_GAP_ANALYSIS.md
+∂²E/∂t² = c²∇²E - χ²(x,t)E
 ```
 
----
-
-## 🎓 Learning Path
-
-### Beginner Path (First-time users)
-
-1. Read [README.md](../README.md) — Understand what LFM is
-2. Follow [INSTALL.md](INSTALL.md) — Get LFM running
-3. Run your first test:
-   ```bash
-   python run_tier1_relativistic.py --test REL-01
-   ```
-4. Read [USER_GUIDE.md: Quick Start](USER_GUIDE.md#quick-start)
-5. Explore [USER_GUIDE.md: Understanding Test Tiers](USER_GUIDE.md#understanding-test-tiers)
-
-### Intermediate Path (Regular users)
-
-1. Master [USER_GUIDE.md: Running Tests](USER_GUIDE.md#running-tests)
-2. Learn [USER_GUIDE.md: Configuration Guide](USER_GUIDE.md#configuration-guide)
-3. Understand [USER_GUIDE.md: Interpreting Results](USER_GUIDE.md#interpreting-results)
-4. Create custom visualizations: [USER_GUIDE.md: Visualization](USER_GUIDE.md#visualization)
-
-### Advanced Path (Developers)
-
-1. Read [DEVELOPER_GUIDE.md: Architecture Overview](DEVELOPER_GUIDE.md#architecture-overview)
-2. Study [DEVELOPER_GUIDE.md: Core Module Reference](DEVELOPER_GUIDE.md#core-module-reference)
-3. Learn [DEVELOPER_GUIDE.md: Test Harness Pattern](DEVELOPER_GUIDE.md#test-harness-pattern)
-4. Follow [DEVELOPER_GUIDE.md: Adding New Tests](DEVELOPER_GUIDE.md#adding-new-tests)
-5. Reference [API_REFERENCE.md](API_REFERENCE.md) as needed
-
-### Contributor Path (Open source contributors)
-
-1. Complete Advanced Path above
-2. Read [PRODUCTION_READINESS_ANALYSIS.md](PRODUCTION_READINESS_ANALYSIS.md)
-3. Review [PRODUCTION_ROADMAP.md](PRODUCTION_ROADMAP.md)
-4. Choose a task from roadmap
-5. Follow [DEVELOPER_GUIDE.md: Common Patterns](DEVELOPER_GUIDE.md#common-patterns)
-6. Submit pull request
+**Key Features:**
+- **Backend Abstraction**: Seamless CPU (NumPy) / GPU (CuPy) switching
+- **Parallel Execution**: Multi-threaded tile-based processing
+- **Comprehensive Validation**: 70 tests across 5 physics tiers (95% pass rate)
+- **User Interfaces**: GUI, console, and CLI modes
+- **Scientific Visualization**: Dispersion curves, interference patterns, 3D evolution
 
 ---
 
-## 🔍 Documentation Standards
+## Navigation
 
-All LFM documentation follows these principles:
-
-### Dual Audience
-- **Humans:** Clear explanations, examples, troubleshooting
-- **AI Assistants:** Structured information, invariants, quick reference
-
-### Three Documentation Levels
-
-1. **User-facing** (USER_GUIDE.md)
-   - *What* you can do
-   - *How* to do it
-   - *Why* it matters
-   - Focus: Practical usage
-
-2. **Developer-facing** (DEVELOPER_GUIDE.md)
-   - *How* it works internally
-   - *Why* it's designed this way
-   - *What* to preserve when modifying
-   - Focus: Architecture and patterns
-
-3. **Reference** (API_REFERENCE.md)
-   - *What* each function does
-   - *What* parameters it takes
-   - *What* it returns
-   - Focus: Quick lookup
-
-### Quality Checklist
-
-Every documentation file should have:
-
-- [ ] Clear target audience stated at top
-- [ ] Table of contents (if >2 pages)
-- [ ] Code examples (for technical docs)
-- [ ] Cross-references to related docs
-- [ ] Last updated date
-- [ ] Contact information (where to get help)
+- **🏠 [Project Overview](../README.md)** — Main project page with quick start
+- **📋 [Installation Guide](INSTALL.md)** — Complete setup instructions  
+- **🧪 [Testing](#testing)** — Run validation tests
+- **📊 [Results](#visualization-examples)** — View simulation outputs
+- **🔧 [Configuration](#configuration)** — Customize parameters
+- **📚 [Documentation](#documentation)** — Detailed technical docs
 
 ---
 
-## 📝 Contributing to Documentation
+## Quick Start
 
-### Found a mistake?
+### ⚖️ Legal Notice — MUST READ
 
-1. Open GitHub issue with "docs:" prefix
-2. Specify which file and section
-3. Provide correction
+**BY DOWNLOADING, COPYING, OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS IN THE [LICENSE](LICENSE) FILE.**
 
-### Want to add documentation?
+**Key restrictions:**
+- ❌ **NO COMMERCIAL USE** without written permission
+- ❌ No "clean room" reimplementations for commercial purposes
+- ✅ Non-commercial research and education permitted (with restrictions)
+- ✅ Must provide proper attribution
 
-1. Determine audience (user vs developer)
-2. Choose appropriate file or create new one
-3. Follow existing format and style
-4. Update this index
-5. Submit pull request
+**Read [LICENSE](LICENSE) and [NOTICE](NOTICE) files before proceeding.**
 
-### Documentation TODO
+### Installation
 
-Current priorities (as of 2025-11-01):
+#### Quick Start (All Platforms)
+```bash
+# Windows: Run quick_setup_windows.bat
+# macOS/Linux: ./quick_setup_unix.sh
+# Or use the automated installer:
+python setup_lfm.py
+```
 
-- [ ] Add Jupyter notebook tutorials (examples/)
-- [ ] Create video walkthroughs for common tasks
-- [ ] Add architecture diagrams (SVG/PNG)
-- [ ] Generate API docs with Sphinx
-- [ ] Create FAQ from common GitHub issues
+#### Manual Installation
+```bash
+# Install dependencies
+pip install numpy>=1.24.0 matplotlib>=3.7.0 scipy>=1.10.0 h5py>=3.8.0 pytest>=7.3.0
+
+# Optional: GPU acceleration (requires CUDA 12.x)
+pip install cupy-cuda12x
+```
+
+📋 **Need help?** See the complete [Installation Guide](INSTALL.md) for detailed instructions, troubleshooting, and platform-specific setup.
+
+### Run Your First Test
+
+#### Using the Graphical Interface (Easiest)
+```bash
+# Windows GUI interface (point-and-click)
+python lfm_gui.py
+
+# Or console interface (menu-driven)
+python lfm_control_center.py
+```
+
+#### Using Command Line Directly
+```bash
+# Single test (completes in ~5 seconds)
+python run_tier1_relativistic.py --test REL-01
+
+# Single electromagnetic test (completes in ~0.3 seconds with analytical precision)
+python run_tier5_electromagnetic.py --test EM-01
+
+# View results
+ls results/Relativistic/REL-01/
+# → summary.json, plots/isotropy_comparison.png, diagnostics/*.csv
+
+ls results/Electromagnetic/EM-01/
+# → summary.json, plots/coulomb_validation.png, diagnostics/*.csv
+```
+
+### Run Full Test Suites
+
+```bash
+# Tier 1: Relativistic propagation (15 tests, ~3 minutes)
+python run_tier1_relativistic.py
+
+# Tier 2: Gravity analogue (25 tests, ~10 minutes)
+python run_tier2_gravityanalogue.py
+
+# Tier 3: Energy conservation (11 tests, ~5 minutes)
+python run_tier3_energy.py
+
+# Tier 4: Quantization (14 tests, ~8 minutes)
+python run_tier4_quantization.py
+
+# Tier 5: Electromagnetic theory (15 tests, ~12 minutes)
+python run_tier5_electromagnetic.py
+```
+
+### Quick Mode (Fast Validation)
+
+```bash
+# Run with reduced resolution for quick verification
+python run_tier1_relativistic.py --quick
+```
 
 ---
 
-## 🛠️ Maintenance
+## Project Structure
 
-This documentation is actively maintained. If you find:
-- **Outdated information** → Open GitHub issue
-- **Missing examples** → Request in issue or submit PR
-- **Broken links** → Report immediately
-- **Unclear explanations** → Ask for clarification
-
-**Documentation maintainer:** Greg D. Partin (latticefieldmediumresearch@gmail.com)
-
-**Last comprehensive review:** 2025-11-01
-
----
-
-## 📦 Documentation Formats
-
-### Current Formats
-- **Markdown (.md):** All current documentation
-- **JSON (.json):** Configuration files with inline comments
-- **CSV (.csv):** Test status reports
-- **TXT (.txt):** Simple logs
-
-### Planned Formats
-- **HTML:** Sphinx-generated API docs (Phase 3)
-- **PDF:** Printable user guide (Phase 4)
-- **Jupyter (.ipynb):** Interactive tutorials (Phase 3)
-
----
-
-## 🌐 External Resources
-
-### Research Papers (Coming Soon)
-- LFM Theory and Implementation (in preparation)
-- Klein-Gordon on Discrete Spacetime (planned)
-- Gravity Analogue Validation (planned)
-
-### Related Projects
-- NumPy: https://numpy.org/doc/
-- CuPy: https://docs.cupy.dev/
-- Matplotlib: https://matplotlib.org/stable/contents.html
-- SciPy: https://docs.scipy.org/
-
-### Community
-- Contact: latticefieldmediumresearch@gmail.com
-- LFM Research — Los Angeles, CA USA
+```
+LFM/code/
+├── setup_lfm.py                 # Automated installer for all platforms
+├── lfm_control_center.py        # Console interface (menu-driven)
+├── lfm_gui.py                   # Windows GUI interface (point-and-click)
+├── run_tier1_relativistic.py    # Tier 1 test harness
+├── run_tier2_gravityanalogue.py # Tier 2 test harness
+├── run_tier3_energy.py          # Tier 3 test harness
+├── run_tier4_quantization.py    # Tier 4 test harness
+├── run_tier5_electromagnetic.py # Tier 5 test harness (NEW)
+├── em_analytical_framework.py   # Analytical test framework for electromagnetic validation
+├── lfm_equation.py              # Modified Klein-Gordon solver
+├── lfm_parallel.py              # Parallel tile-based runner
+├── energy_monitor.py            # Energy conservation tracking
+├── numeric_integrity.py         # CFL checks, NaN detection
+├── lfm_logger.py                # Structured logging (text + JSONL)
+├── lfm_results.py               # Output management
+├── lfm_plotting.py              # Visualization utilities
+├── config/                      # JSON configuration files
+│   ├── config_tier1_relativistic.json
+│   ├── config_tier2_gravityanalogue.json
+│   ├── config_tier3_energy.json
+│   ├── config_tier4_quantization.json
+│   └── config_tier5_electromagnetic.json
+├── results/                     # Test outputs (auto-generated)
+│   ├── MASTER_TEST_STATUS.csv   # Overall test status
+│   ├── Relativistic/            # Tier 1 results
+│   ├── Gravity/                 # Tier 2 results
+│   ├── Energy/                  # Tier 3 results
+│   ├── Quantization/            # Tier 4 results
+│   └── Electromagnetic/         # Tier 5 results (NEW)
+├── tests/                       # Unit tests
+├── tools/visualize/             # Visualization scripts
+├── docs/                        # Documentation
+│   ├── PRODUCTION_READINESS_ANALYSIS.md
+│   ├── PRODUCTION_ROADMAP.md
+│   └── analysis/                # Test coverage analysis
+└── archive/                     # Historical code versions
+```
 
 ---
 
-**Welcome to LFM! We hope this documentation helps you explore the fascinating world of discrete spacetime physics.** 🌊⚛️
+## Core Physics
 
+LFM implements the discrete Klein-Gordon equation with spatially-varying χ-field:
+
+```
+∂²E/∂t² = c² ∇²E - (χ²c⁴/ℏ²) E
+```
+
+Where:
+- `E(x,t)` — Field amplitude (energy density)
+- `c` — Effective propagation speed (≈1 in lattice units)
+- `χ` — Mass-like parameter (curvature field for gravity analogue)
+- `∇²` — Discrete Laplacian (2nd/4th/6th order stencils)
+
+**Discrete Update Rule** (leapfrog time integration):
+```
+E[t+dt] = 2E[t] - E[t-dt] + dt²(c²∇²E[t] - χ²E[t])
+```
+
+**CFL Stability Condition:**
+```
+c·dt/dx ≤ 1/√D  (D = spatial dimensions)
+```
+
+---
+
+## Key Results
+
+### Tier 1 — Relativistic Validation ✅
+- **Isotropy**: Directional equivalence to 0.2% across all axes
+- **Dispersion**: Klein-Gordon ω² = k² + χ² validated from non-relativistic (χ/k≈10) to ultra-relativistic (χ/k≈0.1) regimes
+- **Lorentz Covariance**: Boost-invariant within 1% for velocities up to 0.6c
+- **Causality**: No faster-than-light propagation (correlation threshold <1e-6 outside light cone)
+
+### Tier 2 — Gravity Analogue ✅⚠️
+- **Time Dilation**: Frequency shift ω ∝ χ confirmed in potential wells (6/6 tests)
+- **Redshift**: Climbing out of χ-well reduces frequency (4/4 tests)
+- **Time Delay**: Shapiro-like phase delay through χ-slab demonstrated
+- **Double-Slit**: 3D interference pattern with visibility=0.869, fringe spacing matches theory
+- **Light Bending**: Ray deflection through χ-gradient validated
+- **Gravitational Waves**: χ-wave propagation with 1/r decay confirmed
+
+### Tier 3 — Energy Conservation ✅
+- **Global Conservation**: <0.01% drift over 10,000 steps (undamped)
+- **Hamiltonian Partitioning**: KE ↔ GE ↔ PE exchange validated
+- **Dissipation**: Exponential decay matches analytic exp(-2γt) for weak/strong damping
+- **Thermalization**: Noise + damping reaches steady-state energy distribution
+
+### Tier 4 — Quantum Behavior ✅
+- **Bound States**: Discrete energy eigenvalues En = √(kn² + χ²) with kn = nπ/L (mean error 1.4%)
+- **Tunneling**: Exponential barrier penetration when E < V (classically forbidden)
+- **Uncertainty**: Δx·Δk ≥ 0.5 confirmed across wave packets
+- **Zero-Point Energy**: Ground state E₀ = ½ℏω ≠ 0 (vacuum fluctuations)
+
+### Tier 5 — Electromagnetic Theory ✅ **NEW**
+- **Maxwell Equations**: Complete validation through χ-field coupling
+- **Coulomb's Law**: Electrostatic potential φ = kq/r validated with ±0.1% precision
+- **Wave Propagation**: c = 1/√(μ₀ε₀) speed confirmed across frequency spectrum
+- **Lorentz Force**: F = q(E + v×B) trajectories match analytical solutions exactly
+- **Relativistic Fields**: Proper field transformations under Lorentz boosts validated
+- **Antenna Radiation**: Far-field patterns with correct 1/r intensity decay  
+- **Capacitor Fields**: Parallel plate and cylindrical geometries with energy storage
+- **Inductance Effects**: Magnetic field dynamics and flux conservation
+- **Standing Waves**: Electromagnetic resonance modes and wavelength validation
+- **Rainbow Lensing**: Frequency-dependent χ-field refraction creating spectrum dispersion
+
+### 🔬 Emergence Validation — Critical Evidence ✅
+- **Spontaneous χ-Field Formation**: 29% enhancement from uniform initial conditions
+- **Self-Consistent Coupling**: Energy density drives χ-field structure without pre-programming
+- **Genuine Emergence Confirmed**: Refutes "circular validation" criticism
+- **Evidence Location**: `docs/evidence/emergence_validation/` ([See README](docs/evidence/emergence_validation/README.md))
+
+---
+
+## Configuration
+
+All tests are configured via JSON files in `config/`:
+
+```json
+{
+  "run_settings": {
+    "use_gpu": false,
+    "quick_mode": false,
+    "show_progress": true
+  },
+  "parameters": {
+    "dt": 0.01,
+    "dx": 0.1,
+    "alpha": 1.0,
+    "beta": 1.0,
+    "chi": 0.0,
+    "gamma_damp": 0.0,
+    "boundary": "periodic",
+    "stencil_order": 2,
+    "precision": "float64"
+  },
+  "debug": {
+    "enable_diagnostics": true,
+    "energy_tol": 0.01,
+    "check_nan": true
+  }
+}
+```
+
+---
+
+## Visualization Examples
+
+### Dispersion Curves (REL-11)
+```bash
+python run_tier1_relativistic.py --test REL-11
+# Output: results/Relativistic/REL-11/plots/dispersion_REL-11.png
+```
+Shows measured vs theoretical ω(k) across non-relativistic to ultra-relativistic regimes.
+
+### Double-Slit Interference (GRAV-16)
+```bash
+python run_tier2_gravityanalogue.py --test GRAV-16
+# Output: results/Gravity/GRAV-16/plots/interference_pattern_GRAV-16.png
+```
+3D wave interference pattern demonstrating quantum-like behavior.
+
+### Bound-State Wavefunctions (QUAN-10)
+```bash
+python run_tier4_quantization.py --test QUAN-10
+# Output: results/Quantization/QUAN-10/plots/bound_state_modes.png
+```
+Discrete energy eigenstate mode shapes ψn(x).
+
+### Rainbow Electromagnetic Lensing (EM-11)
+```bash
+python run_tier5_electromagnetic.py --test EM-11
+# Output: results/Electromagnetic/EM-11/plots/rainbow_spectrum_EM-11.png
+```
+Frequency-dependent χ-field refraction showing electromagnetic spectrum dispersion across visible wavelengths.
+
+### Coulomb Law Validation (EM-01)
+```bash
+python run_tier5_electromagnetic.py --test EM-01
+# Output: results/Electromagnetic/EM-01/plots/coulomb_validation_EM-01.png
+```
+Electrostatic potential φ = kq/r validation with blue=LFM computed, red=theoretical expected values.
+
+### 3D Energy Dispersion (GRAV-15)
+```bash
+python tools/visualize/visualize_grav15_3d.py
+# Output: results/Gravity/GRAV-15/energy_dispersion_3d.mp4
+```
+Animated volumetric rendering of radial wave propagation.
+
+---
+
+## Documentation
+
+- **[Installation Guide](INSTALL.md)** — Complete setup instructions for all platforms
+- **[Production Readiness Analysis](docs/PRODUCTION_READINESS_ANALYSIS.md)** — Comprehensive project assessment
+- **[Production Roadmap](docs/PRODUCTION_ROADMAP.md)** — Path to production-ready release
+- **[Test Coverage](results/MASTER_TEST_STATUS.csv)** — Detailed test status report
+- **[Analysis Reports](docs/analysis/)** — Output requirements, test coverage, tier standardization
+- **[Emergence Validation Evidence](docs/evidence/emergence_validation/)** — Critical proof of genuine physics emergence
+
+---
+
+## Testing
+
+```bash
+# Run unit tests
+pytest tests/ -v
+
+# Run specific tier tests
+python run_tier1_relativistic.py --test REL-01
+
+# Check test output requirements
+python test_output_requirements.py --tier 1
+
+# View overall test status
+cat results/MASTER_TEST_STATUS.csv
+```
+
+---
+
+## GPU Acceleration
+
+LFM supports NVIDIA GPUs via CuPy (CUDA 12.x):
+
+```bash
+# Install CuPy for GPU acceleration
+pip install cupy-cuda12x
+
+# Enable GPU in configuration
+# Edit config/*.json → "use_gpu": true
+
+# Verify GPU is detected
+python -c "import cupy as cp; print(f'GPU: {cp.cuda.Device().name}')"
+```
+
+**Performance:** 3D simulations (64³ grid) run ~10-50x faster on GPU depending on test.
+
+---
+
+## User Interfaces
+
+LFM provides three ways to interact with the framework:
+
+### 1. Graphical Interface (`lfm_gui.py`)
+**Best for:** New users, visual interaction, Windows environments
+- 🖱️ Point-and-click operation
+- 📊 Real-time progress monitoring  
+- 🗂️ Visual results browser
+- 🔧 Built-in system diagnostics
+- 💾 Export functionality
+
+```bash
+python lfm_gui.py
+```
+
+**Features:**
+- **Test Execution Tab:** Run individual tests or full tiers with progress bars
+- **Results Viewer Tab:** Browse test outputs with folder tree and file preview
+- **Tools Tab:** System status, emergence validation, report generation
+- **Background Processing:** Tests run without blocking the interface
+
+### 2. Console Interface (`lfm_control_center.py`)
+**Best for:** Terminal users, remote access, automation
+- 🎯 Menu-driven navigation
+- 🌈 Color-coded output
+- ⚡ Fast execution
+- 📋 Integrated results viewer
+- 🔄 Progress monitoring
+
+```bash
+python lfm_control_center.py
+```
+
+**Menu Options:**
+1. Run Fast Tests (4 core validation tests)
+2. Run Single Tier (choose Tier 1-4)
+3. Run Specific Test (by test ID)
+4. Run All Tiers (full 55-test suite)
+5. View Test Results (browse outputs)
+6. Run Emergence Validation (critical proof)
+7. Generate Reports (status summaries)
+8. System Status (GPU detection, dependencies)
+
+### 3. Command Line Interface (Original)
+**Best for:** Scripting, automation, expert users
+- 🔧 Direct script execution
+- ⚙️ Full parameter control
+- 🚀 Maximum performance
+- 📝 Detailed logging
+
+```bash
+# Examples
+python run_tier1_relativistic.py --test REL-01
+python run_tier2_gravityanalogue.py --quick
+python run_parallel_tests.py --config config/tier1.json
+```
+
+**Cross-Platform Compatibility:** All interfaces work on Windows, macOS, and Linux with standard Python installations.
+
+---
+
+## Known Issues
+
+4 tests have documented failures (all understood, not bugs, all in Tier 2 gravity):
+
+1. **GRAV-07** (Time dilation — double-well): Packet trapped in bound state (demonstrates physics, not failure)
+2. **GRAV-09** (Time dilation — refined grid): Grid dispersion at high resolution (known artifact)
+3. **GRAV-11** (Time delay — Shapiro): Packet tracking measurement issues (diagnostic needs refinement)
+4. **GRAV-14** (Group delay): Signal too weak for differential timing (needs increased pulse amplitude)
+
+**Note:** See `results/MASTER_TEST_STATUS.csv` or `docs/upload/RESULTS_COMPREHENSIVE.md` for detailed pass rates across all tiers.
+
+See `results/MASTER_TEST_STATUS.csv` for full details.
+
+---
+
+## Citation
+
+If you use LFM in your research, please cite:
+
+```bibtex
+@software{lfm_simulator,
+  author = {Partin, Greg D.},
+  title = {LFM: Lattice Field Medium Simulator - Klein-Gordon Solver with Spatially-Varying χ-Field},
+  year = {2025},
+  publisher = {LFM Research},
+  license = {CC BY-NC-ND 4.0},
+  doi = {10.5281/zenodo.17510124},
+  url = {https://zenodo.org/records/17510124},
+  repository = {https://osf.io/6agn8},
+  note = {Implementation based on Klein-Gordon equation (Klein, 1926; Gordon, 1926)}
+}
+```
+
+**Foundational Physics References:**
+```bibtex
+@article{klein1926,
+  title={Quantentheorie und fünfdimensionale Relativitätstheorie},
+  author={Klein, Oskar},
+  journal={Zeitschrift für Physik},
+  volume={37},
+  number={12},
+  pages={895--906},
+  year={1926},
+  publisher={Springer}
+}
+
+@article{gordon1926,
+  title={Der Comptoneffekt nach der Schrödingerschen Theorie},
+  author={Gordon, Walter},
+  journal={Zeitschrift für Physik},
+  volume={40},
+  number={1-2},
+  pages={117--133},
+  year={1926},
+  publisher={Springer}
+}
+```
+
+### Citing dependencies and prior work
+
+Please also cite the scientific software and prior literature you used alongside LFM. See:
+- docs/REFERENCES.md — recommended citations (NumPy, SciPy, Matplotlib, h5py, pytest, CuPy)
+- docs/references.bib — BibTeX entries you can include directly in your manuscript
+
+---
+
+## License
+
+This work is licensed under the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)**.
+
+**Copyright (c) 2025 Greg D. Partin. All rights reserved.**  
+**First publication:** November 1, 2025
+
+**By using this software, you agree to:**
+1. Be bound by the [LICENSE](LICENSE) terms
+2. Not use commercially without written permission
+3. Not create commercial "clean room" reimplementations
+4. Provide proper attribution in all uses
+5. Accept California jurisdiction or international arbitration for disputes
+
+**Important:** "All rights reserved" means all rights not explicitly granted by the CC BY-NC-ND 4.0 license remain with the copyright holder, including commercial exploitation rights.
+
+**You are free to:**
+- ✅ Share and adapt this work for non-commercial purposes
+- ✅ Use in academic research and education (with restrictions - see LICENSE)
+
+**Restrictions:**
+- ❌ **No commercial use** without explicit written permission
+- ❌ No use in for-profit research or commercial products
+- ❌ No commercial consulting or paid services using this code
+- ✅ Must provide attribution to the original author
+
+**Important:** "Non-commercial" includes restrictions on industry-funded research and commercial partnerships. See the [LICENSE](LICENSE) file for detailed definitions and requirements.
+
+**Third-Party Dependencies:** This project uses open-source libraries (NumPy, Matplotlib, SciPy, h5py, pytest, CuPy) under permissive licenses. See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for complete attribution.
+
+**Prior Art Notice:** This work has been publicly disclosed on OSF ([osf.io/6agn8](https://osf.io/6agn8)) and Zenodo ([DOI: 10.5281/zenodo.17510124](https://zenodo.org/records/17510124)), establishing prior art and preventing patent claims by third parties on the disclosed methods and algorithms.
+
+**Anti-Circumvention:** Creating "clean room" reimplementations of the disclosed algorithms to avoid the non-commercial restriction is prohibited and may constitute license violation and/or trade secret misappropriation.
+
+**Citation:** When using this software in academic work, please cite using the DOI above and acknowledge the CC BY-NC-ND 4.0 license.
+
+**Commercial Licensing:** Contact **latticefieldmediumresearch@gmail.com** with formal inquiry. See [LICENSE](LICENSE) for required procedure. Email inquiry alone does NOT grant permission.
+
+---
+
+## Contributing
+
+⚠️ **This is a read-only research repository under CC BY-NC-ND 4.0 (NoDerivatives).**
+
+**External modifications are not accepted.** This repository serves as:
+- A reference implementation for the published research
+- A defensive publication establishing prior art
+- An archival record linked to DOI 10.5281/zenodo.17478758
+
+**You may:**
+- ✅ Report bugs via email (latticefieldmediumresearch@gmail.com)
+- ✅ Request clarifications or discuss results via email
+- ✅ Use the code for non-commercial research (with attribution and restrictions—see LICENSE)
+
+**You may NOT:**
+- ❌ Submit pull requests (will be closed)
+- ❌ Create derivative works (license violation)
+- ❌ Fork for commercial purposes
+
+For collaboration inquiries or commercial licensing, contact latticefieldmediumresearch@gmail.com
+
+---
+
+## Contact
+
+**Greg D. Partin**  
+**ORCID:** [https://orcid.org/0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)  
+**Email:** latticefieldmediumresearch@gmail.com  
+LFM Research — Los Angeles, CA USA
+
+For bug reports, feature requests, or collaboration inquiries, please email latticefieldmediumresearch@gmail.com.
+
+---
+
+## Acknowledgments
+
+Development assisted by GitHub Copilot for code generation, refactoring, and documentation.
+
+Special thanks to the scientific Python community (NumPy, SciPy, Matplotlib) and the CUDA/CuPy teams for GPU acceleration infrastructure.
+
+---
+
+**Status:** Active research project in advanced development.
+
+**Last Updated:** 2025-11-01

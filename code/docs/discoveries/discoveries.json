@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2025-10-29T00:00:00Z",
+    "tier": "Electromagnetic",
+    "title": "Ampère–Maxwell consistency in lattice propagation",
+    "summary": "Confirmed displacement current term is required to match simulation wave speed to analytical c=1/sqrt(mu0*eps0).",
+    "evidence": "results/Electromagnetic/EM-07",
+    "links": [
+      "docs/upload/ELECTROMAGNETIC_ACHIEVEMENTS.md"
+    ]
+  }
+]

@@ -1,3 +1,29 @@
+---
+title: "LFM Core Equations"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+generated: "2025-11-03 19:11:55"
+---
+
+# LFM Core Equations
+
+License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
+You may share for non-commercial purposes with attribution; no derivatives permitted. Full terms: https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+No Commercial Use: This work may not be used for commercial purposes, including research or prototypes intended for monetization, commercialization, or patent application, without prior written authorization.
+
+No Derivatives: You may not share modified versions of this work. Private, internal modifications for evaluation are permitted but may not be distributed.
+
+As-Is Disclaimer: This work is provided “as is,” without warranties or conditions of any kind, express or implied. Authors and contributors shall not be liable for any damages arising from use.
+
+Defensive Publication: This document contributes to a defensive disclosure establishing prior art for concepts and methods described herein. See OSF: https://osf.io/6agn8 and Zenodo: https://zenodo.org/records/17478758 for timestamps and DOIs.
+
+Contact: latticefieldmediumresearch@gmail.com
+
 Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations Version 3.0 — 2025-11-01 (Defensive ND Release)
 
 Greg D. Partin | LFM Research — Los Angeles CA USA License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0) Note: This version supersedes all prior releases (v1.x and v2.x) and adds No-Derivatives restrictions and defensive-publication language for intellectual property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
@@ -246,3 +272,9 @@ Lattice Framework for Emergent Relativity, Gravitation, and Quantization
 https://doi.org/10.5281/zenodo.17478758
 
 Contact: latticefieldmediumresearch@gmail.com
+
+
+---
+
+Prepared by LFM Research, Los Angeles CA USA
+License: CC BY-NC-ND 4.0 • Contact: latticefieldmediumresearch@gmail.com

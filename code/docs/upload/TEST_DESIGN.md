@@ -1,3 +1,16 @@
+---
+title: "TEST DESIGN"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+generated: "2025-11-03 19:11:57"
+---
+
+# TEST DESIGN
+
 Lattice-Field Medium (LFM): Phase 1 Test Design — Proof-of-Concept Validation System
 
 Version 3.0 — 2025-11-01 (Defensive ND Release)
@@ -85,7 +98,7 @@ tolerances, run_settings, and notes.
 
 	5                       Electromagnetic theory  Complete Maxwell equation validation; Coulomb's law φ = kq/r 
 	                                                within ±0.1%; electromagnetic wave speed c = 1/√(μ₀ε₀) confirmed;
-	                                                {{PASS_RATE:Electromagnetic}} test success rate on implemented electromagnetic phenomena
+	                                                13/20 (65%) test success rate on implemented electromagnetic phenomena
 	-----------------------------------------------------------------------
 
 6 Orchestration and Parallelism

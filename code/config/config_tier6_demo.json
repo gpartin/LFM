@@ -1,0 +1,43 @@
+{
+  "tier_info": {
+    "tier_number": 6,
+    "tier_name": "demo",
+    "description": "Demo Physics Tests",
+    "version": "1.0"
+  },
+  "run_settings": {
+    "use_gpu": true,
+    "verbose": false,
+    "quick_mode": false,
+    "output_dir": "results/Demo"
+  },
+  "parameters": {
+    "N": 64,
+    "dx": 0.1,
+    "dt": 0.01,
+    "steps": 1000
+  },
+  "tolerances": {
+    "test_tolerance": 0.05
+  },
+  "tests": [
+    {
+      "id": "TEST-01",
+      "name": "Basic Demo Test",
+      "enabled": true,
+      "config": {
+        "test_parameter": 1.0,
+        "tolerance": 0.05
+      }
+    },
+    {
+      "id": "TEST-02",
+      "name": "Advanced Demo Test",
+      "enabled": true,
+      "config": {
+        "test_parameter": 2.0,
+        "tolerance": 0.02
+      }
+    }
+  ]
+}

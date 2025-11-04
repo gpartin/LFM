@@ -18,6 +18,27 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
+
+def compute_relative_error(expected: float, actual: float, *, characteristic: Optional[float] = None,
+						   eps: float = 1e-12) -> float:
+	"""Compute a robust relative error.
+
+	Rules:
+	- If |expected| is appreciable (> eps), use |actual-expected|/|expected|.
+	- Else, if a characteristic scale is provided and appreciable, use that as denominator.
+	- Else, fall back to absolute error scaled by max(|actual|, |expected|, eps) to avoid blowups.
+
+	This avoids false 100% errors when both expected and actual are near zero.
+	"""
+	denom = None
+	if abs(expected) > eps:
+		denom = abs(expected)
+	elif characteristic is not None and abs(characteristic) > eps:
+		denom = abs(characteristic)
+	else:
+		denom = max(abs(actual), abs(expected), eps)
+	return abs(actual - expected) / denom
+
 class TestMetrics:
 	"""
 	Manages test execution metrics database for resource-aware scheduling.
@@ -229,7 +250,7 @@ def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
 	else:  # schema == "tests"
 		test_list = cfg.get("tests", [])
 		for t in test_list:
-			test_id = t.get("test_id")
+			test_id = t.get("test_id") or t.get("id")  # Support both formats
 			if not test_id:
 				continue
 			test_cfg = {**params, **t}

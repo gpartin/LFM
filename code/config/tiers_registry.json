@@ -46,5 +46,17 @@
     "config": "config/config_tier4_quantization.json",
     "config_schema": "tests",
     "expected": 9
+  },
+  {
+    "tier": 5,
+    "name": "Electromagnetic",
+    "category_name": "Electromagnetic & Field Interactions",
+    "dir": "Electromagnetic",
+    "prefix": "EM",
+    "id_pattern": "^EM-\\d+$",
+    "runner": "run_tier5_electromagnetic.py",
+    "config": "config/config_tier5_electromagnetic.json",
+    "config_schema": "tests",
+    "expected": 20
   }
 ]

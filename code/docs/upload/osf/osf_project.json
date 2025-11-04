@@ -1,0 +1,18 @@
+{
+  "title": "LFM Electromagnetic Theory Dataset",
+  "description": "Comprehensive electromagnetic theory validation dataset for the Lattice-Field Medium framework with complete Maxwell equation reproduction.",
+  "category": "physics",
+  "tags": [
+    "electromagnetic",
+    "Maxwell",
+    "discrete spacetime",
+    "lattice field"
+  ],
+  "contributors": [
+    {
+      "name": "Greg D. Partin",
+      "email": "latticefieldmediumresearch@gmail.com"
+    }
+  ],
+  "license": "CC BY-NC-ND 4.0"
+}

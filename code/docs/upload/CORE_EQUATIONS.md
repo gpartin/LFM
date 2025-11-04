@@ -1,3 +1,16 @@
+---
+title: "CORE EQUATIONS"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+generated: "2025-11-03 19:11:57"
+---
+
+# CORE EQUATIONS
+
 Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations Version 3.0 — 2025-11-01 (Defensive ND Release)
 
 Greg D. Partin | LFM Research — Los Angeles CA USA License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0) Note: This version supersedes all prior releases (v1.x and v2.x) and adds No-Derivatives restrictions and defensive-publication language for intellectual property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
