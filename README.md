@@ -1,3 +1,23 @@
+# Lattice Field Medium (LFM)
+## Public release policy (2025-11-04)
+
+Only the following paths are published in this repository:
+
+- Root-level `README.md` (this document)
+- The entire `workspace/` directory (source, docs, tests, tools intended for public consumption)
+
+Everything outside of `workspace/` is ignored by default via the root `.gitignore`. The private test environment lives in `workspace_test/` and is not tracked/public. The build system and other internal folders are likewise excluded from the public surface.
+
+Rationale:
+- Keep a single, clean public surface for end users (workspace/) while allowing a separate internal test area (workspace_test/)
+- Reduce risk of leaking internal analysis notes, temporary artifacts, or compliance-only materials
+- Make uploads reproducible from `workspace/` alone
+
+Operational notes:
+- The build cache resides at `build/cache/` and is not part of the public surface
+- Upload artifacts are generated under `workspace/uploads/` and may be excluded from version control where appropriate
+- The test result cache is shared across environments at `build/cache/test_results/`
+
 # LFM — Lattice Field Medium Simulator
 
 <!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
@@ -11,13 +31,37 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17510124.svg)](https://doi.org/10.5281/zenodo.17510124)
 [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
 
-**High-performance Klein-Gordon wave equation solver with spatially-varying χ-field exploring unified physics through emergent phenomena.**
-
-Simulates relativistic wave propagation, gravity analogues, electromagnetic theory, and quantum behavior in discrete spacetime using the lattice field medium hypothesis — that fundamental physics emerges from discrete field interactions.
+**Computational validation of the lattice field medium hypothesis: that fundamental physics emerges from discrete field interactions on a computational spacetime lattice.**
 
 **Author:** Greg D. Partin | LFM Research — Los Angeles, CA USA  
 **Contact:** latticefieldmediumresearch@gmail.com  
 **ORCID:** [https://orcid.org/0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)
+
+---
+
+## 📍 Navigate by Your Role
+
+**�️ Lost? See the visual map:**  
+→ **[DOCUMENTATION_MAP.md](DOCUMENTATION_MAP.md)** — Visual guide to all docs
+
+**�🔬 Skeptical Reviewer / Physicist?**  
+→ **[FOR_SKEPTICS_START_HERE.md](FOR_SKEPTICS_START_HERE.md)**  
+Addresses "this is just Klein-Gordon" and "where does χ come from?"
+
+**📄 Quick Summary Needed?**  
+→ **[ONE_PAGE_SUMMARY.md](ONE_PAGE_SUMMARY.md)**  
+Hypothesis, critical evidence, validation status, what's proven vs. in-progress
+
+**🚀 Want To Run Tests?**  
+→ **[QUICKSTART_CRITICAL_TEST.md](QUICKSTART_CRITICAL_TEST.md)**  
+30-second validation of χ-field emergence (the key evidence)
+
+**💻 Developer / Technical Deep Dive?**  
+→ **[code/README.md](code/README.md)**  
+Complete implementation, API docs, test harnesses
+
+**📊 Business / Applications?**  
+→ Continue reading below for commercial applications suite
 
 ---
 

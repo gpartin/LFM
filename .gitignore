@@ -1,54 +1,21 @@
-# --- LFM Project .gitignore (v1.1) ---
+###############################################
+# Public surface hardening (2025-11-04)
+#
+# Goal: Only publish the root README.md and the
+#       entire workspace/ tree. Everything else
+#       is ignored by default.
+###############################################
 
-# OS / IDE junk
-Thumbs.db
-desktop.ini
-.vscode/
-__pycache__/
-*.pyc
-*.pyo
-*.log
+# Ignore everything at repo root by default
+/*
 
-# Python virtual environments
-.venv/
-env/
-venv/
+# Allow the root README and this .gitignore
+!/.gitignore
+!/README.md
 
-# Installers and binaries
-installer/
-*.exe
-*.msi
-*.msix
-*.zip
+# Allow the entire workspace (source of truth)
+!/workspace/
+!/workspace/**
 
-# Runtime / results / logs
-runs/
-results/
-logs/
-packages/
-*.tmp
-*.bak
-
-# Generated documentation staging and snapshots (keep source docs tracked)
-docs/upload/
-docs/upload_backup_*/
-docs/upload_ref*/
-docs/upload_ref2_*/
-
-# Legacy .docx files (use markdown workflow instead)
-*.docx
-!docs/evidence/docx_archive/*.zip
-
-# Evidence extracted text is now SOURCE OF TRUTH - keep tracked
-# docs/evidence/docx_text/ - REMOVED from gitignore, these are maintained files
-
-# Python and tooling caches
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.coverage
-coverage.xml
-
-# Config caches
-*.json.lock
-*.DS_Store
+# Keep Git internals visible
+!/.git/
