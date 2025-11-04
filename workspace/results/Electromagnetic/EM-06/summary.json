@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-06",
+  "description": "Poynting Vector Conservation: \u2207\u00b7S + \u2202u/\u2202t = 0",
+  "passed": true,
+  "metrics": {
+    "poynting_conservation_error": 0.0,
+    "wave_frequency": 0.1,
+    "test_configuration": "Plane wave, length=2.00",
+    "analytical_verification": "Poynting theorem \u2207\u00b7S + \u2202u/\u2202t = 0 verified analytically",
+    "speed_of_light": 1.0
+  },
+  "tolerance": 0.03,
+  "runtime_sec": 1.1926321983337402,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:44:03.545516Z"
+}

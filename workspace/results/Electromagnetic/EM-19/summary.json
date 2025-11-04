@@ -1,0 +1,20 @@
+{
+  "test_id": "EM-19",
+  "description": "Gauge Invariance Verification: Physical fields unchanged under gauge transformations",
+  "passed": true,
+  "metrics": {
+    "gauge_invariance_error": 1.6235209511840407e-12,
+    "electric_field_error": 0.0,
+    "magnetic_field_error": 1.6235209511840407e-12,
+    "gauge_parameter": 0.5,
+    "field_amplitude": 0.1,
+    "dynamic_lambda_error": 9.500940984954386e-13,
+    "dynamic_lambda_freq": 0.02,
+    "dynamic_lambda_amp": 0.1
+  },
+  "tolerance": 0.001,
+  "runtime_sec": 2.2057833671569824,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:44:00.641501Z"
+}

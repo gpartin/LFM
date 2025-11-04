@@ -1,0 +1,19 @@
+{
+  "id": "GRAV-23",
+  "description": "Dynamic \u03c7-field evolution \u2014 full wave equation \u25a1\u03c7=-4\u03c0G\u03c1 with causal propagation (gravitational wave analogue)",
+  "passed": true,
+  "chi_pert_max": 0.007745106604207547,
+  "chi_pert_rms": 0.0028272176356583206,
+  "chi_pert_edge": 2.980232227667301e-09,
+  "chi_dynamic_response": true,
+  "chi_reached_edge": false,
+  "energy_drift_frac": 0.512877832621141,
+  "runtime_sec": 0.021919727325439453,
+  "on_gpu": true,
+  "G_coupling": 0.05,
+  "c_chi": 1.0,
+  "chi_update_every": 1,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-03T05:08:50.896254Z"
+}

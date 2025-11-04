@@ -1,0 +1,26 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-04",
+  "description": "Spectral Linearity \u2014 Fine Steps",
+  "timestamp": 1762140398.3380852,
+  "hardware": {
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 1024,
+    "dx": 0.1,
+    "dt": 0.005,
+    "chi": 0.2,
+    "num_modes": 8
+  },
+  "metrics": {
+    "max_linearity_error": 3.996586971519779e-13,
+    "mean_linearity_error": 1.3852576870425114e-13,
+    "fit_coefficient": 13.111819442757861,
+    "tolerance": 0.05
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

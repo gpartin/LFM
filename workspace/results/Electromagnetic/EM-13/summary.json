@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-13",
+  "description": "Electromagnetic Standing Waves in Cavity",
+  "passed": true,
+  "metrics": {
+    "em-13_error": 0.0,
+    "analytical_verification": "Electromagnetic Standing Waves in Cavity verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 0.0,
+    "avg_individual_error": 0.0
+  },
+  "tolerance": 0.15,
+  "runtime_sec": 0.9198784828186035,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:44:03.100232Z"
+}

@@ -1,0 +1,52 @@
+{
+  "test_id": "EM-21",
+  "description": "Time-Varying \u03c7-Field Pulse Response (FDTD)",
+  "passed": true,
+  "metrics": {
+    "arrival_time_baseline": 19.990000000000002,
+    "arrival_time_modulated": 19.990000000000002,
+    "delta_t_measured": 2.9351613503900723e-06,
+    "expected_delay": 2.868929030841133e-06,
+    "expected_delay_uncalibrated": 0.011475716123364533,
+    "dynamic_coupling_factor": 0.00025,
+    "chi_avg_retarded": 0.04517998473765563,
+    "chi_frequency": 0.01,
+    "chi_amplitude": 0.05,
+    "gate_center": 9.525,
+    "gate_width": 2.5400000000000005,
+    "c": 1.0,
+    "relative_error": 0.022565137531583082,
+    "boundary": "mur",
+    "pml_cells": 16,
+    "pml_order": 3,
+    "pml_sigma_max": 1.0,
+    "energy_residuals": {
+      "base_L_inf": 0.08309250329336655,
+      "base_L2": 0.035980933436183735,
+      "base_L_inf_no_work": 0.08309250329336655,
+      "base_L2_no_work": 0.035980933436183735,
+      "base_final_balance": 0.7298659362978952,
+      "base_final_balance_no_work": 0.7298659362978952,
+      "mod_L_inf": 0.08308866307009743,
+      "mod_L2": 0.03597832914972316,
+      "mod_L_inf_no_work": 0.0830887435558393,
+      "mod_L2_no_work": 0.03597823923635163,
+      "mod_final_balance": 0.729975163251368,
+      "mod_final_balance_no_work": 0.7300157342197341,
+      "work_term_improvement_L_inf": 8.048574186292345e-08,
+      "work_term_improvement_L2": -8.991337153291257e-08
+    },
+    "dt_convergence": {
+      "dt": 0.01,
+      "dt_half": 0.005,
+      "delta_t_dt": 2.9351613503900723e-06,
+      "delta_t_dt_half": 1.4945512009750155e-06,
+      "relative_delta": 0.9639075493483814
+    }
+  },
+  "tolerance": 0.35,
+  "runtime_sec": 2.0353097915649414,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:44:00.454113Z"
+}

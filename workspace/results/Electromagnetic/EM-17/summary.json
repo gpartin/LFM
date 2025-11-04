@@ -1,0 +1,26 @@
+{
+  "test_id": "EM-17",
+  "description": "Electromagnetic Pulse Propagation (FDTD)",
+  "passed": true,
+  "metrics": {
+    "arrival_time_measured": 9.71,
+    "arrival_time_expected": 9.067248755824448,
+    "group_delay_error": 0.06619477282961413,
+    "c_eff": 0.9925833339709302,
+    "distance": 9.0,
+    "probe_index": 102,
+    "source_index": 12,
+    "dt_convergence": {
+      "dt": 0.01,
+      "dt_half": 0.005,
+      "arrival_dt": 9.71,
+      "arrival_dt_half": 9.72,
+      "relative_delta": 0.0010288065843621179
+    }
+  },
+  "tolerance": 0.15,
+  "runtime_sec": 1.3154289722442627,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:43:59.687243Z"
+}

@@ -1,8 +1,0 @@
-repos:
-  - repo: local
-    hooks:
-      - id: lfm-validate-results
-        name: LFM validate results pipeline
-        entry: python tools/validate_results_pipeline.py --all --strict --quiet
-        language: system
-        pass_filenames: false

@@ -1,3 +1,0 @@
-Lattice-Field Medium (LFM): OSF Abstract
-Version 2.0 — 2025-10-24 | Greg D. Partin | LFM Research — Los Angeles CA USA
-The Lattice-Field Medium (LFM) models spacetime as a discrete lattice of locally interacting energy cells. Each cell’s evolution follows ∂²E/∂t² = c²∇²E − χ²(x,t)E, with c² = α/β. This deterministic relation reproduces relativity, gravitation, and quantization as emergent effects. GPU-accelerated simulations confirm isotropy and conservation to within 10⁻⁴ over 10³ steps. Tier 1–3 validations demonstrate Lorentz symmetry, redshift analogues, and self-consistent energy balance. LFM thus provides a unified, falsifiable framework where classical, quantum, and cosmological phenomena arise from one discrete law.

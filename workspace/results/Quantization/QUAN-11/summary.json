@@ -1,0 +1,30 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-11",
+  "description": "Zero-point energy \u2014 ground state E\u2080 = \u00bd\u210f\u03c9 \u2260 0 (vacuum fluctuations)",
+  "timestamp": 1762140477.6030579,
+  "hardware": {
+    "backend": "CuPy",
+    "python": "3.13.9"
+  },
+  "parameters": {
+    "N": 512,
+    "dx": 0.1,
+    "dt": 0.005,
+    "chi": 0.2,
+    "num_modes": 4,
+    "steps": 2000
+  },
+  "metrics": {
+    "mean_ratio_error": 0.0017806484928763755,
+    "max_ratio_error": 0.0033364286881058668,
+    "fit_slope": 0.1293022456355746,
+    "fit_intercept": -0.0002585723043961918,
+    "fit_linearity_error": 0.00011328042576700181,
+    "tolerance": 0.15
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}
