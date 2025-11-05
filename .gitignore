@@ -17,6 +17,10 @@
 !/workspace/
 !/workspace/**
 
+# Explicitly ignore root-only directories/files that should never be published
+# (redundant due to /* rule, but kept for clarity and to prevent accidental whitelisting)
+/config/
+
 # But exclude large binary files from workspace
 workspace/**/*.h5
 workspace/**/*.hdf5
