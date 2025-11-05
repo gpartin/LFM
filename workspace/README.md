@@ -153,6 +153,15 @@ This workspace is distributed under CC BY-NC-ND 4.0. Commercial use is prohibite
 - Generate upload package via tools/build_upload_package.py.
 - Review PROJECT_AUDIT_REPORT.md for compliance status.
 
+## Developer Guidelines
+
+**⚠️ CRITICAL:** Always use `encoding='utf-8'` for file I/O to ensure cross-platform compatibility.
+
+See [CODING_STANDARDS.md](CODING_STANDARDS.md) for full details on:
+- File encoding requirements
+- Unicode handling
+- Platform compatibility
+- Testing guidelines
 
 ---
 
