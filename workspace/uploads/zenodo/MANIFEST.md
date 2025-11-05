@@ -1,28 +1,28 @@
 # Upload Manifest
 
-- Generated: 2025-11-04 18:25:53
+- Generated: 2025-11-05 11:01:19
 - Scope: Package manifest for C:/LFM/workspace/uploads/zenodo
 
 ## Provenance
-- Git SHA: ff7c5b968f66592f1777b9cbfecbed9ba8a743db
+- Git SHA: 8d8bbe906b0fb8978cc889ee962b6171023a7a67
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
 - OS: Windows 11 (10.0.26200)
-- Deterministic mode: off
+- Deterministic mode: on
 
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | CITATION.cff | 1795 | `c031d6e8d21c486e442efc8cf71d8bbdfe72e847d2091105f8d82fccd481b5a6` |
 | CORE_EQUATIONS.md | 10478 | `0704ab7f3a1af7f255b5e75746302cf74e45d949bf9b2fa5baf272d9ffbabd22` |
-| DISCOVERIES_OVERVIEW.md | 5730 | `738ccf4a6f269a6046cec214b5a152d7b9f3229d3d9d26f37847aeaa582d24e9` |
+| DISCOVERIES_OVERVIEW.md | 5730 | `4a35c7481aa67b4d3bda697b8b4b25eae8f7ec09256fe5c64b35460f6b0620bb` |
 | EXECUTIVE_SUMMARY.md | 5999 | `72c0380afeadd7e8d669e6aafc6d729d32552e6502f76a0fb40332c1d6b460d6` |
 | Executive_Summary.pdf | 76167 | `f200e96d92ad2712a05b21fa51113d423b4a709da73555760971efef7841548c` |
 | LFM_Core_Equations.pdf | 104891 | `9ab8f5e2c297e3aab763700ad686f724b48421f140705dd39bdfb8bd85e4514e` |
 | LFM_Master.pdf | 135098 | `d0e8ecd08814c29b07b2adf20a6391799e7d909ddcda3955a2dfdbfd04089e8f` |
 | LFM_Phase1_Test_Design.pdf | 98290 | `81d8d1264ac042479cf78a7d172d6e79d2cfa1c3ee8ff39718e54b02e06a772c` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 13165 | `4d688fff26cac44f2c2e8f89bbf2784532a25970d161d98d1aec96d86e565f58` |
+| MANIFEST.md | 13354 | `33b314ecede188b8ea3238c3cb7df2e805a9a9a874303edfdaab57404a628abb` |
 | MASTER_DOCUMENT.md | 11036 | `021d62d745a08e3c8488efbbcd7f063388c436a9ea9c1081942364888ff607d4` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
 | plot_quantum_bound_states.png | 223882 | `4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc` |
@@ -99,6 +99,7 @@
 | plots/Quantization/QUAN-12/tunneling_transmission.png | 91802 | `845f7fbe653c53299bff8f7cf242c15e17aef03daece803da3c0eef4157867df` |
 | plots/Quantization/QUAN-13/wave_particle_duality.png | 107708 | `873fc22330906a08ea65c3daa30cce5e29efc8abe44db5a010762da69eddc122` |
 | plots/Quantization/QUAN-14/non_thermalization.png | 190119 | `f06bb6d960decdea2e1705a99cea9d56274b558d78e5a0b4289f6cbe715b74cf` |
+| plots/README.md | 795 | `4d0e77b95fe23b7ace3a81981a6a8fb3c1f9e071f4fbdbf10f1c61fb6464375f` |
 | plots/Relativistic/REL-05/concept_REL-05.png | 30834 | `4362dbce0dc6561d9350ed6a6e85e8c29fcae4ca2e835b9ba2585954858663e5` |
 | plots/Relativistic/REL-06/concept_REL-06.png | 50864 | `f674efa8bc658e8d1f71343399c90c264ef77f17c34466f822f9f8a1531094a6` |
 | plots/Relativistic/REL-11/dispersion_REL-11.png | 58689 | `4481fc5336f4eb5caee5302dda5c05989fb1b7f808e61c18ac222c9815ece4ad` |
@@ -109,11 +110,12 @@
 | PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
 | README.md | 5076 | `1b99b89da2604ce335a3e30e27e8a20632426a46d16f28eb4144c37b15818a77` |
 | RESULTS_COMPREHENSIVE.md | 7904 | `2eb1adefbdc6b9699010dde66a512faa8a9c57ed95e45f11f1d1fa389be19db6` |
-| results_MASTER_TEST_STATUS.csv | 5863 | `601a795404477d6c459e49f4c259d2279492ea23af3fd9296d412c075f294417` |
+| results_MASTER_TEST_STATUS.csv | 5951 | `7c3b5095cf21bcdd48027f312acfcfc964c9724a6bdb98354a3caa17c5982db1` |
 | TEST_DESIGN.md | 10231 | `0d76de807a47f6664d1e929a98348e5dc382ce6f984a633c3d50714f84b09d27` |
-| txt/Executive_Summary.txt | 6193 | `fc6f29f4a928fb4e36e8f2752b1c00335e5d952294ba14a8172a58727c81bfc2` |
-| txt/LFM_Core_Equations.txt | 10781 | `3fd954daa3af8ee785f3659649d74084e866f0b617d8081535a4b84e6ba445c7` |
-| txt/LFM_Master.txt | 11278 | `68ac1d9d0e2fe0fd207d00d46f3c5cc17d298ae28ec386f6f179e32341538c65` |
-| txt/LFM_Phase1_Test_Design.txt | 9948 | `f8ae44001dfe896a7c5b9a2064be33da26a9861e14829ea85420442ad7c98162` |
+| txt/Executive_Summary.txt | 6193 | `8c39e731b6e0a608db1da7618506d29d0450e5833c53939be8bdd6865cfa49ca` |
+| txt/LFM_Core_Equations.txt | 10781 | `4a8cbf38118cddcc52c9b109d823f27702a683396e35b66e44addb7f54d5073c` |
+| txt/LFM_Master.txt | 11278 | `140bfe97278ad9a80d3d15c05dc6417ceac2c5063bf6ad02ebc1ce310eb48b49` |
+| txt/LFM_Phase1_Test_Design.txt | 9948 | `fd2e4fbcfc805217bea6e3b649c2636c87219c891bffe0f43f2a634577dff0d6` |
+| txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
 | zenodo_metadata.json | 1056 | `3f4ce53df740ef795aff20c4ff553247f2980b923f518c900b67ff40c90b1395` |

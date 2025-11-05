@@ -5,9 +5,9 @@ This is a dry-run staging area. Upload the following files to OSF:
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 12015 | `4107b43d0bb3fb305fd14678e8dae16a81b0aeec739a3531d2e1500c4389ff63` |
+| MANIFEST.md | 12204 | `868921b481696524bef6e0f7e684e5806dc28b70651469f6e2f0464cd066f078` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 11619 | `ec86a5cfd12cef5288d45a27e755863160b6b70ea226d47b565bee68f1816a21` |
+| OSF_UPLOAD_OVERVIEW.md | 11809 | `256b8c6e351cb690105c1b0fc6a5987d53a35870a752aa930b580ddd6f7f4812` |
 | plots/Electromagnetic/EM-01/em-01_analysis.png | 111255 | `cb67aa7abc5159fe69a2ca89f971a0396ff1c529cb931d3fadcad88b8950faed` |
 | plots/Electromagnetic/EM-02/magnetic_generation_verification.png | 140499 | `e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458` |
 | plots/Electromagnetic/EM-03/faraday_error_analysis.png | 42974 | `3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d` |
@@ -79,6 +79,7 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Quantization/QUAN-12/tunneling_transmission.png | 91802 | `845f7fbe653c53299bff8f7cf242c15e17aef03daece803da3c0eef4157867df` |
 | plots/Quantization/QUAN-13/wave_particle_duality.png | 107708 | `873fc22330906a08ea65c3daa30cce5e29efc8abe44db5a010762da69eddc122` |
 | plots/Quantization/QUAN-14/non_thermalization.png | 190119 | `f06bb6d960decdea2e1705a99cea9d56274b558d78e5a0b4289f6cbe715b74cf` |
+| plots/README.md | 795 | `4d0e77b95fe23b7ace3a81981a6a8fb3c1f9e071f4fbdbf10f1c61fb6464375f` |
 | plots/Relativistic/REL-05/concept_REL-05.png | 30834 | `4362dbce0dc6561d9350ed6a6e85e8c29fcae4ca2e835b9ba2585954858663e5` |
 | plots/Relativistic/REL-06/concept_REL-06.png | 50864 | `f674efa8bc658e8d1f71343399c90c264ef77f17c34466f822f9f8a1531094a6` |
 | plots/Relativistic/REL-11/dispersion_REL-11.png | 58689 | `4481fc5336f4eb5caee5302dda5c05989fb1b7f808e61c18ac222c9815ece4ad` |
@@ -88,10 +89,11 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
 | README.md | 1868 | `2b3662e7bcb99a1137d8f1f4316d22970b72070772a49dd048a38345a19725c2` |
-| results_MASTER_TEST_STATUS.csv | 5863 | `601a795404477d6c459e49f4c259d2279492ea23af3fd9296d412c075f294417` |
-| txt/Executive_Summary.txt | 6193 | `fc6f29f4a928fb4e36e8f2752b1c00335e5d952294ba14a8172a58727c81bfc2` |
-| txt/LFM_Core_Equations.txt | 10781 | `3fd954daa3af8ee785f3659649d74084e866f0b617d8081535a4b84e6ba445c7` |
-| txt/LFM_Master.txt | 11278 | `68ac1d9d0e2fe0fd207d00d46f3c5cc17d298ae28ec386f6f179e32341538c65` |
-| txt/LFM_Phase1_Test_Design.txt | 9948 | `f8ae44001dfe896a7c5b9a2064be33da26a9861e14829ea85420442ad7c98162` |
+| results_MASTER_TEST_STATUS.csv | 5951 | `7c3b5095cf21bcdd48027f312acfcfc964c9724a6bdb98354a3caa17c5982db1` |
+| txt/Executive_Summary.txt | 6193 | `8c39e731b6e0a608db1da7618506d29d0450e5833c53939be8bdd6865cfa49ca` |
+| txt/LFM_Core_Equations.txt | 10781 | `4a8cbf38118cddcc52c9b109d823f27702a683396e35b66e44addb7f54d5073c` |
+| txt/LFM_Master.txt | 11278 | `140bfe97278ad9a80d3d15c05dc6417ceac2c5063bf6ad02ebc1ce310eb48b49` |
+| txt/LFM_Phase1_Test_Design.txt | 9948 | `fd2e4fbcfc805217bea6e3b649c2636c87219c891bffe0f43f2a634577dff0d6` |
+| txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
-| LFM_upload_bundle_20251104_v1.zip | 6840681 | `b1e783b9a50196ee2aa7eb899df63a8336e7c10674e0f7f2d5b647c1a60f1a5c` |
+| LFM_upload_bundle_20251105_v1.zip | 6844593 | `e72dc77caf95a65618b698f3ef05ee6429930d5f67675760ff88bac0ee4f4528` |

@@ -80,24 +80,35 @@ def sha256_file(path: Path) -> str:
 
 
 def _deterministic_now_str() -> str:
+    """Return timestamp string from SOURCE_DATE_EPOCH or current date as fallback.
+    
+    For production uploads, SOURCE_DATE_EPOCH should be set or omit --deterministic flag.
+    The 1970 fallback is only for testing reproducibility.
+    """
     sde = os.environ.get('SOURCE_DATE_EPOCH')
     if sde and sde.isdigit():
         try:
             return datetime.utcfromtimestamp(int(sde)).strftime('%Y-%m-%d %H:%M:%S')
         except Exception:
             pass
-    return '1970-01-01 00:00:00'
+    # Use current date instead of 1970 for production uploads
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def _deterministic_date_stamp() -> str:
-    """Return YYYYMMDD from SOURCE_DATE_EPOCH or 19700101 as fallback."""
+    """Return YYYYMMDD from SOURCE_DATE_EPOCH or current date as fallback.
+    
+    For production uploads, SOURCE_DATE_EPOCH should be set or omit --deterministic flag.
+    The 19700101 fallback is only for testing reproducibility.
+    """
     sde = os.environ.get('SOURCE_DATE_EPOCH')
     if sde and sde.isdigit():
         try:
             return datetime.utcfromtimestamp(int(sde)).strftime('%Y%m%d')
         except Exception:
             pass
-    return '19700101'
+    # Use current date instead of 19700101 for production uploads
+    return datetime.now().strftime('%Y%m%d')
 
 
 def _collect_provenance(deterministic: bool = False) -> list[str]:

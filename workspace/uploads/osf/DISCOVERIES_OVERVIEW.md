@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-04 18:25:52"
+generated: "2025-11-05 11:01:19"
 ---
 
 ## Summary Table
@@ -67,4 +67,4 @@ generated: "2025-11-04 18:25:52"
   - Evidence: Complete codebase with validation
   - Links: src/core/lfm_equation.py, src/core/lfm_backend.py, src/physics/chi_field_equation.py
 
-Generated: 2025-11-04 18:25:52
+Generated: 2025-11-05 11:01:19
