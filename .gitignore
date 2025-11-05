@@ -17,5 +17,17 @@
 !/workspace/
 !/workspace/**
 
+# But exclude large binary files from workspace
+workspace/**/*.h5
+workspace/**/*.hdf5
+workspace/**/*.nc
+workspace/**/*.npz
+workspace/**/*.zip
+
+# Python artifacts
+workspace/**/__pycache__/
+workspace/**/.pytest_cache/
+workspace/**/*.pyc
+
 # Keep Git internals visible
 !/.git/
