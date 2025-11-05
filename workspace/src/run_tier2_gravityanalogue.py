@@ -1891,6 +1891,18 @@ class Tier2Harness(BaseTierHarness):
             k_eff = 0.0  # Assume localized, no propagation
             log(f"Localized oscillators (k_eff≈{k_eff:.6f})", "INFO")
             
+            # Diagnostic: compare measured chi with config values for double_well
+            if p.get("chi_profile") == "double_well":
+                chi_center_config = float(p.get("chi_center", 0.30))
+                chi_edge_config = float(p.get("chi_edge", 0.14))
+                chiA_err_pct = 100.0 * abs(chiA - chi_center_config) / max(chi_center_config, 1e-30)
+                chiB_err_pct = 100.0 * abs(chiB - chi_edge_config) / max(chi_edge_config, 1e-30)
+                log(f"Double-well validation: chi_A={chiA:.6f} (config={chi_center_config:.6f}, err={chiA_err_pct:.2f}%), chi_B={chiB:.6f} (config={chi_edge_config:.6f}, err={chiB_err_pct:.2f}%)", "INFO")
+                well_sep_cells = abs(PROBE_A[2] - PROBE_B[2]) if ndim == 3 else 0
+                sigma_well = 9.0  # hardcoded in build_chi_field
+                sep_sigma_ratio = well_sep_cells / sigma_well if sigma_well > 0 else 0
+                log(f"Well separation: {well_sep_cells} cells = {sep_sigma_ratio:.2f}σ (σ_well={sigma_well:.1f}). Need >6σ for isolation.", "INFO")
+            
             # Use dispersion relation: ω² = c²k² + χ² with k≈0
             wA_th = local_omega_theory(c, k_eff, chiA)
             wB_th = local_omega_theory(c, k_eff, chiB)

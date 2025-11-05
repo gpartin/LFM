@@ -1,0 +1,3 @@
+[97m[00:39:44] [INFO] Run settings: quick_mode=False; use_gpu=False; verbose=False[0m
+[97m[00:39:44] [INFO] === Running Single Test: QUAN-07 ===[0m
+[97m[00:39:51] [INFO] [QUAN-07] PASS — Gradient growth: 0.81x[0m

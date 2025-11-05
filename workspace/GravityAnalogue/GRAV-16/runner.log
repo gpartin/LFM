@@ -1,0 +1,42 @@
+[97m[01:44:01] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:01] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:01] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:01] [INFO] === Running Single Test: GRAV-16 ===[0m
+[97m[01:44:02] [INFO] -> Starting GRAV-16: 3D double-slit interference — quantum wave through slits showing χ-field localization (8000 steps)[0m
+[97m[01:44:02] [INFO] Params: N=128³, steps=8000, quick=True[0m
+[97m[01:44:02] [INFO] chi values: PROBE_A=(64, 64, 77) -> chi_A=0.1000, PROBE_B=(64, 64, 153) -> chi_B=0.1000[0m
+[97m[01:44:15] [INFO] Double-slit 3D: plane wave source at z=19 (0.10), width=30, amp=0.50, freq=0.20[0m
+[97m[01:44:16] [INFO] Double-slit barrier: z=57 (thick=2), slits at y=48, 80 (width=6, height=64)[0m
+[97m[01:44:16] [INFO] Double-slit 3D: will save 160 snapshots every 50 steps[0m
+[97m[01:44:26] [INFO] [GRAV-16] 5% complete (double-slit)[0m
+[97m[01:44:37] [INFO] [GRAV-16] 10% complete (double-slit)[0m
+[97m[01:44:45] [INFO] [GRAV-16] 15% complete (double-slit)[0m
+[97m[01:44:54] [INFO] [GRAV-16] 20% complete (double-slit)[0m
+[97m[01:45:02] [INFO] [GRAV-16] 25% complete (double-slit)[0m
+[97m[01:45:11] [INFO] [GRAV-16] 30% complete (double-slit)[0m
+[97m[01:45:19] [INFO] [GRAV-16] 35% complete (double-slit)[0m
+[97m[01:45:27] [INFO] [GRAV-16] 40% complete (double-slit)[0m
+[97m[01:45:35] [INFO] [GRAV-16] 45% complete (double-slit)[0m
+[97m[01:45:43] [INFO] [GRAV-16] 50% complete (double-slit)[0m
+[97m[01:45:50] [INFO] [GRAV-16] 55% complete (double-slit)[0m
+[97m[01:45:58] [INFO] [GRAV-16] 60% complete (double-slit)[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3156, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3080, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3020, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 1607, in run_variant
+    E_next[barrier_mask] = 0.0
+    ~~~~~~^^^^^^^^^^^^^^
+  File "cupy\\_core\\core.pyx", line 1694, in cupy._core.core._ndarray_base.__setitem__
+  File "cupy\\_core\\_routines_indexing.pyx", line 51, in cupy._core._routines_indexing._ndarray_setitem
+  File "cupy\\_core\\_routines_indexing.pyx", line 1003, in cupy._core._routines_indexing._scatter_op
+  File "cupy\\_core\\_routines_indexing.pyx", line 969, in cupy._core._routines_indexing._scatter_op_mask_single
+  File "cupy\\_core\\_routines_manipulation.pyx", line 478, in cupy._core._routines_manipulation.broadcast_to
+  File "C:\Users\gpart\AppData\Roaming\Python\Python313\site-packages\numpy\lib\_function_base_impl.py", line 358, in iterable
+    @set_module('numpy')
+    
+KeyboardInterrupt

@@ -4,6 +4,7 @@
   },
   "hardware": {
     "gpu_enabled": true,
+    "use_fused_cuda": true,
     "precision": "float64"
   },
   "tier": 3,

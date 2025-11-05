@@ -4,11 +4,13 @@
   "output_dir": "results/Electromagnetic",
   "hardware": {
     "gpu_enabled": true,
+    "use_fused_cuda": true,
     "precision": "float64"
   },
   "run_settings": {
     "quick_mode": false,
     "use_gpu": true,
+    "use_fused_cuda": true,
     "verbose": false
   },
   "parameters": {

@@ -1,0 +1,79 @@
+[97m[01:44:11] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:11] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:11] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:11] [INFO] === Running Single Test: GRAV-08 ===[0m
+[97m[01:44:11] [INFO] -> Starting GRAV-08: Time dilation — uniform χ diagnostic (isolate grid dispersion) (4800 steps)[0m
+[97m[01:44:11] [INFO] Params: N=64³, steps=4800, quick=True[0m
+[97m[01:44:11] [INFO] chi values: PROBE_A=(32, 32, 16) -> chi_A=0.2500, PROBE_B=(32, 32, 48) -> chi_B=0.2500[0m
+[97m[01:44:11] [INFO] Time dilation mode: bound states in wells, sigma_well=9.0, separation=32 cells (3.6σ), 4800 steps[0m
+[97m[01:44:11] [INFO] [GRAV-08/serial] step 0/4800[0m
+[97m[01:44:12] [INFO] [GRAV-08/serial] step 200/4800[0m
+[97m[01:44:12] [INFO] [GRAV-08] 5% complete (serial)[0m
+[97m[01:44:13] [INFO] [GRAV-08/serial] step 400/4800[0m
+[97m[01:44:13] [INFO] [GRAV-08] 10% complete (serial)[0m
+[97m[01:44:13] [INFO] [GRAV-08/serial] step 600/4800[0m
+[97m[01:44:14] [INFO] [GRAV-08] 15% complete (serial)[0m
+[97m[01:44:14] [INFO] [GRAV-08/serial] step 800/4800[0m
+[97m[01:44:15] [INFO] [GRAV-08] 20% complete (serial)[0m
+[97m[01:44:15] [INFO] [GRAV-08/serial] step 1000/4800[0m
+[97m[01:44:16] [INFO] [GRAV-08/serial] step 1200/4800[0m
+[97m[01:44:16] [INFO] [GRAV-08] 25% complete (serial)[0m
+[97m[01:44:16] [INFO] [GRAV-08/serial] step 1400/4800[0m
+[97m[01:44:16] [INFO] [GRAV-08] 30% complete (serial)[0m
+[97m[01:44:17] [INFO] [GRAV-08/serial] step 1600/4800[0m
+[97m[01:44:17] [INFO] [GRAV-08] 35% complete (serial)[0m
+[97m[01:44:18] [INFO] [GRAV-08/serial] step 1800/4800[0m
+[97m[01:44:18] [INFO] [GRAV-08] 40% complete (serial)[0m
+[97m[01:44:19] [INFO] [GRAV-08/serial] step 2000/4800[0m
+[97m[01:44:20] [INFO] [GRAV-08] 45% complete (serial)[0m
+[97m[01:44:20] [INFO] [GRAV-08/serial] step 2200/4800[0m
+[97m[01:44:21] [INFO] [GRAV-08/serial] step 2400/4800[0m
+[97m[01:44:21] [INFO] [GRAV-08] 50% complete (serial)[0m
+[97m[01:44:22] [INFO] [GRAV-08/serial] step 2600/4800[0m
+[97m[01:44:22] [INFO] [GRAV-08] 55% complete (serial)[0m
+[97m[01:44:22] [INFO] [GRAV-08/serial] step 2800/4800[0m
+[97m[01:44:23] [INFO] [GRAV-08] 60% complete (serial)[0m
+[97m[01:44:23] [INFO] [GRAV-08/serial] step 3000/4800[0m
+[97m[01:44:24] [INFO] [GRAV-08] 65% complete (serial)[0m
+[97m[01:44:24] [INFO] [GRAV-08/serial] step 3200/4800[0m
+[97m[01:44:25] [INFO] [GRAV-08] 70% complete (serial)[0m
+[97m[01:44:25] [INFO] [GRAV-08/serial] step 3400/4800[0m
+[97m[01:44:26] [INFO] [GRAV-08/serial] step 3600/4800[0m
+[97m[01:44:26] [INFO] [GRAV-08] 75% complete (serial)[0m
+[97m[01:44:27] [INFO] [GRAV-08/serial] step 3800/4800[0m
+[97m[01:44:27] [INFO] [GRAV-08] 80% complete (serial)[0m
+[97m[01:44:28] [INFO] [GRAV-08/serial] step 4000/4800[0m
+[97m[01:44:28] [INFO] [GRAV-08] 85% complete (serial)[0m
+[97m[01:44:29] [INFO] [GRAV-08/serial] step 4200/4800[0m
+[97m[01:44:29] [INFO] [GRAV-08] 90% complete (serial)[0m
+[97m[01:44:30] [INFO] [GRAV-08/serial] step 4400/4800[0m
+[97m[01:44:30] [INFO] [GRAV-08] 95% complete (serial)[0m
+[97m[01:44:31] [INFO] [GRAV-08/serial] step 4600/4800[0m
+[97m[01:44:32] [INFO] [GRAV-08/par] step 0/4800[0m
+[97m[01:44:44] [INFO] [GRAV-08/par] step 200/4800[0m
+[97m[01:44:46] [INFO] [GRAV-08] 5% complete (parallel)[0m
+[97m[01:44:56] [INFO] [GRAV-08/par] step 400/4800[0m
+[97m[01:45:01] [INFO] [GRAV-08] 10% complete (parallel)[0m
+[97m[01:45:08] [INFO] [GRAV-08/par] step 600/4800[0m
+[97m[01:45:15] [INFO] [GRAV-08] 15% complete (parallel)[0m
+[97m[01:45:20] [INFO] [GRAV-08/par] step 800/4800[0m
+[97m[01:45:30] [INFO] [GRAV-08] 20% complete (parallel)[0m
+[97m[01:45:32] [INFO] [GRAV-08/par] step 1000/4800[0m
+[97m[01:45:44] [INFO] [GRAV-08/par] step 1200/4800[0m
+[97m[01:45:44] [INFO] [GRAV-08] 25% complete (parallel)[0m
+[97m[01:45:57] [INFO] [GRAV-08/par] step 1400/4800[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3156, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3080, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3020, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 1835, in run_variant
+    E_next = run_lattice_local(E, params, 1, tiles=tiles3, E_prev=Ep)
+  File "C:\LFM\workspace\src\core\lfm_parallel.py", line 224, in run_lattice
+    E0_energy = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, chi_param)
+  File "C:\LFM\workspace\src\utils\lfm_diagnostics.py", line 63, in energy_total
+    flat = dens.ravel()
+KeyboardInterrupt

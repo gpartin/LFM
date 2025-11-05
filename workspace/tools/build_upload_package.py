@@ -42,7 +42,11 @@ from utils.lfm_results import update_master_test_status  # type: ignore
 
 ROOT = ROOT_DIR
 RESULTS = ROOT / 'results'
+# Legacy dry-run upload folder (kept for backward compatibility)
 UPLOAD = ROOT / 'docs' / 'upload'
+# New canonical destinations for OSF and Zenodo payloads
+DEST_OSF = ROOT / 'uploads' / 'osf'
+DEST_ZENODO = ROOT / 'uploads' / 'zenodo'
 
 # Files we expect to stage (some may already exist in docs/upload)
 CORE_DOCS = [
@@ -570,6 +574,27 @@ def write_manifest(entries: List[Tuple[str, int, str]], deterministic: bool = Fa
     (UPLOAD / 'MANIFEST.md').write_text('\n'.join(lines), encoding='utf-8')
 
 
+def write_manifest_for(base_dir: Path, entries: List[Tuple[str, int, str]], deterministic: bool = False):
+    """Write MANIFEST.md under base_dir using provided entries."""
+    now = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    lines: List[str] = []
+    lines.append('# Upload Manifest')
+    lines.append('')
+    lines.append(f'- Generated: {now}')
+    lines.append(f'- Scope: Package manifest for {base_dir.as_posix()}')
+    lines.append('')
+    lines.append('## Provenance')
+    lines.extend(_collect_provenance(deterministic))
+    lines.append('')
+    lines.append('| File | Size (bytes) | SHA256 |')
+    lines.append('|------|--------------:|--------|')
+    for rel, size, digest in entries:
+        lines.append(f'| {rel} | {size} | `{digest}` |')
+    lines.append('')
+    base_dir.mkdir(parents=True, exist_ok=True)
+    (base_dir / 'MANIFEST.md').write_text('\n'.join(lines), encoding='utf-8')
+
+
 def write_zenodo_metadata(entries: List[Tuple[str, int, str]], deterministic: bool = False):
     pub_date = _deterministic_now_str().split(' ')[0] if deterministic else datetime.now().strftime('%Y-%m-%d')
     meta = {
@@ -819,6 +844,168 @@ def audit_upload_compliance(entries: List[Tuple[str, int, str]]) -> List[str]:
     return issues
 
 
+def audit_dir_compliance(base_dir: Path, entries: List[Tuple[str, int, str]]) -> List[str]:
+    """Audit arbitrary directory for compliance items (LICENSE/NOTICE/MANIFEST)."""
+    issues: List[str] = []
+
+    def require(path: Path, label: str):
+        if not path.exists():
+            issues.append(f"Missing required: {label}")
+
+    require(base_dir, f'{base_dir.name} directory')
+    require(base_dir / 'LICENSE', f'{base_dir}/LICENSE')
+    require(base_dir / 'NOTICE', f'{base_dir}/NOTICE')
+    require(base_dir / 'MANIFEST.md', f'{base_dir}/MANIFEST.md')
+
+    # Basic leak scan as in legacy audit
+    leaks = []
+    for f in sorted(base_dir.rglob('*')):
+        name = f.name.lower()
+        if any(x in name for x in ['secret', 'token', 'password', 'private_key']) or name.endswith('.pyc'):
+            leaks.append(str(f.relative_to(base_dir)))
+    if leaks:
+        issues.append(f"Potentially sensitive artifacts present: {len(leaks)} (see list)")
+
+    # Write report
+    lines = ['# Upload Compliance Audit', '', '## Summary', '']
+    lines += [f"- {i}" for i in (issues if issues else ['No issues found'])]
+    if leaks:
+        lines += ['', '## Potentially sensitive artifacts', '']
+        lines += [f"- {x}" for x in leaks[:200]]
+    (base_dir / 'UPLOAD_COMPLIANCE_AUDIT.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    return issues
+
+
+def _list_entries_for_dir(base_dir: Path) -> List[Tuple[str, int, str]]:
+    """Return list of (relative_path, size, sha256) for files under base_dir."""
+    entries: List[Tuple[str, int, str]] = []
+    if not base_dir.exists():
+        return entries
+    for f in sorted(base_dir.rglob('*')):
+        if f.is_file():
+            rel = str(f.relative_to(base_dir)).replace('\\', '/')
+            entries.append((rel, f.stat().st_size, sha256_file(f)))
+    return entries
+
+
+def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
+    """Generate DISCOVERIES_OVERVIEW.md in dest_dir from docs/discoveries/discoveries.json."""
+    reg = ROOT / 'docs' / 'discoveries' / 'discoveries.json'
+    entries = []
+    try:
+        if reg.exists():
+            entries = json.loads(reg.read_text(encoding='utf-8'))
+            if not isinstance(entries, list):
+                entries = []
+    except Exception:
+        entries = []
+
+    stamp = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    header = [
+        '---',
+        'title: "Scientific Discoveries and Domains of Emergence"',
+        'author: "Greg D. Partin"',
+        'institution: "LFM Research, Los Angeles CA USA"',
+        'license: "CC BY-NC-ND 4.0"',
+        'contact: "latticefieldmediumresearch@gmail.com"',
+        'orcid: "https://orcid.org/0009-0004-0327-6528"',
+        'doi: "10.5281/zenodo.17510124"',
+        f'generated: "{stamp}"',
+        '---',
+        '',
+        '## Summary Table',
+        '',
+        '| Date | Tier | Title | Evidence |',
+        '|------|------|-------|----------|',
+    ]
+    rows = []
+    for e in sorted(entries, key=lambda x: x.get('date','')):
+        date = (e.get('date','') or '')[:10]
+        tier = e.get('tier','')
+        title = e.get('title','')
+        ev = e.get('evidence','')
+        rows.append(f"| {date} | {tier} | {title} | {ev} |")
+    if not rows:
+        rows.append('| - | - | (No discoveries recorded) | - |')
+
+    details = ['','## Detailed List','']
+    for e in sorted(entries, key=lambda x: x.get('date','')):
+        details.append(f"- {e.get('date','')[:10]} — {e.get('title','')} ({e.get('tier','')})")
+        if e.get('summary'):
+            details.append(f"  - {e['summary']}")
+        if e.get('evidence'):
+            details.append(f"  - Evidence: {e['evidence']}")
+        if e.get('links'):
+            details.append(f"  - Links: {', '.join(e['links'])}")
+    details.append('')
+    details.append(f"Generated: {stamp}")
+
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    (dest_dir / 'DISCOVERIES_OVERVIEW.md').write_text('\n'.join(header + rows + details), encoding='utf-8')
+
+
+def _ensure_legal_docs(dest_dir: Path):
+    """Ensure LICENSE and NOTICE are present in dest_dir by copying from repo root."""
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    for name in ['LICENSE', 'NOTICE']:
+        src = ROOT / name
+        dst = dest_dir / name
+        try:
+            if src.exists():
+                shutil.copyfile(src, dst)
+        except Exception:
+            pass
+
+
+def _merge_from_legacy_upload(legacy_dir: Path, dest_dir: Path) -> list[str]:
+    """Copy useful artifacts from legacy docs/upload into dest_dir.
+
+    Returns list of relative paths (under dest_dir) that were copied.
+    """
+    copied: list[str] = []
+    if not legacy_dir.exists():
+        return copied
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    # Files to copy if present
+    files_to_copy = [
+        'results_MASTER_TEST_STATUS.csv',
+        'RESULTS_REPORT.md',
+        'PLOTS_OVERVIEW.md',
+        'README_LFM.txt',
+    ]
+    for name in files_to_copy:
+        src = legacy_dir / name
+        if src.exists() and src.is_file():
+            dst = dest_dir / name
+            try:
+                shutil.copyfile(src, dst)
+                copied.append(str(dst.relative_to(dest_dir)).replace('\\','/'))
+            except Exception:
+                pass
+
+    # Directories to mirror
+    dirs_to_copy = [
+        'plots',
+        'txt',
+        'md',
+    ]
+    for dname in dirs_to_copy:
+        src_dir = legacy_dir / dname
+        if src_dir.exists() and src_dir.is_dir():
+            dst_dir = dest_dir / dname
+            try:
+                if dst_dir.exists():
+                    shutil.rmtree(dst_dir)
+                shutil.copytree(src_dir, dst_dir)
+                # Record top-level marker for manifest context
+                copied.append(dname)
+            except Exception:
+                pass
+
+    return copied
+
+
 def generate_comprehensive_pdf() -> str | None:
     """Generate comprehensive PDF using the separate build_comprehensive_pdf.py tool.
     
@@ -951,6 +1138,35 @@ def main():
     if zip_info:
         print(f"Created bundle: {zip_info[0]} ({zip_info[1]} bytes)")
     print("Wrote MANIFEST.md, zenodo_metadata.json, osf_metadata.json, OSF_UPLOAD_OVERVIEW.md")
+
+    # ---------------- New: Build OSF and Zenodo payloads in uploads/ ----------------
+    print("\n[INFO] Building OSF and Zenodo payloads under uploads/ ...")
+    # Ensure legal docs present
+    _ensure_legal_docs(DEST_OSF)
+    _ensure_legal_docs(DEST_ZENODO)
+    # Generate discoveries overview for both
+    _generate_discoveries_overview(DEST_OSF, deterministic=args.deterministic)
+    _generate_discoveries_overview(DEST_ZENODO, deterministic=args.deterministic)
+
+    # Merge legacy artifacts from docs/upload into each destination
+    merged_osf = _merge_from_legacy_upload(UPLOAD, DEST_OSF)
+    merged_zen = _merge_from_legacy_upload(UPLOAD, DEST_ZENODO)
+    if merged_osf:
+        print(f"Merged {len(merged_osf)} legacy artifact group(s) into OSF payload")
+    if merged_zen:
+        print(f"Merged {len(merged_zen)} legacy artifact group(s) into Zenodo payload")
+
+    # Write manifests for both destinations
+    osf_entries = _list_entries_for_dir(DEST_OSF)
+    zen_entries = _list_entries_for_dir(DEST_ZENODO)
+    write_manifest_for(DEST_OSF, osf_entries, deterministic=args.deterministic)
+    write_manifest_for(DEST_ZENODO, zen_entries, deterministic=args.deterministic)
+
+    # Run compliance audits for both destinations
+    osf_issues = audit_dir_compliance(DEST_OSF, osf_entries)
+    zen_issues = audit_dir_compliance(DEST_ZENODO, zen_entries)
+    print(f"OSF payload compliance: {len(osf_issues)} issue(s). Report: {DEST_OSF / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
+    print(f"Zenodo payload compliance: {len(zen_issues)} issue(s). Report: {DEST_ZENODO / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,14 @@
+{
+  "id": "REL-09",
+  "description": "3D Isotropy \u2014 Directional Equivalence",
+  "passed": true,
+  "anisotropy": 1.9367515729713814e-16,
+  "omega_x": 36.68734522672824,
+  "omega_y": 36.68734522672824,
+  "omega_z": 36.68734522672823,
+  "omega_mean": 36.68734522672824,
+  "backend": "GPU",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:48:16.673574Z"
+}

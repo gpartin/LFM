@@ -1,0 +1,29 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-06",
+  "description": "Phase-Amplitude Coupling \u2014 High Noise",
+  "timestamp": 1762304266.6104436,
+  "hardware": {
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 1024,
+    "dx": 0.1,
+    "dt": 0.005,
+    "modes": [
+      3,
+      5
+    ],
+    "noise_level": 0.1
+  },
+  "metrics": {
+    "scaling_error_percent": 0.0,
+    "superposition_error_percent": 2.819392448217056e-11,
+    "linearity_error_percent": 2.819392448217056e-11,
+    "tolerance_percent": 10.0
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

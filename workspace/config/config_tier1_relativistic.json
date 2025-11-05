@@ -2,6 +2,7 @@
   "run_settings": {
     "quick_mode": false,
     "use_gpu": true,
+    "use_fused_cuda": true,
     "output_dir": "results/Relativistic/",
     "precision": "float64",
     "show_progress": true,

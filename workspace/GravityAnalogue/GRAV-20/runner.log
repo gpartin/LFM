@@ -1,0 +1,17 @@
+[97m[01:44:55] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:55] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:55] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:55] [INFO] === Running Single Test: GRAV-20 ===[0m
+[97m[01:44:55] [INFO] -> Starting GRAV-20: Self-consistent chi from E-energy (Poisson) - verify omega~=chi at center (1D) (600 steps)[0m
+[97m[01:44:55] [INFO] Params: N=256³, steps=600, quick=True[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3156, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3080, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3020, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 497, in run_variant
+    raise RuntimeError("chi_field_equation module not available; cannot run self_consistency")
+RuntimeError: chi_field_equation module not available; cannot run self_consistency

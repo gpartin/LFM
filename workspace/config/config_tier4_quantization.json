@@ -4,6 +4,7 @@
   "output_dir": "results/Quantization",
   "hardware": {
     "gpu_enabled": true,
+    "use_fused_cuda": true,
     "precision": "float64"
   },
   "parameters": {

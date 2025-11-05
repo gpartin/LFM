@@ -2,6 +2,7 @@
   "run_settings": {
     "quick_mode": true,
     "use_gpu": true,
+    "use_fused_cuda": true,
     "output_dir": "results/Gravity",
     "verbose": true,
     "verbose_stride": 200,
@@ -111,6 +112,7 @@
       "description": "Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped, demonstrates bound state physics)",
       "mode": "time_dilation",
       "skip": false,
+      "grid_points": 128,
       "chi_profile": "double_well",
       "chi_center": 0.30,
       "chi_edge": 0.14,

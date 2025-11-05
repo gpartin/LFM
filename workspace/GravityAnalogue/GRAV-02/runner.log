@@ -1,0 +1,99 @@
+[97m[01:46:01] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:46:01] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:46:01] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:46:01] [INFO] === Running Single Test: GRAV-02 ===[0m
+[97m[01:46:05] [INFO] -> Starting GRAV-02: Local frequency — Gaussian well (strong curvature) (4800 steps)[0m
+[97m[01:46:05] [INFO] Params: N=64³, steps=4800, quick=True[0m
+[97m[01:46:06] [INFO] chi values: PROBE_A=(32, 32, 32) -> chi_A=0.3495, PROBE_B=(32, 32, 54) -> chi_B=0.1301[0m
+[97m[01:46:06] [INFO] Local frequency mode: uniform field, single-step measurement[0m
+[97m[01:46:06] [INFO] [GRAV-02/serial] step 0/4800[0m
+[97m[01:46:06] [INFO] [GRAV-02/serial] step 200/4800[0m
+[97m[01:46:06] [INFO] [GRAV-02] 5% complete (serial)[0m
+[97m[01:46:07] [INFO] [GRAV-02/serial] step 400/4800[0m
+[97m[01:46:07] [INFO] [GRAV-02] 10% complete (serial)[0m
+[97m[01:46:07] [INFO] [GRAV-02/serial] step 600/4800[0m
+[97m[01:46:08] [INFO] [GRAV-02] 15% complete (serial)[0m
+[97m[01:46:08] [INFO] [GRAV-02/serial] step 800/4800[0m
+[97m[01:46:09] [INFO] [GRAV-02] 20% complete (serial)[0m
+[97m[01:46:09] [INFO] [GRAV-02/serial] step 1000/4800[0m
+[97m[01:46:09] [INFO] [GRAV-02/serial] step 1200/4800[0m
+[97m[01:46:09] [INFO] [GRAV-02] 25% complete (serial)[0m
+[97m[01:46:10] [INFO] [GRAV-02/serial] step 1400/4800[0m
+[97m[01:46:10] [INFO] [GRAV-02] 30% complete (serial)[0m
+[97m[01:46:11] [INFO] [GRAV-02/serial] step 1600/4800[0m
+[97m[01:46:11] [INFO] [GRAV-02] 35% complete (serial)[0m
+[97m[01:46:11] [INFO] [GRAV-02/serial] step 1800/4800[0m
+[97m[01:46:12] [INFO] [GRAV-02] 40% complete (serial)[0m
+[97m[01:46:12] [INFO] [GRAV-02/serial] step 2000/4800[0m
+[97m[01:46:12] [INFO] [GRAV-02] 45% complete (serial)[0m
+[97m[01:46:13] [INFO] [GRAV-02/serial] step 2200/4800[0m
+[97m[01:46:13] [INFO] [GRAV-02/serial] step 2400/4800[0m
+[97m[01:46:13] [INFO] [GRAV-02] 50% complete (serial)[0m
+[97m[01:46:14] [INFO] [GRAV-02/serial] step 2600/4800[0m
+[97m[01:46:14] [INFO] [GRAV-02] 55% complete (serial)[0m
+[97m[01:46:15] [INFO] [GRAV-02/serial] step 2800/4800[0m
+[97m[01:46:15] [INFO] [GRAV-02] 60% complete (serial)[0m
+[97m[01:46:15] [INFO] [GRAV-02/serial] step 3000/4800[0m
+[97m[01:46:16] [INFO] [GRAV-02] 65% complete (serial)[0m
+[97m[01:46:16] [INFO] [GRAV-02/serial] step 3200/4800[0m
+[97m[01:46:16] [INFO] [GRAV-02] 70% complete (serial)[0m
+[97m[01:46:17] [INFO] [GRAV-02/serial] step 3400/4800[0m
+[97m[01:46:17] [INFO] [GRAV-02/serial] step 3600/4800[0m
+[97m[01:46:17] [INFO] [GRAV-02] 75% complete (serial)[0m
+[97m[01:46:18] [INFO] [GRAV-02/serial] step 3800/4800[0m
+[97m[01:46:18] [INFO] [GRAV-02] 80% complete (serial)[0m
+[97m[01:46:19] [INFO] [GRAV-02/serial] step 4000/4800[0m
+[97m[01:46:19] [INFO] [GRAV-02] 85% complete (serial)[0m
+[97m[01:46:19] [INFO] [GRAV-02/serial] step 4200/4800[0m
+[97m[01:46:20] [INFO] [GRAV-02] 90% complete (serial)[0m
+[97m[01:46:20] [INFO] [GRAV-02/serial] step 4400/4800[0m
+[97m[01:46:20] [INFO] [GRAV-02] 95% complete (serial)[0m
+[97m[01:46:21] [INFO] [GRAV-02/serial] step 4600/4800[0m
+[97m[01:46:21] [INFO] [GRAV-02/par] step 0/4800[0m
+[97m[01:46:31] [INFO] [GRAV-02/par] step 200/4800[0m
+[97m[01:46:33] [INFO] [GRAV-02] 5% complete (parallel)[0m
+[97m[01:46:40] [INFO] [GRAV-02/par] step 400/4800[0m
+[97m[01:46:44] [INFO] [GRAV-02] 10% complete (parallel)[0m
+[97m[01:46:49] [INFO] [GRAV-02/par] step 600/4800[0m
+[97m[01:46:55] [INFO] [GRAV-02] 15% complete (parallel)[0m
+[97m[01:46:58] [INFO] [GRAV-02/par] step 800/4800[0m
+[97m[01:47:06] [INFO] [GRAV-02] 20% complete (parallel)[0m
+[97m[01:47:08] [INFO] [GRAV-02/par] step 1000/4800[0m
+[97m[01:47:17] [INFO] [GRAV-02/par] step 1200/4800[0m
+[97m[01:47:17] [INFO] [GRAV-02] 25% complete (parallel)[0m
+[97m[01:47:27] [INFO] [GRAV-02/par] step 1400/4800[0m
+[97m[01:47:29] [INFO] [GRAV-02] 30% complete (parallel)[0m
+[97m[01:47:36] [INFO] [GRAV-02/par] step 1600/4800[0m
+[97m[01:47:40] [INFO] [GRAV-02] 35% complete (parallel)[0m
+[97m[01:47:47] [INFO] [GRAV-02/par] step 1800/4800[0m
+[97m[01:47:53] [INFO] [GRAV-02] 40% complete (parallel)[0m
+[97m[01:47:57] [INFO] [GRAV-02/par] step 2000/4800[0m
+[97m[01:48:06] [INFO] [GRAV-02] 45% complete (parallel)[0m
+[97m[01:48:08] [INFO] [GRAV-02/par] step 2200/4800[0m
+[97m[01:48:18] [INFO] [GRAV-02/par] step 2400/4800[0m
+[97m[01:48:18] [INFO] [GRAV-02] 50% complete (parallel)[0m
+[97m[01:48:27] [INFO] [GRAV-02/par] step 2600/4800[0m
+[97m[01:48:29] [INFO] [GRAV-02] 55% complete (parallel)[0m
+[97m[01:48:37] [INFO] [GRAV-02/par] step 2800/4800[0m
+[97m[01:48:40] [INFO] [GRAV-02] 60% complete (parallel)[0m
+[97m[01:48:46] [INFO] [GRAV-02/par] step 3000/4800[0m
+[97m[01:48:51] [INFO] [GRAV-02] 65% complete (parallel)[0m
+[97m[01:48:55] [INFO] [GRAV-02/par] step 3200/4800[0m
+[97m[01:49:03] [INFO] [GRAV-02] 70% complete (parallel)[0m
+[97m[01:49:05] [INFO] [GRAV-02/par] step 3400/4800[0m
+[97m[01:49:14] [INFO] [GRAV-02/par] step 3600/4800[0m
+[97m[01:49:14] [INFO] [GRAV-02] 75% complete (parallel)[0m
+[97m[01:49:23] [INFO] [GRAV-02/par] step 3800/4800[0m
+[97m[01:49:25] [INFO] [GRAV-02] 80% complete (parallel)[0m
+[97m[01:49:32] [INFO] [GRAV-02/par] step 4000/4800[0m
+[97m[01:49:36] [INFO] [GRAV-02] 85% complete (parallel)[0m
+[97m[01:49:42] [INFO] [GRAV-02/par] step 4200/4800[0m
+[97m[01:49:47] [INFO] [GRAV-02] 90% complete (parallel)[0m
+[97m[01:49:51] [INFO] [GRAV-02/par] step 4400/4800[0m
+[97m[01:49:59] [INFO] [GRAV-02] 95% complete (parallel)[0m
+[97m[01:50:01] [INFO] [GRAV-02/par] step 4600/4800[0m
+[97m[01:50:10] [INFO] χ-field: χ_center=0.349488, χ_edge=0.130085 (Δ=62.78%)[0m
+[97m[01:50:10] [INFO] Theory predicts: ω_center=0.349488, ω_edge=0.130085 (shift=168.66%)[0m
+[97m[01:50:10] [INFO] Measured (serial): ω_center=0.349488, ω_edge=0.130085 (shift=168.66%)[0m
+[97m[01:50:10] [INFO] GRAV-02 PASS ✅ (ratio_err=0.00%)[0m
+[97m[01:50:10] [INFO] === Test GRAV-02 Complete ===[0m

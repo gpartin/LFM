@@ -1,37 +1,82 @@
----
-title: "Plots and Visualizations Overview"
-author: "Greg D. Partin"
-institution: "LFM Research, Los Angeles CA USA"
-license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
-orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "10.5281/zenodo.17510124"
-generated: "2025-11-04 12:12:47"
----
+# Plots Overview
 
-## Representative Scientific Visualizations
+Staged representative PNG plots from results/ (limited per directory).
 
-This package includes key plots that demonstrate the major theoretical achievements of the Lattice-Field Medium framework.
-
-### Included Plots
-
-#### Relativistic Physics
-- **relativistic_dispersion.png**: Demonstrates proper relativistic dispersion relations emerging from the discrete lattice
-
-#### Quantum Mechanics  
-- **quantum_interference.png**: Shows quantum interference patterns in double-slit experiments
-- **quantum_bound_states.png**: Visualizes quantum bound state formation in potential wells
-
-### Plot Generation
-
-All plots are generated from actual simulation data using the LFM computational framework. Each visualization represents validated theoretical predictions that match analytical expectations.
-
-### Additional Visualizations
-
-The complete results directory contains extensive additional plots covering:
-- Gravitational field analogues
-- Energy conservation demonstrations  
-- Electromagnetic field visualizations
-- Quantization emergence plots
-
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+- ![plots/Electromagnetic/EM-01/em-01_analysis.png](plots/Electromagnetic/EM-01/em-01_analysis.png)
+- ![plots/Electromagnetic/EM-02/magnetic_generation_verification.png](plots/Electromagnetic/EM-02/magnetic_generation_verification.png)
+- ![plots/Electromagnetic/EM-03/faraday_error_analysis.png](plots/Electromagnetic/EM-03/faraday_error_analysis.png)
+- ![plots/Electromagnetic/EM-03/faraday_induction.png](plots/Electromagnetic/EM-03/faraday_induction.png)
+- ![plots/Electromagnetic/EM-04/ampere_displacement.png](plots/Electromagnetic/EM-04/ampere_displacement.png)
+- ![plots/Electromagnetic/EM-05/em_wave_propagation.png](plots/Electromagnetic/EM-05/em_wave_propagation.png)
+- ![plots/Electromagnetic/EM-06/poynting_conservation.png](plots/Electromagnetic/EM-06/poynting_conservation.png)
+- ![plots/Electromagnetic/EM-07/chi_em_coupling.png](plots/Electromagnetic/EM-07/chi_em_coupling.png)
+- ![plots/Electromagnetic/EM-08/em-08_analysis.png](plots/Electromagnetic/EM-08/em-08_analysis.png)
+- ![plots/Electromagnetic/EM-09/em-09_analysis.png](plots/Electromagnetic/EM-09/em-09_analysis.png)
+- ![plots/Electromagnetic/EM-10/em-10_analysis.png](plots/Electromagnetic/EM-10/em-10_analysis.png)
+- ![plots/Electromagnetic/EM-11/em-11_analysis.png](plots/Electromagnetic/EM-11/em-11_analysis.png)
+- ![plots/Electromagnetic/EM-12/em-12_analysis.png](plots/Electromagnetic/EM-12/em-12_analysis.png)
+- ![plots/Electromagnetic/EM-13/em-13_analysis.png](plots/Electromagnetic/EM-13/em-13_analysis.png)
+- ![plots/Electromagnetic/EM-14/em-14_analysis.png](plots/Electromagnetic/EM-14/em-14_analysis.png)
+- ![plots/Electromagnetic/EM-15/em-15_analysis.png](plots/Electromagnetic/EM-15/em-15_analysis.png)
+- ![plots/Electromagnetic/EM-16/em-16_analysis.png](plots/Electromagnetic/EM-16/em-16_analysis.png)
+- ![plots/Electromagnetic/EM-17/em_pulse_propagation.png](plots/Electromagnetic/EM-17/em_pulse_propagation.png)
+- ![plots/Electromagnetic/EM-18/em-18_analysis.png](plots/Electromagnetic/EM-18/em-18_analysis.png)
+- ![plots/Electromagnetic/EM-19/gauge_invariance.png](plots/Electromagnetic/EM-19/gauge_invariance.png)
+- ![plots/Electromagnetic/EM-20/em-20_analysis.png](plots/Electromagnetic/EM-20/em-20_analysis.png)
+- ![plots/Electromagnetic/EM-21/dynamic_chi_pulse_energy.png](plots/Electromagnetic/EM-21/dynamic_chi_pulse_energy.png)
+- ![plots/Energy/ENER-01/energy_vs_time.png](plots/Energy/ENER-01/energy_vs_time.png)
+- ![plots/Energy/ENER-01/entropy_vs_time.png](plots/Energy/ENER-01/entropy_vs_time.png)
+- ![plots/Energy/ENER-02/energy_vs_time.png](plots/Energy/ENER-02/energy_vs_time.png)
+- ![plots/Energy/ENER-02/entropy_vs_time.png](plots/Energy/ENER-02/entropy_vs_time.png)
+- ![plots/Energy/ENER-03/energy_vs_time.png](plots/Energy/ENER-03/energy_vs_time.png)
+- ![plots/Energy/ENER-03/entropy_vs_time.png](plots/Energy/ENER-03/entropy_vs_time.png)
+- ![plots/Energy/ENER-04/energy_vs_time.png](plots/Energy/ENER-04/energy_vs_time.png)
+- ![plots/Energy/ENER-04/entropy_vs_time.png](plots/Energy/ENER-04/entropy_vs_time.png)
+- ![plots/Energy/ENER-05/energy_vs_time.png](plots/Energy/ENER-05/energy_vs_time.png)
+- ![plots/Energy/ENER-05/entropy_vs_time.png](plots/Energy/ENER-05/entropy_vs_time.png)
+- ![plots/Energy/ENER-05/hamiltonian_components.png](plots/Energy/ENER-05/hamiltonian_components.png)
+- ![plots/Energy/ENER-05/hamiltonian_total.png](plots/Energy/ENER-05/hamiltonian_total.png)
+- ![plots/Energy/ENER-06/energy_vs_time.png](plots/Energy/ENER-06/energy_vs_time.png)
+- ![plots/Energy/ENER-06/entropy_vs_time.png](plots/Energy/ENER-06/entropy_vs_time.png)
+- ![plots/Energy/ENER-06/hamiltonian_components.png](plots/Energy/ENER-06/hamiltonian_components.png)
+- ![plots/Energy/ENER-06/hamiltonian_total.png](plots/Energy/ENER-06/hamiltonian_total.png)
+- ![plots/Energy/ENER-07/energy_vs_time.png](plots/Energy/ENER-07/energy_vs_time.png)
+- ![plots/Energy/ENER-07/entropy_vs_time.png](plots/Energy/ENER-07/entropy_vs_time.png)
+- ![plots/Energy/ENER-07/hamiltonian_components.png](plots/Energy/ENER-07/hamiltonian_components.png)
+- ![plots/Energy/ENER-07/hamiltonian_total.png](plots/Energy/ENER-07/hamiltonian_total.png)
+- ![plots/Energy/ENER-08/energy_vs_time.png](plots/Energy/ENER-08/energy_vs_time.png)
+- ![plots/Energy/ENER-08/entropy_vs_time.png](plots/Energy/ENER-08/entropy_vs_time.png)
+- ![plots/Energy/ENER-09/energy_vs_time.png](plots/Energy/ENER-09/energy_vs_time.png)
+- ![plots/Energy/ENER-09/entropy_vs_time.png](plots/Energy/ENER-09/entropy_vs_time.png)
+- ![plots/Energy/ENER-10/energy_vs_time.png](plots/Energy/ENER-10/energy_vs_time.png)
+- ![plots/Energy/ENER-10/entropy_vs_time.png](plots/Energy/ENER-10/entropy_vs_time.png)
+- ![plots/Gravity/GRAV-16/interference_pattern_GRAV-16.png](plots/Gravity/GRAV-16/interference_pattern_GRAV-16.png)
+- ![plots/Gravity/GRAV-20/self_consistency_profile_overlay_GRAV-20.png](plots/Gravity/GRAV-20/self_consistency_profile_overlay_GRAV-20.png)
+- ![plots/Gravity/GRAV-20/self_consistency_ratio_GRAV-20.png](plots/Gravity/GRAV-20/self_consistency_ratio_GRAV-20.png)
+- ![plots/Gravity/GRAV-23/chi_wave_evolution_GRAV-23.png](plots/Gravity/GRAV-23/chi_wave_evolution_GRAV-23.png)
+- ![plots/Gravity/GRAV-24/chi_coupling_GRAV-24.png](plots/Gravity/GRAV-24/chi_coupling_GRAV-24.png)
+- ![plots/Gravity/GRAV-25/light_bending_GRAV-25.png](plots/Gravity/GRAV-25/light_bending_GRAV-25.png)
+- ![plots/Quantization/QUAN-01/energy_transfer.png](plots/Quantization/QUAN-01/energy_transfer.png)
+- ![plots/Quantization/QUAN-02/energy_transfer.png](plots/Quantization/QUAN-02/energy_transfer.png)
+- ![plots/Quantization/QUAN-03/spectral_linearity.png](plots/Quantization/QUAN-03/spectral_linearity.png)
+- ![plots/Quantization/QUAN-04/spectral_linearity.png](plots/Quantization/QUAN-04/spectral_linearity.png)
+- ![plots/Quantization/QUAN-05/linearity_superposition.png](plots/Quantization/QUAN-05/linearity_superposition.png)
+- ![plots/Quantization/QUAN-06/linearity_superposition.png](plots/Quantization/QUAN-06/linearity_superposition.png)
+- ![plots/Quantization/QUAN-07/wavefront_stability.png](plots/Quantization/QUAN-07/wavefront_stability.png)
+- ![plots/Quantization/QUAN-08/stability_test.png](plots/Quantization/QUAN-08/stability_test.png)
+- ![plots/Quantization/QUAN-09/uncertainty_dx_dk.png](plots/Quantization/QUAN-09/uncertainty_dx_dk.png)
+- ![plots/Quantization/QUAN-10/bound_state_modes.png](plots/Quantization/QUAN-10/bound_state_modes.png)
+- ![plots/Quantization/QUAN-10/mode_evolution.png](plots/Quantization/QUAN-10/mode_evolution.png)
+- ![plots/Quantization/QUAN-10/quantized_energies.png](plots/Quantization/QUAN-10/quantized_energies.png)
+- ![plots/Quantization/QUAN-11/zero_point_energy.png](plots/Quantization/QUAN-11/zero_point_energy.png)
+- ![plots/Quantization/QUAN-12/tunneling_snapshot.png](plots/Quantization/QUAN-12/tunneling_snapshot.png)
+- ![plots/Quantization/QUAN-12/tunneling_transmission.png](plots/Quantization/QUAN-12/tunneling_transmission.png)
+- ![plots/Quantization/QUAN-13/wave_particle_duality.png](plots/Quantization/QUAN-13/wave_particle_duality.png)
+- ![plots/Quantization/QUAN-14/non_thermalization.png](plots/Quantization/QUAN-14/non_thermalization.png)
+- ![plots/Relativistic/REL-05/concept_REL-05.png](plots/Relativistic/REL-05/concept_REL-05.png)
+- ![plots/Relativistic/REL-06/concept_REL-06.png](plots/Relativistic/REL-06/concept_REL-06.png)
+- ![plots/Relativistic/REL-11/dispersion_REL-11.png](plots/Relativistic/REL-11/dispersion_REL-11.png)
+- ![plots/Relativistic/REL-12/dispersion_REL-12.png](plots/Relativistic/REL-12/dispersion_REL-12.png)
+- ![plots/Relativistic/REL-13/dispersion_REL-13.png](plots/Relativistic/REL-13/dispersion_REL-13.png)
+- ![plots/Relativistic/REL-14/dispersion_REL-14.png](plots/Relativistic/REL-14/dispersion_REL-14.png)
+- ![plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png](plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png)

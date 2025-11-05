@@ -1,0 +1,11 @@
+{
+  "category": "data",
+  "description": "Staged documents for OSF upload; generated locally.",
+  "license": "CC BY-NC-ND 4.0",
+  "tags": [
+    "LFM",
+    "lattice",
+    "results"
+  ],
+  "title": "LFM Results Package (dry-run)"
+}

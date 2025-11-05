@@ -1,0 +1,88 @@
+[97m[01:44:11] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:11] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:11] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:11] [INFO] === Running Single Test: GRAV-07 ===[0m
+[97m[01:44:11] [INFO] -> Starting GRAV-07: Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped, demonstrates bound state physics) (4800 steps)[0m
+[97m[01:44:11] [INFO] Params: N=64³, steps=4800, quick=True[0m
+[97m[01:44:11] [INFO] chi values: PROBE_A=(32, 32, 16) -> chi_A=0.3000, PROBE_B=(32, 32, 48) -> chi_B=0.1400[0m
+[97m[01:44:11] [INFO] Time dilation mode: bound states in wells, sigma_well=9.0, separation=32 cells (3.6σ), 4800 steps[0m
+[97m[01:44:11] [INFO] [GRAV-07/serial] step 0/4800[0m
+[97m[01:44:12] [INFO] [GRAV-07/serial] step 200/4800[0m
+[97m[01:44:12] [INFO] [GRAV-07] 5% complete (serial)[0m
+[97m[01:44:13] [INFO] [GRAV-07/serial] step 400/4800[0m
+[97m[01:44:13] [INFO] [GRAV-07] 10% complete (serial)[0m
+[97m[01:44:13] [INFO] [GRAV-07/serial] step 600/4800[0m
+[97m[01:44:14] [INFO] [GRAV-07] 15% complete (serial)[0m
+[97m[01:44:14] [INFO] [GRAV-07/serial] step 800/4800[0m
+[97m[01:44:15] [INFO] [GRAV-07] 20% complete (serial)[0m
+[97m[01:44:15] [INFO] [GRAV-07/serial] step 1000/4800[0m
+[97m[01:44:15] [INFO] [GRAV-07/serial] step 1200/4800[0m
+[97m[01:44:15] [INFO] [GRAV-07] 25% complete (serial)[0m
+[97m[01:44:16] [INFO] [GRAV-07/serial] step 1400/4800[0m
+[97m[01:44:16] [INFO] [GRAV-07] 30% complete (serial)[0m
+[97m[01:44:17] [INFO] [GRAV-07/serial] step 1600/4800[0m
+[97m[01:44:17] [INFO] [GRAV-07] 35% complete (serial)[0m
+[97m[01:44:18] [INFO] [GRAV-07/serial] step 1800/4800[0m
+[97m[01:44:18] [INFO] [GRAV-07] 40% complete (serial)[0m
+[97m[01:44:19] [INFO] [GRAV-07/serial] step 2000/4800[0m
+[97m[01:44:20] [INFO] [GRAV-07] 45% complete (serial)[0m
+[97m[01:44:20] [INFO] [GRAV-07/serial] step 2200/4800[0m
+[97m[01:44:21] [INFO] [GRAV-07/serial] step 2400/4800[0m
+[97m[01:44:21] [INFO] [GRAV-07] 50% complete (serial)[0m
+[97m[01:44:22] [INFO] [GRAV-07/serial] step 2600/4800[0m
+[97m[01:44:22] [INFO] [GRAV-07] 55% complete (serial)[0m
+[97m[01:44:23] [INFO] [GRAV-07/serial] step 2800/4800[0m
+[97m[01:44:23] [INFO] [GRAV-07] 60% complete (serial)[0m
+[97m[01:44:24] [INFO] [GRAV-07/serial] step 3000/4800[0m
+[97m[01:44:24] [INFO] [GRAV-07] 65% complete (serial)[0m
+[97m[01:44:25] [INFO] [GRAV-07/serial] step 3200/4800[0m
+[97m[01:44:25] [INFO] [GRAV-07] 70% complete (serial)[0m
+[97m[01:44:26] [INFO] [GRAV-07/serial] step 3400/4800[0m
+[97m[01:44:27] [INFO] [GRAV-07/serial] step 3600/4800[0m
+[97m[01:44:27] [INFO] [GRAV-07] 75% complete (serial)[0m
+[97m[01:44:28] [INFO] [GRAV-07/serial] step 3800/4800[0m
+[97m[01:44:28] [INFO] [GRAV-07] 80% complete (serial)[0m
+[97m[01:44:29] [INFO] [GRAV-07/serial] step 4000/4800[0m
+[97m[01:44:29] [INFO] [GRAV-07] 85% complete (serial)[0m
+[97m[01:44:30] [INFO] [GRAV-07/serial] step 4200/4800[0m
+[97m[01:44:30] [INFO] [GRAV-07] 90% complete (serial)[0m
+[97m[01:44:31] [INFO] [GRAV-07/serial] step 4400/4800[0m
+[97m[01:44:31] [INFO] [GRAV-07] 95% complete (serial)[0m
+[97m[01:44:32] [INFO] [GRAV-07/serial] step 4600/4800[0m
+[97m[01:44:33] [INFO] [GRAV-07/par] step 0/4800[0m
+[97m[01:44:45] [INFO] [GRAV-07/par] step 200/4800[0m
+[97m[01:44:47] [INFO] [GRAV-07] 5% complete (parallel)[0m
+[97m[01:44:57] [INFO] [GRAV-07/par] step 400/4800[0m
+[97m[01:45:01] [INFO] [GRAV-07] 10% complete (parallel)[0m
+[97m[01:45:09] [INFO] [GRAV-07/par] step 600/4800[0m
+[97m[01:45:16] [INFO] [GRAV-07] 15% complete (parallel)[0m
+[97m[01:45:21] [INFO] [GRAV-07/par] step 800/4800[0m
+[97m[01:45:30] [INFO] [GRAV-07] 20% complete (parallel)[0m
+[97m[01:45:33] [INFO] [GRAV-07/par] step 1000/4800[0m
+[97m[01:45:45] [INFO] [GRAV-07/par] step 1200/4800[0m
+[97m[01:45:45] [INFO] [GRAV-07] 25% complete (parallel)[0m
+[97m[01:45:58] [INFO] [GRAV-07/par] step 1400/4800[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3156, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3080, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3020, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 1835, in run_variant
+    E_next = run_lattice_local(E, params, 1, tiles=tiles3, E_prev=Ep)
+  File "C:\LFM\workspace\src\core\lfm_parallel.py", line 264, in run_lattice
+    E_next = _step_threaded(E, E_prev, params, tile_list, deterministic=det)
+  File "C:\LFM\workspace\src\core\lfm_parallel.py", line 176, in _step_threaded
+    for _ in as_completed(futs):
+             ~~~~~~~~~~~~^^^^^^
+  File "C:\Program Files\Python313\Lib\concurrent\futures\_base.py", line 243, in as_completed
+    waiter.event.wait(wait_timeout)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\threading.py", line 659, in wait
+    signaled = self._cond.wait(timeout)
+  File "C:\Program Files\Python313\Lib\threading.py", line 359, in wait
+    waiter.acquire()
+    ~~~~~~~~~~~~~~^^
+KeyboardInterrupt

@@ -1,0 +1,15 @@
+[97m[01:46:16] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:46:16] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:46:16] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:46:16] [INFO] === Running Single Test: GRAV-10 ===[0m
+[97m[01:46:16] [INFO] -> Starting GRAV-10: Gravitational redshift — measure frequency shift in 1D potential well (1 steps)[0m
+[97m[01:46:16] [INFO] Params: N=96³, steps=1, quick=True[0m
+[97m[01:46:16] [INFO] chi values: PROBE_A=(48, 48, 48) -> chi_A=0.2997, PROBE_B=(48, 48, 81) -> chi_B=0.0737[0m
+[97m[01:46:16] [INFO] Local frequency mode: uniform field, single-step measurement[0m
+[97m[01:46:17] [INFO] [GRAV-10/serial] step 0/1[0m
+[97m[01:46:17] [INFO] [GRAV-10] 100% complete (serial)[0m
+[97m[01:46:17] [INFO] [GRAV-10/par] step 0/1[0m
+[97m[01:46:17] [INFO] [GRAV-10] 100% complete (parallel)[0m
+[97m[01:46:17] [INFO] Gravitational redshift: Δω/ω_theory=306.54%, Δω/ω_measured=306.54%[0m
+[97m[01:46:17] [INFO] GRAV-10 PASS ✅ (ratio_err=0.00%)[0m
+[97m[01:46:17] [INFO] === Test GRAV-10 Complete ===[0m

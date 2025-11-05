@@ -10,8 +10,8 @@
     "avg_individual_error": 0.0
   },
   "tolerance": 0.1,
-  "runtime_sec": 1.0503127574920654,
+  "runtime_sec": 0.7449870109558105,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:43:59.453688Z"
+  "timestamp": "2025-11-05T00:57:44.899047Z"
 }

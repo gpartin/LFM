@@ -1,0 +1,6 @@
+metric,value
+rel_err,0.981433081883511
+v_measured,0.01856691811648901
+v_theory,1.0
+max_violation,0.0008565104618352692
+runtime_sec,10.370591163635254

@@ -1,0 +1,104 @@
+[97m[01:57:54] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:57:54] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:57:54] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:57:54] [INFO] === Running Single Test: GRAV-07 ===[0m
+[97m[01:57:54] [INFO] -> Starting GRAV-07: Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped, demonstrates bound state physics) (4800 steps)[0m
+[97m[01:57:54] [INFO] Params: N=64³, steps=4800, quick=True[0m
+[97m[01:57:54] [INFO] chi values: PROBE_A=(32, 32, 16) -> chi_A=0.3000, PROBE_B=(32, 32, 48) -> chi_B=0.1400[0m
+[97m[01:57:54] [INFO] Time dilation mode: bound states in wells, sigma_well=9.0, separation=32 cells (3.6σ), 4800 steps[0m
+[97m[01:57:54] [INFO] [GRAV-07/serial] step 0/4800[0m
+[97m[01:57:54] [INFO] [GRAV-07/serial] step 200/4800[0m
+[97m[01:57:54] [INFO] [GRAV-07] 5% complete (serial)[0m
+[97m[01:57:55] [INFO] [GRAV-07/serial] step 400/4800[0m
+[97m[01:57:55] [INFO] [GRAV-07] 10% complete (serial)[0m
+[97m[01:57:55] [INFO] [GRAV-07/serial] step 600/4800[0m
+[97m[01:57:55] [INFO] [GRAV-07] 15% complete (serial)[0m
+[97m[01:57:55] [INFO] [GRAV-07/serial] step 800/4800[0m
+[97m[01:57:55] [INFO] [GRAV-07] 20% complete (serial)[0m
+[97m[01:57:55] [INFO] [GRAV-07/serial] step 1000/4800[0m
+[97m[01:57:56] [INFO] [GRAV-07/serial] step 1200/4800[0m
+[97m[01:57:56] [INFO] [GRAV-07] 25% complete (serial)[0m
+[97m[01:57:56] [INFO] [GRAV-07/serial] step 1400/4800[0m
+[97m[01:57:56] [INFO] [GRAV-07] 30% complete (serial)[0m
+[97m[01:57:56] [INFO] [GRAV-07/serial] step 1600/4800[0m
+[97m[01:57:56] [INFO] [GRAV-07] 35% complete (serial)[0m
+[97m[01:57:56] [INFO] [GRAV-07/serial] step 1800/4800[0m
+[97m[01:57:57] [INFO] [GRAV-07] 40% complete (serial)[0m
+[97m[01:57:57] [INFO] [GRAV-07/serial] step 2000/4800[0m
+[97m[01:57:57] [INFO] [GRAV-07] 45% complete (serial)[0m
+[97m[01:57:57] [INFO] [GRAV-07/serial] step 2200/4800[0m
+[97m[01:57:57] [INFO] [GRAV-07/serial] step 2400/4800[0m
+[97m[01:57:57] [INFO] [GRAV-07] 50% complete (serial)[0m
+[97m[01:57:57] [INFO] [GRAV-07/serial] step 2600/4800[0m
+[97m[01:57:57] [INFO] [GRAV-07] 55% complete (serial)[0m
+[97m[01:57:58] [INFO] [GRAV-07/serial] step 2800/4800[0m
+[97m[01:57:58] [INFO] [GRAV-07] 60% complete (serial)[0m
+[97m[01:57:58] [INFO] [GRAV-07/serial] step 3000/4800[0m
+[97m[01:57:58] [INFO] [GRAV-07] 65% complete (serial)[0m
+[97m[01:57:58] [INFO] [GRAV-07/serial] step 3200/4800[0m
+[97m[01:57:58] [INFO] [GRAV-07] 70% complete (serial)[0m
+[97m[01:57:59] [INFO] [GRAV-07/serial] step 3400/4800[0m
+[97m[01:57:59] [INFO] [GRAV-07/serial] step 3600/4800[0m
+[97m[01:57:59] [INFO] [GRAV-07] 75% complete (serial)[0m
+[97m[01:57:59] [INFO] [GRAV-07/serial] step 3800/4800[0m
+[97m[01:57:59] [INFO] [GRAV-07] 80% complete (serial)[0m
+[97m[01:57:59] [INFO] [GRAV-07/serial] step 4000/4800[0m
+[97m[01:57:59] [INFO] [GRAV-07] 85% complete (serial)[0m
+[97m[01:58:00] [INFO] [GRAV-07/serial] step 4200/4800[0m
+[97m[01:58:00] [INFO] [GRAV-07] 90% complete (serial)[0m
+[97m[01:58:00] [INFO] [GRAV-07/serial] step 4400/4800[0m
+[97m[01:58:00] [INFO] [GRAV-07] 95% complete (serial)[0m
+[97m[01:58:00] [INFO] [GRAV-07/serial] step 4600/4800[0m
+[97m[01:58:01] [INFO] [GRAV-07/par] step 0/4800[0m
+[97m[01:58:07] [INFO] [GRAV-07/par] step 200/4800[0m
+[97m[01:58:08] [INFO] [GRAV-07] 5% complete (parallel)[0m
+[97m[01:58:14] [INFO] [GRAV-07/par] step 400/4800[0m
+[97m[01:58:16] [INFO] [GRAV-07] 10% complete (parallel)[0m
+[97m[01:58:20] [INFO] [GRAV-07/par] step 600/4800[0m
+[97m[01:58:24] [INFO] [GRAV-07] 15% complete (parallel)[0m
+[97m[01:58:27] [INFO] [GRAV-07/par] step 800/4800[0m
+[97m[01:58:32] [INFO] [GRAV-07] 20% complete (parallel)[0m
+[97m[01:58:33] [INFO] [GRAV-07/par] step 1000/4800[0m
+[97m[01:58:40] [INFO] [GRAV-07/par] step 1200/4800[0m
+[97m[01:58:40] [INFO] [GRAV-07] 25% complete (parallel)[0m
+[97m[01:58:46] [INFO] [GRAV-07/par] step 1400/4800[0m
+[97m[01:58:48] [INFO] [GRAV-07] 30% complete (parallel)[0m
+[97m[01:58:53] [INFO] [GRAV-07/par] step 1600/4800[0m
+[97m[01:58:56] [INFO] [GRAV-07] 35% complete (parallel)[0m
+[97m[01:58:59] [INFO] [GRAV-07/par] step 1800/4800[0m
+[97m[01:59:03] [INFO] [GRAV-07] 40% complete (parallel)[0m
+[97m[01:59:06] [INFO] [GRAV-07/par] step 2000/4800[0m
+[97m[01:59:11] [INFO] [GRAV-07] 45% complete (parallel)[0m
+[97m[01:59:13] [INFO] [GRAV-07/par] step 2200/4800[0m
+[97m[01:59:19] [INFO] [GRAV-07/par] step 2400/4800[0m
+[97m[01:59:19] [INFO] [GRAV-07] 50% complete (parallel)[0m
+[97m[01:59:26] [INFO] [GRAV-07/par] step 2600/4800[0m
+[97m[01:59:27] [INFO] [GRAV-07] 55% complete (parallel)[0m
+[97m[01:59:33] [INFO] [GRAV-07/par] step 2800/4800[0m
+[97m[01:59:35] [INFO] [GRAV-07] 60% complete (parallel)[0m
+[97m[01:59:39] [INFO] [GRAV-07/par] step 3000/4800[0m
+[97m[01:59:43] [INFO] [GRAV-07] 65% complete (parallel)[0m
+[97m[01:59:46] [INFO] [GRAV-07/par] step 3200/4800[0m
+[97m[01:59:51] [INFO] [GRAV-07] 70% complete (parallel)[0m
+[97m[01:59:53] [INFO] [GRAV-07/par] step 3400/4800[0m
+[97m[01:59:59] [INFO] [GRAV-07/par] step 3600/4800[0m
+[97m[01:59:59] [INFO] [GRAV-07] 75% complete (parallel)[0m
+[97m[02:00:06] [INFO] [GRAV-07/par] step 3800/4800[0m
+[97m[02:00:07] [INFO] [GRAV-07] 80% complete (parallel)[0m
+[97m[02:00:13] [INFO] [GRAV-07/par] step 4000/4800[0m
+[97m[02:00:15] [INFO] [GRAV-07] 85% complete (parallel)[0m
+[97m[02:00:19] [INFO] [GRAV-07/par] step 4200/4800[0m
+[97m[02:00:23] [INFO] [GRAV-07] 90% complete (parallel)[0m
+[97m[02:00:26] [INFO] [GRAV-07/par] step 4400/4800[0m
+[97m[02:00:31] [INFO] [GRAV-07] 95% complete (parallel)[0m
+[97m[02:00:33] [INFO] [GRAV-07/par] step 4600/4800[0m
+[97m[02:00:39] [INFO] Analyzing time series with FFT (dt=0.01, 4800 samples)...[0m
+[97m[02:00:39] [INFO] Localized oscillators (k_eff≈0.000000)[0m
+[97m[02:00:39] [INFO] Theory (localized, k≈0): ω_A=0.300000, ω_B=0.140000[0m
+[97m[02:00:39] [INFO] FFT frequencies: ω_A=0.303621 (theory 0.300000), ω_B=0.082885 (theory 0.140000)[0m
+[97m[02:00:39] [INFO] Frequency ratio: measured=3.663175, theory=2.142857, error=70.95%[0m
+[97m[02:00:39] [INFO] χ-field: χ_center=0.300000, χ_edge=0.140000 (Δ=53.33%)[0m
+[97m[02:00:39] [INFO] Theory predicts: ω_center=0.300000, ω_edge=0.140000 (shift=114.29%)[0m
+[97m[02:00:39] [INFO] Measured (serial): ω_center=0.303621, ω_edge=0.082885 (shift=266.32%)[0m
+[91m[02:00:39] [FAIL] GRAV-07 FAIL ❌ (ratio_err=70.95%)[0m
+[97m[02:00:39] [INFO] === Test GRAV-07 Complete ===[0m

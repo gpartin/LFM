@@ -1,0 +1,8 @@
+[97m[00:40:00] [INFO] Run settings: quick_mode=False; use_gpu=False; verbose=False[0m
+[97m[00:40:00] [INFO] === Running Single Test: QUAN-13 ===[0m
+[97m[00:40:01] [INFO] [QUAN-13] Wave-particle duality test — double-slit experiment[0m
+[97m[00:40:01] [INFO] [QUAN-13] Scenario 1: No which-way detector (wave behavior expected)...[0m
+[97m[00:40:01] [INFO] [QUAN-13] Scenario 2: With which-way detector (particle behavior expected)...[0m
+[97m[00:40:01] [INFO] [QUAN-13] Analysis region: 278 points from x=[69.9, 93.8], excluding slits at x=77.9, 85.9[0m
+[92m[00:40:01] [PASS] [QUAN-13] PASS ✅ — Wave-particle duality confirmed! V_wave=0.958, V_particle=0.915, drop=0.043, fringes=3/2[0m
+[97m[00:40:01] [INFO] [QUAN-13] QUANTUM SIGNATURE: Which-way information destroys interference (complementarity)![0m

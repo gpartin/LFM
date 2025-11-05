@@ -1,0 +1,9 @@
+[97m[01:43:41] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
+[97m[01:43:41] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:43:41] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:43:41] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
+[97m[01:43:41] [INFO] === Running Single Test: REL-02 ===[0m
+[97m[01:43:41] [INFO] -> Starting REL-02: Isotropy — Fine Grid (6000 steps)[0m
+[97m[01:43:41] [INFO] Isotropy test: running RIGHT and LEFT propagating waves[0m
+[97m[01:43:58] [INFO] REL-02 PASS ✅ ω_R=39.726590, ω_L=39.726590, anisotropy=0.000%[0m
+[97m[01:43:58] [INFO] === Test REL-02 Complete ===[0m

@@ -1,0 +1,88 @@
+﻿MASTER TEST STATUS REPORT - LFM Lattice Field Model
+Generated: 2025-11-04 18:25:51
+Validation Rule: Suite marked NOT RUN if any test missing from CSV
+
+CATEGORY SUMMARY
+Tier,Category,Expected_Tests,Tests_In_CSV,Status,Pass_Rate
+Tier 1,Relativistic,15,15,PASS,15/15 passed
+Tier 2,Gravity Analogue,25,25,PARTIAL,22/25 passed - 3 skipped
+Tier 3,Energy Conservation,11,10,PASS,10/10 passed - 1 missing
+Tier 4,Quantization,9,14,PASS,14/14 passed
+
+DETAILED TEST RESULTS
+
+TIER 1 - RELATIVISTIC (15/15 tests)
+Test_ID,Description,Status,Notes
+REL-01,Isotropy — Coarse Grid,PASS,
+REL-02,Isotropy — Fine Grid,PASS,
+REL-03,Lorentz Boost — Low Velocity,PASS,
+REL-04,Lorentz Boost — High Velocity,PASS,
+REL-05,Causality — Pulse Propagation,PASS,
+REL-06,Causality — Noise Perturbation,PASS,
+REL-07,Phase Independence Test,PASS,
+REL-08,Superposition Principle Test,PASS,
+REL-09,3D Isotropy — Directional Equivalence,PASS,
+REL-10,3D Isotropy — Spherical Symmetry,PASS,
+REL-11,Dispersion Relation — Non-relativistic (χ/k≈10),PASS,
+REL-12,Dispersion Relation — Weakly Relativistic (χ/k≈1),PASS,
+REL-13,Dispersion Relation — Relativistic (χ/k≈0.5),PASS,
+REL-14,Dispersion Relation — Ultra-relativistic (χ/k≈0.1),PASS,
+REL-15,Causality — Space-like correlation test (light cone violation check),PASS,
+
+TIER 2 - GRAVITY ANALOGUE (25/25 tests)
+Test_ID,Description,Status,Notes
+GRAV-01,Local frequency — linear χ-gradient (weak),PASS,
+GRAV-02,Local frequency — Gaussian well (strong curvature),PASS,
+GRAV-03,Local frequency — Gaussian well (broader potential),PASS,
+GRAV-04,Local frequency — Gaussian well (shallow potential),PASS,
+GRAV-05,Local frequency — linear χ-gradient (moderate),PASS,
+GRAV-06,Local frequency — Gaussian well (stable reference),PASS,
+GRAV-07,Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics),PASS,FIXED: Increased grid resolution to N=128 for proper well isolation (7.1σ separation). Measures time dilation via frequency ratio in double-well potential. Test now passes (error=2.24% < 25% tolerance).
+GRAV-08,Time dilation — uniform χ diagnostic (isolate grid dispersion),PASS,
+GRAV-09,Time dilation — 2x refined grid (N=128; dx=0.5),SKIP,Time-dilation metric under recalibration for refined grid
+GRAV-10,Gravitational redshift — measure frequency shift in 1D potential well,PASS,
+GRAV-11,Time delay — packet through χ slab (Shapiro-like),SKIP,Packet tracking diagnostics WIP; Shapiro-like delay measurement
+GRAV-12,Phase delay — continuous wave through χ slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!),PASS,
+GRAV-13,Local frequency — double well (ω∝χ verification),PASS,
+GRAV-14,Group delay — differential timing with vs without slab,SKIP,Signal too weak for robust differential timing with current setup
+GRAV-15,3D radial energy dispersion visualizer — central excitation; volumetric snapshots for MP4,PASS,
+GRAV-16,3D double-slit interference — quantum wave through slits showing χ-field localization,PASS,
+GRAV-17,Gravitational redshift — frequency shift climbing out of χ-well,PASS,
+GRAV-18,Gravitational redshift — linear gradient (Pound-Rebka analogue),PASS,
+GRAV-19,Gravitational redshift — radial χ-profile (Schwarzschild analogue),PASS,
+GRAV-20,Self-consistent chi from E-energy (Poisson) - verify omega~=chi at center (1D),PASS,
+GRAV-21,GR calibration - redshift to G_eff mapping (weak-field limit),PASS,
+GRAV-22,GR calibration - Shapiro delay correspondence (group velocity through slab),PASS,
+GRAV-23,Dynamic χ-field evolution — full wave equation □χ=-4πGρ with causal propagation (gravitational wave analogue),PASS,
+GRAV-24,Gravitational wave propagation — oscillating source radiates χ-waves; validate 1/r decay and propagation speed,PASS,
+GRAV-25,Light bending — ray tracing through χ-gradient; measure deflection angle,PASS,
+
+TIER 3 - ENERGY CONSERVATION (10/11 tests)
+Test_ID,Description,Status,Notes
+ENER-01,Global conservation — short,PASS,
+ENER-02,Global conservation — long,PASS,
+ENER-03,Wave integrity — mild curvature,PASS,
+ENER-04,Wave integrity — steep curvature,PASS,
+ENER-05,Hamiltonian partitioning — uniform χ (KE ↔ GE flow),PASS,
+ENER-06,Hamiltonian partitioning — with mass term (KE ↔ GE ↔ PE flow),PASS,
+ENER-07,Hamiltonian partitioning — χ-gradient field (energy flow in curved spacetime),PASS,
+ENER-08,Dissipation — weak damping (exponential decay; γ=1e-3 per unit time),PASS,
+ENER-09,Dissipation — strong damping (exponential decay; γ=1e-2 per unit time),PASS,
+ENER-10,Thermalization — noise + damping reaches steady state,PASS,
+
+TIER 4 - QUANTIZATION (14/9 tests)
+Test_ID,Description,Status,Notes
+QUAN-01,ΔE Transfer — Low Energy,PASS,
+QUAN-02,ΔE Transfer — High Energy,PASS,
+QUAN-03,Spectral Linearity — Coarse Steps,PASS,
+QUAN-04,Spectral Linearity — Fine Steps,PASS,
+QUAN-05,Phase-Amplitude Coupling — Low Noise,PASS,
+QUAN-06,Phase-Amplitude Coupling — High Noise,PASS,
+QUAN-07,Nonlinear Wavefront Stability,PASS,
+QUAN-08,High-Energy Lattice Blowout Test,PASS,
+QUAN-09,Heisenberg uncertainty — Δx·Δk ≈ 1/2,PASS,
+QUAN-10,Bound state quantization — discrete energy eigenvalues E_n emerge from boundary conditions,PASS,Discrete energy eigenvalues emerge from boundary conditions - fundamental quantum signature
+QUAN-11,Zero-point energy — ground state E₀ = ½ℏω ≠ 0 (vacuum fluctuations),PASS,
+QUAN-12,Quantum tunneling — barrier penetration when E < V (classically forbidden),PASS,Quantum tunneling demonstrated - wave penetrates classically forbidden barrier
+QUAN-13,Wave-particle duality — which-way information destroys interference,PASS,
+QUAN-14,Non-thermalization — validates Klein-Gordon conserves energy (doesn't approach Planck),PASS,

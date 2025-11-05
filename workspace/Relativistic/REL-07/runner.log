@@ -1,0 +1,32 @@
+[97m[01:43:41] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
+[97m[01:43:41] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:43:41] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:43:41] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
+[97m[01:43:41] [INFO] === Running Single Test: REL-07 ===[0m
+[97m[01:43:41] [INFO] -> Starting REL-07: Phase Independence Test (6000 steps)[0m
+[97m[01:43:41] [INFO] Phase independence test: comparing cos(kx) and sin(kx) initial conditions[0m
+[97m[01:43:58] [INFO] REL-07 PASS ✅ ω_cos=0.418809, ω_sin=0.418809, phase_err=0.000%[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 2186, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 2115, in main
+    test_metrics = TestMetrics()
+  File "C:\LFM\workspace\src\harness\lfm_test_metrics.py", line 53, in __init__
+    self.data = json.load(f)
+                ~~~~~~~~~^^^
+  File "C:\Program Files\Python313\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "C:\Program Files\Python313\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Program Files\Python313\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\json\decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 850 column 44 (char 23749)

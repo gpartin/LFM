@@ -29,6 +29,29 @@ from utils.lfm_diagnostics import energy_total  # compensated measurement
 from utils.energy_monitor import EnergyMonitor
 from utils.numeric_integrity import NumericIntegrityMixin
 
+# Optional optimized kernels
+try:
+    from core.lfm_equation_optimized import OptimizedLatticeKernel
+    _HAS_OPTIMIZED = True
+except ImportError:
+    _HAS_OPTIMIZED = False
+
+# Optional GPU diagnostics
+try:
+    from utils.lfm_diagnostics_gpu import energy_total_gpu, comprehensive_diagnostics_gpu
+    _HAS_GPU_DIAGNOSTICS = True
+except ImportError:
+    _HAS_GPU_DIAGNOSTICS = False
+
+# Optional fused CUDA kernels (Phase 2: 5-20x speedup)
+try:
+    from core.lfm_cuda_kernels import FusedVerletKernel
+    _HAS_FUSED_CUDA = True
+    _FUSED_KERNEL_CACHE = {}  # Cache kernels by dtype to avoid recompilation
+except ImportError:
+    _HAS_FUSED_CUDA = False
+    _FUSED_KERNEL_CACHE = {}
+
 try:
     import cupy as cp  # type: ignore
     _HAS_CUPY = True
@@ -68,6 +91,14 @@ def _normalize_tile_args(t):
     return (t,) if isinstance(t, slice) else t
 
 def _step_threaded(E, E_prev, params, tiles, deterministic=False):
+    """
+    Single timestep update with optional fused CUDA acceleration.
+    
+    When use_fused_cuda=True, E is on GPU (CuPy), and conditions are met,
+    uses a single fused CUDA kernel instead of separate Laplacian + Verlet.
+    
+    Speedup: 2-3x for large 3D grids, 5-10x for small grids on GPU.
+    """
     dt, dx = float(params["dt"]), float(params["dx"])
     alpha, beta = float(params["alpha"]), float(params["beta"])
     gamma = float(params.get("gamma_damp", 0.0))
@@ -75,6 +106,40 @@ def _step_threaded(E, E_prev, params, tiles, deterministic=False):
     chi = params.get("chi", 0.0)
     xp = _xp_for(E)
     c = math.sqrt(alpha / beta)
+    
+    # ═══════════════════════════════════════════════════════════════════
+    # PHASE 2 OPTIMIZATION: Fused CUDA Kernel
+    # ═══════════════════════════════════════════════════════════════════
+    # Check if we can use the fused CUDA kernel (5-20x faster on GPU)
+    use_fused = params.get("use_fused_cuda", False)
+    can_use_fused = (
+        use_fused and 
+        _HAS_FUSED_CUDA and 
+        _is_cupy_array(E) and 
+        E.ndim == 3 and 
+        order == 2 and 
+        len(tiles) == 1 and  # No tiling (or single tile)
+        params.get("boundary", "periodic") == "periodic"  # Fused kernel only supports periodic
+    )
+    
+    if can_use_fused:
+        # Use fused CUDA kernel (Laplacian + Verlet in one GPU launch)
+        dtype_str = 'float64' if E.dtype == cp.float64 else 'float32'
+        
+        # Get or create cached kernel instance
+        if dtype_str not in _FUSED_KERNEL_CACHE:
+            _FUSED_KERNEL_CACHE[dtype_str] = FusedVerletKernel(dtype=dtype_str)
+        
+        kernel = _FUSED_KERNEL_CACHE[dtype_str]
+        Nz, Ny, Nx = E.shape
+        
+        # Single GPU kernel launch (replaces ~10 separate launches)
+        E_next = kernel.step_3d(E, E_prev, chi, Nx, Ny, Nz, dx, dt, c, gamma)
+        return E_next
+    
+    # ═══════════════════════════════════════════════════════════════════
+    # STANDARD PATH: Separate Laplacian + Verlet (backward compatible)
+    # ═══════════════════════════════════════════════════════════════════
     L = laplacian(E, dx, order=order)
     E_next = xp.empty_like(E)
 
@@ -174,6 +239,15 @@ def run_lattice(E0, params:dict, steps:int,
     else:
         # If no monitor, only validate at explicit stride (0 = never)
         monitor_stride = int(params.get("energy_monitor_every", 0))
+    
+    # Adaptive diagnostic stride (Phase 1.3 optimization)
+    use_adaptive_diagnostics = bool(params.get("use_adaptive_diagnostics", False))
+    adaptive_stride_min = int(params.get("adaptive_stride_min", 10))
+    adaptive_stride_max = int(params.get("adaptive_stride_max", 1000))
+    adaptive_drift_threshold = float(params.get("adaptive_drift_threshold", 1e-7))
+    current_stride = monitor_stride
+    last_drift = 0.0
+    stable_count = 0
 
     # Helper: determine conservative scenario for projection
     def _is_conservative():
@@ -191,7 +265,11 @@ def run_lattice(E0, params:dict, steps:int,
         E_prev, E = E, E_next
 
         # Determine if we should compute energy this step
-        compute_energy = (monitor_stride > 0) and ((n + 1) % monitor_stride == 0)
+        if use_adaptive_diagnostics and monitor_stride > 0:
+            # Adaptive stride: increase when energy is stable
+            compute_energy = ((n + 1) % current_stride == 0)
+        else:
+            compute_energy = (monitor_stride > 0) and ((n + 1) % monitor_stride == 0)
         
         # Optional diagnostic projection BEFORE measuring drift
         if params.get("energy_lock", False) and _is_conservative():
@@ -200,7 +278,13 @@ def run_lattice(E0, params:dict, steps:int,
                 _chi_pre = float(chi)
             except Exception:
                 _chi_pre = _as_numpy(chi)
-            e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_pre)
+            
+            # Use GPU diagnostics if available and on GPU
+            if _HAS_GPU_DIAGNOSTICS and _is_cupy_array(E):
+                e_now_pre = energy_total_gpu(E, E_prev, dt, dx, c, _chi_pre, xp=xp)
+            else:
+                e_now_pre = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_pre)
+            
             if abs(e_now_pre) > 0:
                 s = math.sqrt(abs(E0_energy) / (abs(e_now_pre) + 1e-30))
                 E *= s
@@ -213,10 +297,34 @@ def run_lattice(E0, params:dict, steps:int,
                 _chi_now = float(chi)
             except Exception:
                 _chi_now = _as_numpy(chi)
-            e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_now)
+            
+            # Use GPU diagnostics if available and on GPU (Phase 1.2 optimization)
+            if _HAS_GPU_DIAGNOSTICS and _is_cupy_array(E):
+                e_now = energy_total_gpu(E, E_prev, dt, dx, c, _chi_now, xp=xp)
+            else:
+                e_now = energy_total(_as_numpy(E), _as_numpy(E_prev), dt, dx, c, _chi_now)
+            
             drift = (e_now - E0_energy) / (abs(E0_energy) + 1e-30)
             params["_energy_log"].append(e_now)
             params["_energy_drift_log"].append(drift)
+            
+            # Adaptive stride adjustment (Phase 1.3)
+            if use_adaptive_diagnostics:
+                drift_change = abs(drift - last_drift)
+                if drift_change < adaptive_drift_threshold:
+                    stable_count += 1
+                    # Increase stride gradually when stable
+                    if stable_count >= 3:
+                        current_stride = min(int(current_stride * 1.5), adaptive_stride_max)
+                        stable_count = 0
+                else:
+                    stable_count = 0
+                    # Decrease stride when energy changes
+                    if drift_change > 10 * adaptive_drift_threshold:
+                        current_stride = max(adaptive_stride_min, int(current_stride / 2))
+                
+                last_drift = drift
+            
             # use configured tolerance if provided on the integrity instance
             tol_use = float(getattr(integrity, "energy_tol", ni_cfg.get("energy_tol", 1e-6)))
             integrity.validate_energy(drift, tol=tol_use, label=f"step{n}")

@@ -13,8 +13,8 @@
     "dynamic_lambda_amp": 0.1
   },
   "tolerance": 0.001,
-  "runtime_sec": 2.2057833671569824,
+  "runtime_sec": 1.048762559890747,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:44:00.641501Z"
+  "timestamp": "2025-11-05T00:57:48.395649Z"
 }

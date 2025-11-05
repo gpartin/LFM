@@ -8,8 +8,25 @@
 """
 lfm_equation.py — Canonical LFM lattice update (v1.5 — 3D Extended, χ-field safe)
 
-Implements the canonical continuum equation:
-    ∂²E/∂t² = c² ∇²E − χ(x,t)² E,   with   c² = α/β
+═══════════════════════════════════════════════════════════════════════════════
+                    ⚠️  SINGLE SOURCE OF TRUTH FOR LFM PHYSICS  ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+This file contains the CANONICAL implementation of the LFM equation:
+
+    ∂²E/∂t² = c²∇²E − χ²(x,t)E,   with   c² = α/β
+
+This is a modified Klein-Gordon equation (Klein, 1926; Gordon, 1926) with
+spatially-varying mass parameter χ(x,t). The Laplacian (∇²) is the fundamental
+spatial operator that makes this a wave equation with local causality.
+
+ARCHITECTURAL PRINCIPLE:
+- The physics equation lives in ONE place only: THIS FILE
+- The Laplacian implementation is HERE (function: laplacian())
+- All other modules must import and delegate to these functions
+- DO NOT duplicate the Laplacian or equation logic elsewhere
+
+See CORE_EQUATIONS.md for the mathematical derivation and claim validation.
 
 Changes in v1.5:
   • Fix: energy_total() and advance() now accept full χ(x) fields, not only scalars.
@@ -44,10 +61,43 @@ def _asarray(x, xp, dtype=_np.float64):
     return _np.asarray(x, dtype=dtype)
 
 
-# ---------------------------------------------------------------------
-# Laplacian (now includes 3D)
-# ---------------------------------------------------------------------
+# ═════════════════════════════════════════════════════════════════════
+# LAPLACIAN — THE FUNDAMENTAL SPATIAL OPERATOR
+# ═════════════════════════════════════════════════════════════════════
+# This is the CANONICAL implementation of the discrete Laplacian ∇²E.
+# 
+# CRITICAL: This is the spatial operator that defines the LFM wave equation.
+# Our claim: "Klein-Gordon applied via Laplacian to a lattice is what 
+# reality looks like and causes physics to emerge."
+#
+# DO NOT duplicate this implementation elsewhere. All optimization wrappers
+# must delegate to this function to maintain single source of truth.
+#
+# Stencil formulas match CORE_EQUATIONS.md exactly:
+#   1D order-2: (E[i+1] - 2E[i] + E[i-1]) / dx²
+#   1D order-4: [-E[i+2] + 16E[i+1] - 30E[i] + 16E[i-1] - E[i-2]] / (12dx²)
+#   2D/3D: Multi-axis extensions of order-2/4 stencils
+# ═════════════════════════════════════════════════════════════════════
 def laplacian(E, dx, order=2):
+    """
+    Compute discrete Laplacian ∇²E using finite-difference stencils.
+    
+    This is the CANONICAL spatial operator for the LFM equation. The choice
+    of stencil order affects numerical dispersion but not the fundamental
+    physics: ∂²E/∂t² = c²∇²E − χ²E
+    
+    Args:
+        E: Field array (1D, 2D, or 3D)
+        dx: Grid spacing (uniform in all directions)
+        order: Stencil order (2 or 4; order-4 not supported for 3D)
+    
+    Returns:
+        ∇²E with same shape as E
+    
+    Implementation note: Uses np.roll() for periodic boundaries (canonical).
+    For optimization wrappers that eliminate roll() overhead, see
+    lfm_equation_optimized.py (which delegates back to this function).
+    """
     xp = _xp_for(E)
     if E.ndim == 1:
         if order == 2:
@@ -159,10 +209,36 @@ def energy_total(E, E_prev, dt, dx, c, chi):
         return float(_np.sum(dens) * (dx**3))
 
 
-# ---------------------------------------------------------------------
-# One-step update
-# ---------------------------------------------------------------------
+# ═════════════════════════════════════════════════════════════════════
+# LATTICE_STEP — THE FUNDAMENTAL TIME-STEPPING OPERATOR
+# ═════════════════════════════════════════════════════════════════════
+# This implements the Verlet integration of the LFM equation:
+#
+#   E^{t+1} = (2−γ)E^t − (1−γ)E^{t−1} + Δt² [c²∇²E^t − χ²(x,t)E^t]
+#
+# This is a leapfrog scheme for the modified Klein-Gordon equation.
+# The Laplacian (∇²) is computed by calling laplacian() above.
+# ═════════════════════════════════════════════════════════════════════
 def lattice_step(E, E_prev, params):
+    """
+    Advance the lattice field by one timestep using the canonical LFM equation.
+    
+    Implements: ∂²E/∂t² = c²∇²E − χ²(x,t)E
+    
+    Using Verlet (leapfrog) integration:
+        E_next = (2−γ)E − (1−γ)E_prev + dt²(c²∇²E − χ²E)
+    
+    This is the CANONICAL time-stepping function. All simulation runs
+    must use this or delegate to it to ensure consistency with published claims.
+    
+    Args:
+        E: Current field E^t
+        E_prev: Previous field E^{t-1}
+        params: Dict with dt, dx, alpha, beta, chi, gamma_damp, boundary, etc.
+    
+    Returns:
+        E_next: Field at next timestep E^{t+1}
+    """
     xp = _xp_for(E)
     dt, dx = float(params["dt"]), float(params["dx"])
     alpha, beta = float(params["alpha"]), float(params["beta"])
