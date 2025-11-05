@@ -2184,9 +2184,9 @@ class Tier5ElectromagneticHarness(BaseTierHarness):
         
         with open(config_file, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        
-        # Set output directory
-        out_root = Path(config.get("output_dir", "results/Electromagnetic"))
+
+        # Set output directory (anchor under workspace/results)
+        out_root = BaseTierHarness.resolve_outdir(config.get("output_dir", "results/Electromagnetic"))
         
         super().__init__(config, out_root, config_path)
         self.tier_name = "Electromagnetic"
@@ -2232,8 +2232,10 @@ class Tier5ElectromagneticHarness(BaseTierHarness):
         base_output_dir = self.config.get("output_dir", "results/Electromagnetic")
         if isinstance(base_output_dir, list):
             base_output_dir = base_output_dir[0]  # Take first element if it's a list
-        
-        output_dir = Path(base_output_dir) / test_id
+
+        # Resolve under workspace/results consistently
+        output_root = BaseTierHarness.resolve_outdir(base_output_dir)
+        output_dir = output_root / test_id
         ensure_dirs(output_dir)
         # Standard subdirectories for consistency with other tiers
         ensure_dirs(output_dir / 'plots')
@@ -3616,7 +3618,8 @@ def main():
         config_path = Path(_default_config_name())
         if config_path.exists():
             try:
-                update_master_test_status(Path("results"))
+                from utils.lfm_results import get_results_root
+                update_master_test_status(get_results_root())
                 log("Updated master test status", "INFO")
             except Exception as e:
                 log(f"Warning: Could not update master status: {e}", "WARN")

@@ -23,6 +23,7 @@ import time
 import argparse
 import multiprocessing as mp
 from pathlib import Path
+from utils.lfm_results import get_results_root, update_master_test_status
 from typing import Tuple, Dict, List, Optional
 import json
 from datetime import datetime
@@ -643,7 +644,7 @@ def main():
                     category = tier_categories.get(tier_done, f"Tier{tier_done}")
                     
                     actual_status = None
-                    summary_path = Path(f"results/{category}/{test_id_done}/summary.json")
+                    summary_path = get_results_root() / category / test_id_done / "summary.json"
                     if summary_path.exists():
                         try:
                             import json
@@ -690,7 +691,7 @@ def main():
         
         # Check actual test status from summary.json
         category = tier_categories.get(tier, f"Tier{tier}")
-        summary_path = Path(f"results/{category}/{test_id}/summary.json")
+        summary_path = get_results_root() / category / test_id / "summary.json"
         test_passed = None
         
         if summary_path.exists():

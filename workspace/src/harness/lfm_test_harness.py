@@ -222,7 +222,17 @@ class BaseTierHarness(NumericIntegrityMixin):
         caller_frame = inspect.stack()[1]
         caller_file = Path(caller_frame.filename).resolve()
         script_dir = caller_file.parent
-        outdir = script_dir / output_dir_hint
+
+        # Prefer anchoring under the nearest 'workspace' ancestor if present,
+        # so results always go to <workspace>/results regardless of script subdir.
+        workspace_root = None
+        for p in [script_dir] + list(script_dir.parents):
+            if p.name.lower() == "workspace":
+                workspace_root = p
+                break
+
+        base_dir = workspace_root if workspace_root is not None else script_dir
+        outdir = base_dir / output_dir_hint
         outdir.mkdir(parents=True, exist_ok=True)
         return outdir
     

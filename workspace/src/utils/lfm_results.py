@@ -22,6 +22,30 @@ def ensure_dirs(path):
     """Ensure directory exists."""
     Path(path).mkdir(parents=True, exist_ok=True)
 
+def get_workspace_root(start: Path | None = None) -> Path:
+    """Return the nearest ancestor directory named 'workspace' from start or CWD.
+
+    Falls back to the current working directory if no such ancestor exists.
+    """
+    start_path = Path(start) if start is not None else Path.cwd()
+    if start_path.name.lower() == "workspace":
+        return start_path
+    for p in [start_path] + list(start_path.parents):
+        if p.name.lower() == "workspace":
+            return p
+    # Fallback: if a 'workspace' child exists under start_path, use it
+    candidate = start_path / "workspace"
+    if candidate.is_dir():
+        return candidate
+    return start_path
+
+def get_results_root() -> Path:
+    """Return the canonical results root under the workspace directory."""
+    ws = get_workspace_root()
+    results = ws / "results"
+    results.mkdir(parents=True, exist_ok=True)
+    return results
+
 # ---------------------------------------------------------------------
 # JSON helpers
 # ---------------------------------------------------------------------
@@ -232,7 +256,7 @@ def update_master_test_status(results_dir: Path = None):
         results_dir: Path to results directory (default: ./results)
     """
     if results_dir is None:
-        results_dir = Path("results")
+        results_dir = get_results_root()
     else:
         results_dir = Path(results_dir)
     

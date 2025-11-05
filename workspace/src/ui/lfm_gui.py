@@ -300,8 +300,9 @@ class LFMControlCenter:
         # Clear existing items
         for item in self.results_tree.get_children():
             self.results_tree.delete(item)
-        
-        results_dir = Path("results")
+
+        from utils.lfm_results import get_results_root
+        results_dir = get_results_root()
         if not results_dir.exists():
             return
         
@@ -339,7 +340,8 @@ class LFMControlCenter:
     
     def open_results_folder(self):
         """Open the results folder in file explorer"""
-        results_dir = Path("results")
+        from utils.lfm_results import get_results_root
+        results_dir = get_results_root()
         if results_dir.exists():
             if os.name == 'nt':  # Windows
                 os.startfile(str(results_dir))
@@ -362,8 +364,9 @@ class LFMControlCenter:
         
         test_name = self.results_tree.item(item)["text"]
         category = self.results_tree.item(parent)["text"]
-        
-        test_dir = Path("results") / category / test_name
+
+        from utils.lfm_results import get_results_root
+        test_dir = get_results_root() / category / test_name
         if test_dir.exists():
             if os.name == 'nt':
                 os.startfile(str(test_dir))
@@ -404,7 +407,8 @@ class LFMControlCenter:
         
         # Check test results
         try:
-            master_status = Path("results/MASTER_TEST_STATUS.csv")
+            from utils.lfm_results import get_results_root
+            master_status = get_results_root() / "MASTER_TEST_STATUS.csv"
             if master_status.exists():
                 with open(master_status, 'r') as f:
                     lines = f.readlines()

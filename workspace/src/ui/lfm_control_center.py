@@ -61,7 +61,8 @@ def print_menu():
 def get_test_status():
     """Get summary of recent test results"""
     try:
-        master_status = Path("results/MASTER_TEST_STATUS.csv")
+        from utils.lfm_results import get_results_root
+        master_status = get_results_root() / "MASTER_TEST_STATUS.csv"
         if master_status.exists():
             with open(master_status, 'r') as f:
                 lines = f.readlines()
@@ -137,7 +138,8 @@ def view_results_menu():
     print(f"\n{Colors.WHITE}{Colors.BOLD}RESULTS VIEWER:{Colors.END}")
     
     # Check what results exist
-    results_dir = Path("results")
+    from utils.lfm_results import get_results_root
+    results_dir = get_results_root()
     if not results_dir.exists():
         print(f"{Colors.RED}No results directory found.{Colors.END}")
         input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.END}")
@@ -229,7 +231,8 @@ def show_system_status():
     print(f"Last Test Results: {status}")
     
     # Disk space in results
-    results_dir = Path("results")
+    from utils.lfm_results import get_results_root
+    results_dir = get_results_root()
     if results_dir.exists():
         total_size = sum(f.stat().st_size for f in results_dir.rglob('*') if f.is_file())
         size_mb = total_size / (1024 * 1024)

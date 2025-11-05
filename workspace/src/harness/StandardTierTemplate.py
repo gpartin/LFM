@@ -76,7 +76,9 @@ class StandardTierHarness:
         self.tier_name = tier_name
         self.tier_number = tier_number
         self.config = self.load_config()
-        self.output_dir = Path(f"results/{tier_name}")
+        # Anchor outputs under workspace/results regardless of CWD
+        from utils.lfm_results import get_results_root
+        self.output_dir = get_results_root() / tier_name
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
     def load_config(self) -> Dict:
@@ -151,8 +153,8 @@ class StandardTierHarness:
     def update_master_status(self):
         """Update master test status with error handling"""
         try:
-            from harness.lfm_test_harness import update_master_test_status
-            update_master_test_status(Path("results"))
+            from utils.lfm_results import update_master_test_status, get_results_root
+            update_master_test_status(get_results_root())
             log("Updated master test status", "INFO")
         except Exception as e:
             log(f"Warning: Could not update master status: {e}", "WARN")
@@ -165,7 +167,7 @@ class TierNHarness(StandardTierHarness):
     """
     
     def __init__(self, config_path: str):
-        super().__init__(config_path, "TierN", N)  # Replace N with tier number
+        super().__init__(config_path, "TierN", 0)  # TODO: replace 0 with actual tier number
         # Add tier-specific initialization here
     
     def run_single_test(self, test_config: Dict) -> StandardTestResult:
