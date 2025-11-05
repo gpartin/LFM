@@ -1,9 +1,0 @@
-[97m[01:44:00] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
-[97m[01:44:00] [INFO] [accel] Using GPU (CuPy) backend.[0m
-[97m[01:44:00] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
-[97m[01:44:00] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
-[97m[01:44:00] [INFO] === Running Single Test: REL-08 ===[0m
-[97m[01:44:00] [INFO] -> Starting REL-08: Superposition Principle Test (6000 steps)[0m
-[97m[01:44:00] [INFO] Superposition test: verifying linearity with cos(kx) + 0.5*sin(2kx)[0m
-[97m[01:44:39] [INFO] REL-08 PASS ✅ ω1=39.7266→39.7266, ω2=78.5437→78.5437, err=0.00%[0m
-[97m[01:44:39] [INFO] === Test REL-08 Complete ===[0m
