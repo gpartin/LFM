@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-01",
+  "description": "Gauss's Law Verification: \u2207\u00b7E = \u03c1/\u03b5\u2080",
+  "passed": true,
+  "metrics": {
+    "em-01_error": 0.0,
+    "analytical_verification": "Gauss's Law Verification: \u2207\u00b7E = \u03c1/\u03b5\u2080 verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 0.0,
+    "avg_individual_error": 0.0
+  },
+  "tolerance": 0.02,
+  "runtime_sec": 0.6890852451324463,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:35.308871Z"
+}

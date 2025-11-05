@@ -1,0 +1,12 @@
+[97m[01:44:02] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:02] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:02] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:02] [INFO] === Running Single Test: GRAV-25 ===[0m
+[97m[01:44:02] [INFO] -> Starting GRAV-25: Light bending — ray tracing through χ-gradient, measure deflection angle (4800 steps)[0m
+[97m[01:44:02] [INFO] Params: N=1024³, steps=4800, quick=True[0m
+[97m[01:44:02] [INFO] Light bending: χ-gradient=0.02, packet at x0=204.8, k=6.2832[0m
+C:\LFM\workspace\src\core\lfm_equation.py:303: RuntimeWarning: overflow encountered in scalar multiply
+  h ^= x; h *= _np.uint64(1099511628211)
+[97m[01:44:09] [INFO] GRAV-25 PASS [OK] light bending: deflection=-0.855833 rad, expected_x=684.8, actual_x=274.0[0m
+[97m[01:44:09] [INFO] Saved light bending plots[0m
+[97m[01:44:09] [INFO] === Test GRAV-25 Complete ===[0m

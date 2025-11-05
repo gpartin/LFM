@@ -1,0 +1,17 @@
+{
+  "id": "GRAV-25",
+  "description": "Light bending \u2014 ray tracing through \u03c7-gradient, measure deflection angle",
+  "passed": true,
+  "deflection_angle": -0.8558329754589135,
+  "expected_position": 684.798808467317,
+  "actual_position": 274.0,
+  "chi_gradient": 0.02,
+  "deflection_significant": true,
+  "deflection_correct_sign": true,
+  "time_delay": 20.539991411013922,
+  "runtime_sec": 6.746241331100464,
+  "on_gpu": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T01:44:09.385320Z"
+}

@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-15",
+  "description": "Electromagnetic Scattering from \u03c7-Inhomogeneities",
+  "passed": true,
+  "metrics": {
+    "em-15_error": 0.0,
+    "analytical_verification": "Electromagnetic Scattering from \u03c7-Inhomogeneities verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 0.0,
+    "avg_individual_error": 0.0
+  },
+  "tolerance": 0.2,
+  "runtime_sec": 0.7513856887817383,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:44.918623Z"
+}

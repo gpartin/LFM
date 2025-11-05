@@ -1,0 +1,31 @@
+[97m[01:44:10] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:10] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:10] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:10] [INFO] === Running Single Test: GRAV-12 ===[0m
+[97m[01:44:10] [INFO] -> Starting GRAV-12: Phase delay — continuous wave through χ slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!) (2500 steps)[0m
+[97m[01:44:10] [INFO] Params: N=128³, steps=2500, quick=True[0m
+[97m[01:44:10] [INFO] chi-field stats: profile=slab_x, min=0.050000, max=0.200000, mean=0.080469[0m
+[97m[01:44:10] [INFO]   Expected: chi_bg=0.050000, chi_slab=0.200000[0m
+[97m[01:44:10] [INFO] chi values: PROBE_A=25 -> chi_A=0.0500, PROBE_B=89 -> chi_B=0.0500[0m
+[97m[01:44:10] [INFO] Phase delay mode: PDE-consistent IC at x=6 (k_bg=0.2958, vg=0.9860, ω=0.3000)[0m
+[97m[01:44:15] [INFO] Signal before: min=-3.192e-02, max=2.638e-02, mean=9.588e-07[0m
+[97m[01:44:15] [INFO] Signal after: min=-2.055e-02, max=2.204e-02, mean=1.488e-04[0m
+[97m[01:44:15] [INFO] Saved detector signals to detector_signals_GRAV-12.csv[0m
+[97m[01:44:15] [INFO] Saved initial conditions to initial_conditions_GRAV-12.csv[0m
+[97m[01:44:15] [INFO] Saved 5 field snapshots to field_snapshots_GRAV-12.csv[0m
+[97m[01:44:15] [INFO] Phase velocities: vp_bg=1.0142, vp_slab=1.3416 (ratio=0.76x)[0m
+[97m[01:44:15] [INFO] Group velocities: vg_bg=0.9860, vg_slab=0.7454 (slowdown=1.32x)[0m
+[97m[01:44:15] [INFO] Expected phase delay: -6.161s, group delay (Shapiro): 8.383s[0m
+[97m[01:44:15] [INFO] Path lengths: L_before=12.8, L_slab=25.6, L_after=25.6[0m
+[97m[01:44:16] [INFO] Envelope arrival: 50% energy before=36.95s, after=108.35s; threshold-cross before=26.45s, after=0.05s[0m
+[97m[01:44:16] [INFO] Propagation time between detectors: measured=71.40s, expected(bg)=64.91s[0m
+[97m[01:44:16] [INFO] Extra delay (Shapiro): measured=6.49s, theory=8.38s[0m
+[97m[01:44:16] [INFO] Carrier ω near arrival: before=0.5712, after=0.0577 (cfg ω=0.3000)[0m
+[97m[01:44:16] [INFO] Saved envelope diagnostics to envelope_measurement_GRAV-12.csv[0m
+[97m[01:44:16] [INFO] Saved packet analysis to packet_analysis_GRAV-12.csv[0m
+[97m[01:44:16] [INFO] Group delay (envelope): measured=6.492153s, theory=8.382865s, error=22.55%[0m
+[97m[01:44:16] [INFO] Arrival times (50% energy): before=36.95s, after=108.35s, Δt=71.400000s[0m
+[97m[01:44:16] [INFO]   (Comparison: threshold-cross Δt=-26.40s, segment-centroid Δt=-34.41s)[0m
+[97m[01:44:16] [INFO] χ-field: χ_bg=0.050000, χ_slab=0.200000 (Δ=300.00%)[0m
+[97m[01:44:16] [INFO] GRAV-12 PASS ✅ (ratio_err=22.55%)[0m
+[97m[01:44:16] [INFO] === Test GRAV-12 Complete ===[0m

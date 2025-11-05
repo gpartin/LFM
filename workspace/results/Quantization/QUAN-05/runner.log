@@ -1,0 +1,4 @@
+[97m[00:40:03] [INFO] Run settings: quick_mode=False; use_gpu=False; verbose=False[0m
+[97m[00:40:03] [INFO] === Running Single Test: QUAN-05 ===[0m
+[97m[00:40:03] [INFO] [QUAN-05] Linearity test via superposition: modes n=3,5, A=0.1[0m
+[97m[00:40:28] [INFO] [QUAN-05] PASS — Linearity error: 0.000% (scaling: 0.000%, superposition: 0.000%)[0m

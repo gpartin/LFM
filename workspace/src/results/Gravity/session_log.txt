@@ -1,0 +1,301 @@
+=== LFM Log — 2025-11-04T22:33:47.156981Z ===
+[2025-11-04T22:33:47.158200Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:29.615199Z ===
+[2025-11-05T00:11:29.616485Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:30.150138Z ===
+[2025-11-05T00:11:30.151477Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:30.494237Z ===
+[2025-11-05T00:11:30.495404Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:32.178819Z ===
+[2025-11-05T00:11:32.179910Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:34.819779Z ===
+[2025-11-05T00:11:34.820664Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:35.021083Z ===
+[2025-11-05T00:11:35.022608Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:35.462580Z ===
+[2025-11-05T00:11:35.463678Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.070217Z ===
+[2025-11-05T00:11:48.071274Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.107017Z ===
+[2025-11-05T00:11:48.108052Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.140626Z ===
+[2025-11-05T00:11:48.141770Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.157805Z ===
+[2025-11-05T00:11:48.158694Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.164312Z ===
+[2025-11-05T00:11:48.165498Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.177593Z ===
+[2025-11-05T00:11:48.178707Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:48.292021Z ===
+[2025-11-05T00:11:48.292838Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:50.124017Z ===
+[2025-11-05T00:11:50.125223Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:50.934598Z ===
+[2025-11-05T00:11:50.935823Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:11:56.056359Z ===
+[2025-11-05T00:11:56.057972Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:04.143092Z ===
+[2025-11-05T00:12:04.144115Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:27.333167Z ===
+[2025-11-05T00:12:27.334675Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:28.936245Z ===
+[2025-11-05T00:12:28.938128Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:30.339597Z ===
+[2025-11-05T00:12:30.341052Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:31.998083Z ===
+[2025-11-05T00:12:31.999815Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:33.545683Z ===
+[2025-11-05T00:12:33.547988Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:12:34.989312Z ===
+[2025-11-05T00:12:34.994083Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:50.623346Z ===
+[2025-11-05T00:23:50.624475Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:51.309212Z ===
+[2025-11-05T00:23:51.310574Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:51.625662Z ===
+[2025-11-05T00:23:51.627347Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:54.065899Z ===
+[2025-11-05T00:23:54.067217Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:56.322718Z ===
+[2025-11-05T00:23:56.323868Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:56.371506Z ===
+[2025-11-05T00:23:56.372531Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:23:56.432869Z ===
+[2025-11-05T00:23:56.434196Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:24:23.486326Z ===
+[2025-11-05T00:24:23.488232Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:25.886423Z ===
+[2025-11-05T00:27:25.887626Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+[2025-11-05T00:27:25.887751Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:25.892553Z ===
+[2025-11-05T00:27:25.893826Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:25.902942Z ===
+[2025-11-05T00:27:25.903902Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:25.923954Z ===
+[2025-11-05T00:27:25.925362Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:25.950727Z ===
+[2025-11-05T00:27:25.951597Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+[2025-11-05T00:27:25.952537Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:26.075552Z ===
+[2025-11-05T00:27:26.076744Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:28.875684Z ===
+[2025-11-05T00:27:28.876671Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:34.504486Z ===
+[2025-11-05T00:27:34.505778Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:42.088425Z ===
+[2025-11-05T00:27:42.090364Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:45.143226Z ===
+[2025-11-05T00:27:45.145000Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:49.416906Z ===
+[2025-11-05T00:27:49.419325Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:53.906014Z ===
+[2025-11-05T00:27:53.907594Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:27:57.613838Z ===
+[2025-11-05T00:27:57.615650Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:28:01.226521Z ===
+[2025-11-05T00:28:01.228196Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:48.425251Z ===
+[2025-11-05T00:47:48.426144Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:49.404809Z ===
+[2025-11-05T00:47:49.406158Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:49.670805Z ===
+[2025-11-05T00:47:49.672230Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:51.167544Z ===
+[2025-11-05T00:47:51.169173Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:53.904042Z ===
+[2025-11-05T00:47:53.905242Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:54.049521Z ===
+[2025-11-05T00:47:54.050319Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:47:54.093049Z ===
+[2025-11-05T00:47:54.094184Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:48:20.630114Z ===
+[2025-11-05T00:48:20.631615Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:23.973423Z ===
+[2025-11-05T00:52:23.975183Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:25.105009Z ===
+[2025-11-05T00:52:25.106508Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:26.309660Z ===
+[2025-11-05T00:52:26.311020Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:26.544515Z ===
+[2025-11-05T00:52:26.545777Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:29.114977Z ===
+[2025-11-05T00:52:29.116201Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:30.270548Z ===
+[2025-11-05T00:52:30.271710Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:30.312292Z ===
+[2025-11-05T00:52:30.313593Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:32.178281Z ===
+[2025-11-05T00:52:32.179847Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:32.314344Z ===
+[2025-11-05T00:52:32.315311Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:34.343782Z ===
+[2025-11-05T00:52:34.345358Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:46.374622Z ===
+[2025-11-05T00:52:46.376426Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:55.477681Z ===
+[2025-11-05T00:52:55.479237Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:52:59.730821Z ===
+[2025-11-05T00:52:59.733628Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:53:03.023865Z ===
+[2025-11-05T00:53:03.025315Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:53:05.768255Z ===
+[2025-11-05T00:53:05.769765Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:53:06.154835Z ===
+[2025-11-05T00:53:06.157025Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T00:53:08.523474Z ===
+[2025-11-05T00:53:08.525329Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:38:57.493579Z ===
+[2025-11-05T01:38:57.494533Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:43:41.482863Z ===
+[2025-11-05T01:43:41.484047Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:01.961247Z ===
+[2025-11-05T01:44:01.962572Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:02.089901Z ===
+[2025-11-05T01:44:02.091098Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:10.247520Z ===
+[2025-11-05T01:44:10.248454Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:10.342873Z ===
+[2025-11-05T01:44:10.343717Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:11.211806Z ===
+[2025-11-05T01:44:11.212694Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:11.284781Z ===
+[2025-11-05T01:44:11.285765Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:11.543752Z ===
+[2025-11-05T01:44:11.544523Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:12.376894Z ===
+[2025-11-05T01:44:12.378426Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:18.270040Z ===
+[2025-11-05T01:44:18.271436Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:42.127281Z ===
+[2025-11-05T01:44:42.128795Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:55.075356Z ===
+[2025-11-05T01:44:55.077734Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:44:58.400786Z ===
+[2025-11-05T01:44:58.402253Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:45:19.687947Z ===
+[2025-11-05T01:45:19.689935Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:01.374896Z ===
+[2025-11-05T01:46:01.375980Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:01.402951Z ===
+
+=== LFM Log — 2025-11-05T01:46:01.403235Z ===
+[2025-11-05T01:46:01.403963Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+[2025-11-05T01:46:01.404282Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:01.415071Z ===
+[2025-11-05T01:46:01.416186Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:01.427425Z ===
+[2025-11-05T01:46:01.428234Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:01.738016Z ===
+[2025-11-05T01:46:01.738820Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:08.094242Z ===
+[2025-11-05T01:46:08.095962Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:09.045055Z ===
+[2025-11-05T01:46:09.046452Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:12.997506Z ===
+[2025-11-05T01:46:12.999179Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:46:16.268230Z ===
+[2025-11-05T01:46:16.269712Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:56:06.037736Z ===
+[2025-11-05T01:56:06.038547Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T01:57:54.199576Z ===
+[2025-11-05T01:57:54.200622Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}
+
+=== LFM Log — 2025-11-05T02:10:27.885968Z ===
+[2025-11-05T02:10:27.887097Z] Environment: {'event': 'environment', 'python': '3.13.9', 'system': 'Windows', 'release': '11', 'gpu': 'Unknown', 'cuda_runtime': 0}

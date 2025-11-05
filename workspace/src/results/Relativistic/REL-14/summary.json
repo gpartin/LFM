@@ -1,0 +1,27 @@
+{
+  "id": "REL-14",
+  "description": "Dispersion Relation \u2014 Ultra-relativistic (\u03c7/k\u22480.1)",
+  "passed": true,
+  "rel_err": 0.016253171911597895,
+  "omega_meas": 57.81562221678469,
+  "omega_theory": 58.29127186961743,
+  "omega2_over_k2_meas": 0.9837468932300633,
+  "omega2_over_k2_theory": 1.0000000662179123,
+  "k_ang": 58.29126993965436,
+  "chi": 0.015,
+  "chi_over_k": 0.00025732841325173814,
+  "runtime_sec": 0.0,
+  "backend": "GPU",
+  "params": {
+    "N": 512,
+    "dx": 0.008,
+    "dt": 0.0025,
+    "steps": 4000,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "chi": 0.015
+  },
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T01:44:09.550931Z"
+}

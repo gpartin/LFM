@@ -1,0 +1,30 @@
+[97m[01:44:01] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
+[97m[01:44:01] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:01] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:01] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
+[97m[01:44:01] [INFO] === Running Single Test: REL-13 ===[0m
+[97m[01:44:01] [INFO] -> Starting REL-13: Dispersion Relation — Relativistic (χ/k≈0.5) (4000 steps)[0m
+[97m[01:44:01] [INFO] k = 39.883500, χ = 0.050000, χ/k = 0.0013[0m
+[97m[01:44:01] [INFO] Theory: ω = 39.883532, ω²/k² = 1.000002[0m
+[97m[01:44:01] [INFO] [REL-13] 5% complete[0m
+[97m[01:44:02] [INFO] [REL-13] 10% complete[0m
+[97m[01:44:02] [INFO] [REL-13] 15% complete[0m
+[97m[01:44:02] [INFO] [REL-13] 20% complete[0m
+[97m[01:44:03] [INFO] [REL-13] 25% complete[0m
+[97m[01:44:03] [INFO] [REL-13] 30% complete[0m
+[97m[01:44:04] [INFO] [REL-13] 35% complete[0m
+[97m[01:44:04] [INFO] [REL-13] 40% complete[0m
+[97m[01:44:04] [INFO] [REL-13] 45% complete[0m
+[97m[01:44:05] [INFO] [REL-13] 50% complete[0m
+[97m[01:44:05] [INFO] [REL-13] 55% complete[0m
+[97m[01:44:06] [INFO] [REL-13] 60% complete[0m
+[97m[01:44:06] [INFO] [REL-13] 65% complete[0m
+[97m[01:44:06] [INFO] [REL-13] 70% complete[0m
+[97m[01:44:07] [INFO] [REL-13] 75% complete[0m
+[97m[01:44:07] [INFO] [REL-13] 80% complete[0m
+[97m[01:44:08] [INFO] [REL-13] 85% complete[0m
+[97m[01:44:08] [INFO] [REL-13] 90% complete[0m
+[97m[01:44:08] [INFO] [REL-13] 95% complete[0m
+[97m[01:44:09] [INFO] [REL-13] 100% complete[0m
+[97m[01:44:09] [INFO] REL-13 PASS ✅ (ω²/k²_meas=0.992836, ω²/k²_theory=1.000002, err=0.717%)[0m
+[97m[01:44:09] [INFO] === Test REL-13 Complete ===[0m

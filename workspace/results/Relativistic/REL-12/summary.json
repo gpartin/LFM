@@ -1,0 +1,27 @@
+{
+  "id": "REL-12",
+  "description": "Dispersion Relation \u2014 Weakly Relativistic (\u03c7/k\u22481)",
+  "passed": true,
+  "rel_err": 0.002919641515536755,
+  "omega_meas": 19.91268017267961,
+  "omega_theory": 19.941812924977025,
+  "omega2_over_k2_meas": 0.9970866266957117,
+  "omega2_over_k2_theory": 1.0000062865657668,
+  "k_ang": 19.941750242513336,
+  "chi": 0.05,
+  "chi_over_k": 0.002507302488093859,
+  "runtime_sec": 0.0,
+  "backend": "GPU",
+  "params": {
+    "N": 512,
+    "dx": 0.008,
+    "dt": 0.0025,
+    "steps": 4000,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "chi": 0.05
+  },
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-04T13:59:07.690712Z"
+}

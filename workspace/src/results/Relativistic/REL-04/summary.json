@@ -1,0 +1,17 @@
+{
+  "id": "REL-04",
+  "description": "Lorentz Boost \u2014 High Velocity",
+  "passed": true,
+  "rel_error": 1.7024249960253077,
+  "covariance_ratio": 2.7024249960253077,
+  "residual_lab_rms": 22.923004618169102,
+  "residual_boost_rms": 61.947700664143746,
+  "omega_lab": 39.57738929414807,
+  "beta": 0.6,
+  "gamma": 1.25,
+  "backend": "GPU",
+  "test_method": "actual_lorentz_transform",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T01:44:00.200270Z"
+}

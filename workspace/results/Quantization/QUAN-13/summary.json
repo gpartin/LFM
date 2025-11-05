@@ -1,0 +1,34 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-13",
+  "description": "Wave-particle duality \u2014 which-way information destroys interference",
+  "timestamp": 1762140479.7418807,
+  "hardware": {
+    "backend": "CuPy",
+    "python": "3.13.9"
+  },
+  "parameters": {
+    "N": 2048,
+    "dx": 0.08,
+    "dt": 0.004,
+    "chi": 0.1,
+    "slit_separation": 8.0,
+    "slit_width": 3.0,
+    "wavelength": 5.0,
+    "steps": 5000
+  },
+  "metrics": {
+    "visibility_no_detector": 0.9582160257515389,
+    "visibility_with_detector": 0.9152189927290099,
+    "visibility_drop": 0.042997033022528997,
+    "visibility_ratio": 0.9551280380759589,
+    "fringes_no_detector": 3,
+    "fringes_with_detector": 2,
+    "fringe_ratio": 1.5,
+    "tolerance": 0.2
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

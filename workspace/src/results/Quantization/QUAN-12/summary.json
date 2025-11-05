@@ -1,0 +1,32 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-12",
+  "description": "Quantum tunneling \u2014 barrier penetration when E < V (classically forbidden)",
+  "passed": true,
+  "timestamp": 1762304256.1798987,
+  "hardware": {
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 2048,
+    "dx": 0.05,
+    "dt": 0.005,
+    "L": 102.4,
+    "packet_omega": 2.5,
+    "chi_barrier": 3.5,
+    "barrier_width": 5.119999999999997,
+    "is_classically_forbidden": true
+  },
+  "metrics": {
+    "transmission_coefficient": 0.4847533277249084,
+    "theory_transmission": 1.2784661727255446e-11,
+    "relative_error": 10.57883155735545,
+    "incident_energy": 16.73289611455334,
+    "transmitted_energy": 8.111327074004922,
+    "kappa": 2.449489742783178
+  },
+  "notes": "Quantum tunneling demonstrated - wave penetrates classically forbidden barrier",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

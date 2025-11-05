@@ -1,0 +1,29 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-14",
+  "description": "Non-thermalization \u2014 validates Klein-Gordon conserves energy (doesn't approach Planck)",
+  "timestamp": 1762304255.8658962,
+  "hardware": {
+    "backend": "CuPy",
+    "python": "3.13.9"
+  },
+  "parameters": {
+    "N": 512,
+    "dx": 0.1,
+    "dt": 0.005,
+    "chi": 0.2,
+    "temperature": 0.8,
+    "num_modes": 8,
+    "steps": 2000
+  },
+  "metrics": {
+    "initial_divergence_percent": 31.939001315266108,
+    "planck_divergence_percent": 1197.5608402314224,
+    "conservation_ratio": 37.49525003648176,
+    "tolerance_percent": 50.0
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

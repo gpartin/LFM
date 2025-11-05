@@ -1,0 +1,30 @@
+{
+  "tier": 3,
+  "category": "Energy",
+  "test_id": "ENER-06",
+  "description": "Hamiltonian partitioning \u2014 with mass term (KE \u2194 GE \u2194 PE flow)",
+  "timestamp": "2025-11-05T00:54:58.523118+00:00",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "cuda_runtime": 12090,
+    "python": "3.13.9",
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 256,
+    "steps": 5000,
+    "dt": 0.0005,
+    "dx": 0.005,
+    "c": 1.0,
+    "cfl": 0.1,
+    "stencil_order": 4
+  },
+  "metrics": {
+    "energy_rel_drift": 0.003959345839098072,
+    "entropy_monotonic": true,
+    "wave_max_drop": 0.013424149141097321
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

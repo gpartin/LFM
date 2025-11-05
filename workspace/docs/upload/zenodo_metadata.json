@@ -1,0 +1,32 @@
+{
+  "access_right": "open",
+  "creators": [
+    {
+      "affiliation": "Independent",
+      "name": "Partin, Greg D."
+    }
+  ],
+  "description": "Consolidated results and diagnostics for the LFM lattice field model. Includes MASTER_TEST_STATUS, aggregated report, and legal documents.",
+  "keywords": [
+    "Lorentzian Field Model",
+    "lattice",
+    "simulation",
+    "energy",
+    "quantization"
+  ],
+  "license": "cc-by-nc-nd-4.0",
+  "notes": "Dry-run metadata generated locally; review before deposition.",
+  "publication_date": "2025-11-04",
+  "related_identifiers": [
+    {
+      "identifier": "https://osf.io/6agn8",
+      "relation": "isSupplementTo"
+    },
+    {
+      "identifier": "https://zenodo.org/records/17478758",
+      "relation": "isSupplementTo"
+    }
+  ],
+  "title": "Lorentzian Field Model (LFM) \u2014 Results Package",
+  "upload_type": "dataset"
+}

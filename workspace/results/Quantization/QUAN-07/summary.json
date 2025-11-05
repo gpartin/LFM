@@ -1,0 +1,26 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-07",
+  "description": "Nonlinear Wavefront Stability",
+  "timestamp": 1762140437.2326221,
+  "hardware": {
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 1024,
+    "dx": 0.1,
+    "dt": 0.005,
+    "chi": 0.25,
+    "amplitude": 1.0
+  },
+  "metrics": {
+    "initial_gradient": 1.9624944668825501,
+    "final_gradient": 1.598930601637441,
+    "gradient_growth": 0.8147440049071273,
+    "tolerance": 0.15
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

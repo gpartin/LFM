@@ -1,0 +1,35 @@
+[97m[01:45:22] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
+[97m[01:45:22] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:45:22] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:45:22] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
+[97m[01:45:22] [INFO] === Running Single Test: REL-09 ===[0m
+[97m[01:45:23] [INFO] -> Starting REL-09: 3D Isotropy — Directional Equivalence (2048 steps)[0m
+[97m[01:45:23] [INFO] 3D Directional Isotropy: comparing x, y, z axis propagation[0m
+[97m[01:45:23] [INFO] k_ang = 36.815539, k_frac = 0.093750[0m
+[97m[01:45:23] [INFO] Running X-axis wave...[0m
+[97m[01:45:38] [INFO] Running Y-axis wave...[0m
+[97m[01:45:55] [INFO] Running Z-axis wave...[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 2186, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 2109, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 2051, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 541, in run_variant
+    return self.run_3d_directional_isotropy_variant(v)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 987, in run_3d_directional_isotropy_variant
+    E_series_z = self._run_3d_plane_wave(params, N, dx, dt, c, chi, k_ang, axis='z', steps=steps)
+  File "C:\LFM\workspace\src\run_tier1_relativistic.py", line 1132, in _run_3d_plane_wave
+    E_next = 2 * E - E_prev + dt2 * (c2 * lap - chi2 * E)
+                              ~~~~^~~~~~~~~~~~~~~~~~~~~~~
+  File "cupy\\_core\\core.pyx", line 1387, in cupy._core.core._ndarray_base.__mul__
+  File "cupy\\_core\\_kernel.pyx", line 1333, in cupy._core._kernel.ufunc.__call__
+  File "cupy\\_core\\_kernel.pyx", line 1593, in cupy._core._kernel._Ops.guess_routine
+  File "cupy\\_core\\_kernel.pyx", line 1116, in cupy._core._kernel._min_scalar_type
+  File "C:\Users\gpart\AppData\Roaming\Python\Python313\site-packages\numpy\_core\multiarray.py", line 650, in min_scalar_type
+    @array_function_from_c_func_and_dispatcher(_multiarray_umath.min_scalar_type)
+    
+KeyboardInterrupt

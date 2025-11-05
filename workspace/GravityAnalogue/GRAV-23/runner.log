@@ -1,0 +1,30 @@
+[97m[01:45:19] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:45:19] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:45:19] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:45:19] [INFO] === Running Single Test: GRAV-23 ===[0m
+[97m[01:45:19] [INFO] -> Starting GRAV-23: Dynamic χ-field evolution — full wave equation □χ=-4πGρ with causal propagation (gravitational wave analogue) (400 steps)[0m
+[97m[01:45:19] [INFO] Params: N=256³, steps=400, quick=True[0m
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 654, in run_variant
+    _chi_mod = _importlib.import_module('chi_field_equation')
+  File "C:\Program Files\Python313\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'chi_field_equation'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3156, in <module>
+    main()
+    ~~~~^^
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3080, in main
+    results = harness.run()
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 3020, in run
+    res = self.run_variant(v)
+  File "C:\LFM\workspace\src\run_tier2_gravityanalogue.py", line 659, in run_variant
+    raise RuntimeError("chi_field_equation module not available; cannot run dynamic_chi_wave")
+RuntimeError: chi_field_equation module not available; cannot run dynamic_chi_wave

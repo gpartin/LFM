@@ -1,0 +1,31 @@
+{
+  "order": [
+    "Relativistic",
+    "Gravity",
+    "Energy",
+    "Quantization",
+    "Electromagnetic"
+  ],
+  "tiers": {
+    "Relativistic": {
+      "title": "Tier 1 — Relativistic",
+      "description": "Lorentz invariance, isotropy, causality"
+    },
+    "Gravity": {
+      "title": "Tier 2 — Gravity Analogue",
+      "description": "χ-field gradients, redshift, lensing"
+    },
+    "Energy": {
+      "title": "Tier 3 — Energy Conservation",
+      "description": "Hamiltonian partitioning, dissipation"
+    },
+    "Quantization": {
+      "title": "Tier 4 — Quantization",
+      "description": "Discrete exchange, spectral linearity, uncertainty"
+    },
+    "Electromagnetic": {
+      "title": "Tier 5 — Electromagnetic",
+      "description": "Maxwell equations, Coulomb, Lorentz force, EM waves, lensing"
+    }
+  }
+}

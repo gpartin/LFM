@@ -1,0 +1,15 @@
+[97m[01:46:01] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:46:01] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:46:01] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:46:01] [INFO] === Running Single Test: GRAV-22 ===[0m
+[97m[01:46:05] [INFO] -> Starting GRAV-22: GR calibration - Shapiro delay correspondence (group velocity through slab) (100 steps)[0m
+[97m[01:46:05] [INFO] Params: N=128³, steps=100, quick=True[0m
+[97m[01:46:06] [INFO] chi-field stats: profile=slab_x, min=0.050000, max=0.300000, mean=0.098828[0m
+[97m[01:46:06] [INFO]   Expected: chi_bg=0.050000, chi_slab=0.300000[0m
+[97m[01:46:06] [INFO] chi values: PROBE_A=32 -> chi_A=0.0500, PROBE_B=96 -> chi_B=0.0500[0m
+[97m[01:46:06] [INFO] GR calibration mode: uniform field for analytic tests[0m
+[97m[01:46:06] [INFO] LFM group delay prediction: 9.475210s[0m
+[97m[01:46:06] [INFO] GR Shapiro delay prediction: 2.240000s[0m
+[97m[01:46:06] [INFO] LFM/GR ratio: 4.230[0m
+[97m[01:46:06] [INFO] GRAV-22 PASS [OK] GR calibration (Shapiro): LFM=9.475210s, GR=2.240000s, ratio=4.230[0m
+[97m[01:46:06] [INFO] === Test GRAV-22 Complete ===[0m

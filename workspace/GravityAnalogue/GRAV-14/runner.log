@@ -1,0 +1,27 @@
+[97m[01:44:58] [INFO] Run settings: quick_mode=True; use_gpu=True; verbose=True[0m
+[97m[01:44:58] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:44:58] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:44:58] [INFO] === Running Single Test: GRAV-14 ===[0m
+[97m[01:44:58] [INFO] -> Starting GRAV-14: Group delay — differential timing with vs without slab (3000 steps)[0m
+[97m[01:44:58] [INFO] Params: N=64³, steps=3000, quick=True[0m
+[97m[01:44:58] [INFO] chi values: PROBE_A=39 -> chi_A=0.0100, PROBE_B=39 -> chi_B=0.0100[0m
+[97m[01:44:58] [INFO] Phase delay mode: PDE-consistent IC at x=1 (k_bg=0.2998, vg=0.9994, ω=0.3000)[0m
+[97m[01:44:58] [INFO] Chi-field check: slab center (x=20)=0.200000, source (x=1)=0.010000[0m
+[01:44:58] [DEBUG]   IC builder: chi_init=0.010000, omega=0.300000, k=0.299833, vg=0.999444[0m
+[97m[01:45:07] [INFO] Control chi-field: uniform value=0.010000 (expected chi_bg=0.010000)[0m
+[01:45:07] [DEBUG]   IC builder: chi_init=0.010000, omega=0.300000, k=0.299833, vg=0.999444[0m
+[97m[01:45:16] [INFO] Wrote packet tracking: packet_tracking_GRAV-14_slab.csv, packet_tracking_GRAV-14_control.csv[0m
+[97m[01:45:16] [INFO] Wrote detector signals: detector_signal_GRAV-14_slab.csv, detector_signal_GRAV-14_control.csv[0m
+[97m[01:45:16] [INFO] TRANSIT-TIME measurement (through slab region):[0m
+[97m[01:45:16] [INFO]   Slab: enter=27.200s, exit=52.600s, transit=25.400s[0m
+[97m[01:45:16] [INFO]   Ctrl: enter=29.100s, exit=49.500s, transit=20.400s[0m
+[97m[01:45:16] [INFO]   Shapiro delay (transit difference): 5.000000s[0m
+[97m[01:45:16] [INFO] ENVELOPE-PEAK timing: slab=179.400000s, control=73.500000s, delay=105.900000s[0m
+[97m[01:45:16] [INFO] Predicted arrivals (bg/slab): t_bg≈76.042s, t_slab≈82.591s[0m
+[97m[01:45:16] [INFO] 50%-ENERGY timing: slab=84.700000s, control=73.000000s, delay=11.700000s[0m
+[97m[01:45:16] [INFO] Cross-correlation delay: 11.700000s (for comparison only)[0m
+[97m[01:45:16] [INFO] Using 50%-ENERGY measurement for verdict (group delay)[0m
+[97m[01:45:16] [INFO] Differential group delay (same site): measured=11.700000s, theory=11.011553s, error=6.25%[0m
+[97m[01:45:16] [INFO] t50 (indiv.): slab=142.50s, control=132.40s; xcorr-lag=117 samples[0m
+[97m[01:45:16] [INFO] GRAV-14 PASS ✅ (ratio_err=6.25%)[0m
+[97m[01:45:16] [INFO] === Test GRAV-14 Complete ===[0m

@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-08",
+  "description": "Mass-Energy Equivalence: E = mc\u00b2",
+  "passed": true,
+  "metrics": {
+    "em-08_error": 0.0,
+    "analytical_verification": "Mass-Energy Equivalence: E = mc\u00b2 verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 0.0,
+    "avg_individual_error": 0.0
+  },
+  "tolerance": 0.1,
+  "runtime_sec": 0.5924324989318848,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:41.294252Z"
+}

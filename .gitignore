@@ -1,50 +1,47 @@
-# --- LFM Project .gitignore (v1.1) ---
+###############################################
+# Public surface hardening (2025-11-04)
+#
+# Goal: Only publish the root README.md and the
+#       entire workspace/ tree. Everything else
+#       is ignored by default.
+###############################################
 
-# OS / IDE junk
-Thumbs.db
-desktop.ini
-.vscode/
-__pycache__/
-*.pyc
-*.pyo
-*.log
+# Ignore everything at repo root by default
+/*
 
-# Python virtual environments
-.venv/
-env/
-venv/
+# Allow the root README and this .gitignore
+!/.gitignore
+!/README.md
 
-# Installers and binaries
-installer/
-*.exe
-*.msi
-*.msix
-*.zip
+# Allow the entire workspace (source of truth)
+!/workspace/
+!/workspace/**
 
-# Runtime / results / logs
-runs/
-results/
-logs/
-packages/
-*.tmp
-*.bak
+# But exclude large binary files from workspace
+workspace/**/*.h5
+workspace/**/*.hdf5
+workspace/**/*.nc
+workspace/**/*.npz
+workspace/**/*.npy
+workspace/**/*.zip
+workspace/**/*.tar
+workspace/**/*.tar.gz
+workspace/**/*.pkl
+workspace/**/*.pickle
 
-# Generated documentation staging and snapshots (keep source docs tracked)
-docs/upload/
-docs/upload_backup_*/
-docs/upload_ref*/
-docs/upload_ref2_*/
+# Large result files
+workspace/**/*.mp4
+workspace/**/*.avi
+workspace/**/*.gif
 
-# Evidence extracted text (keep headers/templates and summary tracked)
-docs/evidence/docx_text/
+# Python artifacts
+workspace/**/__pycache__/
+workspace/**/.pytest_cache/
+workspace/**/*.pyc
+workspace/**/*.pyo
+workspace/**/*.pyd
+workspace/**/.Python
+workspace/**/pip-log.txt
 
-# Python and tooling caches
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.coverage
-coverage.xml
-
-# Config caches
-*.json.lock
-*.DS_Store
+# Keep Git internals visible
+!/.git/

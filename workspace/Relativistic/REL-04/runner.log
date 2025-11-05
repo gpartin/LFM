@@ -1,0 +1,9 @@
+[97m[01:43:41] [INFO] Run settings: quick_mode=False; use_gpu=True; verbose=False[0m
+[97m[01:43:41] [INFO] [accel] Using GPU (CuPy) backend.[0m
+[97m[01:43:41] [INFO] [cache] Test caching enabled (root: C:\LFM\build\cache\test_results)[0m
+[97m[01:43:41] [INFO] [paths] OUTPUT ROOT = C:\LFM\workspace\src\results\Relativistic[0m
+[97m[01:43:41] [INFO] === Running Single Test: REL-04 ===[0m
+[97m[01:43:41] [INFO] -> Starting REL-04: Lorentz Boost — High Velocity (6000 steps)[0m
+[97m[01:43:41] [INFO] Lorentz boost test: beta=0.60, verifying frame covariance[0m
+[97m[01:44:00] [INFO] REL-04 PASS ✅ KG residual: lab=2.29e+01, boost=6.19e+01, ratio=2.702 (err=170.2%)[0m
+[97m[01:44:00] [INFO] === Test REL-04 Complete ===[0m

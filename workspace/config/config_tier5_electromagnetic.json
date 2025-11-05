@@ -1,0 +1,351 @@
+{
+  "tier": 5,
+  "category": "Electromagnetic & Field Interactions",
+  "output_dir": "results/Electromagnetic",
+  "hardware": {
+    "gpu_enabled": true,
+    "use_fused_cuda": true,
+    "precision": "float64"
+  },
+  "run_settings": {
+    "quick_mode": false,
+    "use_gpu": true,
+    "use_fused_cuda": true,
+    "verbose": false
+  },
+  "parameters": {
+    "dt": 0.01,
+    "dx": 0.1,
+    "N": 128,
+    "steps": 2000,
+    "save_every": 100,
+    "chi_uniform": 0.1
+  },
+  "electromagnetic": {
+    "c_light": 1.0,
+    "mu0": 1.0,
+    "eps0": 1.0,
+    "elementary_charge": 1.0,
+    "em_coupling_strength": 1.0,
+    "gauge_parameter": 0.0
+  },
+  "tolerances": {
+    "maxwell_equation_error": 0.02,
+    "em_wave_speed_error": 0.05,
+    "gauss_law_error": 0.02,
+    "faraday_law_error": 0.02,
+    "ampere_law_error": 0.02,
+    "poynting_vector_error": 0.05,
+    "chi_em_coupling_error": 0.03,
+    "gauge_invariance_error": 0.001,
+    "charge_conservation_error": 0.01,
+    "current_continuity_error": 0.01,
+    "em_energy_conservation": 0.02,
+    "photon_redshift_error": 0.03,
+    "light_bending_error": 0.1,
+    "radiation_power_error": 0.15,
+    "doppler_shift_error": 0.02,
+    "magnetic_generation_error": 0.03,
+    "faraday_induction_error": 0.02,
+    "poynting_conservation_error": 0.03,
+    "chi_coupling_error": 0.15,
+    "mass_energy_error": 0.1,
+    "larmor_radiation_error": 0.25,
+  "dynamic_chi_em_error": 2.0,
+    "em_standing_waves_error": 0.15,
+    "doppler_effect_error": 0.1,
+    "em_scattering_error": 0.2,
+    "synchrotron_radiation_error": 0.3,
+    "em_pulse_propagation_error": 0.15,
+  "dynamic_chi_em_pulse_error": 0.35,
+    "multiscale_coupling_error": 0.25,
+    "conservation_laws_error": 0.02,
+    "advanced_em_error": 0.1
+  },
+  "tests": [
+    {
+      "id": "EM-01",
+      "name": "Gauss's Law Verification",
+      "description": "χ-field coupling to charge density ρ: ∇·E = ρ/ε₀",
+      "type": "gauss_law",
+      "enabled": true,
+      "config": {
+        "charge_density": 0.1,
+        "charge_radius": 0.5,
+        "field_sample_radius": 2.0,
+        "integration_shells": 10
+      }
+    },
+    {
+      "id": "EM-02", 
+      "name": "Magnetic Field Generation",
+      "description": "Moving charges create B-fields: ∇×B = μ₀J + μ₀ε₀∂E/∂t",
+      "type": "magnetic_generation",
+      "enabled": true,
+      "config": {
+        "current_density": 1e-3,
+        "wire_length": 4.0,
+        "measurement_distance": 1.0,
+        "current_frequency": 0.1
+      }
+    },
+    {
+      "id": "EM-03",
+      "name": "Faraday's Law Implementation", 
+      "description": "Changing B-field induces E-field: ∇×E = -∂B/∂t",
+      "type": "faraday_induction",
+      "enabled": true,
+      "config": {
+        "b_field_amplitude": 0.01,
+        "b_field_frequency": 0.05,
+        "loop_radius": 1.0,
+        "measurement_points": 20
+      }
+    },
+    {
+      "id": "EM-04",
+      "name": "Ampère's Law with Displacement Current",
+      "description": "Complete Maxwell's equations with ∂E/∂t term",
+      "type": "ampere_displacement",
+      "enabled": true,
+      "config": {
+        "capacitor_separation": 0.2,
+        "capacitor_radius": 0.8,
+        "charging_rate": 1e-4,
+        "measurement_radius": 1.5
+      }
+    },
+    {
+      "id": "EM-05",
+      "name": "Electromagnetic Wave Propagation",
+      "description": "Verify c = 1/√(μ₀ε₀) emerges from lattice parameters",
+      "type": "em_wave_propagation",
+      "enabled": true,
+      "config": {
+        "wave_frequency": 0.02,
+        "wave_amplitude": 0.1,
+        "propagation_distance": 10.0,
+        "measurement_points": 50,
+        "polarization": "linear"
+      }
+    },
+    {
+      "id": "EM-06",
+      "name": "Poynting Vector Conservation",
+      "description": "Energy density and flow: S = (1/μ₀)E×B",
+      "type": "poynting_conservation",
+      "enabled": true,
+      "config": {
+        "em_pulse_width": 2.0,
+        "pulse_amplitude": 0.05,
+        "energy_surface_radius": 3.0,
+        "integration_time": 100.0
+      }
+    },
+    {
+      "id": "EM-07",
+      "name": "χ-Field Electromagnetic Coupling",
+      "description": "How χ(x,t) modifies local permittivity/permeability",
+      "type": "chi_em_coupling",
+      "enabled": true,
+      "config": {
+        "chi_gradient": 0.1,
+        "chi_variation_scale": 2.0,
+        "em_probe_frequency": 0.03,
+        "coupling_strength_range": [0.5, 2.0]
+      }
+    },
+    {
+      "id": "EM-08",
+      "name": "Electromagnetic Mass-Energy Equivalence",
+      "description": "EM field energy contributes to χ-field source",
+      "type": "em_mass_energy",
+      "enabled": true,
+      "config": {
+        "em_energy_density": 1e-3,
+        "chi_response_time": 50.0,
+        "energy_coupling_factor": 1e-6,
+        "measurement_duration": 200.0
+      }
+    },
+    {
+      "id": "EM-09",
+      "name": "Photon-Matter Interaction",
+      "description": "EM waves in χ-gradient (gravitational redshift for light)",
+      "type": "photon_redshift",
+      "enabled": true,
+      "config": {
+        "chi_well_depth": 0.2,
+        "chi_well_width": 3.0,
+        "photon_frequency": 0.04,
+        "redshift_measurement_points": 30
+      }
+    },
+    {
+      "id": "EM-10",
+      "name": "Electromagnetic Radiation from Accelerated Charges",
+      "description": "Larmor formula emergence: P = (μ₀q²a²)/(6πc)",
+      "type": "larmor_radiation",
+      "enabled": true,
+      "config": {
+        "charge_magnitude": 1e-9,
+        "acceleration_amplitude": 1e6,
+        "oscillation_frequency": 0.02,
+        "radiation_measurement_radius": 5.0
+      }
+    },
+    {
+      "id": "EM-11",
+      "name": "Electromagnetic Rainbow Lensing & Dispersion",
+      "description": "Frequency-dependent χ-field refraction creating rainbow effects",
+      "type": "light_bending",
+      "enabled": true,
+      "config": {
+        "chi_gradient_strength": 0.1,
+        "lensing_distance": 5.0,
+        "frequency_range": [0.02, 0.06],
+        "dispersion_coefficient": 0.5
+      }
+    },
+    {
+      "id": "EM-12",
+      "name": "Time-Varying χ-Field EM Response",
+      "description": "Dynamic χ evolution affects EM propagation",
+      "type": "dynamic_chi_em",
+      "enabled": true,
+      "config": {
+        "chi_wave_frequency": 0.01,
+        "chi_wave_amplitude": 0.05,
+        "em_probe_frequency": 0.03,
+        "interaction_duration": 300.0,
+        "enable_multitaper": true,
+        "multitaper_time_bandwidth": 4.0,
+        "multitaper_tapers": 7
+      }
+    },
+    {
+      "id": "EM-13",
+      "name": "Electromagnetic Standing Waves",
+      "description": "Cavity resonator modes in χ-field medium",
+      "type": "em_standing_waves",
+      "enabled": true,
+      "config": {
+        "cavity_length": 5.0,
+        "cavity_width": 3.0,
+        "resonance_frequencies": [0.02, 0.04, 0.06],
+        "q_factor_measurement": true
+      }
+    },
+    {
+      "id": "EM-14",
+      "name": "Doppler Effect and Relativistic Corrections",
+      "description": "Moving source/observer in lattice medium",
+      "type": "doppler_effect",
+      "enabled": true,
+      "config": {
+        "source_velocity": 0.1,
+        "observer_velocity": 0.05,
+        "source_frequency": 0.025,
+        "relativistic_regime": false
+      }
+    },
+    {
+      "id": "EM-15",
+      "name": "Electromagnetic Scattering",
+      "description": "EM wave scattering from χ-inhomogeneities",
+      "type": "em_scattering",
+      "enabled": true,
+      "config": {
+        "scatterer_radius": 0.5,
+        "scatterer_chi_contrast": 0.3,
+        "incident_wavelength": 2.0,
+        "scattering_angles": 36
+      }
+    },
+    {
+      "id": "EM-16",
+      "name": "Synchrotron Radiation",
+      "description": "Charged particle in magnetic field radiates",
+      "type": "synchrotron_radiation",
+      "enabled": true,
+      "config": {
+        "magnetic_field_strength": 0.1,
+        "particle_energy": 1e-6,
+        "cyclotron_radius": 1.0,
+        "radiation_spectrum_points": 50
+      }
+    },
+    {
+      "id": "EM-17",
+      "name": "Electromagnetic Pulse Propagation",
+      "description": "Short EM pulse through χ-medium",
+      "type": "em_pulse_propagation",
+      "enabled": true,
+      "config": {
+        "pulse_duration": 5.0,
+        "pulse_amplitude": 0.08,
+        "medium_chi_value": 0.15,
+        "dispersion_measurement_distance": 8.0
+      }
+    },
+    {
+      "id": "EM-18",
+      "name": "Multi-Scale EM-χ Coupling",
+      "description": "Large-scale χ-evolution affects local EM properties",
+      "type": "multiscale_coupling",
+      "enabled": true,
+      "config": {
+        "large_scale_chi_gradient": 0.01,
+        "local_em_frequency": 0.05,
+        "scale_separation_factor": 10.0,
+        "effective_field_theory_test": true
+      }
+    },
+    {
+      "id": "EM-19",
+      "name": "Gauge Invariance Verification",
+      "description": "Electromagnetic potentials: gauge transformations leave physics unchanged",
+      "type": "gauge_invariance",
+      "enabled": true,
+      "config": {
+        "gauge_transformation_amplitude": 0.1,
+        "gauge_transformation_frequency": 0.02,
+        "physical_observable_tolerance": 1e-6,
+        "gauge_types": ["coulomb", "lorenz"]
+      }
+    },
+    {
+      "id": "EM-20",
+      "name": "Conservation Laws",
+      "description": "Charge conservation: ∂ρ/∂t + ∇·J = 0",
+      "type": "conservation_laws",
+      "enabled": true,
+      "config": {
+        "charge_distribution_dynamics": true,
+        "current_continuity_test": true,
+        "em_momentum_conservation": true,
+        "conservation_measurement_duration": 250.0
+      }
+    }
+    ,
+    {
+      "id": "EM-21",
+      "name": "Time-Varying χ-Field Pulse Response",
+      "description": "Short EM pulse through time-varying χ(t) gate; measure differential delay",
+      "type": "dynamic_chi_em_pulse",
+      "enabled": true,
+      "config": {
+        "chi_wave_frequency": 0.01,
+        "chi_wave_amplitude": 0.05,
+        "gate_center_fraction": 0.75,
+        "gate_width_fraction": 0.20,
+        "pulse_amplitude": 0.08,
+        "pulse_duration": 5.0,
+        "boundary": "mur",
+        "pml_cells": 16,
+        "pml_order": 3,
+        "pml_sigma_max": 1.0
+      }
+    }
+  ]
+}
