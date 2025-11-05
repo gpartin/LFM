@@ -22,12 +22,26 @@ workspace/**/*.h5
 workspace/**/*.hdf5
 workspace/**/*.nc
 workspace/**/*.npz
+workspace/**/*.npy
 workspace/**/*.zip
+workspace/**/*.tar
+workspace/**/*.tar.gz
+workspace/**/*.pkl
+workspace/**/*.pickle
+
+# Large result files
+workspace/**/*.mp4
+workspace/**/*.avi
+workspace/**/*.gif
 
 # Python artifacts
 workspace/**/__pycache__/
 workspace/**/.pytest_cache/
 workspace/**/*.pyc
+workspace/**/*.pyo
+workspace/**/*.pyd
+workspace/**/.Python
+workspace/**/pip-log.txt
 
 # Keep Git internals visible
 !/.git/
