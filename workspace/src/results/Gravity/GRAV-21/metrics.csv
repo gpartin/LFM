@@ -1,7 +1,0 @@
-metric,value
-delta_omega_over_omega,1.183358318737697
-delta_chi_over_chi,1.1833583187529388
-ratio_match_error,1.2880129014457119e-11
-G_measured,0.09967350187583479
-G_expected,0.1
-rel_err_G,0.003264981241652143
