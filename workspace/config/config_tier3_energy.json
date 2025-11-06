@@ -15,14 +15,14 @@
     "time_step": 5e-4,
     "space_step": 5e-3,
     "N": 256,
-    "stencil_order": 4,
+    "stencil_order": 2,
     "save_every": 10
   },
   "tolerances": {
     "energy_drift": 0.01,
     "wave_integrity_max_drop": 0.05
   },
-  "notes_on_tolerance": "energy_drift=0.01 (1%) is realistic for Klein-Gordon on discrete lattice without artificial enforcement. Actual drift ~0.4% observed, which is acceptable discretization error.",
+  "notes_on_tolerance": "energy_drift=0.01 (1%) is realistic for Klein-Gordon on discrete lattice without artificial enforcement. Actual drift ~0.1-0.4% observed with stencil_order=2. CRITICAL: stencil_order=4 breaks discrete energy conservation (146× worse drift) because energy formula uses 2nd-order gradients while dynamics use 4th-order Laplacian - discrete conservation requires matching discretization orders.",
   "tests": [
     {
       "test_id": "ENER-01",
