@@ -1,0 +1,37 @@
+{
+  "algorithm": "baseline_full_update_wave",
+  "device": "GPU (CuPy)",
+  "grid_size": 256,
+  "total_cells": 16777216,
+  "steps": 150,
+  "elapsed_time_s": 9.20401810000476,
+  "time_per_step_s": 0.061360120666698395,
+  "energy_initial": 0.504918595622699,
+  "energy_final": 0.5049614207262743,
+  "energy_drift": 8.481585734114885e-05,
+  "energy_drift_pass": true,
+  "memory_mb": 384.0,
+  "active_fraction_initial": 0.7165318727493286,
+  "active_fraction_final": 0.7487736344337463,
+  "active_fraction_mean": 0.7419444421927134,
+  "theoretical_speedup": 1.347809813150752,
+  "speedup_vs_baseline": 1.0,
+  "params": {
+    "wave_center": [
+      128.0,
+      128.0,
+      128.0
+    ],
+    "wave_width": 36.0,
+    "wave_amplitude": 0.01,
+    "wave_k_vec": [
+      0.0,
+      0.0,
+      0.19634954084936207
+    ],
+    "wave_omega": 0.19634954084936207,
+    "dx": 1.0,
+    "dt": 0.018,
+    "seed": 42
+  }
+}

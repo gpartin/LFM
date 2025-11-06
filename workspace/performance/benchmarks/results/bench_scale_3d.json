@@ -1,0 +1,35 @@
+{
+  "config": {
+    "sizes": [
+      128,
+      256
+    ],
+    "steps": 120,
+    "precision": "float32",
+    "backend": "GPU"
+  },
+  "results": [
+    {
+      "N": 128,
+      "steps": 120,
+      "precision": "float32",
+      "device": "GPU (CuPy)",
+      "elapsed_s": 0.21662940000533126,
+      "time_per_step_ms": 1.8052450000444271,
+      "energy_initial": 0.02292421672825121,
+      "energy_final": 0.022922119336192728,
+      "energy_drift": 9.149241971254115e-05
+    },
+    {
+      "N": 256,
+      "steps": 120,
+      "precision": "float32",
+      "device": "GPU (CuPy)",
+      "elapsed_s": 1.5008454999915557,
+      "time_per_step_ms": 12.507045833262964,
+      "energy_initial": 0.046933432248390916,
+      "energy_final": 0.04701440539509996,
+      "energy_drift": 0.001725276478406752
+    }
+  ]
+}
