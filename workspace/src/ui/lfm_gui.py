@@ -324,7 +324,7 @@ class LFMControlCenter:
                         if summary_file.exists():
                             try:
                                 import json
-                                with open(summary_file) as f:
+                                with open(summary_file, 'r', encoding='utf-8') as f:
                                     data = json.load(f)
                                     status = "PASS" if data.get("passed", False) else "FAIL"
                                     runtime = f"{data.get('runtime_sec', 0):.1f}s"
@@ -410,7 +410,7 @@ class LFMControlCenter:
             from utils.lfm_results import get_results_root
             master_status = get_results_root() / "MASTER_TEST_STATUS.csv"
             if master_status.exists():
-                with open(master_status, 'r') as f:
+                with open(master_status, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
                     if len(lines) > 1:
                         total_tests = len(lines) - 1

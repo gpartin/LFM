@@ -92,7 +92,7 @@ def promote_experiment(investigation_name: str, workspace_root: str = ".") -> No
     }
     
     metadata_file = candidate_dir / "promotion_metadata.json"
-    with open(metadata_file, 'w') as f:
+    with open(metadata_file, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
     print(f"✓ Created promotion metadata")
     
@@ -127,7 +127,7 @@ To promote to validated test (Gate 2):
 
 [Include original experiment notes or link to them]
 """
-        with open(readme_file, 'w') as f:
+        with open(readme_file, 'w', encoding='utf-8') as f:
             f.write(readme_content)
         print(f"✓ Created README.md")
     

@@ -66,21 +66,9 @@ class TestResult:
 
 # -------------------------- Numerical helpers (2-D) -------------------------
 def laplacian(E, dx, order=4, xp=None):
-    """Compute Laplacian using specified backend (NumPy or CuPy)."""
-    if xp is None:
-        xp = get_array_module(E)
-    if order == 2:
-        return (
-            xp.roll(E,  1, 0) + xp.roll(E, -1, 0) +
-            xp.roll(E,  1, 1) + xp.roll(E, -1, 1) - 4*E
-        ) / (dx*dx)
-    elif order == 4:
-        return (
-            (-xp.roll(E, 2, 0) + 16*xp.roll(E, 1, 0) - 30*E + 16*xp.roll(E, -1, 0) - xp.roll(E, -2, 0)) +
-            (-xp.roll(E, 2, 1) + 16*xp.roll(E, 1, 1) - 30*E + 16*xp.roll(E, -1, 1) - xp.roll(E, -2, 1))
-        ) / (12*dx*dx)
-    else:
-        raise ValueError("Unsupported stencil order; use 2 or 4")
+    """Delegate to canonical Laplacian (single source of truth)."""
+    from core.lfm_equation import laplacian as core_laplacian
+    return core_laplacian(E, dx, order)
 
 def grad_sq(E, dx, xp=None):
     """Compute gradient squared using specified backend."""

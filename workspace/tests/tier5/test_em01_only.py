@@ -13,7 +13,7 @@ from run_tier5_electromagnetic import test_gauss_law_fixed
 def main():
     # Load config
     config_path = Path("config/config_tier5_electromagnetic.json")
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
     
     # Test config for EM-01
@@ -48,7 +48,7 @@ def main():
         "runtime_sec": result.runtime_sec
     }
     
-    with open(output_dir / "summary.json", 'w') as f:
+    with open(output_dir / "summary.json", 'w', encoding='utf-8') as f:
         json.dump(summary, f, indent=2)
     
     print(f"\nResults saved to {output_dir}")

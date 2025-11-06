@@ -284,13 +284,13 @@ def run_baseline_orbit(
         output_dir.mkdir(parents=True, exist_ok=True)
         
         results_file = output_dir / "baseline_results.json"
-        with open(results_file, 'w') as f:
+        with open(results_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2)
         print(f"\nResults saved to: {results_file}")
         
         # Save trajectory as CSV
         traj_file = output_dir / "baseline_trajectory.csv"
-        with open(traj_file, 'w') as f:
+        with open(traj_file, 'w', encoding='utf-8') as f:
             f.write("step,x,y,z,r\n")
             for i, pos in enumerate(trajectory):
                 r = np.linalg.norm(pos - earth_pos)
@@ -347,9 +347,8 @@ if __name__ == "__main__":
         "trials": trials
     }
     
-    summary_file = output_dir / "baseline_summary.json"
-    with open(summary_file, 'w') as f:
-        json.dump(summary, f, indent=2)
-    
+summary_file = output_dir / "baseline_summary.json"
+with open(summary_file, 'w', encoding='utf-8') as f:
+    json.dump(summary, f, indent=2)
     print(f"\nSummary saved to: {summary_file}")
     print("\nBaseline benchmark complete! ✓")

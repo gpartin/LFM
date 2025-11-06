@@ -63,7 +63,7 @@ def load_summary(filename):
     if not filepath.exists():
         return None
     
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
@@ -275,7 +275,7 @@ def generate_comparison_report():
     }
     
     comparison_file = results_dir / "comparison_data.json"
-    with open(comparison_file, 'w') as f:
+    with open(comparison_file, 'w', encoding='utf-8') as f:
         json.dump(comparison_data, f, indent=2)
     
     print(f"Data saved to: {comparison_file}")

@@ -49,12 +49,12 @@ class TestMetrics:
 		self.db_path = Path(db_path)
 		self.db_path.parent.mkdir(parents=True, exist_ok=True)
 		if self.db_path.exists():
-			with open(self.db_path, 'r') as f:
+			with open(self.db_path, 'r', encoding='utf-8') as f:
 				self.data = json.load(f)
 		else:
 			self.data = {}
 	def save(self):
-		with open(self.db_path, 'w') as f:
+		with open(self.db_path, 'w', encoding='utf-8') as f:
 			json.dump(self.data, f, indent=2)
 	def record_run(self, test_id: str, metrics: Dict):
 		if test_id not in self.data:

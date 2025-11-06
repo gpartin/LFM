@@ -18,6 +18,25 @@ python algorithm2_gradient_adaptive.py
 python algorithm3_wavefront_prediction.py
 ```
 
+### Wave Packet Benchmark (baseline vs fused)
+
+The Gaussian wave packet benchmark focuses on field propagation quality and timing and now supports an optional fused GPU backend.
+
+```powershell
+# Small smoke test (GPU, fused)
+python .\baseline_wave_packet.py --gpu --backend fused --grid 64 --steps 60 --trials 1
+
+# 256^3 with tighter drift target (GPU, fused)
+python .\baseline_wave_packet.py --gpu --backend fused --grid 256 --steps 150 --dt 0.018 --width 36 --trials 1
+
+# Compare canonical baseline at same params
+python .\baseline_wave_packet.py --gpu --backend baseline --grid 256 --steps 150 --dt 0.018 --width 36 --trials 1
+```
+
+Outputs are written under `experiments/lattice_optimization_suite/results/`:
+- `baseline_wave_results.json` or `fused_wave_summary.json`
+- `baseline_wave_active_fractions.csv`
+
 ## Problem Statement
 
 Current LFM implementation updates ALL cells every timestep, regardless of field activity. For sparse systems (orbiting bodies, localized wave packets), this wastes computation on "empty" space.

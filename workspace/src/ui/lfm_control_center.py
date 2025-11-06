@@ -64,7 +64,7 @@ def get_test_status():
         from utils.lfm_results import get_results_root
         master_status = get_results_root() / "MASTER_TEST_STATUS.csv"
         if master_status.exists():
-            with open(master_status, 'r') as f:
+            with open(master_status, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
                 if len(lines) > 1:  # Skip header
                     total_tests = len(lines) - 1
