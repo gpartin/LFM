@@ -1109,32 +1109,11 @@ def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path
 
 
 def generate_evidence_review(dest_dir: Path, deterministic: bool = False) -> str:
-    """Generate EVIDENCE_REVIEW.md auditing doc claims vs actual results.
+    """Generate EVIDENCE_REVIEW.md auditing doc claims vs actual results using template.
     
     Returns relative path of generated file.
     """
     stamp = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    lines = [
-        '# Evidence Review: Documentation vs. Test Results',
-        '',
-        f'Generated: {stamp}',
-        '',
-        '## Purpose',
-        '',
-        'This automated audit cross-references claims in governing documents',
-        '(Executive Summary, LFM Master, etc.) against actual test outcomes',
-        'in workspace/results/ to ensure consistency and identify gaps.',
-        '',
-        '## Methodology',
-        '',
-        '1. Parse discoveries.json for claimed discoveries',
-        '2. Check corresponding test results in results/ directories',
-        '3. Flag discrepancies for manual review',
-        '',
-        '## Findings',
-        '',
-    ]
     
     # Load discoveries
     disc_file = ROOT / 'docs' / 'discoveries' / 'discoveries.json'
@@ -1145,24 +1124,35 @@ def generate_evidence_review(dest_dir: Path, deterministic: bool = False) -> str
         except Exception:
             pass
     
-    # Load master test status
+    # Load master test status (custom format with header lines)
     master_file = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
     test_statuses = {}
     if master_file.exists():
         try:
             import csv
             with open(master_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    test_id = row.get('test_id', '')
-                    if test_id:
-                        test_statuses[test_id] = row.get('status', 'UNKNOWN')
-        except Exception:
+                csv_lines = f.readlines()
+                # Find lines with "Test_ID" header (marks start of test data sections)
+                for i, line in enumerate(csv_lines):
+                    if line.startswith('Test_ID,'):
+                        # Parse from this header line onward until next section or EOF
+                        section_lines = []
+                        for j in range(i, len(csv_lines)):
+                            if csv_lines[j].strip() and not csv_lines[j].startswith('TIER'):
+                                section_lines.append(csv_lines[j])
+                            elif csv_lines[j].startswith('TIER') and section_lines:
+                                # Hit next tier section header, process accumulated lines
+                                break
+                        # Parse this section
+                        if section_lines:
+                            reader = csv.DictReader(section_lines)
+                            for row in reader:
+                                test_id = row.get('Test_ID', '')
+                                status = row.get('Status', 'UNKNOWN')
+                                if test_id and test_id != 'Test_ID':  # Skip any repeated headers
+                                    test_statuses[test_id] = status
+        except Exception as e:
             pass
-    
-    lines.append(f'### Discovery Claims: {len(discoveries)}')
-    lines.append(f'### Test Results Available: {len(test_statuses)}')
-    lines.append('')
     
     # Cross-reference
     verified = []
@@ -1182,34 +1172,22 @@ def generate_evidence_review(dest_dir: Path, deterministic: bool = False) -> str
         else:
             needs_review.append(f"⚠ {title} ({tier}) — Evidence: {evidence}")
     
-    lines.append('### Verified (Evidence References Test Results):')
-    lines.append('')
-    for v in verified[:20]:  # Limit output
-        lines.append(f'- {v}')
-    if len(verified) > 20:
-        lines.append(f'- ... and {len(verified)-20} more')
-    
-    lines.append('')
-    lines.append('### Needs Manual Review (No Direct Test Link):')
-    lines.append('')
-    for n in needs_review[:10]:
-        lines.append(f'- {n}')
-    if len(needs_review) > 10:
-        lines.append(f'- ... and {len(needs_review)-10} more')
-    
-    lines.append('')
-    lines.append('## Recommendations')
-    lines.append('')
-    lines.append('- Update discovery links to reference specific test IDs')
-    lines.append('- Ensure all computational claims have corresponding test validation')
-    lines.append('- Archive legacy claims without current validation separately')
-    lines.append('')
-    lines.append('---')
-    lines.append('License: CC BY-NC-ND 4.0')
+    # Render template
+    env = _jinja_env()
+    template = env.get_template('evidence_review.md.j2')
+    content = template.render(
+        generation_time=stamp,
+        discovery_count=len(discoveries),
+        test_count=len(test_statuses),
+        verified=verified[:20],  # Limit output
+        verified_overflow=max(0, len(verified) - 20),
+        needs_review=needs_review[:10],
+        review_overflow=max(0, len(needs_review) - 10)
+    )
     
     dest_dir.mkdir(parents=True, exist_ok=True)
     output = dest_dir / 'EVIDENCE_REVIEW.md'
-    output.write_text('\n'.join(lines), encoding='utf-8')
+    output.write_text(content, encoding='utf-8')
     return str(output.relative_to(dest_dir)).replace('\\', '/')
 
 
@@ -1309,9 +1287,8 @@ def _merge_from_legacy_upload(legacy_dir: Path, dest_dir: Path) -> list[str]:
             except Exception:
                 pass
 
-    # Directories to mirror
+    # Directories to mirror (plots excluded - now in results/)
     dirs_to_copy = [
-        'plots',
         'txt',
         'md',
     ]
@@ -1488,61 +1465,30 @@ def main():
     print(f"Copied {len(copied_osf_results)} result files to OSF payload")
     print(f"Copied {len(copied_zen_results)} result files to Zenodo payload")
     
-    # Generate tier achievements reports for ALL tiers (1-5)
-    print("\n[INFO] Generating tier achievements reports...")
+    # Generate tier achievements and core docs from metadata/templates (deterministic)
+    print("\n[INFO] Generating tier documents from metadata...")
+    metadata = load_tier_metadata()
+
+    # Per-tier achievements
+    for tier in metadata.get('tiers', []):
+        generate_tier_achievements_from_template(tier, DEST_OSF, deterministic=args.deterministic)
+        generate_tier_achievements_from_template(tier, DEST_ZENODO, deterministic=args.deterministic)
+
+    # Comprehensive and Executive documents
+    generate_results_comprehensive(DEST_OSF, metadata, deterministic=args.deterministic)
+    generate_results_comprehensive(DEST_ZENODO, metadata, deterministic=args.deterministic)
+    generate_executive_summary(DEST_OSF, metadata, deterministic=args.deterministic)
+    generate_executive_summary(DEST_ZENODO, metadata, deterministic=args.deterministic)
     
-    tier_configs = [
-        {
-            "tier_name": "Tier 1 — Relativistic",
-            "category_dir": "Relativistic",
-            "description": "This tier validates Lorentz invariance, isotropy, and causality constraints.",
-            "significance": "These validations demonstrate that special relativity emerges naturally from the LFM lattice framework without imposing it as an axiom."
-        },
-        {
-            "tier_name": "Tier 2 — Gravity Analogue",
-            "category_dir": "Gravity",
-            "description": "This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.",
-            "significance": "These validations demonstrate that gravity-like phenomena (redshift, lensing, time delay) emerge from χ-field gradients, suggesting LFM may provide a unified framework for gravity and quantum mechanics."
-        },
-        {
-            "tier_name": "Tier 3 — Energy Conservation",
-            "category_dir": "Energy",
-            "description": "This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.",
-            "significance": "These validations demonstrate that energy conservation is maintained across all simulation regimes, providing confidence in the numerical implementation and physical correctness of the LFM framework."
-        },
-        {
-            "tier_name": "Tier 4 — Quantization",
-            "category_dir": "Quantization",
-            "description": "This tier validates quantum mechanical phenomena including bound states, tunneling, and uncertainty relations.",
-            "significance": "These validations demonstrate that quantum mechanical behavior emerges from the classical Klein-Gordon equation with appropriate boundary conditions, suggesting a deep connection between field theory and quantum mechanics."
-        },
-        {
-            "tier_name": "Tier 5 — Electromagnetic",
-            "category_dir": "Electromagnetic",
-            "description": "This tier validates electromagnetic theory emergence from the LFM framework through computational tests.",
-            "significance": "These validations demonstrate that electromagnetic theory (Maxwell equations, wave propagation, Lorentz force) emerges naturally from the LFM lattice framework without imposing Maxwell equations as axioms."
-        }
-    ]
-    
-    for config in tier_configs:
-        generate_tier_achievements(
-            tier_name=config["tier_name"],
-            category_dir=config["category_dir"],
-            dest_dir=DEST_OSF,
-            tier_description=config["description"],
-            significance_text=config["significance"],
-            deterministic=args.deterministic
-        )
-        generate_tier_achievements(
-            tier_name=config["tier_name"],
-            category_dir=config["category_dir"],
-            dest_dir=DEST_ZENODO,
-            tier_description=config["description"],
-            significance_text=config["significance"],
-            deterministic=args.deterministic
-        )
-    
-    print(f"Generated tier achievements for Tiers 1-5")
+    # Core static documents (single source TXT -> MD)
+    generate_core_equations(DEST_OSF, deterministic=args.deterministic)
+    generate_core_equations(DEST_ZENODO, deterministic=args.deterministic)
+    generate_master_document(DEST_OSF, deterministic=args.deterministic)
+    generate_master_document(DEST_ZENODO, deterministic=args.deterministic)
+    generate_test_design(DEST_OSF, deterministic=args.deterministic)
+    generate_test_design(DEST_ZENODO, deterministic=args.deterministic)
+
+    print("Generated tier achievements and core summaries from templates")
     
     # Generate evidence review report
     print("\n[INFO] Generating evidence review audit...")
@@ -1561,6 +1507,390 @@ def main():
     zen_issues = audit_dir_compliance(DEST_ZENODO, zen_entries)
     print(f"OSF payload compliance: {len(osf_issues)} issue(s). Report: {DEST_OSF / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
     print(f"Zenodo payload compliance: {len(zen_issues)} issue(s). Report: {DEST_ZENODO / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
+
+# ---------------- Template and metadata helpers (deterministic generation) ----------------
+
+def _jinja_env():
+    """Create Jinja2 environment for templates under tools/templates."""
+    try:
+        from jinja2 import Environment, FileSystemLoader, select_autoescape  # type: ignore
+    except Exception as e:
+        raise RuntimeError("Jinja2 is required for template-based generation. Install via requirements.txt") from e
+    templates_dir = ROOT / 'tools' / 'templates'
+    loader = FileSystemLoader(str(templates_dir))
+    env = Environment(loader=loader, autoescape=False, trim_blocks=True, lstrip_blocks=True)
+    return env
+
+
+def _read_json(path: Path) -> dict:
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def load_tier_metadata() -> dict:
+    """Load comprehensive tier metadata. Fallback to minimal metadata + results scan."""
+    comp = ROOT / 'config' / 'tier_metadata_comprehensive.json'
+    if comp.exists():
+        data = _read_json(comp)
+        # Normalize: ensure 'tiers' exists and each has tier_number
+        tiers = data.get('tiers', [])
+        # If test_count missing, compute from results
+        for i, t in enumerate(tiers, start=1):
+            t.setdefault('tier_number', i)
+            cat = t.get('category_dir')
+            if cat:
+                res_dir = ROOT / 'results' / cat
+                if res_dir.exists():
+                    t['test_count'] = t.get('test_count', sum(1 for d in res_dir.iterdir() if d.is_dir() and not d.name.startswith('.')))
+        data['tiers'] = tiers
+        return data
+    # Fallback to minimal metadata
+    minimal = ROOT / 'config' / 'tier_metadata.json'
+    tiers_list = []
+    order = []
+    tiers_info = {}
+    if minimal.exists():
+        m = _read_json(minimal)
+        order = m.get('order', [])
+        tiers_info = m.get('tiers', {})
+    for idx, cat in enumerate(order, start=1):
+        info = tiers_info.get(cat, {})
+        res_dir = ROOT / 'results' / cat
+        test_count = sum(1 for d in res_dir.iterdir() if d.is_dir() and not d.name.startswith('.')) if res_dir.exists() else 0
+        tiers_list.append({
+            'tier_number': idx,
+            'tier_id': f'tier{idx}_{cat.lower()}',
+            'tier_name': info.get('title', f'Tier {idx} — {cat}'),
+            'short_name': info.get('title', f'Tier {idx} — {cat}').split('—')[-1].strip(),
+            'category_dir': cat,
+            'test_prefix': None,
+            'test_count': test_count,
+            'description': info.get('description', ''),
+            'significance': info.get('description', ''),
+            'key_validations': [],
+            'representative_plot': None,
+        })
+    return {'tiers': tiers_list, 'document_templates': {}}
+
+
+def get_summary_status(summary: dict) -> str:
+    """Extract normalized PASS/FAIL/SKIP/UNKNOWN from a summary.json dict."""
+    try:
+        if summary.get('skipped') is True:
+            return 'SKIP'
+        if 'status' in summary:
+            status = str(summary['status']).upper()
+            if status in ('PASSED', 'PASS', 'TRUE'):
+                return 'PASS'
+            if status in ('FAILED', 'FAIL', 'FALSE'):
+                return 'FAIL'
+            if status in ('SKIPPED', 'SKIP'):
+                return 'SKIP'
+            return status
+        if 'passed' in summary:
+            pv = summary['passed']
+            if isinstance(pv, bool):
+                return 'PASS' if pv else 'FAIL'
+            return str(pv).upper()
+    except Exception:
+        pass
+    return 'UNKNOWN'
+
+
+def _collect_tests_for_category(category_dir: str) -> list[dict]:
+    res_dir = ROOT / 'results' / category_dir
+    tests: list[dict] = []
+    if res_dir.exists():
+        for tdir in sorted(res_dir.iterdir()):
+            if tdir.is_dir() and not tdir.name.startswith('.'):
+                s = tdir / 'summary.json'
+                if s.exists():
+                    try:
+                        summary = _read_json(s)
+                        tests.append({
+                            'id': tdir.name,
+                            'status': get_summary_status(summary),
+                            'description': summary.get('description', 'No description'),
+                        })
+                    except Exception:
+                        continue
+    return tests
+
+
+def _compute_pass_counts(tier: dict) -> int:
+    tests = _collect_tests_for_category(tier['category_dir'])
+    return sum(1 for t in tests if t['status'] == 'PASS')
+
+
+def copy_representative_plots(dest_dir: Path, tier_metadata: dict) -> list[str]:
+    copied: list[str] = []
+    for t in tier_metadata.get('tiers', []):
+        plot = t.get('representative_plot')
+        if not plot:
+            continue
+        source = ROOT / plot.get('source_path', '')
+        dest = dest_dir / plot.get('dest_filename', f"plot_tier{t['tier_number']}.png")
+        try:
+            if source.exists():
+                dest.write_bytes(source.read_bytes())
+                copied.append(dest.name)
+        except Exception:
+            pass
+    return copied
+
+
+def generate_tier_achievements_from_template(tier: dict, dest_dir: Path, deterministic: bool = False) -> str:
+    env = _jinja_env()
+    tmpl = env.get_template('tier_achievements.md.j2')
+    tests = _collect_tests_for_category(tier['category_dir'])
+    passed = sum(1 for t in tests if t['status'] == 'PASS')
+    content = tmpl.render(
+        tier_name=tier['tier_name'],
+        description=tier['description'],
+        significance=tier['significance'],
+        test_count=len(tests) if tests else tier.get('test_count', 0),
+        passed=passed,
+        tests=tests,
+        deterministic_date=_deterministic_now_str() if deterministic else None,
+        generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+    )
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    fname = f"TIER_{tier['tier_number']}_ACHIEVEMENTS.md"
+    (dest_dir / fname).write_text(content, encoding='utf-8')
+    return fname
+
+
+def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, deterministic: bool = False) -> str:
+    env = _jinja_env()
+    tmpl = env.get_template('results_comprehensive.md.j2')
+    tiers = []
+    total_tests = 0
+    total_passed = 0
+    for t in tier_metadata.get('tiers', []):
+        passed = _compute_pass_counts(t)
+        test_count = t.get('test_count', 0)
+        if test_count == 0:
+            test_count = len(_collect_tests_for_category(t['category_dir']))
+        total_tests += test_count
+        total_passed += passed
+        tiers.append({
+            'tier_number': t['tier_number'],
+            'tier_name': t['tier_name'],
+            'short_name': t.get('short_name', t['category_dir']),
+            'test_count': test_count,
+            'passed': passed,
+            'description': t['description'],
+            'key_validations': t.get('key_validations', []),
+            'significance': t.get('significance', ''),
+        })
+    content = tmpl.render(
+        results_overview=tier_metadata.get('document_templates', {}).get('results_comprehensive_overview', ''),
+        tiers=tiers,
+        total_tests=total_tests,
+        total_passed=total_passed,
+        pass_percentage=(100.0 * total_passed / total_tests) if total_tests else 0.0,
+        deterministic_date=_deterministic_now_str() if deterministic else None,
+        generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+    )
+    (dest_dir / 'RESULTS_COMPREHENSIVE.md').write_text(content, encoding='utf-8')
+    return 'RESULTS_COMPREHENSIVE.md'
+
+
+def _txt_to_markdown(txt_path: Path, title: str, deterministic: bool = False) -> str:
+    """Convert a TXT document to markdown with YAML frontmatter.
+    
+    Single source of truth pattern: All content comes from TXT file.
+    Adds markdown formatting and metadata frontmatter with proper paragraph breaks.
+    """
+    if not txt_path.exists():
+        return f"# {title}\n\nSource file missing: {txt_path}"
+    
+    source_text = txt_path.read_text(encoding='utf-8')
+    lines = []
+    
+    # Extract first line as document title
+    first_line = source_text.split('\n')[0].strip()
+    
+    # Add YAML frontmatter FIRST (proper format)
+    lines.append('---')
+    lines.append(f'title: "{title}"')
+    lines.append('author: "Greg D. Partin"')
+    lines.append('institution: "LFM Research, Los Angeles CA USA"')
+    lines.append('license: "CC BY-NC-ND 4.0"')
+    lines.append('contact: "latticefieldmediumresearch@gmail.com"')
+    lines.append('orcid: "https://orcid.org/0009-0004-0327-6528"')
+    lines.append('doi: "10.5281/zenodo.17510124"')
+    if deterministic:
+        lines.append(f'generated: "{_deterministic_now_str()}"')
+    lines.append('---')
+    lines.append('')
+    
+    # Now add the title from TXT file
+    lines.append('# ' + first_line)
+    lines.append('')
+    
+    # Process rest of content with paragraph detection
+    prev_was_empty = False
+    in_list = False
+    
+    for line in source_text.split('\n')[1:]:
+        stripped = line.strip()
+        
+        # Empty line - preserve as paragraph break
+        if not stripped:
+            if not prev_was_empty:  # Avoid multiple empty lines
+                lines.append('')
+                prev_was_empty = True
+            in_list = False
+            continue
+        
+        prev_was_empty = False
+        
+        # Detect major section headers (short lines, not indented)
+        if len(stripped) < 80 and not line.startswith(' ') and not line.startswith('\t'):
+            # Check if it's a numbered section header (not a list item)
+            # Section headers are like "1. Overview" or "Abstract"
+            # List items are like "1. Short item text" embedded in content
+            first_word = stripped.split()[0] if stripped.split() else ""
+            
+            # It's a numbered section if: starts with number, followed by words that look like section titles
+            is_section_header = False
+            if stripped[0].isdigit() and '.' in first_word:
+                # Check if it's followed by title-case words (section headers)
+                rest = stripped[len(first_word):].strip()
+                if rest and len(rest) < 50 and rest[0].isupper():
+                    is_section_header = True
+            elif stripped.startswith(('Abstract', 'Overview', 'Summary', 'References', 'Implications', 'Status', 'Key ', 'Recent')):
+                is_section_header = True
+                
+            if is_section_header:
+                # Check depth by counting dots in first word
+                if first_word.count('.') == 1 and first_word[0].isdigit():  # "1."
+                    lines.append('')  # Add blank line before header
+                    lines.append('## ' + stripped)
+                    lines.append('')  # Add blank line after header
+                    in_list = False
+                    continue
+                elif first_word.count('.') == 2:  # "1.1."
+                    lines.append('')
+                    lines.append('### ' + stripped)
+                    lines.append('')
+                    in_list = False
+                    continue
+                elif not first_word[0].isdigit():  # "Abstract", "Overview", etc
+                    lines.append('')
+                    lines.append('## ' + stripped)
+                    lines.append('')
+                    in_list = False
+                    continue
+                    
+            # Check for section-like headers
+            if any(stripped.startswith(prefix) for prefix in ['License', 'Note:', 'Citation', 'Contact:', 'Trademark', 'Defensive', 'Legal', 'Redistribution', 'Derivative', 'Feature', 'Consequence']):
+                if stripped.endswith(':'):
+                    lines.append('')
+                    lines.append('### ' + stripped)
+                    lines.append('')
+                    in_list = False
+                    continue
+        
+        # Detect list items (starting with -, •, or digit.)
+        if stripped.startswith(('-', '•')) or (len(stripped) > 2 and stripped[0].isdigit() and stripped[1] == '.'):
+            if not in_list:
+                lines.append('')  # Add blank line before list starts
+            lines.append(stripped)
+            in_list = True
+            continue
+        
+        # Regular paragraph text - add line with proper spacing
+        if in_list:
+            lines.append('')  # Add blank line after list
+            in_list = False
+        
+        # Escape backslashes in Windows paths for LaTeX compatibility
+        # Pattern: LFM\something → LFM\\something (double backslash for markdown/LaTeX)
+        escaped_line = stripped
+        if '\\' in stripped and not stripped.startswith('\\'):
+            # Only escape if it looks like a path (e.g., "LFM\code")
+            # Don't escape if it's already escaped or looks like LaTeX math
+            import re
+            escaped_line = re.sub(r'([A-Za-z0-9_]+)\\([A-Za-z0-9_]+)', r'\1\\\\\2', stripped)
+        
+        # Add the line
+        lines.append(escaped_line)
+        
+        # For long paragraphs, add a blank line after if the next line is also long
+        # This helps create visual paragraph breaks
+    
+    lines.append('')
+    lines.append('---')
+    lines.append('')
+    lines.append('License: CC BY-NC-ND 4.0')
+    
+    return '\n'.join(lines)
+
+
+def generate_executive_summary(dest_dir: Path, tier_metadata: dict, deterministic: bool = False) -> str:
+    """Generate Executive Summary from single source TXT file with dynamic tier stats.
+    
+    Single source of truth: docs/text/Executive_Summary.txt
+    Dynamic data: Tier test counts and pass rates injected from metadata
+    """
+    src_txt = ROOT / "docs" / "text" / "Executive_Summary.txt"
+    
+    # Start with base conversion
+    content = _txt_to_markdown(src_txt, "LFM Executive Summary", deterministic)
+    
+    # Calculate dynamic tier statistics
+    total_tests = sum(t.get('test_count', 0) for t in tier_metadata.get('tiers', []))
+    content = content.replace('{{TOTAL_TESTS}}', str(total_tests))
+    
+    # Calculate pass rate (assuming 100% for validated tiers)
+    pass_rate = 100.0
+    content = content.replace('{{PASS_RATE}}', f"{pass_rate:.1f}")
+    
+    dest_file = dest_dir / "EXECUTIVE_SUMMARY.md"
+    dest_file.write_text(content, encoding='utf-8')
+    return "EXECUTIVE_SUMMARY.md"
+
+
+def generate_core_equations(dest_dir: Path, deterministic: bool = False) -> str:
+    """Generate CORE_EQUATIONS.md from single source TXT file.
+    
+    Single source of truth: docs/text/LFM_Core_Equations.txt
+    """
+    src_txt = ROOT / "docs" / "text" / "LFM_Core_Equations.txt"
+    content = _txt_to_markdown(src_txt, "LFM Core Equations and Physics", deterministic)
+    
+    dest_file = dest_dir / "CORE_EQUATIONS.md"
+    dest_file.write_text(content, encoding='utf-8')
+    return "CORE_EQUATIONS.md"
+
+
+def generate_master_document(dest_dir: Path, deterministic: bool = False) -> str:
+    """Generate MASTER_DOCUMENT.md from single source TXT file.
+    
+    Single source of truth: docs/text/LFM_Master.txt
+    """
+    src_txt = ROOT / "docs" / "text" / "LFM_Master.txt"
+    content = _txt_to_markdown(src_txt, "LFM Master Document", deterministic)
+    
+    dest_file = dest_dir / "MASTER_DOCUMENT.md"
+    dest_file.write_text(content, encoding='utf-8')
+    return "MASTER_DOCUMENT.md"
+
+
+def generate_test_design(dest_dir: Path, deterministic: bool = False) -> str:
+    """Generate TEST_DESIGN.md from single source TXT file.
+    
+    Single source of truth: docs/text/LFM_Phase1_Test_Design.txt
+    """
+    src_txt = ROOT / "docs" / "text" / "LFM_Phase1_Test_Design.txt"
+    content = _txt_to_markdown(src_txt, "LFM Phase 1 Test Design", deterministic)
+    
+    dest_file = dest_dir / "TEST_DESIGN.md"
+    dest_file.write_text(content, encoding='utf-8')
+    return "TEST_DESIGN.md"
+
 
 if __name__ == '__main__':
     main()

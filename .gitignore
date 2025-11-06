@@ -46,6 +46,19 @@ workspace/**/*.pyo
 workspace/**/*.pyd
 workspace/**/.Python
 workspace/**/pip-log.txt
+# Ephemeral test run artifacts (logs/config) – do not track
+workspace/results/**/run_config.json
+workspace/results/**/session_log.jsonl
+workspace/results/**/session_log.txt
+
+# Harness transient telemetry (keep tracked file, ignore any stray copies)
+workspace/src/results/
+
+# Generated diagnostics CSV (transient)
+workspace/src/diagnostics_core.csv
+
+# Upload backups and bundles not intended for source control
+workspace/uploads/backups/
 
 # Keep Git internals visible
 !/.git/
