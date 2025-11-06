@@ -2,6 +2,24 @@
 
 This directory tracks computational performance optimization efforts for the Lattice Field Model. Performance work follows a **separate pipeline** from physics validation.
 
+## ⚠️ IMPORTANT UPDATE (2025-01)
+
+**Fused GPU backend has been promoted to production** (`src/core/lfm_equation_fused.py`).
+
+This directory now serves two purposes:
+1. **Archive**: Historical development of optimizations (e.g., `optimizations/fused_tiled_kernel.py`)
+2. **Active**: New performance experiments and benchmarks
+
+**For production use**: Import from `src/core/`, not `performance/`:
+```python
+from core.lfm_equation import lattice_step  # Canonical entry point with backend selection
+from core.lfm_equation_fused import fused_verlet_step  # Direct GPU kernel access
+```
+
+See `src/core/README.md` for backend usage documentation.
+
+---
+
 ## Key Principle: Physics ≠ Performance
 
 **Physics validation** answers: "Is this result scientifically correct?"

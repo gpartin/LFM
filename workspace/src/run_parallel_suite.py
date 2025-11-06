@@ -62,6 +62,14 @@ def parse_args():
     )
     
     parser.add_argument(
+        "--backend",
+        type=str,
+        choices=["baseline", "fused"],
+        default="baseline",
+        help="Physics backend for tier runners (propagated via env var LFM_PHYSICS_BACKEND)"
+    )
+    
+    parser.add_argument(
         "--verbose",
         action="store_true",
         default=True,
@@ -161,6 +169,14 @@ def get_fast_test_list() -> List[Tuple[str, int, Dict]]:
 def main():
     """Main entry point."""
     args = parse_args()
+    
+    # Propagate backend selection to child processes via environment variable
+    try:
+        import os
+        if args.backend in ("baseline", "fused"):
+            os.environ["LFM_PHYSICS_BACKEND"] = args.backend
+    except Exception:
+        pass
     
     # Determine test list
     test_list = []

@@ -298,8 +298,8 @@ def _default_config_name() -> str:
 
  
 class Tier2Harness(BaseTierHarness):
-    def __init__(self, cfg: Dict, out_root: Path):
-        super().__init__(cfg, out_root, config_name="config_tier2_gravityanalogue.json")
+    def __init__(self, cfg: Dict, out_root: Path, backend: str = "baseline"):
+        super().__init__(cfg, out_root, config_name="config_tier2_gravityanalogue.json", backend=backend)
         self.variants = cfg["variants"]
         
         # Optional per-variant skip flag: allow config to disable expensive or redundant cases
@@ -518,6 +518,7 @@ class Tier2Harness(BaseTierHarness):
                 "chi": chi_from_energy,  # spatially varying chi (numpy)
                 "boundary": "periodic",
                 "precision": "float64",
+                "backend": self.backend,
                 "debug": {"quiet_run": True, "enable_diagnostics": False}
             }
             save_every = int(p.get("save_every", 1))
@@ -1336,7 +1337,8 @@ class Tier2Harness(BaseTierHarness):
         # Other modes use periodic (time_dilation tests need global coupling anyway)
         boundary_type = "absorbing" if mode in ("time_delay", "phase_delay", "phase_delay_diff") else "periodic"
         params = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary=boundary_type,
-                      chi=to_numpy(chi_field) if xp is np else chi_field)
+                      chi=to_numpy(chi_field) if xp is np else chi_field,
+                      backend=self.backend)
         if "debug" in self.run_settings:
             params.setdefault("debug", {})
             params["debug"].update(self.run_settings.get("debug", {}))
@@ -2644,7 +2646,8 @@ class Tier2Harness(BaseTierHarness):
 
             def simulate_detector(chi_field_local, steps_local, track_packet=False):
                 params_local = dict(dt=dt, dx=dx, alpha=alpha, beta=beta, boundary=boundary_type,
-                                    chi=to_numpy(chi_field_local) if xp is np else chi_field_local)
+                                    chi=to_numpy(chi_field_local) if xp is np else chi_field_local,
+                                    backend=self.backend)
                 E_loc, Ep_loc = make_ic_for(chi_field_local)
                 sig = []
                 packet_track = []  # Track packet position through space
@@ -3051,6 +3054,8 @@ def main():
                        help="Run single test by ID (e.g., GRAV-01). If omitted, runs all tests.")
     parser.add_argument("--config", type=str, default="config/config_tier2_gravityanalogue.json",
                        help="Path to config file")
+    parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
+                       help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated kernel)")
     # Optional post-run hooks
     parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
                         help='Run validator after the suite: "tier" validates Tier 2 + master status; "all" runs end-to-end')
@@ -3063,6 +3068,17 @@ def main():
     parser.add_argument('--deterministic', action='store_true',
                         help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
+    
+    # Allow environment override for backend (used by parallel runner)
+    try:
+        import os
+        env_backend = os.environ.get("LFM_PHYSICS_BACKEND")
+        # Tier 2 may not have CLI backend yet; default to baseline unless env demands fused
+        if env_backend in ("baseline", "fused"):
+            # Instantiate harness below will receive backend via args
+            pass
+    except Exception:
+        pass
     
     # Load config using base harness method
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
@@ -3077,7 +3093,14 @@ def main():
         pass
     outdir = BaseTierHarness.resolve_outdir(cfg.get("run_settings", {}).get("output_dir", "results/Gravity"))
     
-    harness = Tier2Harness(cfg, outdir)
+    # If env requested backend and CLI not provided, inject it
+    try:
+        import os
+        env_backend = os.environ.get("LFM_PHYSICS_BACKEND")
+    except Exception:
+        env_backend = None
+    backend_choice = args.backend if hasattr(args, 'backend') else (env_backend or 'baseline')
+    harness = Tier2Harness(cfg, outdir, backend=backend_choice)
     
     # Filter to single test if requested
     if args.test:

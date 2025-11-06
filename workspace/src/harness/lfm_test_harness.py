@@ -68,7 +68,8 @@ class BaseTierHarness(NumericIntegrityMixin):
         self,
         cfg: Dict,
         out_root: Path,
-        config_name: str = "config.json"
+        config_name: str = "config.json",
+        backend: str = "baseline"
     ):
         """
         Initialize base harness with config and output directory.
@@ -77,6 +78,8 @@ class BaseTierHarness(NumericIntegrityMixin):
             cfg: Configuration dictionary loaded from JSON
             out_root: Root output directory for test results
             config_name: Name of config file (for error messages)
+            backend: Physics backend ('baseline' or 'fused'); tier runners should
+                     pass this from CLI args to enable GPU acceleration
         """
         self.cfg = cfg
         self.config_name = config_name
@@ -88,6 +91,9 @@ class BaseTierHarness(NumericIntegrityMixin):
         # Backend selection
         use_gpu = bool(self.run_settings.get("use_gpu", False))
         self.xp, self.use_gpu = pick_backend(use_gpu)
+        
+        # Physics backend (baseline vs fused kernel)
+        self.backend = backend
         
         # Output directory
         self.out_root = Path(out_root)
@@ -122,6 +128,7 @@ class BaseTierHarness(NumericIntegrityMixin):
         # Log backend info
         backend_name = "GPU (CuPy)" if self.use_gpu else "CPU (NumPy)"
         log(f"[accel] Using {backend_name} backend.", "INFO")
+        log(f"[physics] Using '{self.backend}' physics backend.", "INFO")
 
         # ---------------- Caching setup ----------------
         # Defaults: caching enabled unless explicitly disabled

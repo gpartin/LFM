@@ -2173,7 +2173,7 @@ def test_em_wave_propagation(config: Dict, test_config: Dict, output_dir: Path) 
 class Tier5ElectromagneticHarness(BaseTierHarness):
     """Harness for Tier 5 electromagnetic tests"""
     
-    def __init__(self, config_path: str = None):
+    def __init__(self, config_path: str = None, backend: str = "baseline"):
         if config_path is None:
             config_path = _default_config_name()
         
@@ -2188,7 +2188,7 @@ class Tier5ElectromagneticHarness(BaseTierHarness):
         # Set output directory (anchor under workspace/results)
         out_root = BaseTierHarness.resolve_outdir(config.get("output_dir", "results/Electromagnetic"))
         
-        super().__init__(config, out_root, config_path)
+        super().__init__(config, out_root, config_path, backend=backend)
         self.tier_name = "Electromagnetic"
         self.tier_number = 5
         self.config = config
@@ -3528,6 +3528,8 @@ def main():
     parser.add_argument("--test", type=str, help="Run single test by ID (e.g., EM-01). If omitted, runs all tests.")
     parser.add_argument("--config", type=str, default="config/config_tier5_electromagnetic.json",
                        help="Path to config file")
+    parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
+                       help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated kernel)")
     # Cache control
     parser.add_argument("--no-cache", action="store_true",
                        help="Disable test result caching, force re-run all tests")
@@ -3546,7 +3548,16 @@ def main():
                         help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
     
-    harness = Tier5ElectromagneticHarness()
+    # Allow environment override for backend (used by parallel runner)
+    try:
+        import os
+        env_backend = os.environ.get("LFM_PHYSICS_BACKEND")
+        if env_backend in ("baseline", "fused") and args.backend == "baseline":
+            args.backend = env_backend
+    except Exception:
+        pass
+    
+    harness = Tier5ElectromagneticHarness(backend=args.backend)
     
     # Handle cache control flags
     if getattr(args, 'clear_cache', False) and getattr(harness, 'cache_manager', None):

@@ -1,8 +1,32 @@
 # Lattice Optimization Suite
 
-**Status**: Experiment (Gate 0)  
+**Status**: Experiment (Gate 0) → ✓ **Graduated to Production** (fused kernel)  
 **Created**: 2025-11-05  
+**Promoted**: 2025-01-XX  
 **Objective**: Find optimal algorithm for 3D lattice updates while preserving physics
+
+## ⚠️ IMPORTANT: Fused Kernel Promoted to Production
+
+**Research outcome**: The fused GPU kernel from this experiment has been validated and promoted to `src/core/lfm_equation_fused.py`.
+
+**For production use**:
+- ✓ Use `src/core/lfm_equation_fused.py` (canonical location)
+- ✓ Access via `python src/run_tier1_relativistic.py --backend fused`
+- ✓ See `src/core/README.md` for backend documentation
+
+**This directory** (`experiments/lattice_optimization_suite/`) is now:
+- **Historical archive** showing research process that led to fused kernel
+- **Reference implementation** for understanding design decisions
+- **Educational resource** documenting what worked (fused) and what didn't (masks)
+
+**Performance results from this research**:
+- Wave packet 256³: 1.74× speedup, drift 8.48e-05 (P1 gate: <1e-4) ✓
+- Gravity sim 64³: 3.5× speedup, 0.2ms vs 0.7ms/step ✓
+- Lorentz covariance verified ✓
+
+For new performance experiments, create new directories under `experiments/` or `performance/`.
+
+---
 
 ## Quick Start
 

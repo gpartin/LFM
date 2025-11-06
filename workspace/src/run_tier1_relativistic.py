@@ -64,8 +64,8 @@ class TestSummary:
 
  
 class Tier1Harness(BaseTierHarness):
-    def __init__(self, cfg: Dict, out_root: Path):
-        super().__init__(cfg, out_root, config_name="config_tier1_relativistic.json")
+    def __init__(self, cfg: Dict, out_root: Path, backend: str = "baseline"):
+        super().__init__(cfg, out_root, config_name="config_tier1_relativistic.json", backend=backend)
         self.variants = cfg["variants"]
 
     
@@ -1494,6 +1494,7 @@ class Tier1Harness(BaseTierHarness):
             "chi": params.get("chi", 0.0),
             "boundary": "periodic",
             "precision": "float64",
+            "backend": self.backend,
             "debug": {"quiet_run": True, "enable_diagnostics": False}
         }
         
@@ -1694,6 +1695,7 @@ class Tier1Harness(BaseTierHarness):
             "chi": chi,
             "boundary": "periodic",
             "precision": "float64",
+            "backend": self.backend,
             "debug": {"quiet_run": True, "enable_diagnostics": False}
         }
         
@@ -2077,6 +2079,8 @@ def main():
                        help="Run single test by ID (e.g., REL-05). If omitted, runs all tests.")
     parser.add_argument("--config", type=str, default="config/config_tier1_relativistic.json",
                        help="Path to config file")
+    parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
+                       help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated kernel)")
     # Optional post-run hooks
     parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
                         help='Run validator after the suite: "tier" validates Tier 1 + master status; "all" runs end-to-end')
@@ -2090,9 +2094,18 @@ def main():
                         help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
     
+    # Allow environment override for backend (used by parallel runner)
+    try:
+        import os
+        env_backend = os.environ.get("LFM_PHYSICS_BACKEND")
+        if env_backend in ("baseline", "fused") and args.backend == "baseline":
+            args.backend = env_backend
+    except Exception:
+        pass
+    
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
     outdir = BaseTierHarness.resolve_outdir(cfg.get("output_dir", "results/Relativistic"))
-    harness = Tier1Harness(cfg, outdir)
+    harness = Tier1Harness(cfg, outdir, backend=args.backend)
 
     log(f"[paths] OUTPUT ROOT = {outdir}", "INFO")
     
