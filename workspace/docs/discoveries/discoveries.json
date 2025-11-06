@@ -110,5 +110,18 @@
       "src/core/lfm_backend.py",
       "src/physics/chi_field_equation.py"
     ]
+  },
+  {
+    "date": "2025-01-XX",
+    "tier": "Performance/Core",
+    "title": "Fused GPU Backend Validation and Promotion",
+    "summary": "Validated and promoted fused GPU kernel to production. Achieved 3.3-5.1× speedup (mean 3.94×) on NVIDIA RTX 4060 with drift matching baseline to <1e-13 relative difference. P1 accuracy gate passed. Kernel combines 7-point Laplacian stencil and Verlet time integration in single CUDA launch. Validated across wave packets (64³-256³) and gravity simulations.",
+    "evidence": "performance/benchmarks/fused_backend_benchmark.py results, Tier 1-2 validation runs",
+    "links": [
+      "src/core/lfm_equation_fused.py",
+      "performance/benchmarks/fused_backend_benchmark.py",
+      "performance/benchmarks/fused_benchmark_results.csv",
+      "performance/README.md"
+    ]
   }
 ]

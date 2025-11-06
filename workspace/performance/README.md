@@ -314,8 +314,64 @@ Once an optimization is **validated and benchmarked**:
 As documented in `PERFORMANCE_OPTIMIZATIONS_README.md`:
 
 - **Phase 1**: Memory layout and GPU memory management (COMPLETED)
-- **Phase 2**: Fused CUDA kernels (IN PROGRESS)
+- **Phase 2**: Fused CUDA kernels (**COMPLETED - PROMOTED TO PRODUCTION**)
 - **Phase 3**: Multi-scale AMR (PLANNED)
+
+### Phase 2: Fused Backend (PRODUCTION)
+
+**Status**: Validated and promoted to `src/core/lfm_equation_fused.py`
+
+**Performance**: 3.3-5.1× speedup on NVIDIA RTX 4060 (mean 3.94×)
+**Accuracy**: Drift matches baseline to machine precision (<1e-13 relative difference)
+**P1 Gate**: PASS ✓
+
+**Benchmark Script**: `benchmarks/fused_backend_benchmark.py`
+
+Usage:
+```bash
+# Quick smoke test (2 workloads, 2 trials)
+python benchmarks/fused_backend_benchmark.py --quick
+
+# Full benchmark (4 workloads, 3 trials)
+python benchmarks/fused_backend_benchmark.py --trials 3
+
+# Custom output file
+python benchmarks/fused_backend_benchmark.py --output my_results.csv
+```
+
+**Results Format** (CSV):
+- `workload`: Test name (e.g., wave_packet_256)
+- `grid_size`: Lattice dimensions (e.g., 256x256x256)
+- `backend`: baseline or fused
+- `mean_time_ms`: Average time per step (milliseconds)
+- `std_ms`: Standard deviation
+- `speedup`: Ratio (baseline_time / fused_time)
+- `drift`: Energy drift over run
+- `trials`: Number of trials
+- `hardware`: GPU model + CUDA version
+- `timestamp`: ISO-8601 UTC
+- `status`: completed, skipped_cpu, etc.
+
+**Validation Protocol**:
+1. Fused kernel must match baseline drift to <1e-4 relative difference
+2. Benchmark must run on representative workloads:
+   - Wave packets: 64³, 128³, 256³
+   - Gravity sim: 64³ (100 steps)
+3. Report speedup range, mean, and P1 gate pass/fail
+
+**Hardware Requirements**:
+- NVIDIA GPU with CUDA support
+- CuPy installed
+- Graceful fallback to baseline if GPU unavailable
+
+**Known Limitations**:
+- Fused kernel supports 3D only (not 1D/2D)
+- Periodic boundaries only (Dirichlet requires post-processing)
+- Single precision not yet tested (default: float64)
+
+**IP Protection**: Results documented in `docs/discoveries/discoveries.json` (entry: "Fused GPU Backend Validation")
+
+---
 
 Each phase follows this workflow:
 1. Baseline → 2. Bottleneck analysis → 3. Implementation → 4. Validation → 5. Benchmark → 6. Documentation
