@@ -6,12 +6,12 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 14:27:25"
+generated: "2025-11-06 15:36:21"
 ---
 
 # Evidence Review: Documentation vs. Test Results
 
-Generated: 2025-11-06 14:27:25
+Generated: 2025-11-06 15:36:21
 
 ## Overview
 
@@ -40,8 +40,8 @@ evidence, and flag any gaps between documentation and validated outcomes.
 
 ## Findings
 
-### Discovery Claims: 13
-### Test Results Available: 64
+### Discovery Claims: 16
+### Test Results Available: 88
 
 ### Verified (Evidence References Test Results):
 - ✓ Lorentz Invariance from Discrete Lattice Rules (Tier 1 - Relativistic)
@@ -50,6 +50,9 @@ evidence, and flag any gaps between documentation and validated outcomes.
 - ✓ Natural Quantization from Discrete Temporal Evolution (Tier 4 - Quantization)
 - ✓ Electromagnetic Wave Emergence from χ-Coupled Field Dynamics (Tier 5 - Electromagnetic)
 - ✓ Self-Limiting Cosmological Expansion via χ-Feedback (Tier 6 - Cosmological)
+- ✓ Gravitational Time Dilation from χ-Field Dispersion (Tier 6 - Multi-Domain Coupling)
+- ✓ Lorentz Invariance of Gravitational Light Deflection (Tier 6 - Multi-Domain Coupling)
+- ✓ Quantum Bound States in Gravitational χ-Well (Tier 6 - Multi-Domain Coupling)
 - ✓ Analytical Solution Validation Superior to Feature Tracking (Tier 6 - Numerical Validation)
 
 ### Needs Manual Review (No Direct Test Link):

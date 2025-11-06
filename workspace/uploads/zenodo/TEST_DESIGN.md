@@ -6,13 +6,13 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 14:27:25"
+generated: "2025-11-06 15:36:21"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Phase 1 Test Design — Proof-of-Concept Validation System
 
 
-Version 3.1 — 2025-11-05 (Defensive ND Release)
+Version 3.2 — 2025-11-06 (Defensive ND Release)
 Greg D. Partin | LFM Research — Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0
 International (CC BY-NC-ND 4.0)**
@@ -198,7 +198,7 @@ Research Framework”
 are original works authored by Greg D. Partin.
 
 
-### License Update (v3.1 — 2025-11-05):
+### License Update (v3.2 — 2025-11-06):
 
 Beginning with version 3.0, this work is licensed under the
 Creative Commons Attribution–NonCommercial–NoDerivatives 4.0

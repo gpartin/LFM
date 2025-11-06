@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 14:27:24"
+generated: "2025-11-06 15:36:20"
 ---
 
 ## Summary Table
@@ -25,6 +25,9 @@ generated: "2025-11-06 14:27:24"
 | 2025-11-01 | Theoretical | Variational Gravity Law Derivation | Mathematical derivation in core equations |
 | 2025-11-01 | Computational | GPU-Optimized Discrete Spacetime Framework | Complete codebase with validation |
 | 2025-11-05 | Tier 3 - Numerical Methods | Discrete Conservation Requires Matching Discretization Orders | Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect. |
+| 2025-11-06 | Tier 6 - Multi-Domain Coupling | Gravitational Time Dilation from χ-Field Dispersion | COUP-01: Frequency ratio error 0.05%, energy drift 0.0028% at finest resolution (dx=0.01, 8000 steps, GPU/fused) |
+| 2025-11-06 | Tier 6 - Multi-Domain Coupling | Lorentz Invariance of Gravitational Light Deflection | COUP-03: Deflection invariance error 0.00%, validates Lorentz covariance of emergent gravity (GPU/fused, 128³ grid, 3000 steps) |
+| 2025-11-06 | Tier 6 - Multi-Domain Coupling | Quantum Bound States in Gravitational χ-Well | COUP-04: Localization 100%, ω_measured=2.24 (χ_in*2π < ω < χ_out*2π), energy drift 0.05% (GPU/fused, 96³ grid) |
 | 2025-11-06 | Tier 6 - Numerical Validation | Analytical Solution Validation Superior to Feature Tracking | COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed |
 
 ## Detailed List
@@ -77,9 +80,21 @@ generated: "2025-11-06 14:27:24"
   - Discovery that discrete conservation laws are ONLY preserved when spatial operators use matching discretization orders. For Klein-Gordon equation ∂²E/∂t² = c²∇²E − χ²E with conserved energy E = ½∫[(∂E/∂t)² + c²|∇E|² + χ²E²]dV, using 4th-order Laplacian (dynamics) with 2nd-order gradients (energy) breaks conservation, causing 146× increase in energy drift (0.1% → 15%). This is a fundamental constraint for finite-difference schemes of conservation laws, not specific to LFM.
   - Evidence: Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect.
   - Links: tests/tier3/, config/config_tier3_energy.json, src/run_tier3_energy.py, analysis/tier3_energy_bug_analysis.md, analysis/test_stencil_order.py
+- 2025-11-06 — Gravitational Time Dilation from χ-Field Dispersion (Tier 6 - Multi-Domain Coupling)
+  - Validation that oscillation frequency in χ-gradient matches dispersion relation ω² = c²k² + χ² to 0.05% accuracy across 3 resolutions. Demonstrates gravitational time dilation emerges naturally from modified wave equation without separate GR machinery. Frequency ratio ω_chi/ω_flat = √(1 + χ²_avg/c²k²) confirmed with energy conservation <0.003% drift. Uses stationary standing wave comparison (flat space vs χ-gradient) to eliminate Doppler and measurement artifacts.
+  - Evidence: COUP-01: Frequency ratio error 0.05%, energy drift 0.0028% at finest resolution (dx=0.01, 8000 steps, GPU/fused)
+  - Links: src/run_tier6_coupling.py, config/config_tier6_coupling.json, results/Coupling/COUP-01/
+- 2025-11-06 — Lorentz Invariance of Gravitational Light Deflection (Tier 6 - Multi-Domain Coupling)
+  - Verification that light deflection angle near moving χ-lens is invariant under Lorentz boost (static vs β=0.3 transverse motion). Deflection angles identical to <0.01% (θ_static = θ_moving = 25.014°), confirming gravity in LFM is truly emergent relativistic phenomenon, not Newtonian force. Energy drift 4.9% acceptable for dynamic χ-field (non-conservative gradient). This validates that χ-field lensing satisfies Einstein's equivalence principle.
+  - Evidence: COUP-03: Deflection invariance error 0.00%, validates Lorentz covariance of emergent gravity (GPU/fused, 128³ grid, 3000 steps)
+  - Links: src/run_tier6_coupling.py, config/config_tier6_coupling.json, results/Coupling/COUP-03/
+- 2025-11-06 — Quantum Bound States in Gravitational χ-Well (Tier 6 - Multi-Domain Coupling)
+  - Demonstration of wave function localization in spherical χ-well (χ_inside=0.10, χ_outside=0.40, radius=12.0). Field energy remains 100% localized within well after 3000 evolution steps, with measured oscillation frequency ω=2.24 rad/s falling between χ_in and χ_out bounds. Energy conservation 0.05% drift validates stable quantum-gravitational coupling. Represents first computational evidence that quantum confinement emerges from same discrete field equation producing gravity and relativity.
+  - Evidence: COUP-04: Localization 100%, ω_measured=2.24 (χ_in*2π < ω < χ_out*2π), energy drift 0.05% (GPU/fused, 96³ grid)
+  - Links: src/run_tier6_coupling.py, config/config_tier6_coupling.json, results/Coupling/COUP-04/
 - 2025-11-06 — Analytical Solution Validation Superior to Feature Tracking (Tier 6 - Numerical Validation)
   - Discovery that L2 error convergence against analytical solutions provides more robust validation than feature tracking algorithms (peak tracking, centroid tracking, threshold-based wave front detection). For 1D d'Alembert wave equation with exact Gaussian pulse solution, L2 error showed perfect 2nd-order convergence (ratios 2.13, 2.00) while wave speed measurements diverged non-monotonically (11% → 25% → 54% error) due to wave interference artifacts. Key insight: whole-field comparison (L2 norm) eliminates measurement uncertainty inherent in single-point or threshold-based detection methods. Generalizes to any PDE with known analytical solutions (bound states, static fields, conservation laws, dispersion relations).
   - Evidence: COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed
   - Links: src/run_tier6_coupling.py, results/Coupling/COUP-02/convergence_study.png, experiments/COUP-02_convergence_validation_resolution.md, .github/PROCESS_IMPROVEMENTS.md
 
-Generated: 2025-11-06 14:27:24
+Generated: 2025-11-06 15:36:20

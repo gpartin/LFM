@@ -76,6 +76,30 @@ DEFAULTS: List[Dict] = [
         "config_schema": "tests",
         "expected": 9,
     },
+    {
+        "tier": 5,
+        "name": "Electromagnetic",
+        "category_name": "Electromagnetic",
+        "dir": "Electromagnetic",
+        "prefix": "EM",
+        "id_pattern": r"^EM-\\d+$",
+        "runner": "run_tier5_electromagnetic.py",
+        "config": "config/config_tier5_electromagnetic.json",
+        "config_schema": "tests",
+        "expected": 21,
+    },
+    {
+        "tier": 6,
+        "name": "Coupling",
+        "category_name": "Multi-Domain Coupling",
+        "dir": "Coupling",
+        "prefix": "COUP",
+        "id_pattern": r"^COUP-\\d+$",
+        "runner": "run_tier6_coupling.py",
+        "config": "config/config_tier6_coupling.json",
+        "config_schema": "tests",
+        "expected": 3,  # Implemented (COUP-01,02,07); others TBD
+    },
 ]
 
 _REGISTRY_CACHE: Optional[List[Dict]] = None
