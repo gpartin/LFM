@@ -1,11 +1,11 @@
 ﻿MASTER TEST STATUS REPORT - LFM Lattice Field Model
-Generated: 2025-11-05 19:35:18
+Generated: 2025-11-06 07:58:32
 Validation Rule: Suite marked NOT RUN if any test missing from CSV
 
 CATEGORY SUMMARY
 Tier,Category,Expected_Tests,Tests_In_CSV,Status,Pass_Rate
 Tier 1,Relativistic,15,15,PASS,15/15 passed
-Tier 2,Gravity Analogue,25,25,PARTIAL,22/25 passed - 3 skipped
+Tier 2,Gravity Analogue,25,25,PASS,25/25 passed
 Tier 3,Energy Conservation,11,10,PASS,10/10 passed - 1 missing
 Tier 4,Quantization,9,14,PASS,14/14 passed
 
@@ -37,14 +37,14 @@ GRAV-03,Local frequency — Gaussian well (broader potential),PASS,
 GRAV-04,Local frequency — Gaussian well (shallow potential),PASS,
 GRAV-05,Local frequency — linear χ-gradient (moderate),PASS,
 GRAV-06,Local frequency — Gaussian well (stable reference),PASS,
-GRAV-07,Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics),PASS,FIXED: Increased grid resolution to N=128 for proper well isolation (7.1σ separation). Measures time dilation via frequency ratio in double-well potential. Test now passes (error=2.24% < 25% tolerance).
+GRAV-07,Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics),PASS,
 GRAV-08,Time dilation — uniform χ diagnostic (isolate grid dispersion),PASS,
-GRAV-09,Time dilation — 2x refined grid (N=128; dx=0.5),SKIP,Time-dilation metric under recalibration for refined grid
+GRAV-09,Time dilation — 2x refined grid (N=128; dx=0.5),PASS,
 GRAV-10,Gravitational redshift — measure frequency shift in 1D potential well,PASS,
-GRAV-11,Time delay — packet through χ slab (Shapiro-like),SKIP,Packet tracking diagnostics WIP; Shapiro-like delay measurement
+GRAV-11,Time delay — packet through χ slab (Shapiro-like),PASS,
 GRAV-12,Phase delay — continuous wave through χ slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!),PASS,
 GRAV-13,Local frequency — double well (ω∝χ verification),PASS,
-GRAV-14,Group delay — differential timing with vs without slab,SKIP,Signal too weak for robust differential timing with current setup
+GRAV-14,Group delay — differential timing with vs without slab,PASS,
 GRAV-15,3D radial energy dispersion visualizer — central excitation; volumetric snapshots for MP4,PASS,
 GRAV-16,3D double-slit interference — quantum wave through slits showing χ-field localization,PASS,
 GRAV-17,Gravitational redshift — frequency shift climbing out of χ-well,PASS,

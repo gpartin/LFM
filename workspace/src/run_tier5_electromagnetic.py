@@ -41,8 +41,18 @@ from physics.em_analytical_framework import (
     MaxwellAnalytical, ChiFieldCoupling
 )
 
+# ===== Path Configuration =====
+# CRITICAL: These paths are relative to THIS SCRIPT's location (workspace/src/)
+# All tier runners must use Path(__file__).parent.parent to access workspace root
+CONFIG_DIR = Path(__file__).parent.parent / "config"
+RESULTS_DIR = Path(__file__).parent.parent / "results"
+
+# Verify paths exist at module load time
+assert CONFIG_DIR.exists(), f"Config dir not found: {CONFIG_DIR}"
+assert RESULTS_DIR.exists(), f"Results dir not found: {RESULTS_DIR}"
+
 def _default_config_name() -> str:
-    return "config/config_tier5_electromagnetic.json"
+    return "config_tier5_electromagnetic.json"  # Just filename - BaseTierHarness.load_config will find it
 
 # Helper: ensure plots directory and return its Path
 def _plots_dir(output_dir: Path) -> Path:
@@ -2174,27 +2184,19 @@ class Tier5ElectromagneticHarness(BaseTierHarness):
     """Harness for Tier 5 electromagnetic tests"""
     
     def __init__(self, config_path: str = None, backend: str = "baseline"):
-        if config_path is None:
-            config_path = _default_config_name()
+        # Load configuration using BaseTierHarness method (handles path search automatically)
+        config = BaseTierHarness.load_config(config_path, default_config_name=_default_config_name())
         
-        # Load configuration
-        config_file = Path(config_path)
-        if not config_file.exists():
-            raise FileNotFoundError(f"Config file not found: {config_path}")
-        
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-
         # Set output directory (anchor under workspace/results)
         out_root = BaseTierHarness.resolve_outdir(config.get("output_dir", "results/Electromagnetic"))
         
-        super().__init__(config, out_root, config_path, backend=backend)
+        super().__init__(config, out_root, _default_config_name(), backend=backend)
         self.tier_name = "Electromagnetic"
         self.tier_number = 5
         self.config = config
         
         # Store config file path for cache hashing
-        self.config_file_path = str(config_file.resolve())
+        self.config_file_path = _default_config_name()
     
     def run_all_tests(self):
         """Run all enabled electromagnetic tests defined in configuration"""
@@ -3526,8 +3528,8 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Tier 5 Electromagnetic Test Suite")
     parser.add_argument("--test", type=str, help="Run single test by ID (e.g., EM-01). If omitted, runs all tests.")
-    parser.add_argument("--config", type=str, default="config/config_tier5_electromagnetic.json",
-                       help="Path to config file")
+    parser.add_argument("--config", type=str, default=None,
+                       help="Path to config file (default: auto-locate config_tier5_electromagnetic.json)")
     parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
                        help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated kernel)")
     # Cache control
@@ -3625,15 +3627,13 @@ def main():
         log(f"Failed: {total_tests - passed_tests}", "INFO")
         log(f"Success rate: {passed_tests/total_tests*100:.1f}%", "INFO")
         
-        # Update master test status 
-        config_path = Path(_default_config_name())
-        if config_path.exists():
-            try:
-                from utils.lfm_results import get_results_root
-                update_master_test_status(get_results_root())
-                log("Updated master test status", "INFO")
-            except Exception as e:
-                log(f"Warning: Could not update master status: {e}", "WARN")
+        # Update master test status
+        try:
+            from utils.lfm_results import get_results_root
+            update_master_test_status(get_results_root())
+            log("Updated master test status", "INFO")
+        except Exception as e:
+            log(f"Warning: Could not update master status: {e}", "WARN")
         
         log("Tier 5 electromagnetic tests completed!", "INFO")
 

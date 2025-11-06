@@ -1,0 +1,162 @@
+{
+  "base_paths": {
+    "results": "results"
+  },
+  "hardware": {
+    "gpu_enabled": true,
+    "use_fused_cuda": true,
+    "precision": "float64"
+  },
+  "tier": 6,
+  "category": "Multi-Domain Coupling",
+  "output_dir": "results/Coupling",
+  "parameters": {
+    "c": 1.0,
+    "time_step": 2e-4,
+    "space_step": 0.02,
+    "N": 128,
+    "stencil_order": 2,
+    "save_every": 50
+  },
+  "tolerances": {
+    "energy_drift": 0.01,
+    "combined_effect_error": 0.05,
+    "frequency_shift_error": 0.01,
+    "wave_speed_error": 0.15,
+    "convergence_ratio_min": 0.8
+  },
+  "notes": "Tier 6 validates multi-domain coupling: simultaneous relativistic+gravitational, quantum+gravitational, EM+gravitational effects. Tolerances are stricter than single-domain tests because errors compound. All tests require convergence validation (vary dx, dt) and multiple random seeds for statistical reliability.",
+  "tests": [
+    {
+      "test_id": "COUP-01",
+      "description": "Relativistic + Gravitational Time Dilation (Phase 1)",
+      "category": "Relativistic-Gravitational",
+      "physics": "Moving observer through χ-gradient. Combined SR (γ factor) and GR (χ time dilation). Clock rate: dt_proper = dt_lab / (γ × √(1 + χ²))",
+      "grid_size": 128,
+      "steps": 2000,
+      "velocity_beta": 0.6,
+      "chi_gradient": [0.0, 0.3],
+      "convergence_test": true,
+      "analytical_solution": true,
+      "tolerance_combined": 0.05,
+      "skip": false
+    },
+    {
+      "test_id": "COUP-02",
+      "description": "Wave Propagation Speed in Flat Space (Phase 1)",
+      "category": "Fundamental",
+      "physics": "Single Gaussian pulse in E-field, χ=0 (flat space). Verify wave front propagates at c. Tests hyperbolic causal structure.",
+      "grid_size": 128,
+      "steps": 3000,
+      "convergence_test": true,
+      "tolerance_speed": 0.15,
+      "notes": "2nd-order stencil limits accuracy to ~10%. Convergence test with finer dx achieves <5%. For 1% accuracy, requires 4th-order stencil or dx<0.01.",
+      "skip": false
+    },
+    {
+      "test_id": "COUP-07",
+      "description": "EM Wave in χ-Gradient (Phase 1)",
+      "category": "Electromagnetic-Gravitational",
+      "physics": "Light beam through ∇χ region. Gravitational redshift: ω_observed = ω_emitted × √(1 + Δχ²). Verify E·B orthogonality preserved and Maxwell equations satisfied.",
+      "grid_size": 128,
+      "steps": 2500,
+      "chi_gradient": [0.0, 0.2],
+      "em_wave_freq": 1.0,
+      "em_wave_amp": 0.1,
+      "convergence_test": true,
+      "analytical_solution": true,
+      "tolerance_redshift": 0.01,
+      "skip": false
+    },
+    {
+      "test_id": "COUP-03",
+      "description": "Light Deflection During Transverse Motion (Phase 2)",
+      "category": "Relativistic-Gravitational",
+      "physics": "Light passes near moving massive χ-source. Deflection angle must be invariant under source boost per GR. Tests if gravity is truly emergent.",
+      "grid_size": 128,
+      "steps": 3000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-04",
+      "description": "Bound State Energy Levels in χ-Well (Phase 2)",
+      "category": "Quantum-Gravitational",
+      "physics": "Quantum wavepacket in gravitational potential (χ-gradient well). Energy levels: E_n = E_flat + V_grav. Compare to hydrogen-in-gravity perturbation theory.",
+      "grid_size": 64,
+      "steps": 5000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-05",
+      "description": "Tunneling Rate Modulation by χ-Field (Phase 2)",
+      "category": "Quantum-Gravitational",
+      "physics": "Barrier tunneling with spatially varying χ. χ acts as effective mass, suppressing tunneling: T ∝ exp(-2κL) where κ depends on local χ.",
+      "grid_size": 64,
+      "steps": 4000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-06",
+      "description": "Wavepacket Collapse vs χ-Gradient Interference (Phase 3)",
+      "category": "Quantum-Gravitational",
+      "physics": "Double-slit with asymmetric χ-field. Path difference accumulates phase shift like gravitational redshift: Δφ = ∫ω_local dt.",
+      "grid_size": 128,
+      "steps": 5000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-08",
+      "description": "Charged Particle in Combined χ + B Field (Phase 2)",
+      "category": "Electromagnetic-Gravitational",
+      "physics": "Electron in magnetic field B and χ-gradient. Lorentz force (qv×B) with χ-induced inertia. Cyclotron frequency: ω_c = qB/(γm_eff) where m_eff ~ χ.",
+      "grid_size": 128,
+      "steps": 3000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-09",
+      "description": "Electromagnetic Energy in Gravitational Well (Phase 3)",
+      "category": "Electromagnetic-Gravitational",
+      "physics": "Standing EM wave in χ-potential well. EM field energy contributes to χ-field dynamics (energy-stress tensor coupling): χ responds to |E|² + c²|B|².",
+      "grid_size": 128,
+      "steps": 4000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-10",
+      "description": "χ-Feedback Stabilization of Expansion (Phase 3)",
+      "category": "Cosmological-Thermodynamic",
+      "physics": "Universe simulation with ∂²χ/∂t² = c²∇²χ - κ(E² - E₀²). Test if χ-field self-regulates to prevent runaway expansion. Hubble parameter H(t) → constant.",
+      "grid_size": 256,
+      "steps": 1000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-11",
+      "description": "Entropy Production During χ-Wave Dissipation (Phase 4)",
+      "category": "Cosmological-Thermodynamic",
+      "physics": "χ-wave packet with artificial damping. Entropy increase matches thermodynamic expectation: ΔS = ∫(Q/T)dt where Q is dissipated energy.",
+      "grid_size": 128,
+      "steps": 5000,
+      "skip": true,
+      "implementation_status": "TODO"
+    },
+    {
+      "test_id": "COUP-12",
+      "description": "Vacuum Fluctuation Spectrum vs χ-Granularity (Phase 4)",
+      "category": "Cosmological-Thermodynamic",
+      "physics": "Zero-point energy modes at lattice scale. Discreteness imposes natural UV cutoff: mode density ρ(k) drops exponentially for k > π/dx.",
+      "grid_size": 256,
+      "steps": 2000,
+      "skip": true,
+      "implementation_status": "TODO"
+    }
+  ]
+}

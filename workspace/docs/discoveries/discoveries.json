@@ -137,5 +137,18 @@
       "analysis/tier3_energy_bug_analysis.md",
       "analysis/test_stencil_order.py"
     ]
+  },
+  {
+    "date": "2025-11-06",
+    "tier": "Tier 6 - Numerical Validation",
+    "title": "Analytical Solution Validation Superior to Feature Tracking",
+    "summary": "Discovery that L2 error convergence against analytical solutions provides more robust validation than feature tracking algorithms (peak tracking, centroid tracking, threshold-based wave front detection). For 1D d'Alembert wave equation with exact Gaussian pulse solution, L2 error showed perfect 2nd-order convergence (ratios 2.13, 2.00) while wave speed measurements diverged non-monotonically (11% → 25% → 54% error) due to wave interference artifacts. Key insight: whole-field comparison (L2 norm) eliminates measurement uncertainty inherent in single-point or threshold-based detection methods. Generalizes to any PDE with known analytical solutions (bound states, static fields, conservation laws, dispersion relations).",
+    "evidence": "COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed",
+    "links": [
+      "src/run_tier6_coupling.py",
+  "results/Coupling/COUP-02/convergence_study.png",
+      "experiments/COUP-02_convergence_validation_resolution.md",
+      ".github/PROCESS_IMPROVEMENTS.md"
+    ]
   }
 ]

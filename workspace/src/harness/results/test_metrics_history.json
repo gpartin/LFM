@@ -2638,5 +2638,29 @@
     },
     "priority": 50,
     "last_run": "2025-11-05T00:57:36Z"
+  },
+  "GRAV-09": {
+    "runs": [
+      {
+        "exit_code": 0,
+        "runtime_sec": 3351.6903355121613,
+        "peak_cpu_percent": 774.7,
+        "peak_memory_mb": 411.0859375,
+        "peak_gpu_memory_mb": 366.0,
+        "timestamp": "2025-11-06T15:58:32Z"
+      }
+    ],
+    "estimated_resources": {
+      "runtime_sec": 3686.8593690633775,
+      "cpu_cores_needed": 8.521700000000001,
+      "memory_mb": 493.30312499999997,
+      "gpu_memory_mb": 402.6,
+      "uses_gpu": true,
+      "confidence": "last_run",
+      "sample_size": 1,
+      "timeout_multiplier": 3.0
+    },
+    "priority": 50,
+    "last_run": "2025-11-06T15:58:32Z"
   }
 }

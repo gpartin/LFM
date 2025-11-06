@@ -53,6 +53,16 @@ except Exception:
     compute_chi_from_energy_poisson = None
 from core.lfm_parallel import run_lattice
 
+# ===== Path Configuration =====
+# CRITICAL: These paths are relative to THIS SCRIPT's location (workspace/src/)
+# All tier runners must use Path(__file__).parent.parent to access workspace root
+CONFIG_DIR = Path(__file__).parent.parent / "config"
+RESULTS_DIR = Path(__file__).parent.parent / "results"
+
+# Verify paths exist at module load time
+assert CONFIG_DIR.exists(), f"Config dir not found: {CONFIG_DIR}"
+assert RESULTS_DIR.exists(), f"Results dir not found: {RESULTS_DIR}"
+
 def scalar_fast(v):
     try:
         return float(v.item())
@@ -294,7 +304,7 @@ def local_omega_theory(c, k_mag, chi):
 
  
 def _default_config_name() -> str:
-    return "config_tier2_gravityanalogue.json"
+    return "config_tier2_gravityanalogue.json"  # Just filename - CONFIG_DIR will be prepended
 
  
 class Tier2Harness(BaseTierHarness):
@@ -3052,8 +3062,8 @@ def main():
     parser = argparse.ArgumentParser(description="Tier-2 Gravity Analogue Test Suite")
     parser.add_argument("--test", type=str, default=None,
                        help="Run single test by ID (e.g., GRAV-01). If omitted, runs all tests.")
-    parser.add_argument("--config", type=str, default="config/config_tier2_gravityanalogue.json",
-                       help="Path to config file")
+    parser.add_argument("--config", type=str, default=None,
+                       help="Path to config file (default: auto-locate config_tier2_gravityanalogue.json)")
     parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
                        help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated kernel)")
     # Optional post-run hooks

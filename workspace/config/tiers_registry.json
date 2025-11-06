@@ -58,5 +58,17 @@
     "config": "config/config_tier5_electromagnetic.json",
     "config_schema": "tests",
     "expected": 20
+  },
+  {
+    "tier": 6,
+    "name": "Coupling",
+    "category_name": "Multi-Domain Coupling",
+    "dir": "Coupling",
+    "prefix": "COUP",
+    "id_pattern": "^COUP-\\d+$",
+    "runner": "run_tier6_coupling.py",
+    "config": "config/config_tier6_coupling.json",
+    "config_schema": "tests",
+    "expected": 12
   }
 ]
