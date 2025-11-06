@@ -1,0 +1,20 @@
+{
+  "test_id": "EM-02",
+  "description": "Magnetic Field Generation: \u2207\u00d7B = \u03bc\u2080J",
+  "passed": true,
+  "metrics": {
+    "magnetic_generation_error": 0.0,
+    "absolute_error": 0.0,
+    "current_density": 0.001,
+    "total_current": 3.141592653589794e-05,
+    "wire_radius": 0.1,
+    "test_points": 2,
+    "inside_wire_error": 0.0,
+    "outside_wire_error": 0.0
+  },
+  "tolerance": 0.03,
+  "runtime_sec": 0.8207993507385254,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:38.373851Z"
+}

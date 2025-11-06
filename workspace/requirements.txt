@@ -1,0 +1,7 @@
+# -*- coding: utf-8 -*-
+# LFM Python dependencies
+# Deterministic build system introduces Jinja2 for templated document generation.
+# Jinja2 License: BSD 3-Clause (https://github.com/pallets/jinja/blob/main/LICENSE.rst)
+# Including explicit license reference satisfies IP compliance and attribution requirements.
+
+Jinja2==3.1.4  # BSD-3-Clause

@@ -1,17 +1,18 @@
 ---
-title: "MASTER DOCUMENT"
+title: "LFM Master Document"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-04 12:12:47"
+generated: "2025-11-06 14:27:25"
 ---
 
-﻿Lattice-Field Medium (LFM): Master Document — Conceptual Framework and
+# ﻿Lattice-Field Medium (LFM): Master Document — Conceptual Framework and
+
 Physical Interpretation
-Version 3.0 — 2025-11-01 (Defensive ND Release)
+Version 3.1 — 2025-11-05 (Defensive ND Release)
 Greg D. Partin | LFM Research, Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0
 International (CC BY-NC-ND 4.0)
@@ -20,7 +21,9 @@ adds No-Derivatives restrictions and defensive-publication language for
 intellectual property protection. All LFM Phase-1 documents are
 synchronized under this unified v3.0 release.
 
-Abstract
+
+## Abstract
+
 
 The Lattice-Field Medium (LFM) proposes that spacetime arises from a
 deterministic lattice of locally coupled energy cells. Each cell evolves
@@ -58,28 +61,37 @@ relativistic, and quantum—arise from this same rule.
 
 3 Foundational Properties
 
-	-----------------------------------------------------------------------
-	Structural Feature                  Physical Outcome
-	----------------------------------- -----------------------------------
-	Local hyperbolic operator           Finite propagation speed, causality
 
-	Lorentz invariance of □             Emergent special relativity
+-----------------------------------------------------------------------
 
-	Curvature field χ(x,t)              Inertia and gravity analogues
+Structural Feature                  Physical Outcome
 
-	Lagrangian symmetry                 Energy–momentum conservation
+----------------------------------- -----------------------------------
 
-	Discrete time step defines a        Natural quantization scale
-	natural quantization scale (ℏ_eff = 
-	ΔE_min Δt).                         
-	-----------------------------------------------------------------------
+Local hyperbolic operator           Finite propagation speed, causality
+
+Lorentz invariance of □             Emergent special relativity
+
+Curvature field χ(x,t)              Inertia and gravity analogues
+
+Lagrangian symmetry                 Energy–momentum conservation
+
+Discrete time step defines a        Natural quantization scale
+natural quantization scale (ℏ_eff =
+ΔE_min Δt).
+
+-----------------------------------------------------------------------
 
 4 Analytic Checks and Validation
 
 Analytic proofs demonstrate that the LFM reproduces well-known physical
 laws:
+
 1. Characteristic cone: defines invariant light-cone structure.
-2. Noether energy: ensures intrinsic conservation.
+
+## 2. Noether energy: ensures intrinsic conservation.
+
+
 3. WKB lensing: predicts ray bending toward higher χ.
 4. Mode quantization: discrete oscillation frequencies.
 5. Scaling symmetry: dimensionless and self-consistent.
@@ -89,13 +101,19 @@ laws:
 The same lattice rule reproduces distinct physical regimes depending on
 the behavior of χ(x,t) and coupling constants:
 
+
 • Classical & Relativistic: Lorentz invariance and causal propagation
+
 (Tier 1).
+
 
 • Gravitational: χ-gradients produce redshift and lensing (Tier 2).
 
+
 • Quantum & Coherence: quantized exchange and long-range correlations
+
 (Tier 3–5).
+
 
 • Cosmological: χ-feedback drives self-limiting expansion (Tier 6).
 
@@ -105,6 +123,7 @@ the behavior of χ(x,t) and coupling constants:
 
 In the LFM view, spacetime, matter and energy are emergent
 manifestations of a discrete substrate:
+
 - Space corresponds to lattice connectivity.
 - Time corresponds to sequential updates.
 - Energy corresponds to local oscillation amplitude.
@@ -116,19 +135,24 @@ Fig 1 — Conceptual mapping of LFM quantities to physical observables
 
 7 Experimental and Simulation Validation
 
-	-----------------------------------------------------------------------
-	Domain            Example Test      Observable        Status
-	----------------- ----------------- ----------------- -----------------
-	Laboratory        Cavity or         Discrete          Planned
-										interferometer    dispersion /      
-																			anisotropy         
 
-	Astrophysical     GRB timing /      χ-dependent delay Analysis
-										ringdown          or shift          
+-----------------------------------------------------------------------
 
-	Numerical         Tier 1–3 GPU      Lorentz & energy  PASS
-										lattice runs      conservation      
-	-----------------------------------------------------------------------
+Domain            Example Test      Observable        Status
+
+----------------- ----------------- ----------------- -----------------
+
+Laboratory        Cavity or         Discrete          Planned
+interferometer    dispersion /
+anisotropy
+
+Astrophysical     GRB timing /      χ-dependent delay Analysis
+ringdown          or shift
+
+Numerical         Tier 1–3 GPU      Lorentz & energy  PASS
+lattice runs      conservation
+
+-----------------------------------------------------------------------
 
 8 Gravity Emergence Summary
 
@@ -170,11 +194,15 @@ continuous, isotropic energy propagation with conservation to numerical
 precision. This implies that continuity itself is an emergent illusion
 of discrete processes.
 
-Key outcomes:
+
+## Key outcomes:
+
+
 - Conservation from discreteness
 - Emergent relativity
 - Self-quantization
 - Continuum illusion
+
 Together, these show that the lattice substrate can generate stable,
 law-like behavior indistinguishable from continuous spacetime.
 
@@ -184,24 +212,34 @@ all higher-tier phenomena build.
 12 Open Questions and Future Work
 
 Outstanding questions for future investigation:
+
 1. Mapping lattice constants (α, β, χ) to physical units.
-2. High-curvature stability and 3D scalability.
-3. Independent third-party validation.
+
+## 2. High-curvature stability and 3D scalability.
+
+
+## 3. Independent third-party validation.
+
+
 4. Entropy, thermodynamics, and information conservation.
 5. Integration with established quantum field frameworks.
 
+
 6. Long-term numerical energy drift characterization across different
+
 stencil orders and dimensions.
 
+
 7. Verification of χ-coupled energy curvature via probe-particle
+
 simulations (Tier 2–3 extensions).
 
 13 Summary
 
 The Lattice-Field Medium unifies relativity, gravitation, quantization,
-electromagnetic theory, and cosmology through a single discrete rule. Energy, inertia, 
-curvature, and electromagnetic field interactions emerge as properties of one deterministic field. 
-Complete Maxwell equation validation demonstrates that all classical electromagnetism 
+electromagnetic theory, and cosmology through a single discrete rule. Energy, inertia,
+curvature, and electromagnetic field interactions emerge as properties of one deterministic field.
+Complete Maxwell equation validation demonstrates that all classical electromagnetism
 arises naturally from χ-field variations. Continued
 validation will determine whether this structure can serve as a
 fundamental framework for physical law.
@@ -211,6 +249,14 @@ formulations under one canonical framework, thereby completing Phase 1
 conceptual validation and establishing the theoretical foundation for
 empirical verification.
 
+Discoveries Registry and Priority
+For authoritative discovery statements and dates, refer to the canonical registry and generated overview:
+
+- Registry (canonical): docs/discoveries/discoveries.json (Phase 1 contains 10 entries; last updated 2025-11-01).
+- Reader overview: uploads/osf/DISCOVERIES_OVERVIEW.md and uploads/zenodo/DISCOVERIES_OVERVIEW.md (auto-generated by the upload builder).
+
+If this master document’s wording differs from the registry, the registry governs and establishes scientific priority via defensive publication.
+
 14 Legal & Licensing Notice
 
 This document and all accompanying materials are © 2025 Greg D. Partin.
@@ -218,7 +264,9 @@ All rights reserved. “Lattice-Field Medium,” “LFM Equation,” and “LFM
 Research Framework”
 are original works authored by Greg D. Partin.
 
-License Update (v3.0 — 2025-11-01):
+
+### License Update (v3.1 — 2025-11-05):
+
 Beginning with version 3.0, this work is licensed under the
 Creative Commons Attribution–NonCommercial–NoDerivatives 4.0
 International License (CC BY-NC-ND 4.0).
@@ -254,10 +302,17 @@ They are not granted for reuse, adaptation, or redistribution in
 derivative simulation frameworks
 without written permission of the author.
 
-Citation (Zenodo Record):
+
+### Citation (Zenodo Record):
+
 Partin, G. D. (2025). Lattice-Field Medium (LFM): A Deterministic
 Lattice Framework for Emergent Relativity, Gravitation, and Quantization
 — Phase 1 Conceptual Hypothesis v1.0. Zenodo.
 https://doi.org/10.5281/zenodo.17478758
 
 Contact: latticefieldmediumresearch@gmail.com
+
+
+---
+
+License: CC BY-NC-ND 4.0

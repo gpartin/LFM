@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-10",
+  "description": "Larmor Radiation from Accelerated Charges",
+  "passed": true,
+  "metrics": {
+    "em-10_error": 0.0,
+    "analytical_verification": "Larmor Radiation from Accelerated Charges verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 0.0,
+    "avg_individual_error": 0.0
+  },
+  "tolerance": 0.25,
+  "runtime_sec": 0.5857813358306885,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:41.729495Z"
+}

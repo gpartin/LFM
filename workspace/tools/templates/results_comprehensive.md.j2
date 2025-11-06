@@ -1,0 +1,74 @@
+---
+title: "LFM Phase 1 Comprehensive Test Results"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+{% if deterministic_date %}generated: "{{ deterministic_date }}"{% endif %}
+---
+
+# Comprehensive Test Results
+
+## Overview
+
+{{ results_overview }}
+Generated: {{ deterministic_date if deterministic_date else generation_time }}
+
+## Test Summary
+
+| Tier | Category | Tests | Pass Rate | Tier Achievement Report |
+|------|----------|--------|-----------|------------------------|
+{%- for t in tiers %}
+| {{ t.tier_name }} | {{ t.short_name }} | {{ t.test_count }} | {{ t.passed }}/{{ t.test_count }} ({{ (100 * t.passed / t.test_count) | round(1) }}%) | TIER_{{ t.tier_number }}_ACHIEVEMENTS.md |
+{%- endfor %}
+
+**Total: {{ total_passed }}/{{ total_tests }} tests passing ({{ pass_percentage | round(1) }}%)**
+
+---
+
+## Tier Descriptions
+{%- for t in tiers %}
+### {{ t.tier_name }}
+
+{{ t.description }}
+
+**Key validations:**
+{%- for kv in t.key_validations %}
+- {{ kv }}
+{%- endfor %}
+
+**Pass rate:** {{ t.passed }}/{{ t.test_count }} ({{ (100 * t.passed / t.test_count) | round(1) }}%)  
+**See:** TIER_{{ t.tier_number }}_ACHIEVEMENTS.md
+
+{%- endfor %}
+---
+
+## Detailed Test Results
+
+All detailed test-by-test results, including test IDs, descriptions, and status, are documented in the individual tier achievement reports:
+{%- for t in tiers %}
+- **TIER_{{ t.tier_number }}_ACHIEVEMENTS.md** — {{ t.short_name }} validation ({{ t.test_count }} tests)
+{%- endfor %}
+
+Each report includes:
+- Complete test result table (Test ID, Status, Description)
+- Pass rate statistics
+- Domain-specific significance statements
+
+For test result files (summary.json, plots, diagnostics), see the results/ directory tree included in this package.
+
+---
+
+## Significance
+
+These comprehensive validation results demonstrate that:
+{%- for t in tiers %}
+{{ loop.index }}. {{ t.significance }}
+{%- endfor %}
+
+All without imposing these as separate axioms — they arise naturally from the single governing equation: ∂²E/∂t² = c²∇²E − χ²(x,t)E
+
+---
+License: CC BY-NC-ND 4.0

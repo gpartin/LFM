@@ -1,0 +1,12 @@
+{
+  "test_id": "COUP-07",
+  "description": "EM Wave in χ-Gradient (Phase 1)",
+  "passed": false,
+  "runtime_sec": 10.924711799976649,
+  "energy_drift": 0.4071162889630303,
+  "primary_metric": 11.32234018801084,
+  "metric_name": "redshift_error",
+  "convergence_validated": false,
+  "notes": "ω_measured=12.5664, ω_predicted=1.0198",
+  "timestamp": "2025-11-06T14:56:09.396242+00:00"
+}

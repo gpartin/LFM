@@ -1,0 +1,28 @@
+{
+  "tier": 4,
+  "category": "Quantization",
+  "test_id": "QUAN-10",
+  "description": "Bound state quantization \u2014 discrete energy eigenvalues E_n emerge from boundary conditions",
+  "passed": true,
+  "timestamp": 1762265336.0182836,
+  "hardware": {
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 512,
+    "dx": 0.1,
+    "dt": 0.005,
+    "chi": 0.2,
+    "L": 51.2,
+    "num_modes": 6
+  },
+  "metrics": {
+    "mean_error": 0.014038057552694196,
+    "max_error": 0.02482469874953577,
+    "num_modes_measured": 6,
+    "quantization_demonstrated": true
+  },
+  "notes": "Discrete energy eigenvalues emerge from boundary conditions - fundamental quantum signature",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

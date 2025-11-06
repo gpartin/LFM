@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "description": "Master tier configuration for LFM validation framework. Single source of truth for tier metadata used in test runners, documentation generation, and upload packages.",
+  "version": "1.0.0",
+  "last_updated": "2025-11-06",
+  
+  "tiers": [
+    {
+      "tier_number": 1,
+      "tier_id": "tier1_relativistic",
+      "tier_name": "Tier 1 — Relativistic",
+      "short_name": "Relativistic",
+      "category_dir": "Relativistic",
+      "test_prefix": "REL",
+      "test_count": 15,
+      "runner_script": "run_tier1_relativistic.py",
+      "config_file": "config_tier1_relativistic.json",
+      "description": "This tier validates Lorentz invariance, isotropy, and causality constraints.",
+      "significance": "These validations demonstrate that special relativity emerges naturally from the LFM lattice framework without imposing it as an axiom.",
+      "key_validations": [
+        "Lorentz invariance (boosts at low and high velocities)",
+        "Isotropy (directional equivalence, spherical symmetry)",
+        "Causality (finite propagation speed, light cone constraints)",
+        "Dispersion relations across relativistic regimes (χ/k from 10 to 0.1)"
+      ],
+      "representative_plot": {
+        "test_id": "REL-13",
+        "source_path": "results/Relativistic/REL-13/plots/dispersion_REL-13.png",
+        "dest_filename": "plot_tier1_relativistic_dispersion.png",
+        "caption": "Dispersion relation validation across relativistic regimes"
+      }
+    },
+    {
+      "tier_number": 2,
+      "tier_id": "tier2_gravityanalogue",
+      "tier_name": "Tier 2 — Gravity Analogue",
+      "short_name": "Gravity Analogue",
+      "category_dir": "Gravity",
+      "test_prefix": "GRAV",
+      "test_count": 25,
+      "runner_script": "run_tier2_gravityanalogue.py",
+      "config_file": "config_tier2_gravityanalogue.json",
+      "description": "This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.",
+      "significance": "These validations demonstrate that gravity-like phenomena (redshift, lensing, time delay) emerge from χ-field gradients, suggesting LFM may provide a unified framework for gravity and quantum mechanics.",
+      "key_validations": [
+        "Gravitational redshift (frequency shift in potential wells, linear gradients, radial profiles)",
+        "Time dilation (bound states, refined grids)",
+        "Light bending (ray deflection through χ-gradients)",
+        "Phase/group delay (Shapiro-like time delay)",
+        "Dynamic χ-field evolution (gravitational wave analogues)",
+        "GR calibration (redshift ↔ G_eff mapping)"
+      ],
+      "representative_plot": {
+        "test_id": "GRAV-25",
+        "source_path": "results/Gravity/GRAV-25/plots/light_bending_GRAV-25.png",
+        "dest_filename": "plot_tier2_gravity_light_bending.png",
+        "caption": "Light bending through χ-field gradient demonstrating gravitational lensing analogue"
+      }
+    },
+    {
+      "tier_number": 3,
+      "tier_id": "tier3_energy",
+      "tier_name": "Tier 3 — Energy Conservation",
+      "short_name": "Energy Conservation",
+      "category_dir": "Energy",
+      "test_prefix": "ENER",
+      "test_count": 10,
+      "runner_script": "run_tier3_energy.py",
+      "config_file": "config_tier3_energy.json",
+      "description": "This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.",
+      "significance": "These validations demonstrate that energy conservation is maintained across all simulation regimes, providing confidence in the numerical implementation and physical correctness of the LFM framework.",
+      "key_validations": [
+        "Global energy conservation (short and long simulations)",
+        "Wave integrity in curved spacetime",
+        "Hamiltonian partitioning (KE ↔ GE ↔ PE energy flow)",
+        "Dissipation (exponential decay with controlled damping)",
+        "Thermalization (steady-state convergence)"
+      ],
+      "representative_plot": {
+        "test_id": "ENER-05",
+        "source_path": "results/Energy/ENER-05/plots/hamiltonian_components.png",
+        "dest_filename": "plot_tier3_energy_conservation.png",
+        "caption": "Hamiltonian energy partitioning showing KE ↔ GE ↔ PE flow"
+      }
+    },
+    {
+      "tier_number": 4,
+      "tier_id": "tier4_quantization",
+      "tier_name": "Tier 4 — Quantization",
+      "short_name": "Quantization",
+      "category_dir": "Quantization",
+      "test_prefix": "QUAN",
+      "test_count": 14,
+      "runner_script": "run_tier4_quantization.py",
+      "config_file": "config_tier4_quantization.json",
+      "description": "This tier validates quantum mechanical phenomena including bound states, tunneling, and uncertainty relations.",
+      "significance": "These validations demonstrate that quantum mechanical behavior emerges from the classical Klein-Gordon equation with appropriate boundary conditions, suggesting a deep connection between field theory and quantum mechanics.",
+      "key_validations": [
+        "Energy quantization (discrete eigenvalues from boundary conditions)",
+        "Quantum tunneling (barrier penetration when E < V)",
+        "Heisenberg uncertainty (Δx·Δk ≈ 1/2)",
+        "Zero-point energy (ground state E₀ ≠ 0)",
+        "Wave-particle duality",
+        "Spectral linearity and phase-amplitude coupling"
+      ],
+      "representative_plot": {
+        "test_id": "QUAN-10",
+        "source_path": "results/Quantization/QUAN-10/plots/quantized_energies.png",
+        "dest_filename": "plot_tier4_quantum_bound_states.png",
+        "caption": "Quantized energy eigenvalues demonstrating emergent quantum behavior"
+      }
+    },
+    {
+      "tier_number": 5,
+      "tier_id": "tier5_electromagnetic",
+      "tier_name": "Tier 5 — Electromagnetic",
+      "short_name": "Electromagnetic",
+      "category_dir": "Electromagnetic",
+      "test_prefix": "EM",
+      "test_count": 21,
+      "runner_script": "run_tier5_electromagnetic.py",
+      "config_file": "config_tier5_electromagnetic.json",
+      "description": "This tier validates electromagnetic theory emergence from the LFM framework through computational tests.",
+      "significance": "These validations demonstrate that electromagnetic theory (Maxwell equations, wave propagation, Lorentz force) emerges naturally from the LFM lattice framework without imposing Maxwell equations as axioms.",
+      "key_validations": [
+        "Maxwell equations (Gauss's Law, Faraday's Law, Ampère-Maxwell Law)",
+        "Electromagnetic wave propagation (FDTD validation)",
+        "Poynting vector conservation",
+        "χ-field EM coupling",
+        "Mass-energy equivalence (E = mc²)",
+        "Charge conservation (∂ρ/∂t + ∇·J = 0)",
+        "Gauge invariance",
+        "Larmor radiation, synchrotron radiation",
+        "Doppler effect with relativistic corrections"
+      ],
+      "representative_plot": {
+        "test_id": "EM-05",
+        "source_path": "results/Electromagnetic/EM-05/plots/em_wave_propagation.png",
+        "dest_filename": "plot_tier5_electromagnetic_waves.png",
+        "caption": "Electromagnetic wave propagation demonstrating FDTD validation"
+      }
+    }
+  ],
+  
+  "document_templates": {
+    "executive_summary_header": "Lattice-Field Medium (LFM): Executive Summary",
+    "executive_summary_overview": "The Lattice-Field Medium (LFM) proposes that spacetime itself is a discrete, deterministic lattice of locally interacting cells. Each cell carries an energy amplitude E(x,t) and a curvature parameter χ(x,t) that modulates its local stiffness. The governing relation ∂²E/∂t² = c²∇²E − χ²(x,t)E, with c² = α/β, represents a Lorentz-symmetric, locally causal wave law building upon the Klein-Gordon equation (Klein, 1926; Gordon, 1926). By allowing χ to vary across space and time, this single rule reproduces classical mechanics, relativity, gravitation, quantization, and cosmological expansion as emergent phenomena of one underlying field.",
+    "results_comprehensive_overview": "This document provides a high-level summary of LFM validation test results across all tiers. For detailed test-by-test results, see the individual tier achievement reports."
+  }
+}

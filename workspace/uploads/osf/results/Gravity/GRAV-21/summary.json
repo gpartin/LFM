@@ -1,0 +1,20 @@
+{
+  "id": "GRAV-21",
+  "description": "GR calibration - redshift to G_eff mapping (weak-field limit)",
+  "passed": true,
+  "delta_omega_over_omega": 1.183358318737697,
+  "delta_chi_over_chi": 1.1833583187529388,
+  "ratio_match_error": 1.2880129014457119e-11,
+  "G_measured": 0.09967350187583479,
+  "G_expected": 0.1,
+  "rel_err_G": 0.003264981241652143,
+  "omega_A": 0.4464829306403699,
+  "omega_B": 0.2044936586031847,
+  "chi_A": 0.44648292660713196,
+  "chi_B": 0.2044936567544937,
+  "runtime_sec": 0.0,
+  "on_gpu": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-06T18:07:29.836322Z"
+}

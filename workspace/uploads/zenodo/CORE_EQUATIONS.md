@@ -1,25 +1,30 @@
 ---
-title: "CORE EQUATIONS"
+title: "LFM Core Equations and Physics"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-04 12:12:47"
+generated: "2025-11-06 14:27:25"
 ---
 
-﻿Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations
-Version 3.0 — 2025-11-01 (Defensive ND Release)
+# ﻿Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations
+
+Version 3.1 — 2025-11-05 (Defensive ND Release)
 Greg D. Partin | LFM Research — Los Angeles CA USA
 License: Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
 Note: This version supersedes all prior releases (v1.x and v2.x) and adds No-Derivatives restrictions and defensive-publication language for intellectual property protection. All LFM Phase-1 documents are synchronized under this unified v3.0 release.
-Abstract
+
+## Abstract
+
 This document defines the governing equations of the Lattice-Field Medium (LFM) and their continuum, discrete, and variational forms. It establishes the connection between the lattice update law and the variable-mass Klein–Gordon equation (Klein, 1926; Gordon, 1926), outlines how Lorentz invariance emerges naturally in the continuum limit, and shows how quantization and gravitational analogues arise through the curvature field χ(x,t).
 1 Introduction and Scope
 The Lattice-Field Medium (LFM) treats spacetime as a discrete lattice of interacting energy cells. Each cell holds an energy amplitude E(x,t) and curvature parameter χ(x,t). The purpose of this document is to define the mathematical foundation of LFM, connecting the discrete rule to its continuum form and providing validation targets used in Tier 1–3 testing.
 
-1.1 Physics Foundation
+
+## 1.1 Physics Foundation
+
 LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Gordon in 1926:
 
 Standard Klein-Gordon: ∂²φ/∂t² = c²∇²φ - m²φ
@@ -29,9 +34,13 @@ Modified Klein-Gordon: ∂²E/∂t² = c²∇²E - χ²(x,t)E
 
 This spatial variation enables emergence of gravitational and quantum phenomena through discrete field interactions while preserving the fundamental relativistic structure.
 
-References:
+
+## References:
+
+
 - Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. Zeitschrift für Physik, 37(12), 895-906.
 - Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. Zeitschrift für Physik, 40(1-2), 117-133.
+
 2 Canonical Field Equation
 The canonical continuum form of the LFM equation is:
 ∂²E/∂t² = c² ∇²E − χ²(x,t) E, with c² = α/β.
@@ -48,8 +57,10 @@ E^{t+1} = (2 − γ) E^t − (1 − γ) E^{t−1}
 1D Laplacian (order-4):
 ∇_Δ² E_i = [−E_{i+2} + 16E_{i+1} − 30E_i + 16E_{i−1} − E_{i−2}] / (12 (Δx)²)
 Multi-D:
+
 • 2D supports order-2 and order-4.
 • 3D currently supports order-2 only (order-4/6 reserved for future tiers).
+
 Boundary options (per test): periodic (canonical), reflective, or absorbing.
 No stochastic (η) or exogenous coupling (Δφ) terms are part of the canonical law.
 4 Derived Relations and (Continuum vs Lattice)
@@ -125,10 +136,20 @@ Bisio et al. (2015)
 12 Summary and Outlook
 The Lattice-Field Medium provides a deterministic, Lorentz-symmetric framework where quantization, inertia, gravity, and cosmic expansion emerge from one discrete rule. All formulations preserve conservation, isotropy, and CPT symmetry. Tier 1–3 validations confirm numerical stability and physical coherence, forming the foundation for higher-tier exploration.
 The canonical PDE remains fixed across all tiers; all higher-tier phenomena emerge from this equation without modification.
+
+Discoveries Registry and Priority
+To ensure consistent terminology and scientific priority, the canonical list of discoveries is maintained and published as part of this repository:
+
+- Registry (source of truth): docs/discoveries/discoveries.json (Phase 1: 10 entries, last updated 2025-11-01).
+- Generated overview: uploads/osf/DISCOVERIES_OVERVIEW.md and uploads/zenodo/DISCOVERIES_OVERVIEW.md are created from the registry during the upload build.
+
+In case of any discrepancy between this document and the registry, the registry prevails. It serves as defensive publication establishing prior art.
 13 Legal & Licensing Notice
 This document and all accompanying materials are © 2025 Greg D. Partin.
 All rights reserved. “Lattice-Field Medium,” “LFM Equation,” and “LFM Research Framework” are original works authored by Greg D. Partin.
-License Update (v3.0 — 2025-11-01):
+
+### License Update (v3.1 — 2025-11-05):
+
 Beginning with version 3.0, this work is licensed under the
 Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).
 Earlier releases (v1.x and v2.x) were distributed under CC BY-NC 4.0.
@@ -142,6 +163,12 @@ Trademark Notice
 “Lattice-Field Medium,” “LFM Research,” and “LFM Equation” are distinctive marks identifying this body of work. Unauthorized use of these names in promotional, academic, or product contexts is prohibited.
 Redistribution Boundary
 All code examples, update laws, and data structures herein are disclosed solely for scientific reproducibility. They are not granted for reuse, adaptation, or redistribution in derivative simulation frameworks without written permission of the author.
-Citation (Zenodo Record):
+
+### Citation (Zenodo Record):
+
 Partin, G. D. (2025). Lattice-Field Medium (LFM): A Deterministic Lattice Framework for Emergent Relativity, Gravitation, and Quantization — Phase 1 Conceptual Hypothesis v1.0. Zenodo. https://doi.org/10.5281/zenodo.17478758
 Contact: latticefieldmediumresearch@gmail.com
+
+---
+
+License: CC BY-NC-ND 4.0

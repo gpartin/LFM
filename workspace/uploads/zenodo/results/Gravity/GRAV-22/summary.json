@@ -1,0 +1,16 @@
+{
+  "id": "GRAV-22",
+  "description": "GR calibration - Shapiro delay correspondence (group velocity through slab)",
+  "passed": true,
+  "delay_lfm": 9.475210141199952,
+  "delay_gr": 2.2399999999999993,
+  "correspondence_ratio": 4.230004527321408,
+  "chi_bg": 0.05,
+  "chi_slab": 0.3,
+  "L_slab": 25.599999999999994,
+  "runtime_sec": 0.0,
+  "on_gpu": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-06T18:07:29.786832Z"
+}

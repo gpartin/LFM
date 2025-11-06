@@ -1,0 +1,20 @@
+{
+  "id": "GRAV-20",
+  "description": "Self-consistent chi from E-energy (Poisson) - verify omega~=chi at center (1D)",
+  "passed": true,
+  "rel_err_ratio": 0.05885389325759838,
+  "ratio_meas_serial": 0.9411461067424016,
+  "ratio_meas_parallel": NaN,
+  "ratio_theory": 1.0,
+  "runtime_sec": 0.0,
+  "on_gpu": true,
+  "method": "chi_from_energy_poisson",
+  "profile_halfwidth_cells": 8,
+  "profile_median_ratio": 1.0527548527092674,
+  "profile_rel_err_median": 0.052754852709267386,
+  "center_ok": true,
+  "profile_ok": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-03T05:09:52.593388Z"
+}

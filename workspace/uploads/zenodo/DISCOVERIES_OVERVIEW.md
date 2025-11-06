@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-05 19:35:19"
+generated: "2025-11-06 14:27:24"
 ---
 
 ## Summary Table
@@ -25,6 +25,7 @@ generated: "2025-11-05 19:35:19"
 | 2025-11-01 | Theoretical | Variational Gravity Law Derivation | Mathematical derivation in core equations |
 | 2025-11-01 | Computational | GPU-Optimized Discrete Spacetime Framework | Complete codebase with validation |
 | 2025-11-05 | Tier 3 - Numerical Methods | Discrete Conservation Requires Matching Discretization Orders | Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect. |
+| 2025-11-06 | Tier 6 - Numerical Validation | Analytical Solution Validation Superior to Feature Tracking | COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed |
 
 ## Detailed List
 
@@ -76,5 +77,9 @@ generated: "2025-11-05 19:35:19"
   - Discovery that discrete conservation laws are ONLY preserved when spatial operators use matching discretization orders. For Klein-Gordon equation ∂²E/∂t² = c²∇²E − χ²E with conserved energy E = ½∫[(∂E/∂t)² + c²|∇E|² + χ²E²]dV, using 4th-order Laplacian (dynamics) with 2nd-order gradients (energy) breaks conservation, causing 146× increase in energy drift (0.1% → 15%). This is a fundamental constraint for finite-difference schemes of conservation laws, not specific to LFM.
   - Evidence: Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect.
   - Links: tests/tier3/, config/config_tier3_energy.json, src/run_tier3_energy.py, analysis/tier3_energy_bug_analysis.md, analysis/test_stencil_order.py
+- 2025-11-06 — Analytical Solution Validation Superior to Feature Tracking (Tier 6 - Numerical Validation)
+  - Discovery that L2 error convergence against analytical solutions provides more robust validation than feature tracking algorithms (peak tracking, centroid tracking, threshold-based wave front detection). For 1D d'Alembert wave equation with exact Gaussian pulse solution, L2 error showed perfect 2nd-order convergence (ratios 2.13, 2.00) while wave speed measurements diverged non-monotonically (11% → 25% → 54% error) due to wave interference artifacts. Key insight: whole-field comparison (L2 norm) eliminates measurement uncertainty inherent in single-point or threshold-based detection methods. Generalizes to any PDE with known analytical solutions (bound states, static fields, conservation laws, dispersion relations).
+  - Evidence: COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed
+  - Links: src/run_tier6_coupling.py, results/Coupling/COUP-02/convergence_study.png, experiments/COUP-02_convergence_validation_resolution.md, .github/PROCESS_IMPROVEMENTS.md
 
-Generated: 2025-11-05 19:35:19
+Generated: 2025-11-06 14:27:24

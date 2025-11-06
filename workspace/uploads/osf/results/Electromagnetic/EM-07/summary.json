@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-07",
+  "description": "\u03c7-Field Electromagnetic Coupling: LFM mediates EM wave propagation",
+  "passed": true,
+  "metrics": {
+    "chi_coupling_error": 8.326672684688674e-16,
+    "coupling_strength": 0.05,
+    "chi_amplitude": 0.1,
+    "test_configuration": "\u03c7-field modulation, amplitude=0.100",
+    "analytical_verification": "\u03c7-field electromagnetic coupling verified analytically"
+  },
+  "tolerance": 0.15,
+  "runtime_sec": 1.0955612659454346,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:41.772180Z"
+}

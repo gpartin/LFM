@@ -1,0 +1,17 @@
+{
+  "test_id": "EM-03",
+  "description": "Faraday's Law Implementation: \u2207\u00d7E = -\u2202B/\u2202t",
+  "passed": true,
+  "metrics": {
+    "faraday_induction_error": 0.0,
+    "absolute_error": 0.0,
+    "field_frequency": 0.1,
+    "test_configuration": "Circular B field, radius=1.00",
+    "analytical_verification": "Faraday's law verified analytically"
+  },
+  "tolerance": 0.02,
+  "runtime_sec": 1.2665412425994873,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:38.896477Z"
+}

@@ -1,0 +1,26 @@
+{
+  "test_id": "EM-05",
+  "description": "Electromagnetic Wave Propagation (FDTD)",
+  "passed": true,
+  "metrics": {
+    "measured_wave_speed": 0.986460348162476,
+    "expected_wave_speed": 1.0,
+    "speed_error": 0.013539651837524036,
+    "wave_frequency": 0.02,
+    "probe_distance": 5.1000000000000005,
+    "lag_samples": 517,
+    "time_lag": 5.17,
+    "dt_convergence": {
+      "dt": 0.01,
+      "dt_half": 0.005,
+      "speed_dt": 0.986460348162476,
+      "speed_dt_half": 0.9874152952565345,
+      "relative_delta": 0.0009671179883945624
+    }
+  },
+  "tolerance": 0.05,
+  "runtime_sec": 0.9212746620178223,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:39.252022Z"
+}

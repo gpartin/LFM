@@ -1,0 +1,37 @@
+{
+  "test_id": "EM-12",
+  "description": "Time-Varying \u03c7-Field EM Response",
+  "passed": true,
+  "metrics": {
+    "em-12_error": 1.4685823496403974,
+    "analytical_verification": "Time-Varying \u03c7-Field EM Response verified analytically",
+    "test_configuration": "default parameters",
+    "max_individual_error": 1.4685823496403974,
+    "avg_individual_error": 0.9539717905187256,
+    "phase_shift_measured": [
+      -2.0827220914458285e-05,
+      -0.0007630711551064694,
+      -0.00019609363981676751
+    ],
+    "phase_shift_expected": [
+      -0.00035756167480259943,
+      0.0003575616748026014,
+      -0.00035756167480259943
+    ],
+    "measurement_time": [
+      75.0,
+      125.0,
+      175.0
+    ],
+    "per_point_error": [
+      0.941752088151068,
+      1.4685823496403974,
+      0.45158093376471137
+    ]
+  },
+  "tolerance": 2.0,
+  "runtime_sec": 3.1211938858032227,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-05T00:57:45.038790Z"
+}

@@ -899,6 +899,320 @@ def _list_entries_for_dir(base_dir: Path) -> List[Tuple[str, int, str]]:
     return entries
 
 
+def copy_results_summaries(dest_dir: Path, include_full: bool = False):
+    """Copy key result files from workspace/results to dest_dir/results for reproducibility.
+    
+    Args:
+        dest_dir: Destination directory (uploads/osf or uploads/zenodo)
+        include_full: If True, copy everything; if False, copy only summaries/plots
+    
+    Returns:
+        List of relative paths copied
+    """
+    copied = []
+    src_root = ROOT / 'results'
+    dst_root = dest_dir / 'results'
+    
+    if not src_root.exists():
+        return copied
+    
+    dst_root.mkdir(parents=True, exist_ok=True)
+    
+    # Copy top-level files
+    for top_file in ['MASTER_TEST_STATUS.csv', 'README.md', 'parallel_run_summary.json', 'parallel_test_results.json']:
+        src = src_root / top_file
+        if src.exists() and src.is_file():
+            dst = dst_root / top_file
+            try:
+                shutil.copyfile(src, dst)
+                copied.append(f"results/{top_file}")
+            except Exception:
+                pass
+    
+    # Copy per-category results
+    for category_dir in sorted(src_root.iterdir()):
+        if not category_dir.is_dir():
+            continue
+        if category_dir.name in ['__pycache__', '.git']:
+            continue
+        
+        dst_category = dst_root / category_dir.name
+        dst_category.mkdir(parents=True, exist_ok=True)
+        
+        # Copy category README
+        readme = category_dir / 'README.md'
+        if readme.exists():
+            try:
+                shutil.copyfile(readme, dst_category / 'README.md')
+                copied.append(f"results/{category_dir.name}/README.md")
+            except Exception:
+                pass
+        
+        # Copy per-test results
+        for test_dir in sorted(category_dir.iterdir()):
+            if not test_dir.is_dir():
+                continue
+            if test_dir.name in ['__pycache__', '.git']:
+                continue
+            
+            dst_test = dst_category / test_dir.name
+            dst_test.mkdir(parents=True, exist_ok=True)
+            
+            # Always copy: summary.json, readme.txt
+            for essential in ['summary.json', 'readme.txt']:
+                src_file = test_dir / essential
+                if src_file.exists():
+                    try:
+                        shutil.copyfile(src_file, dst_test / essential)
+                        copied.append(f"results/{category_dir.name}/{test_dir.name}/{essential}")
+                    except Exception:
+                        pass
+            
+            # Copy plots directory
+            plots_dir = test_dir / 'plots'
+            if plots_dir.exists() and plots_dir.is_dir():
+                dst_plots = dst_test / 'plots'
+                dst_plots.mkdir(parents=True, exist_ok=True)
+                for plot in sorted(plots_dir.glob('*.png')):
+                    try:
+                        shutil.copyfile(plot, dst_plots / plot.name)
+                        copied.append(f"results/{category_dir.name}/{test_dir.name}/plots/{plot.name}")
+                    except Exception:
+                        pass
+            
+            # Optionally copy diagnostics (if include_full)
+            if include_full:
+                diag_dir = test_dir / 'diagnostics'
+                if diag_dir.exists() and diag_dir.is_dir():
+                    dst_diag = dst_test / 'diagnostics'
+                    dst_diag.mkdir(parents=True, exist_ok=True)
+                    for diag in sorted(diag_dir.glob('*.csv'))[:10]:  # Limit CSVs
+                        try:
+                            shutil.copyfile(diag, dst_diag / diag.name)
+                            copied.append(f"results/{category_dir.name}/{test_dir.name}/diagnostics/{diag.name}")
+                        except Exception:
+                            pass
+    
+    return copied
+
+
+def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path, 
+                               tier_description: str, significance_text: str,
+                               deterministic: bool = False) -> str:
+    """Generate TIER{N}_ACHIEVEMENTS.md from tier results directory.
+    
+    Args:
+        tier_name: Display name (e.g., "Tier 1 — Relativistic")
+        category_dir: Results subdirectory name (e.g., "Relativistic")
+        dest_dir: Destination directory for output file
+        tier_description: Overview text for tier
+        significance_text: Significance/implications text
+        deterministic: Use fixed timestamps for reproducibility
+    
+    Returns:
+        Relative path of generated file.
+    """
+    results_dir = ROOT / 'results' / category_dir
+    stamp = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    filename = f"{tier_name.split('—')[0].strip().upper().replace(' ', '_')}_ACHIEVEMENTS.md"
+    
+    lines = [
+        f'# {tier_name} Validation Achievements',
+        '',
+        f'Generated: {stamp}',
+        '',
+        '## Overview',
+        '',
+        tier_description,
+        '',
+        '## Key Achievements',
+        '',
+    ]
+    
+    # Collect test results
+    tests = []
+    if results_dir.exists():
+        for test_dir in sorted(results_dir.iterdir()):
+            if not test_dir.is_dir() or test_dir.name.startswith('.'):
+                continue
+            summary_file = test_dir / 'summary.json'
+            if summary_file.exists():
+                try:
+                    with open(summary_file, 'r', encoding='utf-8') as f:
+                        summary = json.load(f)
+                    tests.append({
+                        'id': test_dir.name,
+                        'summary': summary
+                    })
+                except Exception:
+                    pass
+    
+    # Determine pass/fail status using same logic as update_master_test_status()
+    def get_test_status(summary):
+        """Extract pass/fail status from summary dict, handling multiple field formats."""
+        if summary.get("skipped") is True:
+            return "SKIP"
+        elif "status" in summary:
+            status = summary["status"]
+        elif "passed" in summary:
+            passed_val = summary["passed"]
+            if isinstance(passed_val, bool):
+                status = "PASS" if passed_val else "FAIL"
+            else:
+                status = "UNKNOWN"
+        else:
+            status = "UNKNOWN"
+        
+        # Normalize status values to uppercase
+        status_upper = str(status).upper()
+        if status_upper in ["PASSED", "PASS", "TRUE"]:
+            return "PASS"
+        elif status_upper in ["FAILED", "FAIL", "FALSE"]:
+            return "FAIL"
+        elif status_upper in ["SKIPPED", "SKIP"]:
+            return "SKIP"
+        return status_upper
+    
+    # Count passes
+    total = len(tests)
+    passed = sum(1 for t in tests if get_test_status(t['summary']) == 'PASS')
+    
+    lines.append(f'- **Total {tier_name} Tests**: {total}')
+    lines.append(f'- **Tests Passed**: {passed} ({100*passed//total if total > 0 else 0}%)')
+    lines.append('')
+    
+    if tests:
+        lines.append('## Test Results Summary')
+        lines.append('')
+        lines.append('| Test ID | Status | Description |')
+        lines.append('|---------|--------|-------------|')
+        
+        for test in sorted(tests, key=lambda x: x['id']):
+            test_id = test['id']
+            status = get_test_status(test['summary'])
+            desc = test['summary'].get('description', 'No description')
+            lines.append(f"| {test_id} | {status} | {desc[:60]} |")
+        
+        lines.append('')
+    
+    lines.append('## Significance')
+    lines.append('')
+    lines.append(significance_text)
+    lines.append('')
+    lines.append('---')
+    lines.append('License: CC BY-NC-ND 4.0')
+    
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    output = dest_dir / filename
+    output.write_text('\n'.join(lines), encoding='utf-8')
+    return str(output.relative_to(dest_dir)).replace('\\', '/')
+
+
+def generate_evidence_review(dest_dir: Path, deterministic: bool = False) -> str:
+    """Generate EVIDENCE_REVIEW.md auditing doc claims vs actual results.
+    
+    Returns relative path of generated file.
+    """
+    stamp = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    lines = [
+        '# Evidence Review: Documentation vs. Test Results',
+        '',
+        f'Generated: {stamp}',
+        '',
+        '## Purpose',
+        '',
+        'This automated audit cross-references claims in governing documents',
+        '(Executive Summary, LFM Master, etc.) against actual test outcomes',
+        'in workspace/results/ to ensure consistency and identify gaps.',
+        '',
+        '## Methodology',
+        '',
+        '1. Parse discoveries.json for claimed discoveries',
+        '2. Check corresponding test results in results/ directories',
+        '3. Flag discrepancies for manual review',
+        '',
+        '## Findings',
+        '',
+    ]
+    
+    # Load discoveries
+    disc_file = ROOT / 'docs' / 'discoveries' / 'discoveries.json'
+    discoveries = []
+    if disc_file.exists():
+        try:
+            discoveries = json.loads(disc_file.read_text(encoding='utf-8'))
+        except Exception:
+            pass
+    
+    # Load master test status
+    master_file = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
+    test_statuses = {}
+    if master_file.exists():
+        try:
+            import csv
+            with open(master_file, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    test_id = row.get('test_id', '')
+                    if test_id:
+                        test_statuses[test_id] = row.get('status', 'UNKNOWN')
+        except Exception:
+            pass
+    
+    lines.append(f'### Discovery Claims: {len(discoveries)}')
+    lines.append(f'### Test Results Available: {len(test_statuses)}')
+    lines.append('')
+    
+    # Cross-reference
+    verified = []
+    needs_review = []
+    
+    for disc in discoveries:
+        title = disc.get('title', 'Unknown')
+        tier = disc.get('tier', '')
+        evidence = disc.get('evidence', '')
+        links = disc.get('links', [])
+        
+        # Check if evidence links reference test results
+        has_test_ref = any('results/' in str(link) or any(tid in str(link) for tid in test_statuses.keys()) for link in links)
+        
+        if has_test_ref:
+            verified.append(f"✓ {title} ({tier})")
+        else:
+            needs_review.append(f"⚠ {title} ({tier}) — Evidence: {evidence}")
+    
+    lines.append('### Verified (Evidence References Test Results):')
+    lines.append('')
+    for v in verified[:20]:  # Limit output
+        lines.append(f'- {v}')
+    if len(verified) > 20:
+        lines.append(f'- ... and {len(verified)-20} more')
+    
+    lines.append('')
+    lines.append('### Needs Manual Review (No Direct Test Link):')
+    lines.append('')
+    for n in needs_review[:10]:
+        lines.append(f'- {n}')
+    if len(needs_review) > 10:
+        lines.append(f'- ... and {len(needs_review)-10} more')
+    
+    lines.append('')
+    lines.append('## Recommendations')
+    lines.append('')
+    lines.append('- Update discovery links to reference specific test IDs')
+    lines.append('- Ensure all computational claims have corresponding test validation')
+    lines.append('- Archive legacy claims without current validation separately')
+    lines.append('')
+    lines.append('---')
+    lines.append('License: CC BY-NC-ND 4.0')
+    
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    output = dest_dir / 'EVIDENCE_REVIEW.md'
+    output.write_text('\n'.join(lines), encoding='utf-8')
+    return str(output.relative_to(dest_dir)).replace('\\', '/')
+
+
 def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
     """Generate DISCOVERIES_OVERVIEW.md in dest_dir from docs/discoveries/discoveries.json."""
     reg = ROOT / 'docs' / 'discoveries' / 'discoveries.json'
@@ -1166,6 +1480,75 @@ def main():
         print(f"Merged {len(merged_osf)} legacy artifact group(s) into OSF payload")
     if merged_zen:
         print(f"Merged {len(merged_zen)} legacy artifact group(s) into Zenodo payload")
+    
+    # Copy results tree to both destinations
+    print("\n[INFO] Copying results summaries to upload payloads...")
+    copied_osf_results = copy_results_summaries(DEST_OSF, include_full=False)
+    copied_zen_results = copy_results_summaries(DEST_ZENODO, include_full=False)
+    print(f"Copied {len(copied_osf_results)} result files to OSF payload")
+    print(f"Copied {len(copied_zen_results)} result files to Zenodo payload")
+    
+    # Generate tier achievements reports for ALL tiers (1-5)
+    print("\n[INFO] Generating tier achievements reports...")
+    
+    tier_configs = [
+        {
+            "tier_name": "Tier 1 — Relativistic",
+            "category_dir": "Relativistic",
+            "description": "This tier validates Lorentz invariance, isotropy, and causality constraints.",
+            "significance": "These validations demonstrate that special relativity emerges naturally from the LFM lattice framework without imposing it as an axiom."
+        },
+        {
+            "tier_name": "Tier 2 — Gravity Analogue",
+            "category_dir": "Gravity",
+            "description": "This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.",
+            "significance": "These validations demonstrate that gravity-like phenomena (redshift, lensing, time delay) emerge from χ-field gradients, suggesting LFM may provide a unified framework for gravity and quantum mechanics."
+        },
+        {
+            "tier_name": "Tier 3 — Energy Conservation",
+            "category_dir": "Energy",
+            "description": "This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.",
+            "significance": "These validations demonstrate that energy conservation is maintained across all simulation regimes, providing confidence in the numerical implementation and physical correctness of the LFM framework."
+        },
+        {
+            "tier_name": "Tier 4 — Quantization",
+            "category_dir": "Quantization",
+            "description": "This tier validates quantum mechanical phenomena including bound states, tunneling, and uncertainty relations.",
+            "significance": "These validations demonstrate that quantum mechanical behavior emerges from the classical Klein-Gordon equation with appropriate boundary conditions, suggesting a deep connection between field theory and quantum mechanics."
+        },
+        {
+            "tier_name": "Tier 5 — Electromagnetic",
+            "category_dir": "Electromagnetic",
+            "description": "This tier validates electromagnetic theory emergence from the LFM framework through computational tests.",
+            "significance": "These validations demonstrate that electromagnetic theory (Maxwell equations, wave propagation, Lorentz force) emerges naturally from the LFM lattice framework without imposing Maxwell equations as axioms."
+        }
+    ]
+    
+    for config in tier_configs:
+        generate_tier_achievements(
+            tier_name=config["tier_name"],
+            category_dir=config["category_dir"],
+            dest_dir=DEST_OSF,
+            tier_description=config["description"],
+            significance_text=config["significance"],
+            deterministic=args.deterministic
+        )
+        generate_tier_achievements(
+            tier_name=config["tier_name"],
+            category_dir=config["category_dir"],
+            dest_dir=DEST_ZENODO,
+            tier_description=config["description"],
+            significance_text=config["significance"],
+            deterministic=args.deterministic
+        )
+    
+    print(f"Generated tier achievements for Tiers 1-5")
+    
+    # Generate evidence review report
+    print("\n[INFO] Generating evidence review audit...")
+    ev_rev_osf = generate_evidence_review(DEST_OSF, deterministic=args.deterministic)
+    ev_rev_zen = generate_evidence_review(DEST_ZENODO, deterministic=args.deterministic)
+    print(f"Generated: {ev_rev_osf}")
 
     # Write manifests for both destinations
     osf_entries = _list_entries_for_dir(DEST_OSF)

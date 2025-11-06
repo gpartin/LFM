@@ -1,0 +1,69 @@
+---
+title: "Evidence Review: Documentation vs Test Results"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+generated: "{{ generation_time }}"
+---
+
+# Evidence Review: Documentation vs. Test Results
+
+Generated: {{ generation_time }}
+
+## Overview
+
+This document provides an automated compliance audit that cross-references
+scientific discoveries documented in `discoveries.json` against actual
+computational test results from the 85-test validation suite.
+
+**Purpose:** Ensure every claimed discovery has corresponding computational
+evidence, and flag any gaps between documentation and validated outcomes.
+
+**Note:** File paths referenced below (e.g., `workspace/...`) refer to the GitHub repository structure.  
+**Repository:** https://github.com/gpartin/LFM
+
+## Audit Scope
+
+- **Discovery Claims:** All entries in `workspace/docs/discoveries/discoveries.json`
+- **Test Results:** All tier tests tracked in `workspace/results/MASTER_TEST_STATUS.csv`
+- **Cross-Reference:** Verify discovery evidence fields link to actual test IDs or result files
+
+## Methodology
+
+1. Parse discoveries.json for claimed discoveries
+2. Load test outcomes from MASTER_TEST_STATUS.csv (85 tier tests)
+3. Check if discovery evidence references specific test results
+4. Flag discoveries without direct test links for manual review
+
+## Findings
+
+### Discovery Claims: {{ discovery_count }}
+### Test Results Available: {{ test_count }}
+
+### Verified (Evidence References Test Results):
+{% for item in verified %}
+- {{ item }}
+{% endfor -%}
+{%- if verified_overflow > 0 %}
+- ... and {{ verified_overflow }} more
+{% endif %}
+
+### Needs Manual Review (No Direct Test Link):
+{% for item in needs_review %}
+- {{ item }}
+{% endfor -%}
+{%- if review_overflow > 0 %}
+- ... and {{ review_overflow }} more
+{% endif %}
+
+## Recommendations
+
+- Update discovery links to reference specific test IDs
+- Ensure all computational claims have corresponding test validation
+- Archive legacy claims without current validation separately
+
+---
+License: CC BY-NC-ND 4.0

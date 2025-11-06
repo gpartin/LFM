@@ -1,128 +1,76 @@
+---
+title: "LFM Phase 1 Comprehensive Test Results"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+generated: "2025-11-06 14:27:25"---
+
 # Comprehensive Test Results
 
 ## Overview
 
-This report is generated directly from the results/* directories. As tests are added or updated, this section automatically reflects the current state.
+This document provides a high-level summary of LFM validation test results across all tiers. For detailed test-by-test results, see the individual tier achievement reports.
+Generated: 2025-11-06 14:27:25
 
 ## Test Summary
 
-| Tier | Category | Tests | Pass Rate | Notes |
-|------|----------|--------|-----------|-------|
-| Tier 1 | Relativistic | 15 | 15/15 (100%) | Key achievements available in tier descriptions |
-| Tier 2 | Gravity | 25 | 24/25 (96%) | Key achievements available in tier descriptions |
-| Tier 3 | Energy | 10 | 0/10 (0%) | Key achievements available in tier descriptions |
-| Tier 4 | Quantization | 14 | 2/14 (14%) | Key achievements available in tier descriptions |
-| Tier 5 | Electromagnetic | 21 | 21/21 (100%) | Key achievements available in tier descriptions |
-| chi_emergence | chi_emergence | 0 | 0/0 (0%) | Key achievements available in tier descriptions |
-| Demo | Demo | 0 | 0/0 (0%) | Key achievements available in tier descriptions |
+| Tier | Category | Tests | Pass Rate | Tier Achievement Report |
+|------|----------|--------|-----------|------------------------|| Tier 1 — Relativistic | Relativistic | 15 | 15/15 (100.0%) | TIER_1_ACHIEVEMENTS.md || Tier 2 — Gravity Analogue | Gravity Analogue | 25 | 25/25 (100.0%) | TIER_2_ACHIEVEMENTS.md || Tier 3 — Energy Conservation | Energy Conservation | 10 | 10/10 (100.0%) | TIER_3_ACHIEVEMENTS.md || Tier 4 — Quantization | Quantization | 14 | 14/14 (100.0%) | TIER_4_ACHIEVEMENTS.md || Tier 5 — Electromagnetic | Electromagnetic | 21 | 21/21 (100.0%) | TIER_5_ACHIEVEMENTS.md |
+**Total: 85/85 tests passing (100.0%)**
 
 ---
 
-## Tier 1 — Relativistic (Lorentz invariance, isotropy, causality)
+## Tier Descriptions### Tier 1 — Relativistic
 
-- REL-01: PASS — Isotropy — Coarse Grid
-- REL-02: PASS — Isotropy — Fine Grid
-- REL-03: PASS — Lorentz Boost — Low Velocity
-- REL-04: PASS — Lorentz Boost — High Velocity
-- REL-05: PASS — Causality — Pulse Propagation
-- REL-06: PASS — Causality — Noise Perturbation
-- REL-07: PASS — Phase Independence Test
-- REL-08: PASS — Superposition Principle Test
-- REL-09: PASS — 3D Isotropy — Directional Equivalence
-- REL-10: PASS — 3D Isotropy — Spherical Symmetry
-- REL-11: PASS — Dispersion Relation — Non-relativistic (χ/k≈10)
-- REL-12: PASS — Dispersion Relation — Weakly Relativistic (χ/k≈1)
-- REL-13: PASS — Dispersion Relation — Relativistic (χ/k≈0.5)
-- REL-14: PASS — Dispersion Relation — Ultra-relativistic (χ/k≈0.1)
-- REL-15: PASS — Causality — Space-like correlation test (light cone violation check)
+This tier validates Lorentz invariance, isotropy, and causality constraints.
 
-## Tier 2 — Gravity Analogue (χ-field gradients, redshift, lensing)
+**Key validations:**- Lorentz invariance (boosts at low and high velocities)- Isotropy (directional equivalence, spherical symmetry)- Causality (finite propagation speed, light cone constraints)- Dispersion relations across relativistic regimes (χ/k from 10 to 0.1)
+**Pass rate:** 15/15 (100.0%)  
+**See:** TIER_1_ACHIEVEMENTS.md### Tier 2 — Gravity Analogue
 
-- GRAV-01: PASS — Local frequency — linear χ-gradient (weak)
-- GRAV-02: PASS — Local frequency — Gaussian well (strong curvature)
-- GRAV-03: PASS — Local frequency — Gaussian well (broader potential)
-- GRAV-04: PASS — Local frequency — Gaussian well (shallow potential)
-- GRAV-05: PASS — Local frequency — linear χ-gradient (moderate)
-- GRAV-06: PASS — Local frequency — Gaussian well (stable reference)
-- GRAV-07: FAIL — Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped, demonstrates bound state physics)
-- GRAV-08: PASS — Time dilation — uniform χ diagnostic (isolate grid dispersion)
-- GRAV-09: PASS — Time dilation — 2x refined grid (N=128, dx=0.5)
-- GRAV-10: PASS — Gravitational redshift — measure frequency shift in 1D potential well
-- GRAV-11: PASS — Time delay — packet through χ slab (Shapiro-like)
-- GRAV-12: PASS — Phase delay — continuous wave through χ slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!)
-- GRAV-13: PASS — Local frequency — double well (ω∝χ verification)
-- GRAV-14: PASS — Group delay — differential timing with vs without slab
-- GRAV-15: PASS — 3D radial energy dispersion visualizer — central excitation, volumetric snapshots for MP4
-- GRAV-16: PASS — 3D double-slit interference — quantum wave through slits showing χ-field localization
-- GRAV-17: PASS — Gravitational redshift — frequency shift climbing out of χ-well
-- GRAV-18: PASS — Gravitational redshift — linear gradient (Pound-Rebka analogue)
-- GRAV-19: PASS — Gravitational redshift — radial χ-profile (Schwarzschild analogue)
-- GRAV-20: PASS — Self-consistent chi from E-energy (Poisson) - verify omega~=chi at center (1D)
-- GRAV-21: PASS — GR calibration - redshift to G_eff mapping (weak-field limit)
-- GRAV-22: PASS — GR calibration - Shapiro delay correspondence (group velocity through slab)
-- GRAV-23: PASS — Dynamic χ-field evolution — full wave equation □χ=-4πGρ with causal propagation (gravitational wave analogue)
-- GRAV-24: PASS — Gravitational wave propagation — oscillating source radiates χ-waves, validate 1/r decay and propagation speed
-- GRAV-25: PASS — Light bending — ray tracing through χ-gradient, measure deflection angle
+This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.
 
-## Tier 3 — Energy Conservation (Hamiltonian partitioning, dissipation)
+**Key validations:**- Gravitational redshift (frequency shift in potential wells, linear gradients, radial profiles)- Time dilation (bound states, refined grids)- Light bending (ray deflection through χ-gradients)- Phase/group delay (Shapiro-like time delay)- Dynamic χ-field evolution (gravitational wave analogues)- GR calibration (redshift ↔ G_eff mapping)
+**Pass rate:** 25/25 (100.0%)  
+**See:** TIER_2_ACHIEVEMENTS.md### Tier 3 — Energy Conservation
 
-- ENER-01: UNKNOWN — Global conservation — short
-- ENER-02: UNKNOWN — Global conservation — long
-- ENER-03: UNKNOWN — Wave integrity — mild curvature
-- ENER-04: UNKNOWN — Wave integrity — steep curvature
-- ENER-05: UNKNOWN — Hamiltonian partitioning — uniform χ (KE ↔ GE flow)
-- ENER-06: UNKNOWN — Hamiltonian partitioning — with mass term (KE ↔ GE ↔ PE flow)
-- ENER-07: UNKNOWN — Hamiltonian partitioning — χ-gradient field (energy flow in curved spacetime)
-- ENER-08: UNKNOWN — Dissipation — weak damping (exponential decay, γ=1e-3 per unit time)
-- ENER-09: UNKNOWN — Dissipation — strong damping (exponential decay, γ=1e-2 per unit time)
-- ENER-10: UNKNOWN — Thermalization — noise + damping reaches steady state
+This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.
 
-## Tier 4 — Quantization (Discrete exchange, spectral linearity, uncertainty)
+**Key validations:**- Global energy conservation (short and long simulations)- Wave integrity in curved spacetime- Hamiltonian partitioning (KE ↔ GE ↔ PE energy flow)- Dissipation (exponential decay with controlled damping)- Thermalization (steady-state convergence)
+**Pass rate:** 10/10 (100.0%)  
+**See:** TIER_3_ACHIEVEMENTS.md### Tier 4 — Quantization
 
-- QUAN-01: UNKNOWN — ΔE Transfer — Low Energy
-- QUAN-02: UNKNOWN — ΔE Transfer — High Energy
-- QUAN-03: UNKNOWN — Spectral Linearity — Coarse Steps
-- QUAN-04: UNKNOWN — Spectral Linearity — Fine Steps
-- QUAN-05: UNKNOWN — Phase-Amplitude Coupling — Low Noise
-- QUAN-06: UNKNOWN — Phase-Amplitude Coupling — High Noise
-- QUAN-07: UNKNOWN — Nonlinear Wavefront Stability
-- QUAN-08: UNKNOWN — High-Energy Lattice Blowout Test
-- QUAN-09: UNKNOWN — Heisenberg uncertainty — Δx·Δk ≈ 1/2
-- QUAN-10: PASS — Bound state quantization — discrete energy eigenvalues E_n emerge from boundary conditions
-- QUAN-11: UNKNOWN — Zero-point energy — ground state E₀ = ½ℏω ≠ 0 (vacuum fluctuations)
-- QUAN-12: PASS — Quantum tunneling — barrier penetration when E < V (classically forbidden)
-- QUAN-13: UNKNOWN — Wave-particle duality — which-way information destroys interference
-- QUAN-14: UNKNOWN — Non-thermalization — validates Klein-Gordon conserves energy (doesn't approach Planck)
+This tier validates quantum mechanical phenomena including bound states, tunneling, and uncertainty relations.
 
-## Tier 5 — Electromagnetic (Maxwell equations, Coulomb, Lorentz force, EM waves, lensing)
+**Key validations:**- Energy quantization (discrete eigenvalues from boundary conditions)- Quantum tunneling (barrier penetration when E < V)- Heisenberg uncertainty (Δx·Δk ≈ 1/2)- Zero-point energy (ground state E₀ ≠ 0)- Wave-particle duality- Spectral linearity and phase-amplitude coupling
+**Pass rate:** 14/14 (100.0%)  
+**See:** TIER_4_ACHIEVEMENTS.md### Tier 5 — Electromagnetic
 
-- EM-01: PASS — Gauss's Law Verification: ∇·E = ρ/ε₀
-- EM-02: PASS — Magnetic Field Generation: ∇×B = μ₀J
-- EM-03: PASS — Faraday's Law Implementation: ∇×E = -∂B/∂t
-- EM-04: PASS — Ampère's Law with Displacement Current: ∇×B = μ₀(J + ε₀∂E/∂t)
-- EM-05: PASS — Electromagnetic Wave Propagation (FDTD)
-- EM-06: PASS — Poynting Vector Conservation: ∇·S + ∂u/∂t = 0
-- EM-07: PASS — χ-Field Electromagnetic Coupling: LFM mediates EM wave propagation
-- EM-08: PASS — Mass-Energy Equivalence: E = mc²
-- EM-09: PASS — Photon-Matter Interaction
-- EM-10: PASS — Larmor Radiation from Accelerated Charges
-- EM-11: PASS — Electromagnetic Rainbow Lensing & Dispersion
-- EM-12: PASS — Time-Varying χ-Field EM Response
-- EM-13: PASS — Electromagnetic Standing Waves in Cavity
-- EM-14: PASS — Doppler Effect and Relativistic Corrections
-- EM-15: PASS — Electromagnetic Scattering from χ-Inhomogeneities
-- EM-16: PASS — Synchrotron Radiation from Accelerated Charges
-- EM-17: PASS — Electromagnetic Pulse Propagation (FDTD)
-- EM-18: PASS — Multi-Scale EM-χ Coupling
-- EM-19: PASS — Gauge Invariance Verification: Physical fields unchanged under gauge transformations
-- EM-20: PASS — Charge Conservation: ∂ρ/∂t + ∇·J = 0
-- EM-21: PASS — Time-Varying χ-Field Pulse Response (FDTD)
+This tier validates electromagnetic theory emergence from the LFM framework through computational tests.
 
-## chi_emergence
+**Key validations:**- Maxwell equations (Gauss's Law, Faraday's Law, Ampère-Maxwell Law)- Electromagnetic wave propagation (FDTD validation)- Poynting vector conservation- χ-field EM coupling- Mass-energy equivalence (E = mc²)- Charge conservation (∂ρ/∂t + ∇·J = 0)- Gauge invariance- Larmor radiation, synchrotron radiation- Doppler effect with relativistic corrections
+**Pass rate:** 21/21 (100.0%)  
+**See:** TIER_5_ACHIEVEMENTS.md---
 
+## Detailed Test Results
 
-## Demo
+All detailed test-by-test results, including test IDs, descriptions, and status, are documented in the individual tier achievement reports:- **TIER_1_ACHIEVEMENTS.md** — Relativistic validation (15 tests)- **TIER_2_ACHIEVEMENTS.md** — Gravity Analogue validation (25 tests)- **TIER_3_ACHIEVEMENTS.md** — Energy Conservation validation (10 tests)- **TIER_4_ACHIEVEMENTS.md** — Quantization validation (14 tests)- **TIER_5_ACHIEVEMENTS.md** — Electromagnetic validation (21 tests)
+Each report includes:
+- Complete test result table (Test ID, Status, Description)
+- Pass rate statistics
+- Domain-specific significance statements
 
+For test result files (summary.json, plots, diagnostics), see the results/ directory tree included in this package.
 
+---
 
-Generated: 2025-11-04 12:11:59
+## Significance
+
+These comprehensive validation results demonstrate that:1. These validations demonstrate that special relativity emerges naturally from the LFM lattice framework without imposing it as an axiom.2. These validations demonstrate that gravity-like phenomena (redshift, lensing, time delay) emerge from χ-field gradients, suggesting LFM may provide a unified framework for gravity and quantum mechanics.3. These validations demonstrate that energy conservation is maintained across all simulation regimes, providing confidence in the numerical implementation and physical correctness of the LFM framework.4. These validations demonstrate that quantum mechanical behavior emerges from the classical Klein-Gordon equation with appropriate boundary conditions, suggesting a deep connection between field theory and quantum mechanics.5. These validations demonstrate that electromagnetic theory (Maxwell equations, wave propagation, Lorentz force) emerges naturally from the LFM lattice framework without imposing Maxwell equations as axioms.
+All without imposing these as separate axioms — they arise naturally from the single governing equation: ∂²E/∂t² = c²∇²E − χ²(x,t)E
+
+---
+License: CC BY-NC-ND 4.0

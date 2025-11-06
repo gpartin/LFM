@@ -1,0 +1,19 @@
+{
+  "id": "GRAV-24",
+  "description": "Gravitational wave propagation \u2014 oscillating source radiates \u03c7-waves, validate 1/r decay and propagation speed",
+  "passed": true,
+  "chi_pert_max": 0.042345523886634026,
+  "chi_pert_rms": 0.012032611056794953,
+  "chi_responded": true,
+  "system_stable": true,
+  "chi_reasonable": true,
+  "E_energy_init": 0.7976043224334717,
+  "E_energy_final": 0.34754038783353447,
+  "G_coupling": 0.1,
+  "chi_bg": 0.05,
+  "runtime_sec": 0.07163214683532715,
+  "on_gpu": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-03T05:08:45.907781Z"
+}

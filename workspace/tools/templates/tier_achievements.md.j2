@@ -1,0 +1,38 @@
+---
+title: "{{ tier_name }} Validation Achievements"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+orcid: "https://orcid.org/0009-0004-0327-6528"
+doi: "10.5281/zenodo.17510124"
+{% if deterministic_date %}generated: "{{ deterministic_date }}"{% endif %}
+---
+
+# {{ tier_name }} Validation Achievements
+
+Generated: {{ deterministic_date if deterministic_date else generation_time }}
+
+## Overview
+
+{{ description }}
+
+## Key Achievements
+
+- **Total {{ tier_name }} Tests**: {{ test_count }}
+- **Tests Passed**: {{ passed }} ({{ (100 * passed / test_count) | round(1) }}%)
+
+## Test Results Summary
+
+| Test ID | Status | Description |
+|---------|--------|-------------|
+{%- for test in tests %}
+| {{ test.id }} | {{ test.status }} | {{ test.description }} |
+{%- endfor %}
+
+## Significance
+
+{{ significance }}
+
+---
+License: CC BY-NC-ND 4.0

@@ -1,0 +1,14 @@
+{
+  "id": "REL-15",
+  "description": "Causality \u2014 Space-like correlation test (light cone violation check)",
+  "passed": true,
+  "num_violations": 0,
+  "max_violation": 0.0,
+  "threshold": 1e-06,
+  "light_speed": 1.0,
+  "runtime_sec": 0.0,
+  "backend": "GPU",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-06T18:07:30.361627Z"
+}
