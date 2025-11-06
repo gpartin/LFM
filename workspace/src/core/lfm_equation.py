@@ -253,7 +253,7 @@ def lattice_step(E, E_prev, params):
         xp = _xp_for(E)
         try:
             import cupy as cp
-            if xp is cp:  # Only use fused on GPU
+            if xp is cp and E.ndim == 3:  # Fused requires GPU + 3D
                 from core.lfm_equation_fused import fused_verlet_step
                 
                 # Extract params for fused kernel

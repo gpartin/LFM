@@ -520,39 +520,51 @@ class Tier1Harness(BaseTierHarness):
         """Run a single test variant. Dispatches to specialized methods for isotropy and boost tests."""
         tid = v["test_id"]
         
+        # Override backend based on dimensionality (fused only works for 3D)
+        # REL-09, REL-10 are 3D; all others are 1D
+        is_3d = v.get("dimensions", 1) == 3
+        original_backend = self.backend
+        if not is_3d and self.backend == "fused":
+            self.backend = "baseline"  # Temporarily override for 1D tests
+        
         # Isotropy tests require special handling (run twice with different directions)
         if tid in ("REL-01", "REL-02"):
-            return self.run_isotropy_variant(v)
+            result = self.run_isotropy_variant(v)
         
         # Lorentz boost tests require special validation
-        if tid in ("REL-03", "REL-04"):
-            return self.run_boost_variant(v)
+        elif tid in ("REL-03", "REL-04"):
+            result = self.run_boost_variant(v)
         
         # Phase independence test (REL-07)
-        if tid == "REL-07":
-            return self.run_phase_independence_variant(v)
+        elif tid == "REL-07":
+            result = self.run_phase_independence_variant(v)
         
         # Superposition test (REL-08)
-        if tid == "REL-08":
-            return self.run_superposition_variant(v)
+        elif tid == "REL-08":
+            result = self.run_superposition_variant(v)
         
         # 3D isotropy tests
-        if tid == "REL-09":
-            return self.run_3d_directional_isotropy_variant(v)
+        elif tid == "REL-09":
+            result = self.run_3d_directional_isotropy_variant(v)
         
-        if tid == "REL-10":
-            return self.run_3d_spherical_isotropy_variant(v)
+        elif tid == "REL-10":
+            result = self.run_3d_spherical_isotropy_variant(v)
         
         # Dispersion relation tests (REL-11-14)
-        if tid in ("REL-11", "REL-12", "REL-13", "REL-14"):
-            return self.run_dispersion_relation_variant(v)
+        elif tid in ("REL-11", "REL-12", "REL-13", "REL-14"):
+            result = self.run_dispersion_relation_variant(v)
         
         # Space-like correlation test (REL-15)
-        if tid == "REL-15":
-            return self.run_spacelike_correlation_variant(v)
+        elif tid == "REL-15":
+            result = self.run_spacelike_correlation_variant(v)
         
         # All other tests use standard single-run logic
-        return self.run_standard_variant(v)
+        else:
+            result = self.run_standard_variant(v)
+        
+        # Restore original backend
+        self.backend = original_backend
+        return result
     
     def run_isotropy_variant(self, v: Dict) -> TestSummary:
         """Run isotropy test by comparing left and right propagating waves."""
