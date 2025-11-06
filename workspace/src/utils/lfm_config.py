@@ -191,7 +191,7 @@ class LFMConfig:
         Returns:
             New LFMConfig instance
         """
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             data = json.load(f)
         return cls.from_dict(data)
         
@@ -202,7 +202,7 @@ class LFMConfig:
         Args:
             filepath: Path to output JSON file
         """
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(self.to_dict(), f, indent=2)
             
     def copy(self, **changes) -> LFMConfig:

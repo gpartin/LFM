@@ -728,7 +728,7 @@ RECOMMENDATIONS:
             filetypes=[("Python Files", "*.py"), ("All Files", "*.*")]
         )
         if filename:
-            with open(filename, 'w') as f:
+            with open(filename, 'w', encoding='utf-8') as f:
                 f.write(code)
             self.log_message(f"📁 Exported code to: {os.path.basename(filename)}")
             

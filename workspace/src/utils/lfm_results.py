@@ -440,7 +440,7 @@ def update_master_test_status(results_dir: Path = None):
         start = time.time()
         while True:
             try:
-                with open(lock_file, 'x') as _:
+                with open(lock_file, 'x', encoding='utf-8') as _:
                     return True
             except FileExistsError:
                 if time.time() - start > timeout_s:

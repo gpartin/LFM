@@ -172,7 +172,7 @@ else:
 # Save results
 all_results = results_mur + results_pml
 results_file = output_dir / "domain_convergence_results.json"
-with open(results_file, 'w') as f:
+with open(results_file, 'w', encoding='utf-8') as f:
     json.dump({
         'domain_multipliers': domain_multipliers,
         'base_N': base_N,

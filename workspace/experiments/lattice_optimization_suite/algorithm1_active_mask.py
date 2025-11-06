@@ -328,7 +328,7 @@ def run_algorithm1_masked(
         output_dir.mkdir(parents=True, exist_ok=True)
         
         results_file = output_dir / "algorithm1_results.json"
-        with open(results_file, 'w') as f:
+        with open(results_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2)
         print(f"\nResults saved to: {results_file}")
     
@@ -383,7 +383,7 @@ if __name__ == "__main__":
     }
     
     summary_file = output_dir / "algorithm1_summary.json"
-    with open(summary_file, 'w') as f:
+    with open(summary_file, 'w', encoding='utf-8') as f:
         json.dump(summary, f, indent=2)
     
     print(f"\nSummary saved to: {summary_file}")

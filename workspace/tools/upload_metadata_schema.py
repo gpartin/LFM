@@ -560,7 +560,7 @@ def main():
     
     # Export schema
     schema_file = Path(__file__).parent / 'upload_schema.json'
-    with open(schema_file, 'w') as f:
+    with open(schema_file, 'w', encoding='utf-8') as f:
         f.write(schema.to_json())
     print(f"\n💾 Schema exported to: {schema_file}")
 

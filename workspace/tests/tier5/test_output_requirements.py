@@ -331,7 +331,7 @@ def check_core_requirements(test_dir: Path, test_id: str) -> Tuple[List[str], Li
     summary_file = test_dir / "summary.json"
     if summary_file.exists():
         try:
-            with open(summary_file, 'r') as f:
+            with open(summary_file, 'r', encoding='utf-8') as f:
                 summary = json.load(f)
             
             # Check required keys
@@ -377,7 +377,7 @@ def check_core_requirements(test_dir: Path, test_id: str) -> Tuple[List[str], Li
     metrics_file = project_root / "results" / "test_metrics_history.json"
     if metrics_file.exists():
         try:
-            with open(metrics_file, 'r') as f:
+            with open(metrics_file, 'r', encoding='utf-8') as f:
                 history = json.load(f)
             
             if test_id in history:
@@ -457,7 +457,7 @@ def check_special_requirements(test_dir: Path, test_id: str) -> Tuple[List[str],
             # Check CSV structure
             try:
                 import csv
-                with open(file_path, 'r') as f:
+                with open(file_path, 'r', encoding='utf-8') as f:
                     reader = csv.DictReader(f)
                     rows = list(reader)
                     

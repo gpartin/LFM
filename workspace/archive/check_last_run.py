@@ -16,7 +16,7 @@ from path_utils import get_workspace_dir
 test_id = sys.argv[1] if len(sys.argv) > 1 else 'QUAN-09'
 
 WS = get_workspace_dir(__file__)
-with open(WS / 'results' / 'test_metrics_history.json','r') as f:
+with open(WS / 'results' / 'test_metrics_history.json','r', encoding='utf-8') as f:
     d=json.load(f)
 last=d.get(test_id,{}).get('runs',[])
 print(f'{test_id}: Total runs: {len(last)}')

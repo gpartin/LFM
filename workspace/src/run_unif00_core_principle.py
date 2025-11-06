@@ -797,7 +797,7 @@ def load_config() -> Dict:
     config_path = Path(__file__).parent / "config" / "config_unif00_core.json"
     
     if config_path.exists():
-        with open(config_path, "r") as f:
+        with open(config_path, "r", encoding="utf-8") as f:
             return json.load(f)
     
     # Default config if file doesn't exist

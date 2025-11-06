@@ -778,7 +778,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         }
         
         dest_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(dest_path, 'w') as f:
+        with open(dest_path, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2)
         return True
     
@@ -799,7 +799,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         }
         
         dest_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(dest_path, 'w') as f:
+        with open(dest_path, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2)
         return True
     

@@ -56,6 +56,10 @@ def check_file(file_path: Path) -> List[Tuple[int, str, str]]:
             
         for pattern, encoding_pattern, violation_type in patterns:
             if re.search(pattern, line):
+                # Skip binary mode operations (rb, wb, ab, etc.)
+                if re.search(r"['\"]r?[wab]b['\"]", line):
+                    continue
+                    
                 # Check if encoding= is present in this line or continuation
                 if not re.search(encoding_pattern, line):
                     # Check if this is part of multi-line call

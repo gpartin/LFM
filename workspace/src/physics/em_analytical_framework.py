@@ -298,7 +298,7 @@ class AnalyticalEMFramework:
         diag_dir = Path(output_dir) / 'diagnostics'
         ensure_dirs(diag_dir)
         diag_path = diag_dir / f"{test_spec.test_id.lower()}_diagnostics.json"
-        with open(diag_path, 'w') as f:
+        with open(diag_path, 'w', encoding='utf-8') as f:
             json.dump(diagnostics, f, indent=2)
         
         print(f"[DIAG] Wrote diagnostics to {diag_path}")

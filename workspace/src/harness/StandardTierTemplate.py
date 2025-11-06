@@ -84,7 +84,7 @@ class StandardTierHarness:
     def load_config(self) -> Dict:
         """Load tier configuration with error handling"""
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except FileNotFoundError:
             log(f"[ERROR] Config file not found: {self.config_path}", "FAIL")

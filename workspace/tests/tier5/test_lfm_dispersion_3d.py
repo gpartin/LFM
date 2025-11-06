@@ -228,7 +228,7 @@ iso  = np.std([r["omega_meas_serial"]   for r in results]) / np.mean([r["omega_m
 isoP = np.std([r["omega_meas_parallel"] for r in results]) / np.mean([r["omega_meas_parallel"] for r in results])
 print(f"\nIsotropy CoV  serial={iso*100:.3f}%   parallel={isoP*100:.3f}%")
 
-with open(RESULTS_DIR / "dispersion_results_3d.csv", "w", newline="") as f:
+with open(RESULTS_DIR / "dispersion_results_3d.csv", "w", newline="", encoding="utf-8") as f:
     fields = [
         "dir","omega_theory","omega_meas_serial","omega_meas_parallel",
         "rel_err_serial","rel_err_parallel","backend_gap","serial_t","parallel_t"

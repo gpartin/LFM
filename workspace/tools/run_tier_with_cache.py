@@ -99,7 +99,7 @@ def run_test_with_cache(
         summary_file = output_test_dir / 'summary.json'
         if summary_file.exists():
             import json
-            summary = json.loads(summary_file.read_text())
+            summary = json.loads(summary_file.read_text(encoding='utf-8'))
             return {
                 'test_id': test_id,
                 'passed': summary.get('passed', False),

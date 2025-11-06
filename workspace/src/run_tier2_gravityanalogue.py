@@ -745,7 +745,7 @@ class Tier2Harness(BaseTierHarness):
             
             # Save history
             history_path = diag_dir / f"chi_wave_history_{tid}.csv"
-            with open(history_path, 'w') as f:
+            with open(history_path, 'w', encoding='utf-8') as f:
                 f.write("step,E_rms,chi_rms,omega_rms,energy\n")
                 for step, E_snap, chi_snap, omega_snap, energy in history:
                     E_rms = float(np.sqrt(np.mean(E_snap**2)))
@@ -921,7 +921,7 @@ class Tier2Harness(BaseTierHarness):
             
             # Save χ-field evolution data
             chi_csv = diag_dir / f"chi_evolution_{tid}.csv"
-            with open(chi_csv, 'w') as f:
+            with open(chi_csv, 'w', encoding='utf-8') as f:
                 f.write("step,time,chi_pert_max,chi_pert_rms,E_energy\n")
                 for i, (step, E_snap, chi_snap, omega_snap, energy) in enumerate(history):
                     t = step * dt
@@ -1093,7 +1093,7 @@ class Tier2Harness(BaseTierHarness):
             
             # Save trajectory data
             traj_csv = diag_dir / f"light_bending_{tid}.csv"
-            with open(traj_csv, 'w') as f:
+            with open(traj_csv, 'w', encoding='utf-8') as f:
                 f.write("x,chi,E_final\n")
                 x_arr = np.arange(len(E_final_np)) * dx
                 chi_np = to_numpy(chi_field)
@@ -1807,7 +1807,7 @@ class Tier2Harness(BaseTierHarness):
             if packet_tracking_serial:
                 import csv
                 csv_path = diag_dir / f"packet_tracking_{tid}_serial.csv"
-                with open(csv_path, 'w', newline='') as f:
+                with open(csv_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'x_peak', 'max_amplitude'])
                     writer.writerows(packet_tracking_serial)
@@ -1816,7 +1816,7 @@ class Tier2Harness(BaseTierHarness):
             # Write centroid tracking CSV (NEW)
             if centroid_tracking_serial:
                 csv_path = diag_dir / f"centroid_tracking_{tid}_serial.csv"
-                with open(csv_path, 'w', newline='') as f:
+                with open(csv_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'x_centroid'])
                     writer.writerows(centroid_tracking_serial)
@@ -1867,7 +1867,7 @@ class Tier2Harness(BaseTierHarness):
             # Write packet tracking CSV for parallel run
             if packet_tracking_parallel:
                 csv_path = diag_dir / f"packet_tracking_{tid}_parallel.csv"
-                with open(csv_path, 'w', newline='') as f:
+                with open(csv_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'x_peak', 'max_amplitude'])
                     writer.writerows(packet_tracking_parallel)
@@ -2042,7 +2042,7 @@ class Tier2Harness(BaseTierHarness):
             if centroid_tracking_ctrl:
                 import csv
                 csv_path = diag_dir / f"centroid_tracking_{tid}_control.csv"
-                with open(csv_path, 'w', newline='') as f:
+                with open(csv_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'x_centroid'])
                     writer.writerows(centroid_tracking_ctrl)
@@ -2051,7 +2051,7 @@ class Tier2Harness(BaseTierHarness):
             # Save peak tracking for control run
             if peak_tracking_ctrl:
                 csv_path = diag_dir / f"packet_tracking_{tid}_control.csv"
-                with open(csv_path, 'w', newline='') as f:
+                with open(csv_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'x_peak', 'max_amplitude'])
                     writer.writerows(peak_tracking_ctrl)
@@ -2063,14 +2063,14 @@ class Tier2Harness(BaseTierHarness):
                 import csv
                 # Slab run signal
                 csv_slab = diag_dir / f"detector_signal_{tid}_slab.csv"
-                with open(csv_slab, 'w', newline='') as f:
+                with open(csv_slab, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'time_s', 'detector_value'])
                     for idx, val in enumerate(sig_slab_s):
                         writer.writerow([idx, idx*dt, val])
                 # Control run signal
                 csv_ctrl = diag_dir / f"detector_signal_{tid}_control.csv"
-                with open(csv_ctrl, 'w', newline='') as f:
+                with open(csv_ctrl, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'time_s', 'detector_value'])
                     for idx, val in enumerate(sig_ctrl_s):
@@ -2311,7 +2311,7 @@ class Tier2Harness(BaseTierHarness):
             # Save detector signals for debugging
             import csv
             sig_path = diag_dir / f"detector_signals_{tid}.csv"
-            with open(sig_path, 'w', newline='') as f:
+            with open(sig_path, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow(['step', 'time', 'signal_before', 'signal_after'])
                 for i, (sb, sa) in enumerate(zip(sig_before, sig_after)):
@@ -2344,7 +2344,7 @@ class Tier2Harness(BaseTierHarness):
                 # Implied time derivative from (E - Eprev)/dt
                 E_dot_from_pair = (E_init_np - Eprev_init_np) / dt
                 import csv
-                with open(ic_path, 'w', newline='') as f:
+                with open(ic_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['x_index', 'x_position', 'E_init', 'Eprev_init', 'E_dot_analytic', 'E_dot_from_pair',
                                      'envelope', 'carrier_cos', 'chi_field'])
@@ -2367,7 +2367,7 @@ class Tier2Harness(BaseTierHarness):
             if field_snapshots and ndim == 1:
                 snapshot_path = diag_dir / f"field_snapshots_{tid}.csv"
                 x_grid_snap = np.arange(N) * dx
-                with open(snapshot_path, 'w', newline='') as f:
+                with open(snapshot_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     # Header: x_index, x_position, chi, then E_step0, E_step1, etc.
                     snap_keys = sorted(field_snapshots.keys())
@@ -2524,7 +2524,7 @@ class Tier2Harness(BaseTierHarness):
 
             # Save envelope and thresholds for offline inspection
             env_csv = diag_dir / f"envelope_measurement_{tid}.csv"
-            with open(env_csv, 'w', newline='') as f:
+            with open(env_csv, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow(['step','time','env_before','env_after','thr_before','thr_after'])
                 for i in range(len(env_before)):
@@ -2538,7 +2538,7 @@ class Tier2Harness(BaseTierHarness):
             if field_snapshots and ndim == 1:
                 packet_analysis_path = diag_dir / f"packet_analysis_{tid}.csv"
                 x_grid_analysis = np.arange(N) * dx
-                with open(packet_analysis_path, 'w', newline='') as f:
+                with open(packet_analysis_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['step', 'time', 'center_of_mass', 'rms_width', 'max_amplitude', 
                                      'max_position', 'total_energy', 'implied_velocity'])
@@ -2684,11 +2684,11 @@ class Tier2Harness(BaseTierHarness):
             # Save packet tracking for analysis
             if bool(diag_cfg.get("save_packet_tracking", True)):
                 csv_pkt_slab = diag_dir / f"packet_tracking_{tid}_slab.csv"
-                with open(csv_pkt_slab, 'w', newline='') as f:
+                with open(csv_pkt_slab, 'w', newline='', encoding='utf-8') as f:
                     wr = csv.writer(f); wr.writerow(['step','x_peak','amplitude'])
                     for step, x_pk, amp in packet_slab: wr.writerow([step, x_pk, amp])
                 csv_pkt_ctrl = diag_dir / f"packet_tracking_{tid}_control.csv"
-                with open(csv_pkt_ctrl, 'w', newline='') as f:
+                with open(csv_pkt_ctrl, 'w', newline='', encoding='utf-8') as f:
                     wr = csv.writer(f); wr.writerow(['step','x_peak','amplitude'])
                     for step, x_pk, amp in packet_ctrl: wr.writerow([step, x_pk, amp])
                 log(f"Wrote packet tracking: {csv_pkt_slab.name}, {csv_pkt_ctrl.name}", "INFO")
@@ -2696,11 +2696,11 @@ class Tier2Harness(BaseTierHarness):
             # Save signals
             if bool(diag_cfg.get("save_detector_signals", True)):
                 csv_slab = diag_dir / f"detector_signal_{tid}_slab.csv"
-                with open(csv_slab, 'w', newline='') as f:
+                with open(csv_slab, 'w', newline='', encoding='utf-8') as f:
                     wr = csv.writer(f); wr.writerow(['step','time_s','detector_value'])
                     for i, vval in enumerate(sig_after_slab): wr.writerow([i, i*dt, vval])
                 csv_ctrl = diag_dir / f"detector_signal_{tid}_control.csv"
-                with open(csv_ctrl, 'w', newline='') as f:
+                with open(csv_ctrl, 'w', newline='', encoding='utf-8') as f:
                     wr = csv.writer(f); wr.writerow(['step','time_s','detector_value'])
                     for i, vval in enumerate(sig_after_ctrl): wr.writerow([i, i*dt, vval])
                 log(f"Wrote detector signals: {csv_slab.name}, {csv_ctrl.name}", "INFO")
@@ -2977,7 +2977,7 @@ class Tier2Harness(BaseTierHarness):
                 omega_z = np.sqrt(np.maximum(0.0, omega2_field[x_mid, y_mid, :]))
                 diag_path = diag_dir / f"local_freq_profile_{tid}.csv"
                 import csv
-                with open(diag_path, 'w', newline='') as f:
+                with open(diag_path, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(['z_index','chi','omega_measured'])
                     for iz in range(N):

@@ -111,7 +111,7 @@ def ensure_dirs(base: Path) -> None:
     (base/"plots").mkdir(parents=True, exist_ok=True)
 
 def write_json(path: Path, obj) -> None:
-    with open(path, 'w') as f:
+    with open(path, 'w', encoding='utf-8') as f:
         json.dump(obj, f, indent=2)
 
 def write_txt(path: Path, text: str) -> None:

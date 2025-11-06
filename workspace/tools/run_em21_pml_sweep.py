@@ -87,7 +87,7 @@ for pml_cells in pml_cells_values:
 # Save results
 df = pd.DataFrame(results)
 csv_path = output_dir / "pml_sweep_results.csv"
-df.to_csv(csv_path, index=False)
+df.to_csv(csv_path, index=False, encoding='utf-8')
 print(f"\n✓ Saved results to {csv_path}")
 print(df.to_string(index=False))
 
