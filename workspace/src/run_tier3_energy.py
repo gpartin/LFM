@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
@@ -153,7 +154,7 @@ def init_pulse(N, dtype, xp, kind="gaussian", kx=8.0, width=20.0):
     return xp.zeros((N, N), dtype=dtype)
 
 # ------------------------------ Test runner ------------------------------
-def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
+def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu, physics_backend: str = "baseline"):
     """Run a single energy conservation test."""
     ensure_dirs(out_dir)
     test_id = test.get("test_id", "ENER-??")
@@ -192,6 +193,31 @@ def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
     KE_trace, GE_trace, PE_trace = [], [], []
     t0 = time.time()
 
+    # Prepare canonical lattice_step parameters (delegates to single source of truth)
+    from core.lfm_equation import lattice_step  # defer import to avoid cycles at module import time
+    precision_str = "float64" if dtype == xp.float64 else "float32"
+    base_params = {
+        "dt": dt,
+        "dx": dx,
+        "alpha": c * c,
+        "beta": 1.0,
+        "chi": chi,
+        # Keep damping external in Tier-3 to preserve historical semantics
+        "gamma_damp": 0.0,
+        "boundary": "periodic",
+        "stencil_order": stencil_order,
+        "precision": precision_str,
+    }
+
+    # Fused kernel is 3D-only; Tier-3 is 2D → force baseline to avoid shape errors
+    backend_effective = physics_backend
+    if physics_backend == "fused":
+        if (getattr(E, "ndim", 2) != 3) or (not on_gpu):
+            backend_effective = "baseline"
+            log("[Tier3] Fused backend requested but not applicable to 2D or CPU — using baseline", "WARN")
+
+    base_params["backend"] = backend_effective
+
     for t in range(steps):
         # --- Optionally enforce energy (only for stability tests, NOT conservation tests) ---
         if enforce_energy:
@@ -214,11 +240,11 @@ def run_test(params, tol, test, out_dir: Path, dtype, xp, on_gpu):
                 GE_trace.append(GE)
                 PE_trace.append(PE)
 
-        # Advance one leapfrog step
-        lap = laplacian(E, dx, order=stencil_order, xp=xp)
-        E_next = 2*E - E_prev + (dt*dt)*((c*c)*lap - (chi*chi)*E)
+        # Advance one step via canonical lattice_step (single source of truth)
+        E_next = lattice_step(E, E_prev, base_params)
 
         if damping > 0.0:
+            # Maintain original Tier-3 damping semantics (post-step multiplicative)
             E_next *= (1.0 - damping)
 
         if noise_amp > 0.0 and (t % 50 == 0):
@@ -377,6 +403,8 @@ def main():
     parser.add_argument("--config", type=str, default="config/config_tier3_energy.json",
                        help="Path to config file")
     # Optional post-run hooks
+    parser.add_argument("--backend", type=str, choices=["baseline", "fused"], default="baseline",
+                       help="Physics backend: 'baseline' (canonical) or 'fused' (GPU-accelerated, 3D-only)")
     parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
                         help='Run validator after the suite: "tier" validates Tier 3 + master status; "all" runs end-to-end')
     parser.add_argument('--strict-validate', action='store_true',
@@ -389,6 +417,15 @@ def main():
                         help='Enable deterministic mode for upload build (fixed timestamps, reproducible zip)')
     args = parser.parse_args()
     
+    # Allow environment override for backend (used by parallel runner)
+    try:
+        import os
+        env_backend = os.environ.get("LFM_PHYSICS_BACKEND")
+        if env_backend in ("baseline", "fused") and args.backend == "baseline":
+            args.backend = env_backend
+    except Exception:
+        pass
+
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
     p, tol, tests = cfg["parameters"], cfg["tolerances"], cfg["tests"]
     
@@ -446,7 +483,7 @@ def main():
         tracker.start(background=True)
         
         # Run test
-        result = run_test(p, tol, test, out_base / test_dirname, dtype, xp, on_gpu)
+        result = run_test(p, tol, test, out_base / test_dirname, dtype, xp, on_gpu, physics_backend=args.backend)
         
         # Stop tracking and get metrics
         tracker.stop()
