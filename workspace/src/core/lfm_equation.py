@@ -265,12 +265,8 @@ def lattice_step(E, E_prev, params):
                 gamma = float(params.get("gamma_damp", 0.0))
                 c = math.sqrt(alpha / beta)
                 
-                # Call fused kernel
+                # Call fused kernel (returns E_next without modifying inputs)
                 E_next = fused_verlet_step(E, E_prev, chi, dt, dx, c, gamma)
-                
-                # Update E and E_prev in place
-                E_prev[:] = E
-                E[:] = E_next
                 return E_next
         except (ImportError, Exception):
             # Fall back to baseline if fused unavailable
