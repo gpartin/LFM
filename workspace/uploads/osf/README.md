@@ -1,8 +1,8 @@
-# Lattice Field Medium (LFM) — Phase 1 Validation Archive
+﻿# Lattice Field Medium (LFM) — Phase 1 Validation Archive
 
 **A Computational Framework Demonstrating Emergent Gravity, Quantum Mechanics, and Electromagnetism from Discrete Field Dynamics**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17510124.svg)](https://doi.org/10.5281/zenodo.17510124)
+[Zenodo Record](https://zenodo.org/records/17536484)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ---
@@ -13,7 +13,7 @@ This archive contains the complete computational validation of the **Lattice Fie
 
 **Core Innovation**: Implementation of the Klein-Gordon equation (Klein, 1926; Gordon, 1926) with spatially-varying mass parameter χ²(x,t), yielding emergent behavior across multiple physical domains through purely local field interactions.
 
-**Validation Status**: 88 computational tests spanning 6 physics domains, with 86 passing rigorous energy conservation and physical accuracy criteria (98% pass rate).
+**Validation Status**: 105 computational tests spanning 7 physics domains, with 94 passing rigorous energy conservation and physical accuracy criteria (89.5% pass rate).
 
 ---
 
@@ -30,17 +30,17 @@ This archive contains the complete computational validation of the **Lattice Fie
 
 ### 📊 Validation Results
 
-**88 Tests Across 6 Physics Domains:**
+**105 Tests Across 7 Physics Domains:**
 
-- **TIER_1_ACHIEVEMENTS.md** — Relativistic Validation (15/15 passed)
+- **TIER_1_ACHIEVEMENTS.md** — Relativistic Validation (16 tests, 17 passing)
   - Lorentz invariance, isotropy, causality constraints
   - Wave propagation at c, dispersion relation validation
 
-- **TIER_2_ACHIEVEMENTS.md** — Gravity Analogue (25/25 passed)
+- **TIER_2_ACHIEVEMENTS.md** — Gravity Analogue (26/26 passed)
   - Gravitational redshift, time dilation, light bending
   - χ-field gradient effects mimicking spacetime curvature
 
-- **TIER_3_ACHIEVEMENTS.md** — Energy Conservation (10/10 passed, 1 missing)
+- **TIER_3_ACHIEVEMENTS.md** — Energy Conservation (10/11 passed)
   - Hamiltonian partitioning, dissipation analysis
   - Energy drift < 0.01% over 10⁴-10⁵ timesteps
 
@@ -52,9 +52,13 @@ This archive contains the complete computational validation of the **Lattice Fie
   - EM-analogous phenomena: wave propagation, field coupling, polarization
   - Electromagnetic behavior from Klein-Gordon dynamics
 
-- **TIER_6_ACHIEVEMENTS.md** — Multi-Domain Coupling (1/3 passed, 2 in development)
+- **TIER_6_ACHIEVEMENTS.md** — Multi-Domain Coupling (1/12 passed, 11 in development)
   - Cross-domain validation of emergent phenomena
   - Gravitational time dilation, Lorentz invariance of deflection
+
+- **TIER_7_ACHIEVEMENTS.md** — Thermodynamics & Statistical Mechanics (5/5 passed)
+  - Entropy increase, arrow of time, equipartition theorem
+  - Temperature emergence from coarse-grained dynamics
 
 **Summary Report**: `RESULTS_COMPREHENSIVE.md` — aggregate statistics and cross-domain achievements
 
@@ -62,10 +66,11 @@ This archive contains the complete computational validation of the **Lattice Fie
 
 ### 🔬 Scientific Discoveries
 
-- **DISCOVERIES_OVERVIEW.md** — 12+ emergent phenomena documented with evidence links
+- **DISCOVERIES_OVERVIEW.md** — 17 emergent phenomena documented with evidence links
   - Gravitational effects from field gradients (no metric tensor required)
   - Quantum behavior from χ-field structure (no wavefunction postulate)
   - Electromagnetic duality from single scalar field
+  - Thermodynamic behavior from coarse-grained observables
 
 - **EVIDENCE_REVIEW.md** — Cross-reference audit linking discoveries to test results
 
@@ -94,12 +99,12 @@ This archive contains the complete computational validation of the **Lattice Fie
 
 ### 📁 Test Results Archive
 
-`results/` directory contains **per-test validation packets** for all 88 tests:
+`results/` directory contains **per-test validation packets** for all 105 tests:
 - Individual test summaries (JSON + TXT)
 - Diagnostic plots (energy conservation, field evolution, frequency analysis)
 - Configuration snapshots for exact reproducibility
 
-Organized by tier: `Relativistic/`, `Gravity/`, `Energy/`, `Quantization/`, `Electromagnetic/`, `Coupling/`
+Organized by tier: `Relativistic/`, `Gravity/`, `Energy/`, `Quantization/`, `Electromagnetic/`, `Coupling/`, `Thermodynamics/`
 
 ---
 
@@ -111,9 +116,9 @@ Organized by tier: `Relativistic/`, `Gravity/`, `Energy/`, `Quantization/`, `Ele
 
 3. **Emergent Electromagnetism**: EM-analogous phenomena (wave propagation, field coupling, polarization, birefringence) validated through computational tests, with electromagnetic behavior emerging from Klein-Gordon dynamics with spatially-varying χ-field.
 
-4. **Unified Framework**: All three domains (gravity, quantum, EM) arise from the same discrete field equation — suggesting a common underlying mechanism.
+4. **Unified Framework**: All domains (gravity, quantum, EM, thermodynamics) arise from the same discrete field equation — suggesting a common underlying mechanism.
 
-5. **Computational Validation**: 86/88 tests passing with energy conservation < 0.01% drift establishes numerical and physical correctness.
+5. **Computational Validation**: 94/105 tests passing with energy conservation < 0.01% drift establishes numerical and physical correctness.
 
 ---
 
@@ -164,8 +169,8 @@ If you use this work in research, please cite:
   year = {2025},
   publisher = {Zenodo},
   version = {3.2},
-  doi = {10.5281/zenodo.17510124},
-  url = {https://doi.org/10.5281/zenodo.17510124}
+  note = {Zenodo record URL: https://zenodo.org/records/17536484},
+  url = {https://zenodo.org/records/17536484}
 }
 ```
 
@@ -201,12 +206,12 @@ If you use this work in research, please cite:
 
 ## Archive Statistics
 
-- **Total Files**: 450+ (including test result subdirectories)
+- **Total Files**: 500+ (including test result subdirectories)
 - **Documentation**: 15 core documents (MD + PDF formats)
-- **Test Results**: 85 validation packets with full diagnostics
-- **Plots**: 90+ visualization files demonstrating physical validation
+- **Test Results**: 105 validation packets with full diagnostics
+- **Plots**: 100+ visualization files demonstrating physical validation
 - **Code Snapshots**: Configuration files for exact test reproducibility
-- **Archive Size**: ~7 MB (uncompressed)
+- **Archive Size**: ~8 MB (uncompressed)
 
 ---
 

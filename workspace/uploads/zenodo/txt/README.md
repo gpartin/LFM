@@ -1,4 +1,4 @@
-# Upload Staging — Text Content
+﻿# Upload Staging — Text Content
 
 **Role in hierarchy**: `workspace/` → `docs/` → `upload/` → `txt/`
 

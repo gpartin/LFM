@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
@@ -1213,7 +1213,7 @@ def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
         'license: "CC BY-NC-ND 4.0"',
         'contact: "latticefieldmediumresearch@gmail.com"',
         'orcid: "https://orcid.org/0009-0004-0327-6528"',
-        'doi: "10.5281/zenodo.17510124"',
+        'url: "https://zenodo.org/records/17536484"',
         f'generated: "{stamp}"',
         '---',
         '',
@@ -1729,7 +1729,7 @@ def _txt_to_markdown(txt_path: Path, title: str, deterministic: bool = False) ->
     lines.append('license: "CC BY-NC-ND 4.0"')
     lines.append('contact: "latticefieldmediumresearch@gmail.com"')
     lines.append('orcid: "https://orcid.org/0009-0004-0327-6528"')
-    lines.append('doi: "10.5281/zenodo.17510124"')
+    lines.append('url: "https://zenodo.org/records/17536484"')
     if deterministic:
         lines.append(f'generated: "{_deterministic_now_str()}"')
     lines.append('---')

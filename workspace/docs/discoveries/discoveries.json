@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "date": "2025-11-01",
     "tier": "Core Framework",
@@ -6,7 +6,7 @@
     "summary": "Discovery that a single discrete lattice equation (∂²E/∂t² = c²∇²E − χ²(x,t)E) can reproduce relativistic, gravitational, quantum, and electromagnetic phenomena through spatially-varying curvature parameter.",
     "evidence": "Tier 1-5 computational validation",
     "links": [
-      "DOI: 10.5281/zenodo.17510124",
+      "Zenodo: https://zenodo.org/records/17536484",
       "tests/tier1/",
       "docs/text/LFM_Core_Equations.txt"
     ]

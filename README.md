@@ -1,4 +1,4 @@
-# Lattice Field Medium (LFM)
+﻿# Lattice Field Medium (LFM)
 ## Public release policy (2025-11-04)
 
 Only the following paths are published in this repository:
@@ -28,7 +28,7 @@ Operational notes:
 
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17510124.svg)](https://doi.org/10.5281/zenodo.17510124)
+[Zenodo Record](https://zenodo.org/records/17536484)
 [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2F6AGN8-blue)](https://osf.io/6agn8)
 
 **Computational validation of the lattice field medium hypothesis: that fundamental physics emerges from discrete field interactions on a computational spacetime lattice.**
@@ -371,8 +371,8 @@ LFM Research — Los Angeles, CA USA
   year = {2025},
   publisher = {LFM Research},
   license = {CC BY-NC-ND 4.0},
-  doi = {10.5281/zenodo.17510124},
-  url = {https://zenodo.org/records/17510124},
+  doi = {https://zenodo.org/records/17536484},
+  url = {https://zenodo.org/records/17536484},
   note = {Based on Klein-Gordon equation (Klein, 1926; Gordon, 1926)}
 }
 

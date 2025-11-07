@@ -2,5 +2,9 @@
   "version": "3.2",
   "date": "2025-11-06",
   "description": "LFM Defensive ND Release v3.2",
-  "updated": "2025-11-06 15:36:12"
+  "updated": "2025-11-07 00:00:00",
+  "changelog": [
+    "2025-11-07: Updated all Zenodo references to new record URL https://zenodo.org/records/17536484",
+    "2025-11-06: Terminology corrections, 105-test validation complete"
+  ]
 }

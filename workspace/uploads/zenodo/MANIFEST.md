@@ -1,4 +1,4 @@
-# Upload Manifest
+﻿# Upload Manifest
 
 - Generated: 2025-11-06 19:53:08
 - Scope: Package manifest for C:/LFM/workspace/uploads/zenodo

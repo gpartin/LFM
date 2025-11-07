@@ -1,11 +1,11 @@
----
+﻿---
 title: "Scientific Discoveries and Domains of Emergence"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "10.5281/zenodo.17510124"
+doi: "https://zenodo.org/records/17536484"
 generated: "2025-11-06 19:53:06"
 ---
 
@@ -40,7 +40,7 @@ generated: "2025-11-06 19:53:06"
 - 2025-11-01 — Unified Field Equation with Spatially-Varying χ-Field (Core Framework)
   - Discovery that a single discrete lattice equation (∂²E/∂t² = c²∇²E − χ²(x,t)E) can reproduce relativistic, gravitational, quantum, and electromagnetic phenomena through spatially-varying curvature parameter.
   - Evidence: Tier 1-5 computational validation
-  - Links: DOI: 10.5281/zenodo.17510124, tests/tier1/, docs/text/LFM_Core_Equations.txt
+  - Links: DOI: https://zenodo.org/records/17536484, tests/tier1/, docs/text/LFM_Core_Equations.txt
 - 2025-11-01 — Lorentz Invariance from Discrete Lattice Rules (Tier 1 - Relativistic)
   - Demonstration that Lorentz symmetry emerges in continuum limit of discrete lattice updates. Dispersion relation ω² = c²k² + χ² validated to numerical precision.
   - Evidence: Tier 1 tests - Lorentz-covariant propagation confirmed

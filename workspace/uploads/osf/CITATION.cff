@@ -8,8 +8,8 @@ authors:
     email: latticefieldmediumresearch@gmail.com
     affiliation: Independent
 version: 1.0.0
-doi: 10.5281/zenodo.17510124
-url: https://zenodo.org/records/17510124
+# DOI pending for new record; using direct record URL for citation until DOI minted
+url: https://zenodo.org/records/17536484
 repository-code: https://github.com/gpartin/LFM
 license: CC-BY-NC-ND-4.0
 date-released: 2025-10-27

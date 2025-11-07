@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
@@ -300,7 +300,7 @@ institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "10.5281/zenodo.17510124"
+url: "https://zenodo.org/records/17536484"
 generated: "{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 ---
 
