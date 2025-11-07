@@ -20,8 +20,10 @@
 - **Educational resource** documenting what worked (fused) and what didn't (masks)
 
 **Performance results from this research**:
-- Wave packet 256³: 1.74× speedup, drift 8.48e-05 (P1 gate: <1e-4) ✓
-- Gravity sim 64³: 3.5× speedup, 0.2ms vs 0.7ms/step ✓
+- Wave packet 64³: 3.32× speedup, drift matches baseline ✓
+- Wave packet 128³: 3.35× speedup, drift matches baseline ✓
+- Wave packet 256³: 3.99× speedup, drift 8.48e-05 (P1 gate: <1e-4) ✓
+- Gravity sim 64³: 5.10× speedup, 0.14ms vs 0.70ms/step ✓
 - Lorentz covariance verified ✓
 
 For new performance experiments, create new directories under `experiments/` or `performance/`.

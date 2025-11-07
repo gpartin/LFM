@@ -609,24 +609,25 @@ def write_manifest_for(base_dir: Path, entries: List[Tuple[str, int, str]], dete
 def write_zenodo_metadata(entries: List[Tuple[str, int, str]], deterministic: bool = False):
     pub_date = _deterministic_now_str().split(' ')[0] if deterministic else datetime.now().strftime('%Y-%m-%d')
     meta = {
-        "title": "Lorentzian Field Model (LFM) — Results Package",
+        "title": "Lattice-Field Medium: EM-Analogous Phenomena Validation",
         "upload_type": "dataset",
         "publication_date": pub_date,
         "creators": [
-            {"name": "Partin, Greg D.", "affiliation": "Independent"}
+            {"name": "Partin, Greg D.", "affiliation": "LFM Research, Los Angeles CA USA", "orcid": "0009-0004-0327-6528"}
         ],
         "description": (
-            "Consolidated results and diagnostics for the LFM lattice field model. "
-            "Includes MASTER_TEST_STATUS, aggregated report, and legal documents."
+            "Validation of electromagnetic theory within the Lattice-Field Medium framework, demonstrating EM-analogous phenomena "
+            "(wave propagation, field coupling, polarization, birefringence) from Klein-Gordon equation with spatially-varying χ-field. "
+            "Includes test results, diagnostics, and validation data for Tier 5 electromagnetic validations."
         ),
         "access_right": "open",
         "license": "cc-by-nc-nd-4.0",
-        "keywords": ["Lorentzian Field Model", "lattice", "simulation", "energy", "quantization"],
+        "keywords": ["Lattice Field Medium", "EM-analogous", "Klein-Gordon equation", "electromagnetic phenomena", "discrete spacetime", "lattice simulation"],
         "related_identifiers": [
             {"relation": "isSupplementTo", "identifier": "https://osf.io/6agn8"},
-            {"relation": "isSupplementTo", "identifier": "https://zenodo.org/records/17478758"}
+            {"relation": "isSupplementTo", "identifier": "https://zenodo.org/records/17510124"}
         ],
-        "notes": "Dry-run metadata generated locally; review before deposition."
+        "notes": "LFM Phase 1 validation package - electromagnetic phenomena emerging from Klein-Gordon dynamics."
     }
     (UPLOAD / 'zenodo_metadata.json').write_text(json.dumps(meta, indent=2, sort_keys=True), encoding='utf-8')
 

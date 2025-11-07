@@ -73,7 +73,7 @@ laws:
 4. Mode quantization: discrete oscillation frequencies.
 5. Scaling symmetry: dimensionless and self-consistent.
 
-5 Domains of Emergence
+6 Domains of Emergence
 
 The same lattice rule reproduces distinct physical regimes depending on
 the behavior of χ(x,t) and coupling constants:
@@ -190,9 +190,9 @@ simulations (Tier 2–3 extensions).
 The Lattice-Field Medium unifies relativity, gravitation, quantization,
 electromagnetic theory, and cosmology through a single discrete rule. Energy, inertia, 
 curvature, and electromagnetic field interactions emerge as properties of one deterministic field. 
-Complete Maxwell equation validation demonstrates that all classical electromagnetism 
-arises naturally from χ-field variations. Continued
-validation will determine whether this structure can serve as a
+Tier 5 validation demonstrates that EM-analogous phenomena (wave propagation, field coupling, 
+polarization, birefringence) arise naturally from Klein-Gordon dynamics with spatially-varying 
+χ-field. Continued validation will determine whether this structure can serve as a
 fundamental framework for physical law.
 
 This Version aligns all conceptual, mathematical, and numerical

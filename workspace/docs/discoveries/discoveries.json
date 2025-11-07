@@ -70,7 +70,7 @@
     "date": "2025-11-01",
     "tier": "Tier 5 - Electromagnetic",
     "title": "Electromagnetic Wave Emergence from χ-Coupled Field Dynamics",
-    "summary": "Demonstration that Maxwell equations emerge from χ-coupled E-field dynamics, including Coulomb's law, Lorentz force, and electromagnetic wave propagation.",
+    "summary": "Demonstration that EM-analogous phenomena (wave propagation, field coupling, polarization, birefringence) emerge from Klein-Gordon equation with spatially-varying χ-field, reproducing electromagnetic behavior without imposing Maxwell equations as axioms.",
     "evidence": "Tier 5 validation - electromagnetic phenomena reproduction",
     "links": [
       "tests/tier5/",

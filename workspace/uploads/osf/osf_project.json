@@ -1,12 +1,13 @@
 {
   "title": "LFM Electromagnetic Theory Dataset",
-  "description": "Comprehensive electromagnetic theory validation dataset for the Lattice-Field Medium framework with complete Maxwell equation reproduction.",
+  "description": "Comprehensive EM-analogous phenomena validation dataset for the Lattice-Field Medium framework, demonstrating electromagnetic behavior from Klein-Gordon dynamics.",
   "category": "physics",
   "tags": [
     "electromagnetic",
-    "Maxwell",
+    "EM-analogous",
     "discrete spacetime",
-    "lattice field"
+    "lattice field",
+    "Klein-Gordon"
   ],
   "contributors": [
     {

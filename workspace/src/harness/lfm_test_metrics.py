@@ -47,7 +47,8 @@ class TestMetrics:
 	"""
 	def __init__(self, db_path: Path = None):
 		if db_path is None:
-			db_path = Path(__file__).parent / "results" / "test_metrics_history.json"
+			# Use workspace/results/ not workspace/src/harness/results/
+			db_path = Path(__file__).parent.parent.parent / "results" / "test_metrics_history.json"
 		self.db_path = Path(db_path)
 		self.db_path.parent.mkdir(parents=True, exist_ok=True)
 		self.data = self._safe_read_json(self.db_path)

@@ -34,7 +34,7 @@ This ensures:
 This document describes the performance optimizations implemented in the LFM codebase, covering three phases:
 
 - **Phase 1**: Memory optimization & GPU diagnostics (2-5x speedup)
-- **Phase 2**: Fused CUDA kernels (5-20x speedup on GPU)
+- **Phase 2**: Fused CUDA kernels (3.3-5.1× speedup validated on RTX 4060)
 - **Phase 3**: Multi-scale AMR for cosmology (100-1000x for large-scale simulations)
 
 ## Installation

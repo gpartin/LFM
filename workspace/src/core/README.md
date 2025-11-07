@@ -48,7 +48,7 @@ The LFM framework now supports two physics backends:
 - **Function**: `fused_verlet_step()`
 - **Status**: Production-ready, verified to P1 accuracy gate
 - **Use**: GPU-accelerated production runs
-- **Performance**: 1.7-3.5× faster than baseline
+- **Performance**: 3.3-5.1× faster than baseline (mean 3.94×)
 - **Validation**:
   - Wave packet 256³: drift 8.48e-05 (P1 gate: <1e-4) ✓
   - Gravity sim 64³: drift within tolerance ✓
@@ -89,9 +89,12 @@ Measured on NVIDIA GeForce RTX 4060 Laptop (8GB VRAM, CuPy v13.6.0):
 
 | Test Case | Grid | Steps | Baseline | Fused | Speedup |
 |-----------|------|-------|----------|-------|---------|
-| Wave packet | 256³ | 2000 | 5.11 ms/step | 2.94 ms/step | **1.74×** |
-| Gravity sim | 64³ | 200 | 0.7 ms/step | 0.2 ms/step | **3.5×** |
+| Wave packet 64³ | 64³ | — | 0.64 ms/step | 0.19 ms/step | **3.32×** |
+| Wave packet 128³ | 128³ | — | 3.58 ms/step | 1.07 ms/step | **3.35×** |
+| Wave packet 256³ | 256³ | — | 34.1 ms/step | 8.55 ms/step | **3.99×** |
+| Gravity sim 64³ | 64³ | — | 0.70 ms/step | 0.14 ms/step | **5.10×** |
 
+**Source**: `performance/benchmarks/fused_benchmark_results.csv` (2025-11-06)
 **Accuracy**: Both backends match to machine precision (verified via diff).
 
 ### Design Rationale

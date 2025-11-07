@@ -25,7 +25,7 @@
     },
     "Electromagnetic": {
       "title": "Tier 5 — Electromagnetic",
-      "description": "Maxwell equations, Coulomb, Lorentz force, EM waves, lensing"
+      "description": "EM-analogous phenomena: wave propagation, field coupling, polarization, birefringence"
     }
   }
 }

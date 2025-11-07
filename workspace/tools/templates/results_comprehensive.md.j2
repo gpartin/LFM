@@ -20,10 +20,9 @@ Generated: {{ deterministic_date if deterministic_date else generation_time }}
 
 | Tier | Category | Tests | Pass Rate | Tier Achievement Report |
 |------|----------|--------|-----------|------------------------|
-{%- for t in tiers %}
+{% for t in tiers -%}
 | {{ t.tier_name }} | {{ t.short_name }} | {{ t.test_count }} | {{ t.passed }}/{{ t.test_count }} ({{ (100 * t.passed / t.test_count) | round(1) }}%) | TIER_{{ t.tier_number }}_ACHIEVEMENTS.md |
-{%- endfor %}
-
+{% endfor %}
 **Total: {{ total_passed }}/{{ total_tests }} tests passing ({{ pass_percentage | round(1) }}%)**
 
 ---

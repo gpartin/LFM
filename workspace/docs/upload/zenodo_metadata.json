@@ -2,20 +2,22 @@
   "access_right": "open",
   "creators": [
     {
-      "affiliation": "Independent",
-      "name": "Partin, Greg D."
+      "affiliation": "LFM Research, Los Angeles CA USA",
+      "name": "Partin, Greg D.",
+      "orcid": "0009-0004-0327-6528"
     }
   ],
-  "description": "Consolidated results and diagnostics for the LFM lattice field model. Includes MASTER_TEST_STATUS, aggregated report, and legal documents.",
+  "description": "Validation of electromagnetic theory within the Lattice-Field Medium framework, demonstrating EM-analogous phenomena (wave propagation, field coupling, polarization, birefringence) from Klein-Gordon equation with spatially-varying \u03c7-field. Includes test results, diagnostics, and validation data for Tier 5 electromagnetic validations.",
   "keywords": [
-    "Lorentzian Field Model",
-    "lattice",
-    "simulation",
-    "energy",
-    "quantization"
+    "Lattice Field Medium",
+    "EM-analogous",
+    "Klein-Gordon equation",
+    "electromagnetic phenomena",
+    "discrete spacetime",
+    "lattice simulation"
   ],
   "license": "cc-by-nc-nd-4.0",
-  "notes": "Dry-run metadata generated locally; review before deposition.",
+  "notes": "LFM Phase 1 validation package - electromagnetic phenomena emerging from Klein-Gordon dynamics.",
   "publication_date": "2025-11-06",
   "related_identifiers": [
     {
@@ -23,10 +25,10 @@
       "relation": "isSupplementTo"
     },
     {
-      "identifier": "https://zenodo.org/records/17478758",
+      "identifier": "https://zenodo.org/records/17510124",
       "relation": "isSupplementTo"
     }
   ],
-  "title": "Lorentzian Field Model (LFM) \u2014 Results Package",
+  "title": "Lattice-Field Medium: EM-Analogous Phenomena Validation",
   "upload_type": "dataset"
 }

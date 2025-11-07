@@ -1,10 +1,10 @@
 # Upload Manifest
 
-- Generated: 2025-11-06 16:28:24
+- Generated: 2025-11-06 17:49:33
 - Scope: Package manifest for C:/LFM/workspace/uploads/osf
 
 ## Provenance
-- Git SHA: 5a4fd52d7ab20edc7c6c910e4f774a191e4d7249
+- Git SHA: 582583c4076e9d780a52d337d7b9a92da8bad2d2
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
@@ -14,19 +14,19 @@
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | CITATION.cff | 1795 | `c031d6e8d21c486e442efc8cf71d8bbdfe72e847d2091105f8d82fccd481b5a6` |
-| CORE_EQUATIONS.md | 11254 | `3aa7e1c89fa5907b536fdafee543109c0d2067ee7f017a70b3bdf934dbf5484b` |
-| DISCOVERIES_OVERVIEW.md | 12379 | `ce6b2c87fe8d7cb11f9f3c70b25d19b59aea3b0f39f378566c6f1ad51513af6b` |
-| EVIDENCE_REVIEW.md | 3760 | `1ec64eeda3548dba27836a5495f74bf5f192f9ba1e9547c7f912c9f88ab02887` |
-| EXECUTIVE_SUMMARY.md | 6606 | `85b5e776e9dc62fe06717b79b810640b485dde7af8403fa532a67b948be4cc21` |
+| CORE_EQUATIONS.md | 11254 | `75a3e45dcf5ec73502faed24469274ecbddd36ca66f673537af3c2cd36bc6662` |
+| DISCOVERIES_OVERVIEW.md | 12479 | `bb9f52a715b3ff2e4a997f28ae476dc5a0bf3b9938d0e086744a2dbd554cdf88` |
+| EVIDENCE_REVIEW.md | 3760 | `b2a131966ebcffd59130acc453c66f24f02f4254e12757f12a472595d4e65263` |
+| EXECUTIVE_SUMMARY.md | 6606 | `eba5f16568fa39fefe952cb2b40465309fe64fbef0908fa160dee6950bd711ec` |
 | Executive_Summary.pdf | 32870 | `dd78c2cfa3781d9ba96d40185023e15d23eabbc370378f1f1716570188cc3923` |
 | LFM_Core_Equations.pdf | 44127 | `47bc57513f04b562bc9e69e48b1c0dc8ffa843695ca5963e9c2585e009991c5e` |
 | LFM_Master.pdf | 37799 | `241c6ba01d4ed5ff8d20fb675ba30e5311edf36b1f0cfcf21c6332e1677e93b2` |
 | LFM_Phase1_Test_Design.pdf | 36002 | `e9e9d61d6763ff6cdfbe036e3a139c48641510720c54952a087b3c3e50fe0d4d` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 36860 | `1036e2cdc515f2d65ec157b7c016df02e90f9d9d2d10cb88d5d73fd7f0b5ce5f` |
-| MASTER_DOCUMENT.md | 11607 | `a8832ca2b91271f6ca3731297c982f081e94a42616241e7898857fe29500610d` |
+| MANIFEST.md | 36965 | `e95ef6153444e89e1d013b976383b617970c5bbfe32d8c58fa24fe74fdebf77e` |
+| MASTER_DOCUMENT.md | 11677 | `c76ec4521306ea332073b134d62f88a3eee5f53b997cba46a173125dfac4045b` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| osf_project.json | 509 | `a171654c3fc17d37dfff025f9360fdea35f03635cef297fa4d740dec9fec9160` |
+| osf_project.json | 558 | `6ba912092e19179d48c5c935d4c0ce4482013ef8ac76bb6bfeb4f5067693b120` |
 | plot_quantum_bound_states.png | 223882 | `4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc` |
 | plot_quantum_interference.png | 38562 | `228a4db51cfceb15a6e448bd91da67720304423c9bd5b08f5b02206d02839c17` |
 | plot_relativistic_dispersion.png | 30834 | `4362dbce0dc6561d9350ed6a6e85e8c29fcae4ca2e835b9ba2585954858663e5` |
@@ -36,7 +36,7 @@
 | plot_tier4_quantum_bound_states.png | 78381 | `30526d79e952c4acb44c568311fb2c167b02b4486548087320a8d77016af0afe` |
 | plot_tier5_electromagnetic_waves.png | 71341 | `272443f33952b9b2512607be95f39ba85a2ba47ea58c07dc281d52fbed14dc5a` |
 | PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
-| README.md | 9741 | `22603f0e936e49e4831ea2364b99fb326b70da42815c6b13ae5d6cfd8d908e5d` |
+| README.md | 10104 | `b03a3951031a67ed29a813aa5ff3fd311d2e87560b3a9b0e57bd59ba47e4a5b7` |
 | results/chi_emergence/README.md | 541 | `fa437df435ca9b3905fab8e7922a7277f5334ff2f579b552205e4c16e8b2a0aa` |
 | results/Coupling/COUP-01/summary.json | 426 | `0864041baf3c73d1c949e851a02b7097ae6f9585b872c207e5ec5a5b2bc5b2a2` |
 | results/Coupling/COUP-02/summary.json | 435 | `78fac77ccb53d47f059159c4ace3e0cfebb79073d112350d5ba9095e4f8fc620` |
@@ -173,7 +173,7 @@
 | results/Gravity/GRAV-09/readme.txt | 489 | `741e554bf82feb39401bd6b2a1f17aeacd9ab84cfd4f8a84fc5af62065aa42f8` |
 | results/Gravity/GRAV-09/summary.json | 854 | `3c5a60cf44a47e876648072be296f02589278f6083bdf4110932efe8f1648b0c` |
 | results/Gravity/GRAV-10/readme.txt | 489 | `4e7259eed38f8d4773740f9ac9ed16fcbe2719191f89fbcc22cbe83930fae1fd` |
-| results/Gravity/GRAV-10/summary.json | 836 | `5f8eab114cb57718e56f81a348cd38415a8ab48d64e1728a169f510ec956e2f4` |
+| results/Gravity/GRAV-10/summary.json | 836 | `9add877b919847c2bc06c3b37ec95e6efe3d901c7daa24857e9a98d41ecbad20` |
 | results/Gravity/GRAV-11/readme.txt | 489 | `7ffc4593a2a9200a29e9559f9fbbff26153c91f99a210c6b325be6827b20f2c2` |
 | results/Gravity/GRAV-11/summary.json | 742 | `ba7467b54bdaef194b063cf464e5cfa50c98dfae66690535dec377b7e8a6dd81` |
 | results/Gravity/GRAV-12/readme.txt | 489 | `a4bf5d47a69483ea6047e603ed49a62c52b3918c6461b8422bcca6a2bb010261` |
@@ -198,9 +198,9 @@
 | results/Gravity/GRAV-20/readme.txt | 488 | `78c261c7c3b7c4c825975db19852ccaee0e4ff7e24cae6b71c18bfcf98781f18` |
 | results/Gravity/GRAV-20/summary.json | 648 | `b43b8cdc5d4c3f64f4baa63dec6a14c4838f9058b3f8c8ef5859db1918fb061f` |
 | results/Gravity/GRAV-21/readme.txt | 488 | `d32095868cd9c51b1ae92d63d71f57cf86cd0c2690569c27b1adf0ea924cdd31` |
-| results/Gravity/GRAV-21/summary.json | 647 | `d1287ebfa7d380a87137c55677d3a16e8b6d1396ea8873f4035331b9a0c49c62` |
+| results/Gravity/GRAV-21/summary.json | 647 | `ac5e507760fc3430050b62531628be27fce236b0cd3bbdf675c04ec5a3cc338c` |
 | results/Gravity/GRAV-22/readme.txt | 488 | `921084999d8a71d5c6f92b25723620bb411d824b34873d852a1abbe603a69051` |
-| results/Gravity/GRAV-22/summary.json | 477 | `d558150ea6d0063bd4be495f34498c2453fd227fbe1e0159372d5f947fa13d99` |
+| results/Gravity/GRAV-22/summary.json | 477 | `fdbd3567a3ec1d8f039dd31ed3e52010614aaa500f07df8ad7943a6603296395` |
 | results/Gravity/GRAV-23/plots/chi_wave_evolution_GRAV-23.png | 115277 | `30fe0ebdabc13ee5f46aa2f169aae209f57230b756099de0cebb04062ce7f6b9` |
 | results/Gravity/GRAV-23/readme.txt | 488 | `69a302b8e5a4674657b40ddc4611beeeb0bd5b09dbc27b2e919698704e002231` |
 | results/Gravity/GRAV-23/summary.json | 668 | `401aabd3b9c6587735a82d6763ac32d83afa21b71d50e9f20cadde6b71392b49` |
@@ -211,7 +211,7 @@
 | results/Gravity/GRAV-25/readme.txt | 488 | `42eb43295664bb7f81ae20ddc2363d647842006c373209c5e58b52d745fe2ec7` |
 | results/Gravity/GRAV-25/summary.json | 559 | `249d9190906e46d75230650afff9ec8fb1314ab95528037f02ce6d03e0b27a53` |
 | results/Gravity/README.md | 798 | `12d238358b40eca912570ac7bdd562d2666a837973ea848529f15ea6bdfe19dd` |
-| results/MASTER_TEST_STATUS.csv | 7674 | `8d6336144b8b7703defdfddeccbaf9830623d5716a3872f5a0bb14acc31c1562` |
+| results/MASTER_TEST_STATUS.csv | 7271 | `1f7b89efe748c224afc69c113aae2fddb2fa4edfdb2742148e61f3d1619b2104` |
 | results/parallel_run_summary.json | 157 | `ed4d9f893e43a016f201495ae608d5364dfd6c97e22ef8145555d175031b3df4` |
 | results/parallel_test_results.json | 70568 | `1a5d80995124d45a4434eb0c72d13c678f01404d0dab34d7144b173bf1cd2e88` |
 | results/Quantization/QUAN-01/plots/energy_transfer.png | 131580 | `9f03da0f2a6a9df57e6378bc85f67f39874d83fccb5adaf20325aef01cd7de0a` |
@@ -240,7 +240,7 @@
 | results/Quantization/QUAN-08/summary.json | 576 | `87f8f39fd523f3ccf416a4c49a33945cc28f4e667b817a9a2e756c08a9a846c7` |
 | results/Quantization/QUAN-09/plots/uncertainty_dx_dk.png | 38562 | `228a4db51cfceb15a6e448bd91da67720304423c9bd5b08f5b02206d02839c17` |
 | results/Quantization/QUAN-09/readme.txt | 489 | `df83ce452a71f4124a35a6b08140ccb9edc3de253077e95cb41e3dd859684b37` |
-| results/Quantization/QUAN-09/summary.json | 559 | `eb2ad8622dfa8328e0329d93b0b9a5a838ce3ec8e7415f19b97c99a000646c47` |
+| results/Quantization/QUAN-09/summary.json | 559 | `e336046138f50e28938f053ed50ab430cd6ba570f516ba23f184b13d468b5c9f` |
 | results/Quantization/QUAN-10/plots/bound_state_modes.png | 223882 | `4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc` |
 | results/Quantization/QUAN-10/plots/mode_evolution.png | 121705 | `3e3f3b05c70a0b5ddee7518a43f978e54923df45d07805c822176c6924d91471` |
 | results/Quantization/QUAN-10/plots/quantized_energies.png | 78381 | `30526d79e952c4acb44c568311fb2c167b02b4486548087320a8d77016af0afe` |
@@ -255,10 +255,10 @@
 | results/Quantization/QUAN-12/summary.json | 942 | `6b19d7fa69d387815307c2abdf785ae61770c20219c3b7e402c23d1fe60317e7` |
 | results/Quantization/QUAN-13/plots/wave_particle_duality.png | 107708 | `873fc22330906a08ea65c3daa30cce5e29efc8abe44db5a010762da69eddc122` |
 | results/Quantization/QUAN-13/readme.txt | 489 | `8184e763a27c2af74bd0eda8bc44cb76a46ff6d8c205d4e069e770e171b93878` |
-| results/Quantization/QUAN-13/summary.json | 876 | `4a5befbb04882e9672fa69f6b4b6156158bd3d71e9e2aa0d0bc1a83673542fd1` |
+| results/Quantization/QUAN-13/summary.json | 876 | `e85a8f82fa95ab9f270a4faca2dc2df644075bc0befa3d2e75e586185de1ad72` |
 | results/Quantization/QUAN-14/plots/non_thermalization.png | 190119 | `f06bb6d960decdea2e1705a99cea9d56274b558d78e5a0b4289f6cbe715b74cf` |
 | results/Quantization/QUAN-14/readme.txt | 489 | `1ade3694604c9ef6e4e9bbbf799e7639822d0707d64cfcb19ab77de760f3778f` |
-| results/Quantization/QUAN-14/summary.json | 741 | `8b60760107f6d4353e2dc212df6ea7536305e750bd4d7b11d0f86d5445e669ad` |
+| results/Quantization/QUAN-14/summary.json | 741 | `1d1ace5db6914e9a18c9ebeca3fa014200e5d9f19ee46dbef2d2e79c4a666c72` |
 | results/Quantization/README.md | 609 | `004e797be967428bebb7096ac3d54fabfef68d0df31cdc7b6f5786aaf2cb22a4` |
 | results/README.md | 1608 | `589ad9b5d11186c63f04ec6b8faede9c7412b46ea00acc23e00c82c56f72314c` |
 | results/Relativistic/README.md | 609 | `004e797be967428bebb7096ac3d54fabfef68d0df31cdc7b6f5786aaf2cb22a4` |
@@ -286,10 +286,10 @@
 | results/Relativistic/REL-10/summary.json | 274 | `68ad4b8b1453b16a9d25cd7d0e7724bcd1801b21d7ac4c740faa2bd3f13a91ca` |
 | results/Relativistic/REL-11/plots/dispersion_REL-11.png | 58689 | `4481fc5336f4eb5caee5302dda5c05989fb1b7f808e61c18ac222c9815ece4ad` |
 | results/Relativistic/REL-11/readme.txt | 487 | `cc36391a4a8cf532e1d0731981f8586cdfeba48781c7a98eb23921196f3fe5a1` |
-| results/Relativistic/REL-11/summary.json | 712 | `ef47006a4fd9aae0fc6ed41c38396bb540e074f28d4a4aca9a8028fbbf5b1ca5` |
+| results/Relativistic/REL-11/summary.json | 712 | `bef481b67495db7a7cd505672ad3f2c212059e27b2ab59375fb8c882c5d137a8` |
 | results/Relativistic/REL-12/plots/dispersion_REL-12.png | 55548 | `855af2dc6fc55af024faad0906addf0e22a1f060f2bf3a40a0fc038eda2238e1` |
 | results/Relativistic/REL-12/readme.txt | 487 | `d1191e2559e380bc2efbd2e688e69ebf1775f842e24c781f85f39ae87cffa69b` |
-| results/Relativistic/REL-12/summary.json | 718 | `72f01c5e90dc11b273cd3b487cfad4cb36ffc030723c295264b73bd68885ae05` |
+| results/Relativistic/REL-12/summary.json | 718 | `aeb15b2e618fc570ef55049e3f356713a3d5bcead224d05aad7bee965df9b3ad` |
 | results/Relativistic/REL-13/plots/dispersion_REL-13.png | 55981 | `9496284aa000b8401a0354092cb3c6bef0535e905f8d752aba37d1a28104c837` |
 | results/Relativistic/REL-13/readme.txt | 487 | `c939b7797a411dc00c34ccf66acb7cec8fb0f6cf7f9f2bc290b161c9b28c563f` |
 | results/Relativistic/REL-13/summary.json | 713 | `ebace28c3c1e8c98463be07309d7a31572b129aef0ca19a947bbf52cbc31e01d` |
@@ -298,18 +298,19 @@
 | results/Relativistic/REL-14/summary.json | 721 | `cfccd841f0f1f873fb34ac154256fadf9e113cd9884ad7e4fd2e34c5d187ad74` |
 | results/Relativistic/REL-15/plots/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | results/Relativistic/REL-15/readme.txt | 487 | `db641474ac24dbe6f6e9526c16d4fac5673ec85b7739adf909e69ea1c310431e` |
-| results/Relativistic/REL-15/summary.json | 383 | `511a70de0f305ccc284feb6b688da3613759cd348dd891f1d02383374c190272` |
-| RESULTS_COMPREHENSIVE.md | 5927 | `45a1471f5709ad9da9b1ef998186ae46cba9d352c5c703618f6197ebcaedfe03` |
-| results_MASTER_TEST_STATUS.csv | 7794 | `1f562ec259cab75c4a0f891b4dde321af3cff59a9894d4497b57d61f4f6915b4` |
-| TEST_DESIGN.md | 9826 | `6084ff77568d2b9df223fb88c9d9b706ea0f72e39df3ca4a128f0f4cfd39d6f6` |
-| TIER_1_ACHIEVEMENTS.md | 1781 | `303a12d2c800650744b327af5e2ab7ff2a92c644a773bc33ff7c185540006c33` |
-| TIER_2_ACHIEVEMENTS.md | 3358 | `465ffcfa5724611322663ff285c7d38eb946d5361d9f7acb8637d90fb4c5bf39` |
-| TIER_3_ACHIEVEMENTS.md | 1750 | `abc30764ba91457a51f13e4f271955dfdb2fc86575d4cbe31390635d2b209d45` |
-| TIER_4_ACHIEVEMENTS.md | 2028 | `dca3a5fd36a24b267da3a4f6f4245a38872345ac02c76003a0d38e3574f12cd8` |
-| TIER_5_ACHIEVEMENTS.md | 2372 | `24597e3251adbf7737cd05b86137d13c7e97fa02d358d96adae0c690417ac2bb` |
+| results/Relativistic/REL-15/summary.json | 383 | `e87473b949870af009852ce004e051fdd39e68e44ae857369669e0dac0928ef1` |
+| RESULTS_COMPREHENSIVE.md | 6943 | `e4dcef90527f4b9694553e1191b291f6362d20d941a018c0434820c0b4468326` |
+| results_MASTER_TEST_STATUS.csv | 7391 | `878ceecb4862a161c73272566b6e1cba337fd654c09b2a4dad963314e53e96bf` |
+| TEST_DESIGN.md | 9810 | `deadbbb0f60ac12fc7ff2adf928be5186fd134ce83fb08771174845d47b6f7fc` |
+| TIER_1_ACHIEVEMENTS.md | 1781 | `b5559be564146936e7f062b4797ce91c8e895e7288ac5b18fc43e3fde7b01ddb` |
+| TIER_2_ACHIEVEMENTS.md | 3358 | `a2c37054f5a6039f33e3dc2eaff0168b7e5f20a8d61d19b356c7fca78188a97c` |
+| TIER_3_ACHIEVEMENTS.md | 1750 | `1eebef2493dcdea41579c2f8016159191048232c29f9541e52eeea6960612d6b` |
+| TIER_4_ACHIEVEMENTS.md | 2028 | `14b4de3538e526070fc2e2c354ba0152c61bdca2da297d89f49ece06d98bfdb9` |
+| TIER_5_ACHIEVEMENTS.md | 2453 | `d6ae9a4984e56cf4e5ddb27fefdecab5f29efbc2173a9f68ab8f9bd1a2da81c1` |
+| TIER_6_ACHIEVEMENTS.md | 1368 | `61370410579aab99de34ff86e41e27fd6eed4ef3e24a19e341b0b9dfb0dd8de1` |
 | txt/Executive_Summary.txt | 6193 | `7a92be6199027df7f42eb4743c585e67f75e5723efdac8cb568a77319b5ffd72` |
 | txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
-| txt/LFM_Master.txt | 11278 | `8c69cd760277955a8c9fb71c96d298debdc701f466cd1eb18a32a77b842e9c37` |
-| txt/LFM_Phase1_Test_Design.txt | 9948 | `b702e66c2eee8429c632b28d2d42192827a177908d12878318d6ca1d8fdf8318` |
+| txt/LFM_Master.txt | 11349 | `06c42fda39919f4c07a3d2c755089044794d0cacceb3a24577702008169eeddb` |
+| txt/LFM_Phase1_Test_Design.txt | 9931 | `890a118af096289356360b1dc136110d2e4b482057acaf85f5815ded4e1a15ea` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |

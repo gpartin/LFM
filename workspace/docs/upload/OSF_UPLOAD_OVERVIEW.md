@@ -5,9 +5,9 @@ This is a dry-run staging area. Upload the following files to OSF:
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 12086 | `13ef42f2b881f06844252eab4c796512d00ab84da54a7036270e473671b3ac0e` |
+| MANIFEST.md | 12204 | `aee0ea8989538a23e86e5fcb609dd5b0360f549013024633776213e4e04075f9` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 11691 | `38e3cd5220f22424495725fd2ec2a16c0c33d267a6f671b365622197528fc9e7` |
+| OSF_UPLOAD_OVERVIEW.md | 11809 | `b61e138ad09b0afc50e57b5c1a5d2b5fac80155d4ed43219eb6fb8d194569b3b` |
 | plots/Electromagnetic/EM-01/em-01_analysis.png | 111255 | `cb67aa7abc5159fe69a2ca89f971a0396ff1c529cb931d3fadcad88b8950faed` |
 | plots/Electromagnetic/EM-02/magnetic_generation_verification.png | 140499 | `e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458` |
 | plots/Electromagnetic/EM-03/faraday_error_analysis.png | 42974 | `3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d` |
@@ -89,10 +89,11 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
 | README.md | 1868 | `2b3662e7bcb99a1137d8f1f4316d22970b72070772a49dd048a38345a19725c2` |
-| results_MASTER_TEST_STATUS.csv | 7794 | `1f562ec259cab75c4a0f891b4dde321af3cff59a9894d4497b57d61f4f6915b4` |
+| results_MASTER_TEST_STATUS.csv | 7391 | `878ceecb4862a161c73272566b6e1cba337fd654c09b2a4dad963314e53e96bf` |
 | txt/Executive_Summary.txt | 6193 | `7a92be6199027df7f42eb4743c585e67f75e5723efdac8cb568a77319b5ffd72` |
 | txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
-| txt/LFM_Master.txt | 11278 | `8c69cd760277955a8c9fb71c96d298debdc701f466cd1eb18a32a77b842e9c37` |
-| txt/LFM_Phase1_Test_Design.txt | 9948 | `b702e66c2eee8429c632b28d2d42192827a177908d12878318d6ca1d8fdf8318` |
+| txt/LFM_Master.txt | 11349 | `06c42fda39919f4c07a3d2c755089044794d0cacceb3a24577702008169eeddb` |
+| txt/LFM_Phase1_Test_Design.txt | 9931 | `890a118af096289356360b1dc136110d2e4b482057acaf85f5815ded4e1a15ea` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
+| LFM_upload_bundle_20251106_v1.zip | 6845205 | `6d2002ee175222667eb62bd3eeb30c33fad83929d8ba4a1d5b049d51f43f0f1a` |

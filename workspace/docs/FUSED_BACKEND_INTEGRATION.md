@@ -18,7 +18,7 @@ The fused GPU backend, developed in `experiments/lattice_optimization_suite/`, h
 Promoted from `performance/optimizations/fused_tiled_kernel.py` with enhanced documentation:
 - Positioned as "optional high-performance accelerator"
 - Documents verified physics (P1 gate passed: drift 8.48e-05 < 1e-4)
-- Documents performance baselines (1.74-3.5× speedup)
+- Documents performance baselines (3.3-5.1× speedup, mean 3.94×)
 - Notes Lorentz covariance verification
 - 194 lines, CuPy RawKernel implementation
 
@@ -119,8 +119,12 @@ All measurements on **NVIDIA GeForce RTX 4060 Laptop** (8GB VRAM, CuPy v13.6.0):
 
 | Test Case | Grid Size | Steps | Baseline (ms/step) | Fused (ms/step) | Speedup |
 |-----------|-----------|-------|--------------------|-----------------|---------|
-| Wave packet | 256³ | 2000 | 5.11 | 2.94 | **1.74×** |
-| Gravity sim | 64³ | 200 | 0.7 | 0.2 | **3.5×** |
+| Wave packet | 64³ | — | 0.64 | 0.19 | **3.32×** |
+| Wave packet | 128³ | — | 3.58 | 1.07 | **3.35×** |
+| Wave packet | 256³ | — | 34.1 | 8.55 | **3.99×** |
+| Gravity sim | 64³ | — | 0.70 | 0.14 | **5.10×** |
+
+**Source**: `performance/benchmarks/fused_benchmark_results.csv` (2025-11-06)
 
 **Physics accuracy**:
 - Energy drift: 8.48e-05 (P1 gate: < 1e-4) ✓
@@ -273,7 +277,7 @@ Fused kernel succeeded because it:
 
 ### After Merging
 1. Run full Tier 1 with both backends, compare results
-2. Benchmark Tier 2 gravity tests (should see 3.5× speedup at 64³)
+2. Benchmark Tier 2 gravity tests (should see 5.1× speedup at 64³)
 3. Document any test-specific drift patterns
 4. Update `discoveries/` with performance findings
 

@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 16:28:23"
+generated: "2025-11-06 17:49:33"
 ---
 
 ## Summary Table
@@ -61,7 +61,7 @@ generated: "2025-11-06 16:28:23"
   - Evidence: Tier 4 validation - mode quantization demonstrated
   - Links: tests/tier4/, results/Quantization/
 - 2025-11-01 — Electromagnetic Wave Emergence from χ-Coupled Field Dynamics (Tier 5 - Electromagnetic)
-  - Demonstration that Maxwell equations emerge from χ-coupled E-field dynamics, including Coulomb's law, Lorentz force, and electromagnetic wave propagation.
+  - Demonstration that EM-analogous phenomena (wave propagation, field coupling, polarization, birefringence) emerge from Klein-Gordon equation with spatially-varying χ-field, reproducing electromagnetic behavior without imposing Maxwell equations as axioms.
   - Evidence: Tier 5 validation - electromagnetic phenomena reproduction
   - Links: tests/tier5/, results/Electromagnetic/
 - 2025-11-01 — Self-Limiting Cosmological Expansion via χ-Feedback (Tier 6 - Cosmological)
@@ -97,4 +97,4 @@ generated: "2025-11-06 16:28:23"
   - Evidence: COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed
   - Links: src/run_tier6_coupling.py, results/Coupling/COUP-02/convergence_study.png, experiments/COUP-02_convergence_validation_resolution.md, .github/PROCESS_IMPROVEMENTS.md
 
-Generated: 2025-11-06 16:28:23
+Generated: 2025-11-06 17:49:33

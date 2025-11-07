@@ -83,9 +83,9 @@ tolerances, run_settings, and notes.
 	4                       Quantum behavior        Discrete energy eigenvalues with <2% error; quantum tunneling 
 	                                                demonstrated; uncertainty relation Δx·Δk ≥ 0.5 confirmed
 
-	5                       Electromagnetic theory  Complete Maxwell equation validation; Coulomb's law φ = kq/r 
-	                                                within ±0.1%; electromagnetic wave speed c = 1/√(μ₀ε₀) confirmed;
-	                                                {{PASS_RATE:Electromagnetic}} test success rate on implemented electromagnetic phenomena
+	5                       Electromagnetic theory  EM-analogous phenomena validated: wave propagation, field coupling,
+	                                                polarization, and birefringence emerge from Klein-Gordon + χ-field;
+	                                                {{PASS_RATE:Electromagnetic}} test success rate on implemented phenomena
 	-----------------------------------------------------------------------
 
 6 Orchestration and Parallelism
