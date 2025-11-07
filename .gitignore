@@ -63,5 +63,8 @@ workspace/src/diagnostics_core.csv
 # Upload backups and bundles not intended for source control
 workspace/uploads/backups/
 
+# Do not track transient per-run outputs under src/
+workspace/src/results/**
+
 # Keep Git internals visible
 !/.git/
