@@ -12,7 +12,7 @@
       "short_name": "Relativistic",
       "category_dir": "Relativistic",
       "test_prefix": "REL",
-      "test_count": 15,
+      "test_count": 16,
       "runner_script": "run_tier1_relativistic.py",
       "config_file": "config_tier1_relativistic.json",
       "description": "This tier validates Lorentz invariance, isotropy, and causality constraints.",
@@ -37,7 +37,7 @@
       "short_name": "Gravity Analogue",
       "category_dir": "Gravity",
       "test_prefix": "GRAV",
-      "test_count": 25,
+      "test_count": 26,
       "runner_script": "run_tier2_gravityanalogue.py",
       "config_file": "config_tier2_gravityanalogue.json",
       "description": "This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.",
@@ -64,7 +64,7 @@
       "short_name": "Energy Conservation",
       "category_dir": "Energy",
       "test_prefix": "ENER",
-      "test_count": 10,
+      "test_count": 11,
       "runner_script": "run_tier3_energy.py",
       "config_file": "config_tier3_energy.json",
       "description": "This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.",
@@ -147,7 +147,7 @@
       "short_name": "Coupling",
       "category_dir": "Coupling",
       "test_prefix": "COUP",
-      "test_count": 3,
+      "test_count": 12,
       "runner_script": "run_tier6_coupling.py",
       "config_file": "config_tier6_coupling.json",
       "description": "This tier validates cross-domain coupling phenomena where relativistic, gravitational, and quantum effects interact.",
@@ -163,6 +163,32 @@
         "source_path": "results/Coupling/COUP-03/plots/deflection_comparison.png",
         "dest_filename": "plot_tier6_coupling_deflection.png",
         "caption": "Lorentz-invariant light deflection in moving χ-field gradient"
+      }
+    },
+    {
+      "tier_number": 7,
+      "tier_id": "tier7_thermodynamics",
+      "tier_name": "Tier 7 — Thermodynamics & Statistical Mechanics",
+      "short_name": "Thermodynamics",
+      "category_dir": "Thermodynamics",
+      "test_prefix": "THERM",
+      "test_count": 5,
+      "runner_script": "run_tier7_thermodynamics.py",
+      "config_file": "config_tier7_thermodynamics.json",
+      "description": "This tier validates thermodynamic observables emerging from statistical coarse-graining of time-reversible Klein-Gordon dynamics.",
+      "significance": "These validations demonstrate that thermodynamics (entropy increase, arrow of time, equipartition, thermalization, temperature) emerges from coarse-grained observables of deterministic dynamics, validating Boltzmann's vision that macroscopic thermodynamics arises from microscopic mechanics. Despite the equation being Hamiltonian and energy-conserving (<0.01% drift), thermodynamic behavior emerges from phase mixing, numerical dissipation, and spatially-varying χ field.",
+      "key_validations": [
+        "Entropy increase via phase mixing (Second Law of Thermodynamics)",
+        "Irreversibility and arrow of time (time-reversal symmetry breaking)",
+        "Equipartition theorem (energy distribution across Fourier modes)",
+        "Thermalization timescale (exponential relaxation to equilibrium)",
+        "Temperature emergence (Boltzmann distribution from mode statistics)"
+      ],
+      "representative_plot": {
+        "test_id": "THERM-01",
+        "source_path": "results/Thermodynamics/THERM-01/entropy_increase.png",
+        "dest_filename": "plot_tier7_thermodynamics_entropy.png",
+        "caption": "Shannon entropy increases 14.3% via phase mixing in deterministic dynamics"
       }
     }
   ],

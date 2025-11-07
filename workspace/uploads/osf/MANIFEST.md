@@ -1,10 +1,10 @@
 # Upload Manifest
 
-- Generated: 2025-11-06 17:49:33
+- Generated: 2025-11-06 19:53:07
 - Scope: Package manifest for C:/LFM/workspace/uploads/osf
 
 ## Provenance
-- Git SHA: 582583c4076e9d780a52d337d7b9a92da8bad2d2
+- Git SHA: 45fe4096d25832e7947d88c47bf1177d3834d660
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
@@ -14,17 +14,17 @@
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | CITATION.cff | 1795 | `c031d6e8d21c486e442efc8cf71d8bbdfe72e847d2091105f8d82fccd481b5a6` |
-| CORE_EQUATIONS.md | 11254 | `75a3e45dcf5ec73502faed24469274ecbddd36ca66f673537af3c2cd36bc6662` |
-| DISCOVERIES_OVERVIEW.md | 12479 | `bb9f52a715b3ff2e4a997f28ae476dc5a0bf3b9938d0e086744a2dbd554cdf88` |
-| EVIDENCE_REVIEW.md | 3760 | `b2a131966ebcffd59130acc453c66f24f02f4254e12757f12a472595d4e65263` |
-| EXECUTIVE_SUMMARY.md | 6606 | `eba5f16568fa39fefe952cb2b40465309fe64fbef0908fa160dee6950bd711ec` |
+| CORE_EQUATIONS.md | 11254 | `22af65ae2046d1f6adc3a77e06aec47f231e84f537a3053f60ca1152aa3a3329` |
+| DISCOVERIES_OVERVIEW.md | 14027 | `846c1be05f33754d44c5c6265fb71b6ee32f0ddd8c07e5cac019bff67c8cab55` |
+| EVIDENCE_REVIEW.md | 3880 | `aedad27b5d5ac4c70933e30644c828020f72900fb89427cb1403a14c0b1ed719` |
+| EXECUTIVE_SUMMARY.md | 7170 | `9d0a2843d7491557e8b3060bcae71b79e0fbcd0923fbe749b2d6d8c52ccf002f` |
 | Executive_Summary.pdf | 32870 | `dd78c2cfa3781d9ba96d40185023e15d23eabbc370378f1f1716570188cc3923` |
 | LFM_Core_Equations.pdf | 44127 | `47bc57513f04b562bc9e69e48b1c0dc8ffa843695ca5963e9c2585e009991c5e` |
 | LFM_Master.pdf | 37799 | `241c6ba01d4ed5ff8d20fb675ba30e5311edf36b1f0cfcf21c6332e1677e93b2` |
 | LFM_Phase1_Test_Design.pdf | 36002 | `e9e9d61d6763ff6cdfbe036e3a139c48641510720c54952a087b3c3e50fe0d4d` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 36965 | `e95ef6153444e89e1d013b976383b617970c5bbfe32d8c58fa24fe74fdebf77e` |
-| MASTER_DOCUMENT.md | 11677 | `c76ec4521306ea332073b134d62f88a3eee5f53b997cba46a173125dfac4045b` |
+| MANIFEST.md | 39614 | `0c003556f5db6a28dc80ceb0ffed87a6e99203eda56526bd942b386517640eb2` |
+| MASTER_DOCUMENT.md | 12248 | `8eb569397a6a26e94bc6b735091cb0f95825d258575063ea96616e73b788c406` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
 | osf_project.json | 558 | `6ba912092e19179d48c5c935d4c0ce4482013ef8ac76bb6bfeb4f5067693b120` |
 | plot_quantum_bound_states.png | 223882 | `4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc` |
@@ -35,7 +35,7 @@
 | plot_tier3_energy_conservation.png | 214252 | `7e7d5b4362cf899c5df1fc8ac83ed97e1069469c160d3e2fdba15c90f1534d75` |
 | plot_tier4_quantum_bound_states.png | 78381 | `30526d79e952c4acb44c568311fb2c167b02b4486548087320a8d77016af0afe` |
 | plot_tier5_electromagnetic_waves.png | 71341 | `272443f33952b9b2512607be95f39ba85a2ba47ea58c07dc281d52fbed14dc5a` |
-| PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
+| PLOTS_OVERVIEW.md | 8528 | `00c9f0af1adc8c4bec96f40f6a200a804d11b5cad22b118050faf9041bd2d59f` |
 | README.md | 10104 | `b03a3951031a67ed29a813aa5ff3fd311d2e87560b3a9b0e57bd59ba47e4a5b7` |
 | results/chi_emergence/README.md | 541 | `fa437df435ca9b3905fab8e7922a7277f5334ff2f579b552205e4c16e8b2a0aa` |
 | results/Coupling/COUP-01/summary.json | 426 | `0864041baf3c73d1c949e851a02b7097ae6f9585b872c207e5ec5a5b2bc5b2a2` |
@@ -66,10 +66,10 @@
 | results/Electromagnetic/EM-07/summary.json | 602 | `53f022d60752c3ea46b539fc34c09db8f1ceee44c777b11b10b4fbf0558a9ff7` |
 | results/Electromagnetic/EM-08/plots/em-08_analysis.png | 84585 | `68692e8dd7bf3db111f8322f38ab8f44df0131b1c5801e7e93192a847efa8bba` |
 | results/Electromagnetic/EM-08/readme.txt | 487 | `2ee28de36e481002911fdb99c700969ea93bc37e618ba69c5318476857a87bfd` |
-| results/Electromagnetic/EM-08/summary.json | 529 | `f3adacb2e1fa375d20d92904533e2c032101e1950aab233fdd6eccaa3c1a2b8d` |
+| results/Electromagnetic/EM-08/summary.json | 529 | `e387aafb71544e04300298388254fcf33448e70926b6bc58346da715394057ad` |
 | results/Electromagnetic/EM-09/plots/em-09_analysis.png | 91518 | `3f00991c8eec96a068b1a33801ab4746c280cf3478a9847a12a551ae37e188a0` |
 | results/Electromagnetic/EM-09/readme.txt | 487 | `63d33692301654862e146ac7331a079ee16d29af6f147382af2ae3050fb4071f` |
-| results/Electromagnetic/EM-09/summary.json | 505 | `164f9b69069ad08a88f1d9be3cf145495b839afc940cc0ef195a2f0e4465bba7` |
+| results/Electromagnetic/EM-09/summary.json | 506 | `592e2145b442e57b0df52df5266a91e0ffc768f9576d6adc557221228bf30c86` |
 | results/Electromagnetic/EM-10/plots/em-10_analysis.png | 85414 | `33dc3eb9f28f4bda25d2d872b5c421e6eee3c90431a52234548c02319cf91732` |
 | results/Electromagnetic/EM-10/readme.txt | 487 | `d9840f5df3b8ff1dcd979c4b60192ea51a15dae5479bd160f339741381d51baf` |
 | results/Electromagnetic/EM-10/summary.json | 538 | `117deab341799983a4858fa92d1c00087b99055dd94edb80cb276aba79d14038` |
@@ -84,7 +84,7 @@
 | results/Electromagnetic/EM-13/summary.json | 536 | `9ad44f90b32c933a0cb716245e3a73d3883990ec116425cc3f0ff3fce42c2070` |
 | results/Electromagnetic/EM-14/plots/em-14_analysis.png | 78014 | `024b8a3aba8442f7ad7f922abbe63fa74e1fbaabd9707d57cb8c7529e7ea61f3` |
 | results/Electromagnetic/EM-14/readme.txt | 487 | `4c89c903c2b15cb4eddef3c6c27b99506bedfbabf0e3603e8d7eddc2618ad6ee` |
-| results/Electromagnetic/EM-14/summary.json | 541 | `9fa5dec4e865090f3e3f34f67a92b6f053be8ddc2605ca8d6eb2959c29b5dda3` |
+| results/Electromagnetic/EM-14/summary.json | 542 | `4dba025378c3b819907f22a75bb909a2883e66a559c2fee0f1f5ceef9306c4ad` |
 | results/Electromagnetic/EM-15/plots/em-15_analysis.png | 83788 | `ddada540395ecb063f00ede488be9a741dd1ae08e6ec31301443ea9a07b99590` |
 | results/Electromagnetic/EM-15/readme.txt | 487 | `d7cebb0ccec79a0adc8f2f52f8bff477e05c2ec132eb81122883968d0ef347d0` |
 | results/Electromagnetic/EM-15/summary.json | 563 | `37a1a8f843e5951259132aca93573748cfef277d6e348beefc9d3f45f705f7db` |
@@ -210,8 +210,11 @@
 | results/Gravity/GRAV-25/plots/light_bending_GRAV-25.png | 107443 | `13b46c505dfdba179aafb0b99139eef124bd4673e150a0a9a9b605f34709a3d4` |
 | results/Gravity/GRAV-25/readme.txt | 488 | `42eb43295664bb7f81ae20ddc2363d647842006c373209c5e58b52d745fe2ec7` |
 | results/Gravity/GRAV-25/summary.json | 559 | `249d9190906e46d75230650afff9ec8fb1314ab95528037f02ce6d03e0b27a53` |
+| results/Gravity/GRAV-26/plots/equivalence_principle_GRAV-26.png | 136607 | `d093d5ca89397adbd18b3a0bfc32a7301789a3accede19fee5ec6e7d5dfce82a` |
+| results/Gravity/GRAV-26/readme.txt | 488 | `8fcfa161747b5f7f1d8d96182f0d01e93843c9a7fd15b89cf8e53417e4ef7bfc` |
+| results/Gravity/GRAV-26/summary.json | 538 | `2b70299f43262964e9bb3d030de541a6b3c243614f8477ee2c3d973195584648` |
 | results/Gravity/README.md | 798 | `12d238358b40eca912570ac7bdd562d2666a837973ea848529f15ea6bdfe19dd` |
-| results/MASTER_TEST_STATUS.csv | 7271 | `1f7b89efe748c224afc69c113aae2fddb2fa4edfdb2742148e61f3d1619b2104` |
+| results/MASTER_TEST_STATUS.csv | 7990 | `c7d8d1243d903a5a7a053f135cfe750909b6e3836a5617723843378c8a5ebca4` |
 | results/parallel_run_summary.json | 157 | `ed4d9f893e43a016f201495ae608d5364dfd6c97e22ef8145555d175031b3df4` |
 | results/parallel_test_results.json | 70568 | `1a5d80995124d45a4434eb0c72d13c678f01404d0dab34d7144b173bf1cd2e88` |
 | results/Quantization/QUAN-01/plots/energy_transfer.png | 131580 | `9f03da0f2a6a9df57e6378bc85f67f39874d83fccb5adaf20325aef01cd7de0a` |
@@ -299,18 +302,36 @@
 | results/Relativistic/REL-15/plots/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | results/Relativistic/REL-15/readme.txt | 487 | `db641474ac24dbe6f6e9526c16d4fac5673ec85b7739adf909e69ea1c310431e` |
 | results/Relativistic/REL-15/summary.json | 383 | `e87473b949870af009852ce004e051fdd39e68e44ae857369669e0dac0928ef1` |
-| RESULTS_COMPREHENSIVE.md | 6943 | `e4dcef90527f4b9694553e1191b291f6362d20d941a018c0434820c0b4468326` |
-| results_MASTER_TEST_STATUS.csv | 7391 | `878ceecb4862a161c73272566b6e1cba337fd654c09b2a4dad963314e53e96bf` |
-| TEST_DESIGN.md | 9810 | `deadbbb0f60ac12fc7ff2adf928be5186fd134ce83fb08771174845d47b6f7fc` |
-| TIER_1_ACHIEVEMENTS.md | 1781 | `b5559be564146936e7f062b4797ce91c8e895e7288ac5b18fc43e3fde7b01ddb` |
-| TIER_2_ACHIEVEMENTS.md | 3358 | `a2c37054f5a6039f33e3dc2eaff0168b7e5f20a8d61d19b356c7fca78188a97c` |
-| TIER_3_ACHIEVEMENTS.md | 1750 | `1eebef2493dcdea41579c2f8016159191048232c29f9541e52eeea6960612d6b` |
-| TIER_4_ACHIEVEMENTS.md | 2028 | `14b4de3538e526070fc2e2c354ba0152c61bdca2da297d89f49ece06d98bfdb9` |
-| TIER_5_ACHIEVEMENTS.md | 2453 | `d6ae9a4984e56cf4e5ddb27fefdecab5f29efbc2173a9f68ab8f9bd1a2da81c1` |
-| TIER_6_ACHIEVEMENTS.md | 1368 | `61370410579aab99de34ff86e41e27fd6eed4ef3e24a19e341b0b9dfb0dd8de1` |
-| txt/Executive_Summary.txt | 6193 | `7a92be6199027df7f42eb4743c585e67f75e5723efdac8cb568a77319b5ffd72` |
+| results/Relativistic/REL-16/plots/angular_momentum_REL-16.png | 198260 | `c54a66b740b969f9fb8b98fc7276077db5f29b55e7f761ea0ef401d31e5199a5` |
+| results/Relativistic/REL-16/plots/momentum_conservation_REL-16.png | 112284 | `9e6d84e615e748e700a0e3ae1c2d9f5da496e382456168a3ad8d494a35c1cdcf` |
+| results/Relativistic/REL-16/readme.txt | 487 | `130d5af7a1e16c52bcc86d8d1ea93a48fc0456463d11d7cf5faca548a90f9a4b` |
+| results/Relativistic/REL-16/summary.json | 475 | `90cc17f3eada5fdcfea91272a7461cdded9497d8b95fcb9a59cf15a93b7b8468` |
+| results/Relativistic/REL-17/plots/momentum_conservation_REL-17.png | 111926 | `65a92ba1ec6916381f7a062ebf314a8ea433be19d25c77bbed4a188ce50e0c61` |
+| results/Relativistic/REL-17/readme.txt | 487 | `2631d881d426fd4cee35eef51fe82a22977d484038ff25a9dd142b9381b0eafc` |
+| results/Relativistic/REL-17/summary.json | 475 | `59f222a8421ec238445e4385639b4880a6e6ebe2c2f632e7a5f5ce6a257f260f` |
+| results/Thermodynamics/THERM-01/readme.txt | 490 | `7368cb65321c8891412f3f8d73fa29ce23e8714f31bb72ebc63a67b463b313ef` |
+| results/Thermodynamics/THERM-01/summary.json | 659 | `951669008cbf38c92de088184ccb82a54bb762d9d14e30e2866360db30cd0b9d` |
+| results/Thermodynamics/THERM-02/readme.txt | 490 | `f9a4acdb220992ac18fcdd2d4649fa301274df98cb85bf10ea9df6f7658fcadc` |
+| results/Thermodynamics/THERM-02/summary.json | 460 | `38a512296e6bffe1c740b3c977846d59e7a42da4a54fb899dac236a7490fe895` |
+| results/Thermodynamics/THERM-03/readme.txt | 490 | `655c01b790fa94a25570daf3b304d90a890b204c599db2d729d33d64ac429620` |
+| results/Thermodynamics/THERM-03/summary.json | 491 | `bed39175d56017744e38493e20e15fa04aad47f0e99ca4ba1958914f5abaf542` |
+| results/Thermodynamics/THERM-04/readme.txt | 490 | `0dc70c32f1638e68fe2be535972595e717d55e8b7dc33bf3e175834e0d1cfa97` |
+| results/Thermodynamics/THERM-04/summary.json | 405 | `0dc398db97fac0c53f40c8a3e01f607621f8da391dcb0923321391a3960aea3c` |
+| results/Thermodynamics/THERM-05/readme.txt | 490 | `35a84fdef948d2a5a4a47b5417ded3d977c4f907775dfc83789ff5ede3a550c0` |
+| results/Thermodynamics/THERM-05/summary.json | 443 | `59c9a3e4f71c62c642d44e55144f4dd75ff4434cf99865ff4c84bd1cb612c5bb` |
+| RESULTS_COMPREHENSIVE.md | 8214 | `4258ce4684cbe1e024a31d56b5fb769d94329196771ea7d54b9e21feb2c5bc31` |
+| results_MASTER_TEST_STATUS.csv | 8122 | `76a99e578866979518789e1152fb29c29e8c37e322a1b86c8d628b9f05502f20` |
+| TEST_DESIGN.md | 9932 | `6c47da9b372760a9852067fdfde67883b68214a98b0b4bc5f2aaecc19beb7871` |
+| TIER_1_ACHIEVEMENTS.md | 1927 | `81a1cc1fe4c0f5c7bd18dc190750f770f9968fe15cd271b730cba2c65a85f9d6` |
+| TIER_2_ACHIEVEMENTS.md | 3453 | `02fe47468aca6e269aa2f73e86115ab470f8cf7e805f557aa50e3857fa865e0c` |
+| TIER_3_ACHIEVEMENTS.md | 1750 | `c42c4c00caa871f5068e8fe64a9abd5aaca7082be0bf3f5fa25eab627dcf78df` |
+| TIER_4_ACHIEVEMENTS.md | 2028 | `7aac26d34d49e9062b4a43502d567a562e504b9b5d8f557cb26b5cf6e2b9b046` |
+| TIER_5_ACHIEVEMENTS.md | 2453 | `dfb2f5996bdcc0b8946cfa2d9524e742f10f3a347c9191c2cc95d6ed36a83d27` |
+| TIER_6_ACHIEVEMENTS.md | 1368 | `f3c3a85822036fdb16206f1909ad454142ebbf180ee06ae0fe2b3ac0b6da1e82` |
+| TIER_7_ACHIEVEMENTS.md | 1726 | `fb69ad53e7eb80eef39788af345efd163ae9f4f87fd931fe67f018145648c1f2` |
+| txt/Executive_Summary.txt | 6765 | `d0011c69656bc8446cd237eb75a10ab7a73c8817b715e326556b99731cbc1d65` |
 | txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
-| txt/LFM_Master.txt | 11349 | `06c42fda39919f4c07a3d2c755089044794d0cacceb3a24577702008169eeddb` |
-| txt/LFM_Phase1_Test_Design.txt | 9931 | `890a118af096289356360b1dc136110d2e4b482057acaf85f5815ded4e1a15ea` |
+| txt/LFM_Master.txt | 11919 | `8f554275379fccee77dfc549e0803bbc4635fa33a0c952d2c932028874189f10` |
+| txt/LFM_Phase1_Test_Design.txt | 10056 | `4f77ad2b2c665fada64e6ceac137081ab094355ddb76ec24b36785cb6eb9582b` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |

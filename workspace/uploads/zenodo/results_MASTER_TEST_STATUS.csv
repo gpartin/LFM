@@ -1,19 +1,20 @@
 ﻿MASTER TEST STATUS REPORT - LFM Lattice Field Model
-Generated: 2025-11-06 17:49:31
+Generated: 2025-11-06 19:53:05
 Validation Rule: Suite marked NOT RUN if any test missing from CSV
 
 CATEGORY SUMMARY
 Tier,Category,Expected_Tests,Tests_In_CSV,Status,Pass_Rate
-Tier 1,Relativistic,15,15,PASS,15/15 passed
-Tier 2,Gravity Analogue,25,25,PASS,25/25 passed
+Tier 1,Relativistic,16,17,PASS,17/17 passed
+Tier 2,Gravity Analogue,26,26,PASS,26/26 passed
 Tier 3,Energy Conservation,11,10,PASS,10/10 passed - 1 missing
 Tier 4,Quantization,9,14,PASS,14/14 passed
 Tier 5,Electromagnetic,21,21,PASS,21/21 passed
-Tier 6,Multi-Domain Coupling,3,3,PARTIAL,1/3 passed
+Tier 6,Multi-Domain Coupling,12,3,NOT RUN,1/3 passed - 9 missing
+Tier 7,Thermodynamics & Statistical Mechanics,5,5,PASS,5/5 passed
 
 DETAILED TEST RESULTS
 
-TIER 1 - RELATIVISTIC (15/15 tests)
+TIER 1 - RELATIVISTIC (17/16 tests)
 Test_ID,Description,Status,Notes
 REL-01,Isotropy — Coarse Grid,PASS,
 REL-02,Isotropy — Fine Grid,PASS,
@@ -30,8 +31,10 @@ REL-12,Dispersion Relation — Weakly Relativistic (χ/k≈1),PASS,
 REL-13,Dispersion Relation — Relativistic (χ/k≈0.5),PASS,
 REL-14,Dispersion Relation — Ultra-relativistic (χ/k≈0.1),PASS,
 REL-15,Causality — Space-like correlation test (light cone violation check),PASS,
+REL-16,Linear Momentum Conservation — Two-Packet Collision,PASS,
+REL-17,Linear Momentum Conservation — Two-Packet Collision,PASS,
 
-TIER 2 - GRAVITY ANALOGUE (25/25 tests)
+TIER 2 - GRAVITY ANALOGUE (26/26 tests)
 Test_ID,Description,Status,Notes
 GRAV-01,Local frequency — linear χ-gradient (weak),PASS,
 GRAV-02,Local frequency — Gaussian well (strong curvature),PASS,
@@ -58,6 +61,7 @@ GRAV-22,GR calibration - Shapiro delay correspondence (group velocity through sl
 GRAV-23,Dynamic χ-field evolution — full wave equation □χ=-4πGρ with causal propagation (gravitational wave analogue),PASS,
 GRAV-24,Gravitational wave propagation — oscillating source radiates χ-waves; validate 1/r decay and propagation speed,PASS,
 GRAV-25,Light bending — ray tracing through χ-gradient; measure deflection angle,PASS,
+GRAV-26,Weak Equivalence Principle — mass-independent gravitational acceleration,PASS,
 
 TIER 3 - ENERGY CONSERVATION (10/11 tests)
 Test_ID,Description,Status,Notes
@@ -113,8 +117,16 @@ EM-19,Gauge Invariance Verification: Physical fields unchanged under gauge trans
 EM-20,Charge Conservation: ∂ρ/∂t + ∇·J = 0,PASS,
 EM-21,Time-Varying χ-Field Pulse Response (FDTD),PASS,
 
-TIER 6 - MULTI-DOMAIN COUPLING (3/3 tests)
+TIER 6 - MULTI-DOMAIN COUPLING (3/12 tests)
 Test_ID,Description,Status,Notes
 COUP-01,Relativistic + Gravitational Time Dilation (Phase 1),FAIL,Δω/ω: measured=-50.00%; theory=0.01%
 COUP-02,Wave Propagation Speed (1D Analytical Validation with L2 Convergence),PASS,L2_conv_ratio=2.06; L2_extrap=2.4e-07; max_L2=2.6e-03
 COUP-07,EM Wave in χ-Gradient (Phase 1),FAIL,ω_measured=12.5664; ω_predicted=1.0198
+
+TIER 7 - THERMODYNAMICS & STATISTICAL MECHANICS (5/5 tests)
+Test_ID,Description,Status,Notes
+THERM-01,Entropy Increase — Second Law of Thermodynamics,PASS,
+THERM-02,Irreversibility — Arrow of Time,PASS,
+THERM-03,Equipartition Theorem — Energy Distribution Across Modes,PASS,
+THERM-04,Thermalization Timescale — Relaxation to Equilibrium,PASS,
+THERM-05,Temperature Emergence — Boltzmann Distribution,PASS,

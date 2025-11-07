@@ -57,6 +57,7 @@
     { "test_id": "REL-12", "description": "Dispersion Relation — Weakly Relativistic (χ/k≈1)", "k_fraction": 0.05, "chi": 0.05, "steps": 4000 },
     { "test_id": "REL-13", "description": "Dispersion Relation — Relativistic (χ/k≈0.5)", "k_fraction": 0.10, "chi": 0.05, "steps": 4000 },
     { "test_id": "REL-14", "description": "Dispersion Relation — Ultra-relativistic (χ/k≈0.1)", "k_fraction": 0.15, "chi": 0.015, "steps": 4000 },
-    { "test_id": "REL-15", "description": "Causality — Space-like correlation test (light cone violation check)", "mode": "correlation_lightcone", "dimensions": 1, "grid_points": 256, "steps": 200, "dt": 0.01, "dx": 0.1, "perturbation_amp": 0.1, "perturbation_width": 2.0, "correlation_threshold": 1e-6 }
+    { "test_id": "REL-15", "description": "Causality — Space-like correlation test (light cone violation check)", "mode": "correlation_lightcone", "dimensions": 1, "grid_points": 256, "steps": 200, "dt": 0.01, "dx": 0.1, "perturbation_amp": 0.1, "perturbation_width": 2.0, "correlation_threshold": 1e-6 },
+    { "test_id": "REL-16", "description": "Linear Momentum Conservation — Two-Packet Collision", "mode": "momentum_conservation", "dimensions": 1, "grid_points": 512, "steps": 2000, "dt": 0.005, "dx": 0.02, "chi": 0.0, "packet1_pos": 0.3, "packet2_pos": 0.7, "packet1_k": 2.0, "packet2_k": -2.0, "packet_width": 0.05, "momentum_tolerance": 0.01 }
   ]
 }

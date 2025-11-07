@@ -1,0 +1,19 @@
+{
+  "test_id": "THERM-01",
+  "description": "Entropy Increase \u2014 Second Law of Thermodynamics",
+  "passed": true,
+  "metrics": {
+    "entropy_initial": 0.469260844348527,
+    "entropy_final": 0.5364437991094659,
+    "entropy_increase": 0.06718295476093894,
+    "entropy_increase_fraction": 0.14316761257634605,
+    "linear_fit_slope": -1.2764894280656448e-05,
+    "linear_fit_r_squared": 3.085753936859266e-05,
+    "max_energy_drift": 0.10534965430428778,
+    "tolerance_increase_min": 0.1
+  },
+  "runtime_sec": 0.1726834774017334,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-07T03:44:03.887957Z"
+}

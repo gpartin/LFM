@@ -1,0 +1,16 @@
+{
+  "test_id": "THERM-02",
+  "description": "Irreversibility \u2014 Arrow of Time",
+  "passed": true,
+  "metrics": {
+    "width_initial": 5.656462673438855,
+    "width_mid": 20.565917414805,
+    "width_final": 5.656462673438847,
+    "reversibility_ratio": 0.9999999999999986,
+    "tolerance": 0.9
+  },
+  "runtime_sec": 0.20476818084716797,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-07T03:44:04.329891Z"
+}

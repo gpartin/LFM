@@ -558,6 +558,10 @@ class Tier1Harness(BaseTierHarness):
         elif tid == "REL-15":
             result = self.run_spacelike_correlation_variant(v)
         
+        # Linear momentum conservation (REL-16, formerly REL-17)
+        elif tid == "REL-16":
+            result = self.run_momentum_conservation_variant(v)
+        
         # All other tests use standard single-run logic
         else:
             result = self.run_standard_variant(v)
@@ -1824,6 +1828,237 @@ class Tier1Harness(BaseTierHarness):
         return TestSummary(
             id=tid, description=desc, passed=passed, rel_err=rel_change,
             omega_meas=float(P_final), omega_theory=float(P_initial),
+            runtime_sec=0.0, k_fraction_lattice=0.0
+        )
+    
+    def run_angular_momentum_variant(self, v: Dict) -> TestSummary:
+        """
+        Test angular momentum conservation via rotating wave packet.
+        Create 2D rotating Gaussian with angular mode m and measure L_z over time.
+        Angular momentum density: l_z = x * p_y - y * p_x
+        Total: L_z = ∫∫ (x * ∂E/∂y - y * ∂E/∂x) dx dy
+        """
+        import numpy as np
+        xp = self.xp
+        to_numpy = lambda arr: arr.get() if hasattr(arr, 'get') else arr
+        
+        tid = v["test_id"]
+        desc = v.get("description", tid)
+        params = self.base.copy(); params.update(v)
+        
+        # Parameters
+        N = params["grid_points"]
+        dx = params["dx"]
+        dt = params["dt"]
+        steps = params["steps"]
+        c = math.sqrt(params["alpha"] / params["beta"])
+        chi = params.get("chi", 0.0)
+        
+        angular_mode = int(v.get("angular_mode", 1))  # m = 1 for single unit
+        packet_width = float(v.get("packet_width", N * 0.15))
+        momentum_tol = float(v.get("momentum_tolerance", 0.01))
+        amplitude = 0.1
+        
+        test_dir = self.out_root / tid
+        diag_dir = test_dir / "diagnostics"
+        plot_dir = test_dir / "plots"
+        for d in (test_dir, diag_dir, plot_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        
+        test_start(tid, desc, steps)
+        log(f"Angular momentum: m={angular_mode}, width={packet_width:.1f}", "INFO")
+        
+        # Create 2D grid centered at origin
+        x1d = xp.arange(N, dtype=xp.float64) * dx - (N * dx / 2.0)
+        X, Y = xp.meshgrid(x1d, x1d, indexing='ij')
+        R = xp.sqrt(X**2 + Y**2)
+        Theta = xp.arctan2(Y, X)
+        
+        # Create ROTATING wave packet (not just static pattern)
+        # Use complex representation: ψ = A * exp(-r²/σ²) * exp(i*m*θ) * exp(-i*ω*t)
+        # At t=0: E_real = Re(ψ) = A * exp(-r²/σ²) * cos(m*θ)
+        # At t=-dt: phase shift by ω*dt
+        gaussian_env = amplitude * xp.exp(-R**2 / (2.0 * packet_width**2))
+        
+        # Estimate ω from typical k
+        k_r = angular_mode / packet_width  # radial wavenumber
+        omega = np.sqrt(c*c * k_r**2 + chi**2)
+        
+        # E at t=0
+        E0 = gaussian_env * xp.cos(angular_mode * Theta)
+        
+        # E at t=-dt (phase rotated backward)
+        Eprev0 = gaussian_env * xp.cos(angular_mode * Theta + omega * dt)
+        
+        # Compute initial angular momentum
+        # L_z = ∫∫ (x * p_y - y * p_x) dx dy
+        # where p_x = E_t * E_x, p_y = E_t * E_y
+        E0_np = to_numpy(E0)
+        Eprev0_np = to_numpy(Eprev0)
+        X_np = to_numpy(X)
+        Y_np = to_numpy(Y)
+        
+        E_t_init = (E0_np - Eprev0_np) / dt
+        E_x_init = np.gradient(E0_np, dx, axis=0)
+        E_y_init = np.gradient(E0_np, dx, axis=1)
+        
+        p_x_init = E_t_init * E_x_init
+        p_y_init = E_t_init * E_y_init
+        
+        l_z_density_init = X_np * p_y_init - Y_np * p_x_init
+        L_z_initial = np.sum(l_z_density_init) * dx * dx
+        
+        # Evolve system (use baseline for 2D, fused only works for 3D)
+        from core.lfm_equation import lattice_step
+        
+        run_params = {
+            "dt": dt, "dx": dx,
+            "alpha": params["alpha"], "beta": params["beta"],
+            "chi": chi,
+            "boundary": "periodic",
+            "precision": "float64",
+            "backend": "baseline",  # Force baseline for 2D
+            "debug": {"quiet_run": True, "enable_diagnostics": False}
+        }
+        
+        E_prev = xp.array(Eprev0, copy=True)
+        E_curr = xp.array(E0, copy=True)
+        
+        L_z_history = [(0, L_z_initial)]
+        
+        # Sample L_z periodically
+        sample_stride = max(1, steps // 50)
+        
+        log(f"Initial L_z: {L_z_initial:.6e}", "INFO")
+        
+        for n in range(steps):
+            E_next = lattice_step(E_curr, E_prev, run_params)
+            E_prev, E_curr = E_curr, E_next
+            
+            if n % sample_stride == 0 and n > 0:
+                E_curr_np = to_numpy(E_curr)
+                E_prev_np = to_numpy(E_prev)
+                E_t = (E_curr_np - E_prev_np) / dt
+                E_x = np.gradient(E_curr_np, dx, axis=0)
+                E_y = np.gradient(E_curr_np, dx, axis=1)
+                
+                p_x = E_t * E_x
+                p_y = E_t * E_y
+                l_z_density = X_np * p_y - Y_np * p_x
+                L_z_current = np.sum(l_z_density) * dx * dx
+                L_z_history.append((n, L_z_current))
+        
+        # Compute final angular momentum
+        E_curr_np = to_numpy(E_curr)
+        E_prev_np = to_numpy(E_prev)
+        E_t_final = (E_curr_np - E_prev_np) / dt
+        E_x_final = np.gradient(E_curr_np, dx, axis=0)
+        E_y_final = np.gradient(E_curr_np, dx, axis=1)
+        
+        p_x_final = E_t_final * E_x_final
+        p_y_final = E_t_final * E_y_final
+        l_z_density_final = X_np * p_y_final - Y_np * p_x_final
+        L_z_final = np.sum(l_z_density_final) * dx * dx
+        
+        # Conservation check
+        L_z_change = abs(L_z_final - L_z_initial)
+        rel_change = L_z_change / max(abs(L_z_initial), 1e-10)
+        
+        passed = rel_change < momentum_tol
+        
+        status = "PASS ✅" if passed else "FAIL ❌"
+        level = "INFO" if passed else "FAIL"
+        
+        log(f"{tid} {status} Angular Momentum: initial={L_z_initial:.6e}, final={L_z_final:.6e}, change={rel_change*100:.4f}%", level)
+        
+        # Save L_z history
+        lz_csv = diag_dir / "angular_momentum_history.csv"
+        with open(lz_csv, "w", encoding="utf-8") as f:
+            f.write("step,time,L_z\n")
+            for step, L_z_val in L_z_history:
+                t = step * dt
+                f.write(f"{step},{t:.6f},{L_z_val:.10e}\n")
+        
+        # Save angular momentum density snapshots
+        density_csv = diag_dir / "angular_momentum_density.csv"
+        with open(density_csv, "w", encoding="utf-8") as f:
+            f.write("x,y,l_z_initial,l_z_final\n")
+            for i in range(0, N, max(1, N//64)):  # Subsample to avoid huge files
+                for j in range(0, N, max(1, N//64)):
+                    f.write(f"{X_np[i,j]:.6f},{Y_np[i,j]:.6f},{l_z_density_init[i,j]:.10e},{l_z_density_final[i,j]:.10e}\n")
+        
+        # Plot
+        try:
+            import matplotlib.pyplot as plt
+            
+            fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+            
+            # L_z vs time
+            steps_hist, L_z_hist = zip(*L_z_history)
+            times_hist = [s * dt for s in steps_hist]
+            axes[0,0].plot(times_hist, L_z_hist, 'b-', linewidth=2)
+            axes[0,0].axhline(L_z_initial, color='r', linestyle='--', label=f'Initial L_z')
+            axes[0,0].set_xlabel('Time')
+            axes[0,0].set_ylabel('Angular Momentum L_z')
+            axes[0,0].set_title(f'{tid}: Angular Momentum vs Time')
+            axes[0,0].legend()
+            axes[0,0].grid(True, alpha=0.3)
+            
+            # Relative change
+            rel_changes = [(abs(L - L_z_initial)/abs(L_z_initial) * 100) for L in L_z_hist]
+            axes[0,1].plot(times_hist, rel_changes, 'g-', linewidth=2)
+            axes[0,1].axhline(momentum_tol * 100, color='r', linestyle='--', label=f'Tolerance ({momentum_tol*100:.1f}%)')
+            axes[0,1].set_xlabel('Time')
+            axes[0,1].set_ylabel('|ΔL_z| / |L_z_initial| (%)')
+            axes[0,1].set_title('Relative Angular Momentum Change')
+            axes[0,1].legend()
+            axes[0,1].grid(True, alpha=0.3)
+            axes[0,1].set_yscale('log')
+            
+            # Initial angular momentum density
+            im1 = axes[1,0].contourf(X_np, Y_np, l_z_density_init, levels=20, cmap='RdBu_r')
+            axes[1,0].set_xlabel('x')
+            axes[1,0].set_ylabel('y')
+            axes[1,0].set_title('Initial l_z(x,y) Density')
+            axes[1,0].set_aspect('equal')
+            plt.colorbar(im1, ax=axes[1,0])
+            
+            # Final angular momentum density
+            im2 = axes[1,1].contourf(X_np, Y_np, l_z_density_final, levels=20, cmap='RdBu_r')
+            axes[1,1].set_xlabel('x')
+            axes[1,1].set_ylabel('y')
+            axes[1,1].set_title('Final l_z(x,y) Density')
+            axes[1,1].set_aspect('equal')
+            plt.colorbar(im2, ax=axes[1,1])
+            
+            plt.tight_layout()
+            plt.savefig(plot_dir / f"angular_momentum_{tid}.png", dpi=140)
+            plt.close()
+            log("Saved angular momentum plots", "INFO")
+        except Exception as e:
+            log(f"Plotting skipped ({type(e).__name__}: {e})", "WARN")
+        
+        summary = {
+            "id": tid, "description": desc, "passed": passed,
+            "L_z_initial": float(L_z_initial),
+            "L_z_final": float(L_z_final),
+            "L_z_change": float(L_z_change),
+            "relative_change": float(rel_change),
+            "tolerance": momentum_tol,
+            "angular_mode": angular_mode,
+            "runtime_sec": 0.0,
+            "backend": "GPU" if self.use_gpu else "CPU"
+        }
+        metrics = [
+            ("L_z_initial", L_z_initial),
+            ("L_z_final", L_z_final),
+            ("relative_change", rel_change)
+        ]
+        save_summary(test_dir, tid, summary, metrics=metrics)
+        
+        return TestSummary(
+            id=tid, description=desc, passed=passed, rel_err=rel_change,
+            omega_meas=float(L_z_final), omega_theory=float(L_z_initial),
             runtime_sec=0.0, k_fraction_lattice=0.0
         )
     

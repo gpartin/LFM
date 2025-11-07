@@ -1,10 +1,10 @@
 # Upload Manifest
 
-- Generated: 2025-11-06 17:49:32
+- Generated: 2025-11-06 19:53:06
 - Scope: OSF/Zenodo dry-run package (docs/upload)
 
 ## Provenance
-- Git SHA: 582583c4076e9d780a52d337d7b9a92da8bad2d2
+- Git SHA: 45fe4096d25832e7947d88c47bf1177d3834d660
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
@@ -14,9 +14,9 @@
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 12204 | `aee0ea8989538a23e86e5fcb609dd5b0360f549013024633776213e4e04075f9` |
+| MANIFEST.md | 12765 | `ec9b79451999b02ec6a965da56e639d08d741470d5b994accbdfb7521a8e8dd0` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 11809 | `b61e138ad09b0afc50e57b5c1a5d2b5fac80155d4ed43219eb6fb8d194569b3b` |
+| OSF_UPLOAD_OVERVIEW.md | 12370 | `829bd362231536f9a59c3dd127d24879500c20a4804243088d945c686f3bcb98` |
 | plots/Electromagnetic/EM-01/em-01_analysis.png | 111255 | `cb67aa7abc5159fe69a2ca89f971a0396ff1c529cb931d3fadcad88b8950faed` |
 | plots/Electromagnetic/EM-02/magnetic_generation_verification.png | 140499 | `e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458` |
 | plots/Electromagnetic/EM-03/faraday_error_analysis.png | 42974 | `3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d` |
@@ -71,6 +71,7 @@
 | plots/Gravity/GRAV-23/chi_wave_evolution_GRAV-23.png | 115277 | `30fe0ebdabc13ee5f46aa2f169aae209f57230b756099de0cebb04062ce7f6b9` |
 | plots/Gravity/GRAV-24/chi_coupling_GRAV-24.png | 111694 | `c372d324e61082fdb9ebc4e5a88eff874dd0d2f8d8346a4d64dbe44cda1d0723` |
 | plots/Gravity/GRAV-25/light_bending_GRAV-25.png | 107443 | `13b46c505dfdba179aafb0b99139eef124bd4673e150a0a9a9b605f34709a3d4` |
+| plots/Gravity/GRAV-26/equivalence_principle_GRAV-26.png | 136607 | `d093d5ca89397adbd18b3a0bfc32a7301789a3accede19fee5ec6e7d5dfce82a` |
 | plots/Quantization/QUAN-01/energy_transfer.png | 131580 | `9f03da0f2a6a9df57e6378bc85f67f39874d83fccb5adaf20325aef01cd7de0a` |
 | plots/Quantization/QUAN-02/energy_transfer.png | 156083 | `b6fbab9368b960229e53469a27862439c73a73182c0d8305daf86afd4ef83314` |
 | plots/Quantization/QUAN-03/spectral_linearity.png | 60565 | `419e8cd73ded3f45f120a9738e787b66de3cde2262bff09c16fc56f6c89348f1` |
@@ -96,16 +97,19 @@
 | plots/Relativistic/REL-13/dispersion_REL-13.png | 55981 | `9496284aa000b8401a0354092cb3c6bef0535e905f8d752aba37d1a28104c837` |
 | plots/Relativistic/REL-14/dispersion_REL-14.png | 54570 | `050c8ab13fdda1f038ef8cda247e761bd4c687efa84eeb0e2b71a6db0087a039` |
 | plots/Relativistic/REL-15/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
-| PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
+| plots/Relativistic/REL-16/angular_momentum_REL-16.png | 198260 | `c54a66b740b969f9fb8b98fc7276077db5f29b55e7f761ea0ef401d31e5199a5` |
+| plots/Relativistic/REL-16/momentum_conservation_REL-16.png | 112284 | `9e6d84e615e748e700a0e3ae1c2d9f5da496e382456168a3ad8d494a35c1cdcf` |
+| plots/Relativistic/REL-17/momentum_conservation_REL-17.png | 111926 | `65a92ba1ec6916381f7a062ebf314a8ea433be19d25c77bbed4a188ce50e0c61` |
+| PLOTS_OVERVIEW.md | 8528 | `00c9f0af1adc8c4bec96f40f6a200a804d11b5cad22b118050faf9041bd2d59f` |
 | README.md | 1868 | `2b3662e7bcb99a1137d8f1f4316d22970b72070772a49dd048a38345a19725c2` |
-| results_MASTER_TEST_STATUS.csv | 7391 | `878ceecb4862a161c73272566b6e1cba337fd654c09b2a4dad963314e53e96bf` |
-| txt/Executive_Summary.txt | 6193 | `7a92be6199027df7f42eb4743c585e67f75e5723efdac8cb568a77319b5ffd72` |
+| results_MASTER_TEST_STATUS.csv | 8122 | `76a99e578866979518789e1152fb29c29e8c37e322a1b86c8d628b9f05502f20` |
+| txt/Executive_Summary.txt | 6765 | `d0011c69656bc8446cd237eb75a10ab7a73c8817b715e326556b99731cbc1d65` |
 | txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
-| txt/LFM_Master.txt | 11349 | `06c42fda39919f4c07a3d2c755089044794d0cacceb3a24577702008169eeddb` |
-| txt/LFM_Phase1_Test_Design.txt | 9931 | `890a118af096289356360b1dc136110d2e4b482057acaf85f5815ded4e1a15ea` |
+| txt/LFM_Master.txt | 11919 | `8f554275379fccee77dfc549e0803bbc4635fa33a0c952d2c932028874189f10` |
+| txt/LFM_Phase1_Test_Design.txt | 10056 | `4f77ad2b2c665fada64e6ceac137081ab094355ddb76ec24b36785cb6eb9582b` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
-| LFM_upload_bundle_20251106_v1.zip | 6845205 | `6d2002ee175222667eb62bd3eeb30c33fad83929d8ba4a1d5b049d51f43f0f1a` |
+| LFM_upload_bundle_20251106_v1.zip | 7362535 | `e8877c02c3b2ecfcc8a11795df8eb19ffe1c3c3b847b313a2fddd0398ba91c67` |
 
 Notes:
 - MASTER_TEST_STATUS is refreshed from results/.

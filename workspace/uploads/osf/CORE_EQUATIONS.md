@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 17:49:33"
+generated: "2025-11-06 19:53:07"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations

@@ -1,0 +1,16 @@
+{
+  "id": "GRAV-26",
+  "description": "Weak Equivalence Principle \u2014 mass-independent gravitational acceleration",
+  "passed": true,
+  "acceleration_light": 0.011351861875654208,
+  "acceleration_heavy": 0.011351861883788084,
+  "acceleration_diff": 8.133875517568612e-12,
+  "relative_diff": 7.165234746292048e-10,
+  "tolerance": 0.05,
+  "amplitude_ratio": 5.0,
+  "runtime_sec": 3.681763172149658,
+  "on_gpu": true,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-07T02:25:31.749383Z"
+}

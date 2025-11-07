@@ -38,7 +38,7 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier1_relativistic.py",
         "config": "config/config_tier1_relativistic.json",
         "config_schema": "variants",
-        "expected": 15,
+        "expected": 16,
     },
     {
         "tier": 2,
@@ -50,7 +50,7 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier2_gravityanalogue.py",
         "config": "config/config_tier2_gravityanalogue.json",
         "config_schema": "variants",
-        "expected": 25,
+        "expected": 26,
     },
     {
         "tier": 3,
@@ -98,7 +98,19 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier6_coupling.py",
         "config": "config/config_tier6_coupling.json",
         "config_schema": "tests",
-        "expected": 3,  # Implemented (COUP-01,02,07); others TBD
+        "expected": 12,
+    },
+    {
+        "tier": 7,
+        "name": "Thermodynamics",
+        "category_name": "Thermodynamics & Statistical Mechanics",
+        "dir": "Thermodynamics",
+        "prefix": "THERM",
+        "id_pattern": r"^THERM-\\d+$",
+        "runner": "run_tier7_thermodynamics.py",
+        "config": "config/config_tier7_thermodynamics.json",
+        "config_schema": "tests",
+        "expected": 5,
     },
 ]
 

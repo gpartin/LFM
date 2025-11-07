@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 17:49:33"
+generated: "2025-11-06 19:53:07"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Master Document — Conceptual Framework and
@@ -115,9 +115,17 @@ the behavior of χ(x,t) and coupling constants:
 (Tier 3–5).
 
 
-• Cosmological: χ-feedback drives self-limiting expansion (Tier 6).
+• Multi-Domain Coupling: relativistic energy-momentum, wave-chi coupling,
 
-(Tier numbering corresponds to Phase 1 Test Design v2.0.)
+quantum-gravitational bound states (Tier 6).
+
+
+• Thermodynamics & Statistical Mechanics: entropy increase, arrow of time,
+
+equipartition, thermalization, temperature emergence from coarse-grained
+observables of time-reversible dynamics (Tier 7).
+
+(Tier numbering corresponds to Phase 1 Test Design v3.2.)
 
 6 Interpretation and Ontology
 
@@ -221,28 +229,31 @@ Outstanding questions for future investigation:
 ## 3. Independent third-party validation.
 
 
-4. Entropy, thermodynamics, and information conservation.
-5. Integration with established quantum field frameworks.
+4. Integration with established quantum field frameworks.
 
 
-6. Long-term numerical energy drift characterization across different
+5. Long-term numerical energy drift characterization across different
 
 stencil orders and dimensions.
 
 
-7. Verification of χ-coupled energy curvature via probe-particle
+6. Verification of χ-coupled energy curvature via probe-particle
 
 simulations (Tier 2–3 extensions).
 
 13 Summary
 
 The Lattice-Field Medium unifies relativity, gravitation, quantization,
-electromagnetic theory, and cosmology through a single discrete rule. Energy, inertia,
-curvature, and electromagnetic field interactions emerge as properties of one deterministic field.
-Tier 5 validation demonstrates that EM-analogous phenomena (wave propagation, field coupling,
-polarization, birefringence) arise naturally from Klein-Gordon dynamics with spatially-varying
-χ-field. Continued validation will determine whether this structure can serve as a
-fundamental framework for physical law.
+electromagnetic theory, thermodynamics, and multi-domain coupling through a single discrete rule.
+Energy, inertia, curvature, electromagnetic field interactions, and thermodynamic observables
+emerge as properties of one deterministic field. Tier 5 validation demonstrates that EM-analogous
+phenomena (wave propagation, field coupling, polarization, birefringence) arise naturally from
+Klein-Gordon dynamics with spatially-varying χ-field. Tier 7 validation establishes that
+thermodynamics (entropy increase, arrow of time, equipartition, thermalization, temperature)
+emerges from statistical coarse-graining of time-reversible deterministic dynamics, validating
+Boltzmann's vision that macroscopic thermodynamics arises from microscopic mechanics.
+Continued validation will determine whether this structure can serve as a fundamental framework
+for physical law.
 
 This Version aligns all conceptual, mathematical, and numerical
 formulations under one canonical framework, thereby completing Phase 1

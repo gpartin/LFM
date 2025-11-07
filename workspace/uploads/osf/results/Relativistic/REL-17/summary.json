@@ -1,0 +1,15 @@
+{
+  "id": "REL-17",
+  "description": "Linear Momentum Conservation \u2014 Two-Packet Collision",
+  "passed": true,
+  "momentum_initial": 5.6025978456553106e-09,
+  "momentum_final": 5.602598442955298e-09,
+  "momentum_change": 5.972999875461192e-16,
+  "relative_change": 1.0661125499295153e-07,
+  "tolerance": 0.01,
+  "runtime_sec": 0.0,
+  "backend": "GPU",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-07T02:16:54.811561Z"
+}

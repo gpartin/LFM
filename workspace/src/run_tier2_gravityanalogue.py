@@ -491,8 +491,8 @@ class Tier2Harness(BaseTierHarness):
             PROBE_B = 3*N//4  # After slab
         
         # Extract chi values at probe locations for theory comparison (when applicable)
-        # GR modes need these values; self_consistency, dynamic_chi_wave, and gravitational_wave compute chi differently
-        if mode not in ("self_consistency", "dynamic_chi_wave", "gravitational_wave", "light_bending"):
+        # GR modes need these values; self_consistency, dynamic_chi_wave, gravitational_wave, light_bending, and equivalence_principle compute chi differently
+        if mode not in ("self_consistency", "dynamic_chi_wave", "gravitational_wave", "light_bending", "equivalence_principle"):
             chiA = float(to_numpy(chi_field[PROBE_A]))
             chiB = float(to_numpy(chi_field[PROBE_B]))
             log(f"chi values: PROBE_A={PROBE_A} -> chi_A={chiA:.4f}, PROBE_B={PROBE_B} -> chi_B={chiB:.4f}", "INFO")
@@ -1152,6 +1152,209 @@ class Tier2Harness(BaseTierHarness):
                 test_id=tid, description=desc, passed=passed,
                 rel_err_ratio=abs(deflection_angle), ratio_meas_serial=float(actual_x), ratio_meas_parallel=float('nan'),
                 ratio_theory=float(expected_x), runtime_sec=t_elapsed, on_gpu=self.on_gpu
+            )
+        
+        if mode == "equivalence_principle":
+            # GRAV-26: Weak Equivalence Principle
+            # Test if two packets with different amplitudes (masses) fall at same rate in χ-gradient
+            # This is Einstein's founding principle for GR: inertial mass = gravitational mass
+            if ndim != 1:
+                raise ValueError("equivalence_principle mode currently supports 1D only")
+            
+            chi_gradient = float(p.get("chi_gradient", 0.01))
+            packet_width_cells = float(p.get("packet_width_cells", 10.0))
+            amplitude_light = float(p.get("amplitude_light", 0.1))
+            amplitude_heavy = float(p.get("amplitude_heavy", 0.5))
+            acceleration_tol = float(p.get("acceleration_tolerance", 0.05))
+            
+            # Build χ-gradient field: linear ramp (gravitational potential)
+            chi_min = 0.05
+            chi_max = chi_min + chi_gradient
+            ax = xp.arange(N, dtype=self.dtype)
+            chi_field = chi_min + (chi_max - chi_min) * (ax / float(N))
+            
+            # Launch both packets from same initial position (middle)
+            x0 = N * 0.5
+            
+            # Light packet (low amplitude)
+            env_light = xp.exp(-((ax - x0)**2) / (2.0 * packet_width_cells**2))
+            E_light = (amplitude_light * env_light).astype(self.dtype)
+            Eprev_light = E_light.copy()
+            
+            # Heavy packet (high amplitude)
+            env_heavy = xp.exp(-((ax - x0)**2) / (2.0 * packet_width_cells**2))
+            E_heavy = (amplitude_heavy * env_heavy).astype(self.dtype)
+            Eprev_heavy = E_heavy.copy()
+            
+            log(f"Equivalence principle: A_light={amplitude_light}, A_heavy={amplitude_heavy}, χ-gradient={chi_gradient}", "INFO")
+            
+            # Track center-of-mass trajectories
+            def center_of_mass(E_field):
+                """Compute center of mass: x_cm = Σ(x * E²) / Σ(E²)"""
+                E_np = to_numpy(E_field)
+                E2 = E_np ** 2
+                total_energy = np.sum(E2)
+                if total_energy < 1e-12:
+                    return 0.0
+                x_arr = np.arange(len(E_np))
+                return np.sum(x_arr * E2) / total_energy
+            
+            # Storage for trajectories
+            times = []
+            x_light_traj = []
+            x_heavy_traj = []
+            
+            # Sample every N steps
+            sample_stride = max(1, steps // 100)
+            
+            # Run parallel simulations (they don't interact)
+            params_light = {
+                "dt": dt, "dx": dx, "alpha": alpha, "beta": beta, "boundary": "periodic",
+                "chi": to_numpy(chi_field) if xp is np else chi_field,
+                "Eprev": to_numpy(Eprev_light) if xp is np else Eprev_light,
+                "debug": {"quiet_run": True, "enable_diagnostics": False}
+            }
+            params_heavy = {
+                "dt": dt, "dx": dx, "alpha": alpha, "beta": beta, "boundary": "periodic",
+                "chi": to_numpy(chi_field) if xp is np else chi_field,
+                "Eprev": to_numpy(Eprev_heavy) if xp is np else Eprev_heavy,
+                "debug": {"quiet_run": True, "enable_diagnostics": False}
+            }
+            
+            t0 = time.time()
+            
+            # Evolve both packets
+            from core.lfm_equation import lattice_step
+            
+            E_light_curr = E_light
+            E_light_prev = Eprev_light
+            E_heavy_curr = E_heavy
+            E_heavy_prev = Eprev_heavy
+            
+            for n in range(steps):
+                E_light_next = lattice_step(E_light_curr, E_light_prev, params_light)
+                E_heavy_next = lattice_step(E_heavy_curr, E_heavy_prev, params_heavy)
+                
+                E_light_prev, E_light_curr = E_light_curr, E_light_next
+                E_heavy_prev, E_heavy_curr = E_heavy_curr, E_heavy_next
+                
+                if n % sample_stride == 0:
+                    x_cm_light = center_of_mass(E_light_curr)
+                    x_cm_heavy = center_of_mass(E_heavy_curr)
+                    times.append(n * dt)
+                    x_light_traj.append(x_cm_light)
+                    x_heavy_traj.append(x_cm_heavy)
+            
+            t_elapsed = time.time() - t0
+            
+            # Final center-of-mass positions
+            x_cm_light_final = center_of_mass(E_light_curr)
+            x_cm_heavy_final = center_of_mass(E_heavy_curr)
+            
+            # Fit parabolic trajectories to extract acceleration
+            # x(t) = x0 + v0*t + 0.5*a*t²
+            times_np = np.array(times)
+            x_light_np = np.array(x_light_traj)
+            x_heavy_np = np.array(x_heavy_traj)
+            
+            # Fit using least squares: [1, t, t²] @ [x0, v0, a/2] = x(t)
+            def fit_parabola(t, x):
+                """Fit x(t) = c0 + c1*t + c2*t² and return acceleration a = 2*c2"""
+                A = np.column_stack([np.ones_like(t), t, t**2])
+                coeffs, _, _, _ = np.linalg.lstsq(A, x, rcond=None)
+                return 2.0 * coeffs[2]  # a = 2 * (1/2 * a) = 2 * c2
+            
+            a_light = fit_parabola(times_np, x_light_np)
+            a_heavy = fit_parabola(times_np, x_heavy_np)
+            
+            # Equivalence principle test: accelerations should match
+            a_diff = abs(a_light - a_heavy)
+            a_avg = (abs(a_light) + abs(a_heavy)) / 2.0
+            rel_diff = a_diff / max(a_avg, 1e-12)
+            
+            passed = bool(rel_diff < acceleration_tol)
+            
+            status = "PASS [OK]" if passed else "FAIL [X]"
+            log(f"{tid} {status} equivalence: a_light={a_light:.6e}, a_heavy={a_heavy:.6e}, rel_diff={rel_diff*100:.2f}%",
+                "INFO" if passed else "FAIL")
+            
+            # Save summary
+            summary = {
+                "id": tid, "description": desc, "passed": passed,
+                "acceleration_light": float(a_light),
+                "acceleration_heavy": float(a_heavy),
+                "acceleration_diff": float(a_diff),
+                "relative_diff": float(rel_diff),
+                "tolerance": acceleration_tol,
+                "amplitude_ratio": amplitude_heavy / amplitude_light,
+                "runtime_sec": float(t_elapsed),
+                "on_gpu": self.on_gpu
+            }
+            metrics = [
+                ("acceleration_light", a_light),
+                ("acceleration_heavy", a_heavy),
+                ("relative_diff", rel_diff)
+            ]
+            save_summary(test_dir, tid, summary, metrics=metrics)
+            
+            # Save trajectories
+            traj_csv = diag_dir / f"equivalence_trajectories_{tid}.csv"
+            with open(traj_csv, 'w', encoding='utf-8') as f:
+                f.write("time,x_light,x_heavy\n")
+                for i in range(len(times)):
+                    f.write(f"{times[i]:.6f},{x_light_traj[i]:.6f},{x_heavy_traj[i]:.6f}\n")
+            
+            # Plot
+            try:
+                import matplotlib.pyplot as _plt
+                fig, axes = _plt.subplots(2, 2, figsize=(14, 10))
+                
+                # χ-field profile
+                x_arr = np.arange(N) * dx
+                chi_np = to_numpy(chi_field)
+                axes[0,0].plot(x_arr, chi_np, 'r-', linewidth=1.5)
+                axes[0,0].axvline(x0 * dx, color='g', linestyle='--', alpha=0.5, label='Initial position')
+                axes[0,0].set_xlabel("Position x")
+                axes[0,0].set_ylabel("χ(x)")
+                axes[0,0].set_title(f"{tid} χ-Gradient (Gravitational Field)")
+                axes[0,0].legend()
+                axes[0,0].grid(True, alpha=0.3)
+                
+                # Trajectories
+                axes[0,1].plot(times_np, x_light_np, 'b-', linewidth=2, label=f'Light (A={amplitude_light})')
+                axes[0,1].plot(times_np, x_heavy_np, 'r-', linewidth=2, label=f'Heavy (A={amplitude_heavy})')
+                axes[0,1].set_xlabel("Time")
+                axes[0,1].set_ylabel("Center-of-Mass Position")
+                axes[0,1].set_title("Packet Trajectories in χ-Gradient")
+                axes[0,1].legend()
+                axes[0,1].grid(True, alpha=0.3)
+                
+                # Acceleration comparison
+                axes[1,0].bar(['Light', 'Heavy'], [a_light, a_heavy], color=['blue', 'red'], alpha=0.7)
+                axes[1,0].axhline(a_light, color='b', linestyle='--', alpha=0.5)
+                axes[1,0].axhline(a_heavy, color='r', linestyle='--', alpha=0.5)
+                axes[1,0].set_ylabel("Acceleration (cells/time²)")
+                axes[1,0].set_title(f"Measured Accelerations (diff={rel_diff*100:.2f}%)")
+                axes[1,0].grid(True, alpha=0.3, axis='y')
+                
+                # Relative difference vs tolerance
+                axes[1,1].bar(['Measured', 'Tolerance'], [rel_diff * 100, acceleration_tol * 100], 
+                             color=['green' if passed else 'red', 'gray'], alpha=0.7)
+                axes[1,1].set_ylabel("Relative Difference (%)")
+                axes[1,1].set_title(f"Equivalence Principle Test: {'PASS' if passed else 'FAIL'}")
+                axes[1,1].grid(True, alpha=0.3, axis='y')
+                
+                _plt.tight_layout()
+                _plt.savefig(plot_dir / f"equivalence_principle_{tid}.png", dpi=140)
+                _plt.close()
+                log("Saved equivalence principle plots", "INFO")
+            except Exception as _e:
+                log(f"Plotting skipped ({type(_e).__name__}: {_e})", "WARN")
+            
+            return VariantResult(
+                test_id=tid, description=desc, passed=passed,
+                rel_err_ratio=float(rel_diff), ratio_meas_serial=float(a_light), ratio_meas_parallel=float(a_heavy),
+                ratio_theory=1.0, runtime_sec=t_elapsed, on_gpu=self.on_gpu
             )
 
         # Initial conditions depend on test mode
