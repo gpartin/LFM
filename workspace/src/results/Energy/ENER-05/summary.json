@@ -1,0 +1,30 @@
+{
+  "tier": 3,
+  "category": "Energy",
+  "test_id": "ENER-05",
+  "description": "Hamiltonian partitioning \u2014 uniform \u03c7 (KE \u2194 GE flow)",
+  "timestamp": "2025-11-07T00:39:33.468634+00:00",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "cuda_runtime": 12090,
+    "python": "3.13.9",
+    "backend": "CuPy"
+  },
+  "parameters": {
+    "N": 256,
+    "steps": 5000,
+    "dt": 0.0005,
+    "dx": 0.005,
+    "c": 1.0,
+    "cfl": 0.1,
+    "stencil_order": 2
+  },
+  "metrics": {
+    "energy_rel_drift": 0.0021498656572412904,
+    "entropy_monotonic": true,
+    "wave_max_drop": 0.012445783016404546
+  },
+  "status": "Passed",
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0"
+}

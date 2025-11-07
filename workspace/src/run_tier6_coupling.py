@@ -1347,7 +1347,7 @@ class Tier6Harness(BaseTierHarness):
         """
         Compute total energy of field configuration.
         
-        Energy functional for modified Klein-Gordon equation:
+        Energy functional for Klein-Gordon equation with variable χ-field:
         
             E_total = ∫ [ ½(∂E/∂t)² + ½c²|∇E|² + ½χ²E² ] dV
         

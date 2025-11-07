@@ -1,0 +1,12 @@
+{
+  "test_id": "COUP-06",
+  "description": "Wavepacket Collapse vs χ-Gradient Interference (Phase 3)",
+  "passed": false,
+  "runtime_sec": 7.888733900006628,
+  "energy_drift": 0.012804802973554807,
+  "primary_metric": 3.2613485245747142e-09,
+  "metric_name": "fringe_centroid_shift",
+  "convergence_validated": false,
+  "notes": "shift=-0.000",
+  "timestamp": "2025-11-06T23:17:49.852866+00:00"
+}

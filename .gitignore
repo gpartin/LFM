@@ -52,7 +52,10 @@ workspace/results/**/session_log.jsonl
 workspace/results/**/session_log.txt
 
 # Harness transient telemetry (keep tracked file, ignore any stray copies)
-workspace/src/results/
+# Keep the canonical metrics JSON tracked, but ignore backup/temp variants
+workspace/src/harness/results/*.bak
+workspace/src/harness/results/*.json.bak
+workspace/src/harness/results/*.tmp
 
 # Generated diagnostics CSV (transient)
 workspace/src/diagnostics_core.csv

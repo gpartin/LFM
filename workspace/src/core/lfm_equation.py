@@ -16,7 +16,7 @@ This file contains the CANONICAL implementation of the LFM equation:
 
     ∂²E/∂t² = c²∇²E − χ²(x,t)E,   with   c² = α/β
 
-This is a modified Klein-Gordon equation (Klein, 1926; Gordon, 1926) with
+This is the standard Klein-Gordon equation (Klein, 1926; Gordon, 1926) with
 spatially-varying mass parameter χ(x,t). The Laplacian (∇²) is the fundamental
 spatial operator that makes this a wave equation with local causality.
 
@@ -216,7 +216,7 @@ def energy_total(E, E_prev, dt, dx, c, chi):
 #
 #   E^{t+1} = (2−γ)E^t − (1−γ)E^{t−1} + Δt² [c²∇²E^t − χ²(x,t)E^t]
 #
-# This is a leapfrog scheme for the modified Klein-Gordon equation.
+# This is a leapfrog scheme for the Klein-Gordon equation with variable χ(x,t).
 # The Laplacian (∇²) is computed by calling laplacian() above.
 # ═════════════════════════════════════════════════════════════════════
 def lattice_step(E, E_prev, params):

@@ -1,0 +1,163 @@
+{
+  "base_paths": {
+    "results": "results"
+  },
+  "hardware": {
+    "gpu_enabled": true,
+    "use_fused_cuda": true,
+    "precision": "float64"
+  },
+  "tier": 3,
+  "category": "Energy Conservation & Transport",
+  "output_dir": "results/Energy",
+  "parameters": {
+    "c": 1.0,
+    "time_step": 0.0005,
+    "space_step": 0.005,
+    "N": 256,
+    "stencil_order": 2,
+    "save_every": 10
+  },
+  "tolerances": {
+    "energy_drift": 0.01,
+    "wave_integrity_max_drop": 0.05
+  },
+  "notes_on_tolerance": "energy_drift=0.01 (1%) is realistic for Klein-Gordon on discrete lattice without artificial enforcement. Actual drift ~0.1-0.4% observed with stencil_order=2. CRITICAL: stencil_order=4 breaks discrete energy conservation (146\u00d7 worse drift) because energy formula uses 2nd-order gradients while dynamics use 4th-order Laplacian - discrete conservation requires matching discretization orders.",
+  "tests": [
+    {
+      "test_id": "ENER-01",
+      "description": "Global conservation \u2014 short",
+      "steps": 5000,
+      "chi_const": 0.0,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-02",
+      "description": "Global conservation \u2014 long",
+      "steps": 20000,
+      "chi_const": 0.0,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-03",
+      "description": "Wave integrity \u2014 mild curvature",
+      "chi_gradient": [
+        0.0,
+        0.05
+      ],
+      "steps": 10000,
+      "check_wave_integrity": true,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-04",
+      "description": "Wave integrity \u2014 steep curvature",
+      "chi_gradient": [
+        0.0,
+        0.1
+      ],
+      "steps": 10000,
+      "check_wave_integrity": true,
+      "enforce_energy": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-05",
+      "description": "Hamiltonian partitioning \u2014 uniform \u03c7 (KE \u2194 GE flow)",
+      "ic": "gaussian",
+      "chi_const": 0.0,
+      "steps": 5000,
+      "track_hamiltonian_components": true,
+      "enforce_energy": false,
+      "energy_drift_max": 0.01,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-06",
+      "description": "Hamiltonian partitioning \u2014 with mass term (KE \u2194 GE \u2194 PE flow)",
+      "ic": "gaussian",
+      "chi_const": 0.15,
+      "steps": 5000,
+      "track_hamiltonian_components": true,
+      "enforce_energy": false,
+      "energy_drift_max": 0.01,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-07",
+      "description": "Hamiltonian partitioning \u2014 \u03c7-gradient field (energy flow in curved spacetime)",
+      "ic": "gaussian",
+      "chi_gradient": [
+        0.05,
+        0.2
+      ],
+      "steps": 5000,
+      "track_hamiltonian_components": true,
+      "enforce_energy": false,
+      "energy_drift_max": 0.01,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-08",
+      "description": "Dissipation \u2014 weak damping (exponential decay, \u03b3=1e-3 per unit time)",
+      "ic": "gaussian",
+      "chi_const": 0.0,
+      "damping": 5e-07,
+      "steps": 5000,
+      "enforce_energy": false,
+      "energy_drift_max": 0.1,
+      "track_hamiltonian_components": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-09",
+      "description": "Dissipation \u2014 strong damping (exponential decay, \u03b3=1e-2 per unit time)",
+      "ic": "gaussian",
+      "chi_const": 0.0,
+      "damping": 5e-06,
+      "steps": 5000,
+      "enforce_energy": false,
+      "energy_drift_max": 0.2,
+      "track_hamiltonian_components": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-10",
+      "description": "Thermalization \u2014 noise + damping reaches steady state",
+      "ic": "gaussian",
+      "chi_const": 0.0,
+      "noise_amp": 1.5e-05,
+      "damping": 1.2e-05,
+      "steps": 8000,
+      "require_entropy_monotonic": false,
+      "check_wave_integrity": false,
+      "enforce_energy": false,
+      "energy_drift_max": 0.2,
+      "track_hamiltonian_components": false,
+      "skip": false
+    },
+    {
+      "test_id": "ENER-11",
+      "description": "Momentum conservation \u2014 two-packet collision",
+      "mode": "momentum_conservation",
+      "dimensions": 1,
+      "grid_points": 512,
+      "steps": 1000,
+      "dt": 0.005,
+      "dx": 0.05,
+      "packet1_pos": 0.3,
+      "packet2_pos": 0.7,
+      "packet1_k": 2.0,
+      "packet2_k": -2.0,
+      "packet_width": 0.05,
+      "momentum_tolerance": 0.01,
+      "skip": true,
+      "comment": "Validates momentum conservation from Noether's theorem - currently has calculation issues"
+    }
+  ],
+  "notes": "Tier-3 unified test: verifies energy conservation, wave integrity, entropy growth under variable chi(x).",
+  "timestamp": "2025-11-07T00:39:26.371091Z"
+}

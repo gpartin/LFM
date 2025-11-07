@@ -70,7 +70,7 @@ Test: COUP-02 - Wave Propagation Speed in Flat Space
 
 ```python
 """
-Energy functional for modified Klein-Gordon equation:
+Energy functional for Klein-Gordon equation with variable χ-field:
 
     E_total = ∫ [ ½(∂E/∂t)² + ½c²|∇E|² + ½χ²E² ] dV
 

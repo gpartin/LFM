@@ -1,0 +1,2 @@
+test_id,description,passed,energy_rel_drift,entropy_monotonic,wave_max_drop,runtime_sec
+ENER-05,Hamiltonian partitioning — uniform χ (KE ↔ GE flow),True,0.0021498656572412904,True,0.012445783016404546,7.099008321762085
