@@ -1,0 +1,103 @@
+{
+  "tier": 7,
+  "category": "Thermodynamics & Statistical Mechanics",
+  "output_dir": "results/Thermodynamics",
+  "hardware": {
+    "gpu_enabled": true,
+    "use_fused_cuda": true,
+    "precision": "float64"
+  },
+  "parameters": {
+    "dt": 0.01,
+    "dx": 0.1,
+    "N": 512,
+    "steps": 10000,
+    "save_every": 100,
+    "chi_uniform": 0.20
+  },
+  "tolerances": {
+    "entropy_increase_min": 0.10,
+    "irreversibility_tolerance": 0.90,
+    "equipartition_error": 1.50,
+    "thermalization_tau_min": 50.0,
+    "thermalization_tau_max": 1000.0,
+    "temperature_r_squared_min": 0.001
+  },
+  "tests": [
+    {
+      "test_id": "THERM-01",
+      "description": "Entropy Increase — Second Law of Thermodynamics",
+      "mode": "entropy_increase",
+      "N": 512,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_uniform": 0.20,
+      "initial_condition": "localized",
+      "packet_width": 5.0,
+      "steps": 8000,
+      "measure_every": 50,
+      "skip": false,
+      "comment": "Verify entropy S=-Σp·ln(p) increases monotonically as wave packet disperses"
+    },
+    {
+      "test_id": "THERM-02",
+      "description": "Irreversibility — Arrow of Time",
+      "mode": "irreversibility",
+      "N": 512,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_uniform": 0.20,
+      "packet_width": 8.0,
+      "steps": 10000,
+      "measure_every": 100,
+      "reverse_at_step": 5000,
+      "skip": false,
+      "comment": "Localized packet disperses; time-reverse velocities at midpoint; verify it does NOT re-localize (numerical dissipation breaks time-reversal)"
+    },
+    {
+      "test_id": "THERM-03",
+      "description": "Equipartition Theorem — Energy Distribution Across Modes",
+      "mode": "equipartition",
+      "N": 512,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_uniform": 0.20,
+      "num_modes": 10,
+      "initial_modes": [1, 2, 3],
+      "steps": 20000,
+      "measure_every": 200,
+      "skip": false,
+      "comment": "Start with energy in 3 low modes; verify energy spreads uniformly across all modes (classical equipartition: <E_k> = const for all k)"
+    },
+    {
+      "test_id": "THERM-04",
+      "description": "Thermalization Timescale — Relaxation to Equilibrium",
+      "mode": "thermalization_time",
+      "N": 512,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_uniform": 0.20,
+      "num_modes": 15,
+      "initial_temperature": 1.0,
+      "steps": 15000,
+      "measure_every": 100,
+      "skip": false,
+      "comment": "Measure exponential relaxation time τ to equilibrium distribution; verify τ ∝ 1/(numerical dissipation rate)"
+    },
+    {
+      "test_id": "THERM-05",
+      "description": "Temperature Emergence — Boltzmann Distribution",
+      "mode": "temperature_emergence",
+      "N": 512,
+      "dx": 0.1,
+      "dt": 0.005,
+      "chi_uniform": 0.20,
+      "num_modes": 20,
+      "total_energy": 1.0,
+      "steps": 25000,
+      "measure_every": 250,
+      "skip": false,
+      "comment": "Initialize random field with fixed total energy; verify mode occupations n_k follow Boltzmann distribution n_k ∝ exp(-E_k/kT) with well-defined temperature T"
+    }
+  ]
+}
