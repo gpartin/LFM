@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 15:36:20"
+generated: "2025-11-06 16:28:23"
 ---
 
 ## Summary Table
@@ -97,4 +97,4 @@ generated: "2025-11-06 15:36:20"
   - Evidence: COUP-02 convergence study: L2 errors (0.00258 → 0.000588 → 0.000147) with 2nd-order convergence, wave speed tracking failed
   - Links: src/run_tier6_coupling.py, results/Coupling/COUP-02/convergence_study.png, experiments/COUP-02_convergence_validation_resolution.md, .github/PROCESS_IMPROVEMENTS.md
 
-Generated: 2025-11-06 15:36:20
+Generated: 2025-11-06 16:28:23

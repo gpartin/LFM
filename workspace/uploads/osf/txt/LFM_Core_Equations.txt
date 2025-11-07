@@ -13,8 +13,8 @@ LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Go
 
 Standard Klein-Gordon: ∂²φ/∂t² = c²∇²φ - m²φ
 
-LFM's Innovation: We implement a spatially-varying mass term χ²(x,t):
-Modified Klein-Gordon: ∂²E/∂t² = c²∇²E - χ²(x,t)E
+LFM's Innovation: We implement the standard Klein-Gordon equation with spatially-varying mass parameter χ²(x,t):
+Klein-Gordon with spatially-varying χ-field: ∂²E/∂t² = c²∇²E - χ²(x,t)E
 
 This spatial variation enables emergence of gravitational and quantum phenomena through discrete field interactions while preserving the fundamental relativistic structure.
 

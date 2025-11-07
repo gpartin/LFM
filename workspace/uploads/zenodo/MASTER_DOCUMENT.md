@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 15:36:21"
+generated: "2025-11-06 16:28:24"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Master Document — Conceptual Framework and

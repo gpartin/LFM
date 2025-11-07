@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "10.5281/zenodo.17510124"
-generated: "2025-11-06 15:36:21"
+generated: "2025-11-06 16:28:24"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Core Equations and Theoretical Foundations
@@ -29,8 +29,8 @@ LFM builds upon the Klein-Gordon equation developed by Oskar Klein and Walter Go
 
 Standard Klein-Gordon: ∂²φ/∂t² = c²∇²φ - m²φ
 
-LFM's Innovation: We implement a spatially-varying mass term χ²(x,t):
-Modified Klein-Gordon: ∂²E/∂t² = c²∇²E - χ²(x,t)E
+LFM's Innovation: We implement the standard Klein-Gordon equation with spatially-varying mass parameter χ²(x,t):
+Klein-Gordon with spatially-varying χ-field: ∂²E/∂t² = c²∇²E - χ²(x,t)E
 
 This spatial variation enables emergence of gravitational and quantum phenomena through discrete field interactions while preserving the fundamental relativistic structure.
 

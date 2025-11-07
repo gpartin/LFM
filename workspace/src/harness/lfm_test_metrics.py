@@ -14,6 +14,8 @@ Tracks runtime, CPU, RAM, and GPU usage for each test run.
 
 import json
 import math
+import os
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
@@ -48,14 +50,87 @@ class TestMetrics:
 			db_path = Path(__file__).parent / "results" / "test_metrics_history.json"
 		self.db_path = Path(db_path)
 		self.db_path.parent.mkdir(parents=True, exist_ok=True)
-		if self.db_path.exists():
-			with open(self.db_path, 'r', encoding='utf-8') as f:
-				self.data = json.load(f)
-		else:
-			self.data = {}
+		self.data = self._safe_read_json(self.db_path)
+
+	def _safe_read_json(self, path: Path, retries: int = 3, delay: float = 0.05) -> Dict:
+		"""Safely read a JSON file with small retries and fallback.
+
+		Handles concurrent writers by retrying on JSONDecodeError and falling back to
+		an empty database or a .bak file if present.
+		"""
+		if not path.exists():
+			return {}
+		last_exc: Optional[Exception] = None
+		for _ in range(max(1, retries)):
+			try:
+				with open(path, 'r', encoding='utf-8') as f:
+					return json.load(f)
+			except json.JSONDecodeError as e:
+				last_exc = e
+				time.sleep(delay)
+			except Exception as e:
+				# Unexpected read error — stop retrying and fall back
+				last_exc = e
+				break
+		# Try reading backup if available
+		bak = path.with_suffix(path.suffix + '.bak')
+		if bak.exists():
+			try:
+				with open(bak, 'r', encoding='utf-8') as f:
+					return json.load(f)
+			except Exception:
+				pass
+		# Fall back to empty database to avoid hard failure during parallel runs
+		return {}
 	def save(self):
-		with open(self.db_path, 'w', encoding='utf-8') as f:
-			json.dump(self.data, f, indent=2)
+		"""Atomically persist metrics to disk.
+
+		Writes to a temporary file and replaces the target to avoid readers
+		observing partially written JSON during parallel test runs.
+		Also writes a .bak copy for recovery.
+		"""
+		tmp_path = self.db_path.with_suffix(self.db_path.suffix + '.tmp')
+		bak_path = self.db_path.with_suffix(self.db_path.suffix + '.bak')
+		# Serialize once to avoid discrepancies between tmp and bak
+		payload = json.dumps(self.data, indent=2)
+		with open(tmp_path, 'w', encoding='utf-8') as f:
+			f.write(payload)
+			f.flush()
+			try:
+				os.fsync(f.fileno())
+			except Exception:
+				# fsync may fail on some filesystems; not fatal
+				pass
+		# Best effort backup
+		try:
+			with open(bak_path, 'w', encoding='utf-8') as fb:
+				fb.write(payload)
+		except Exception:
+			pass
+		# Atomic replace with Windows-friendly retries (handle file sharing)
+		retries = 10
+		for i in range(retries):
+			try:
+				os.replace(tmp_path, self.db_path)
+				break
+			except PermissionError:
+				# Another process may hold a read handle; back off briefly and retry
+				time.sleep(0.05 * (i + 1))
+				continue
+			except Exception:
+				# Unexpected failure — try a short backoff and one more attempt
+				time.sleep(0.05)
+				try:
+					os.replace(tmp_path, self.db_path)
+				except Exception:
+					# Fallback: write non-atomically to avoid crashing the test
+					with open(self.db_path, 'w', encoding='utf-8') as f:
+						f.write(payload)
+					return
+		else:
+			# If loop completes without break, perform best-effort fallback write
+			with open(self.db_path, 'w', encoding='utf-8') as f:
+				f.write(payload)
 	def record_run(self, test_id: str, metrics: Dict):
 		if test_id not in self.data:
 			self.data[test_id] = {"runs": [], "estimated_resources": None, "priority": 50}

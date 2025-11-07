@@ -109,17 +109,17 @@ LFM builds upon the **Klein-Gordon equation** first developed by Oskar Klein and
 
 **Standard Klein-Gordon:** `∂²φ/∂t² = c²∇²φ - m²φ`
 
-**LFM Innovation:** Spatially-varying mass term χ²(x,t):
-**Modified Klein-Gordon:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
+**LFM Innovation:** We implement the standard Klein-Gordon equation with spatially-varying mass parameter χ²(x,t):
+**Klein-Gordon with spatially-varying χ-field:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
 
-This modification enables emergence of gravitational and quantum phenomena through discrete field interactions on a computational lattice, while preserving the fundamental relativistic structure of the original equation.
+This approach enables emergence of gravitational and quantum phenomena through discrete field interactions on a computational lattice, while preserving the fundamental relativistic structure of the original equation.
 
 **Key References:**
 - Klein, O. (1926). Quantentheorie und fünfdimensionale Relativitätstheorie. *Zeitschrift für Physik*, 37(12), 895-906.
 - Gordon, W. (1926). Der Comptoneffekt nach der Schrödingerschen Theorie. *Zeitschrift für Physik*, 40(1-2), 117-133.
 
 ### Core Physics Simulation
-- **Modified Klein-Gordon Equation:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
+- **Klein-Gordon with spatially-varying χ-field:** `∂²E/∂t² = c²∇²E - χ²(x,t)E`
 - **Spatially-Varying χ-Field:** Enables gravity analogue and quantum behavior
 - **Emergence Mechanism:** Energy density drives χ-field structure formation
 
@@ -209,7 +209,7 @@ LFM/
 │   ├── setup_lfm.py            #    Automated installer
 │   ├── lfm_gui.py              #    Windows GUI interface
 │   ├── lfm_control_center.py   #    Console interface
-│   ├── lfm_equation.py         #    Modified Klein-Gordon solver
+│   ├── lfm_equation.py         #    Klein-Gordon with spatially-varying χ-field
 │   ├── run_tier*_*.py          #    Test harnesses (Tiers 1-4)
 │   ├── apps/                   #    🚀 Commercial Applications Suite
 │   │   ├── README.md           #       Application portfolio overview

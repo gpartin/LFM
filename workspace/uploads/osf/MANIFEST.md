@@ -1,10 +1,10 @@
 # Upload Manifest
 
-- Generated: 2025-11-06 15:36:21
+- Generated: 2025-11-06 16:28:24
 - Scope: Package manifest for C:/LFM/workspace/uploads/osf
 
 ## Provenance
-- Git SHA: c618ba481a613eb963a9230353b8f51dabdfd4e7
+- Git SHA: 5a4fd52d7ab20edc7c6c910e4f774a191e4d7249
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
@@ -14,17 +14,17 @@
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | CITATION.cff | 1795 | `c031d6e8d21c486e442efc8cf71d8bbdfe72e847d2091105f8d82fccd481b5a6` |
-| CORE_EQUATIONS.md | 11188 | `4f4d181f9a4abe8b23ee4d1b2da0a8aad52c3c806fbadb9b80899876ce1f58ef` |
-| DISCOVERIES_OVERVIEW.md | 12379 | `9123252c192b0014559638aeeaaa569ae7d869c76e6eddfc5de44927146845ed` |
-| EVIDENCE_REVIEW.md | 3760 | `8566ed7bf705487ebef5c2051799565c9431bb254c5284402cb8fd6caa61c4da` |
-| EXECUTIVE_SUMMARY.md | 6606 | `9cdb958ef3ec3c936fdce6e3a9c4fe754250b54bc583af98f0e82a16f2a2dd85` |
+| CORE_EQUATIONS.md | 11254 | `3aa7e1c89fa5907b536fdafee543109c0d2067ee7f017a70b3bdf934dbf5484b` |
+| DISCOVERIES_OVERVIEW.md | 12379 | `ce6b2c87fe8d7cb11f9f3c70b25d19b59aea3b0f39f378566c6f1ad51513af6b` |
+| EVIDENCE_REVIEW.md | 3760 | `1ec64eeda3548dba27836a5495f74bf5f192f9ba1e9547c7f912c9f88ab02887` |
+| EXECUTIVE_SUMMARY.md | 6606 | `85b5e776e9dc62fe06717b79b810640b485dde7af8403fa532a67b948be4cc21` |
 | Executive_Summary.pdf | 32870 | `dd78c2cfa3781d9ba96d40185023e15d23eabbc370378f1f1716570188cc3923` |
 | LFM_Core_Equations.pdf | 44127 | `47bc57513f04b562bc9e69e48b1c0dc8ffa843695ca5963e9c2585e009991c5e` |
 | LFM_Master.pdf | 37799 | `241c6ba01d4ed5ff8d20fb675ba30e5311edf36b1f0cfcf21c6332e1677e93b2` |
 | LFM_Phase1_Test_Design.pdf | 36002 | `e9e9d61d6763ff6cdfbe036e3a139c48641510720c54952a087b3c3e50fe0d4d` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 36859 | `f83a53f334a1aa2a67f894481117543b0703487ab7b0115c9933481502e35f7a` |
-| MASTER_DOCUMENT.md | 11607 | `1f9c80030451e0d9843d2fc07112aab592d1c6309cf5a9d4a87cf17351c8e693` |
+| MANIFEST.md | 36860 | `1036e2cdc515f2d65ec157b7c016df02e90f9d9d2d10cb88d5d73fd7f0b5ce5f` |
+| MASTER_DOCUMENT.md | 11607 | `a8832ca2b91271f6ca3731297c982f081e94a42616241e7898857fe29500610d` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
 | osf_project.json | 509 | `a171654c3fc17d37dfff025f9360fdea35f03635cef297fa4d740dec9fec9160` |
 | plot_quantum_bound_states.png | 223882 | `4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc` |
@@ -36,7 +36,7 @@
 | plot_tier4_quantum_bound_states.png | 78381 | `30526d79e952c4acb44c568311fb2c167b02b4486548087320a8d77016af0afe` |
 | plot_tier5_electromagnetic_waves.png | 71341 | `272443f33952b9b2512607be95f39ba85a2ba47ea58c07dc281d52fbed14dc5a` |
 | PLOTS_OVERVIEW.md | 8044 | `c867960aca609f75c31c879b760278efe2fefd08a64cf4574ce42147005f2885` |
-| README.md | 5076 | `1b99b89da2604ce335a3e30e27e8a20632426a46d16f28eb4144c37b15818a77` |
+| README.md | 9741 | `22603f0e936e49e4831ea2364b99fb326b70da42815c6b13ae5d6cfd8d908e5d` |
 | results/chi_emergence/README.md | 541 | `fa437df435ca9b3905fab8e7922a7277f5334ff2f579b552205e4c16e8b2a0aa` |
 | results/Coupling/COUP-01/summary.json | 426 | `0864041baf3c73d1c949e851a02b7097ae6f9585b872c207e5ec5a5b2bc5b2a2` |
 | results/Coupling/COUP-02/summary.json | 435 | `78fac77ccb53d47f059159c4ace3e0cfebb79073d112350d5ba9095e4f8fc620` |
@@ -211,7 +211,7 @@
 | results/Gravity/GRAV-25/readme.txt | 488 | `42eb43295664bb7f81ae20ddc2363d647842006c373209c5e58b52d745fe2ec7` |
 | results/Gravity/GRAV-25/summary.json | 559 | `249d9190906e46d75230650afff9ec8fb1314ab95528037f02ce6d03e0b27a53` |
 | results/Gravity/README.md | 798 | `12d238358b40eca912570ac7bdd562d2666a837973ea848529f15ea6bdfe19dd` |
-| results/MASTER_TEST_STATUS.csv | 7674 | `94b3e1f6b9f26513b3585939a42d503be628e514e9f7e7d04ea7a8b750762a2a` |
+| results/MASTER_TEST_STATUS.csv | 7674 | `8d6336144b8b7703defdfddeccbaf9830623d5716a3872f5a0bb14acc31c1562` |
 | results/parallel_run_summary.json | 157 | `ed4d9f893e43a016f201495ae608d5364dfd6c97e22ef8145555d175031b3df4` |
 | results/parallel_test_results.json | 70568 | `1a5d80995124d45a4434eb0c72d13c678f01404d0dab34d7144b173bf1cd2e88` |
 | results/Quantization/QUAN-01/plots/energy_transfer.png | 131580 | `9f03da0f2a6a9df57e6378bc85f67f39874d83fccb5adaf20325aef01cd7de0a` |
@@ -299,16 +299,16 @@
 | results/Relativistic/REL-15/plots/correlation_vs_distance_REL-15.png | 193019 | `ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9` |
 | results/Relativistic/REL-15/readme.txt | 487 | `db641474ac24dbe6f6e9526c16d4fac5673ec85b7739adf909e69ea1c310431e` |
 | results/Relativistic/REL-15/summary.json | 383 | `511a70de0f305ccc284feb6b688da3613759cd348dd891f1d02383374c190272` |
-| RESULTS_COMPREHENSIVE.md | 5927 | `2f524ca2f995bdbe3b720aac0b22ae865e9e70eed6030ca5bccd82533faf164c` |
-| results_MASTER_TEST_STATUS.csv | 7794 | `47276463a5e3f65a4f44bf768ffee2180ff27b498e72c37989d912c4baf2026d` |
-| TEST_DESIGN.md | 9826 | `1a48ced50c348c30660c96604b13819893f689f6659f9f231b5e8f4a225caa65` |
-| TIER_1_ACHIEVEMENTS.md | 1781 | `0c04763f59690bbfd1dfcf5ca6b509a029ad783ddceaae4597500d6f7fef4d78` |
-| TIER_2_ACHIEVEMENTS.md | 3358 | `4fd7673249e52f60e699873baf8fe11bac05677ef447196f7dd968f378ec384f` |
-| TIER_3_ACHIEVEMENTS.md | 1750 | `b26849fb7492289476e903f7feb5da23a3433e3aa70edff32d0e36c627d60d43` |
-| TIER_4_ACHIEVEMENTS.md | 2028 | `5e3715cf41b3ce75685078e1ecd33bb5dacf6a78dbfdba989774564e0aecd17b` |
-| TIER_5_ACHIEVEMENTS.md | 2372 | `9d36dfaebdff4e3bf22225a7decff5481f370b591e9939e58c8b90716974f861` |
+| RESULTS_COMPREHENSIVE.md | 5927 | `45a1471f5709ad9da9b1ef998186ae46cba9d352c5c703618f6197ebcaedfe03` |
+| results_MASTER_TEST_STATUS.csv | 7794 | `1f562ec259cab75c4a0f891b4dde321af3cff59a9894d4497b57d61f4f6915b4` |
+| TEST_DESIGN.md | 9826 | `6084ff77568d2b9df223fb88c9d9b706ea0f72e39df3ca4a128f0f4cfd39d6f6` |
+| TIER_1_ACHIEVEMENTS.md | 1781 | `303a12d2c800650744b327af5e2ab7ff2a92c644a773bc33ff7c185540006c33` |
+| TIER_2_ACHIEVEMENTS.md | 3358 | `465ffcfa5724611322663ff285c7d38eb946d5361d9f7acb8637d90fb4c5bf39` |
+| TIER_3_ACHIEVEMENTS.md | 1750 | `abc30764ba91457a51f13e4f271955dfdb2fc86575d4cbe31390635d2b209d45` |
+| TIER_4_ACHIEVEMENTS.md | 2028 | `dca3a5fd36a24b267da3a4f6f4245a38872345ac02c76003a0d38e3574f12cd8` |
+| TIER_5_ACHIEVEMENTS.md | 2372 | `24597e3251adbf7737cd05b86137d13c7e97fa02d358d96adae0c690417ac2bb` |
 | txt/Executive_Summary.txt | 6193 | `7a92be6199027df7f42eb4743c585e67f75e5723efdac8cb568a77319b5ffd72` |
-| txt/LFM_Core_Equations.txt | 10781 | `5ffbdc615f9e62814c2c8f038d06f96abc2baad77784930640edf46f14432b70` |
+| txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
 | txt/LFM_Master.txt | 11278 | `8c69cd760277955a8c9fb71c96d298debdc701f466cd1eb18a32a77b842e9c37` |
 | txt/LFM_Phase1_Test_Design.txt | 9948 | `b702e66c2eee8429c632b28d2d42192827a177908d12878318d6ca1d8fdf8318` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |

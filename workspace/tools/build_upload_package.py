@@ -1488,6 +1488,15 @@ def main():
     generate_test_design(DEST_OSF, deterministic=args.deterministic)
     generate_test_design(DEST_ZENODO, deterministic=args.deterministic)
 
+    # Upload archive README (world-class overview) from template
+    try:
+        generate_upload_readme  # type: ignore[name-defined]
+    except NameError:
+        pass
+    else:
+        generate_upload_readme(DEST_OSF, deterministic=args.deterministic)  # type: ignore[name-defined]
+        generate_upload_readme(DEST_ZENODO, deterministic=args.deterministic)  # type: ignore[name-defined]
+
     print("Generated tier achievements and core summaries from templates")
     
     # Generate evidence review report
@@ -1890,6 +1899,25 @@ def generate_test_design(dest_dir: Path, deterministic: bool = False) -> str:
     dest_file = dest_dir / "TEST_DESIGN.md"
     dest_file.write_text(content, encoding='utf-8')
     return "TEST_DESIGN.md"
+
+
+def generate_upload_readme(dest_dir: Path, deterministic: bool = False) -> str:
+    """Render uploads README.md from Jinja template upload_readme.md.j2.
+
+    Single source of truth: tools/templates/upload_readme.md.j2
+    """
+    env = _jinja_env()
+    try:
+        tmpl = env.get_template('upload_readme.md.j2')
+    except Exception:
+        # If template missing, leave existing README.md untouched
+        return 'README.md'
+
+    # Minimal context for future extension
+    generation_time = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    content = tmpl.render(generation_time=generation_time)
+    (dest_dir / 'README.md').write_text(content, encoding='utf-8')
+    return 'README.md'
 
 
 if __name__ == '__main__':
