@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Header() {
+  const [experimentsOpen, setExperimentsOpen] = useState(false);
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-space-dark/95 backdrop-blur-sm border-b border-space-border">
       <div className="container mx-auto px-4 py-4">
@@ -20,6 +22,105 @@ export default function Header() {
 
           {/* Research Links */}
           <nav className="hidden md:flex items-center space-x-4">
+            {/* Experiments Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setExperimentsOpen(true)}
+              onMouseLeave={() => setExperimentsOpen(false)}
+            >
+              <button className="px-4 py-2 text-text-secondary hover:text-accent-chi transition-colors flex items-center space-x-1">
+                <span>Experiments</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {experimentsOpen && (
+                <div className="absolute top-full left-0 pt-2 w-64">
+                  <div className="bg-space-panel border border-space-border rounded-lg shadow-xl overflow-hidden">
+                    <Link
+                      href="/experiments/browse"
+                      className="block px-4 py-3 hover:bg-space-dark transition-colors border-b border-space-border"
+                    >
+                      <div className="font-semibold text-accent-chi">Browse All Experiments</div>
+                      <div className="text-xs text-text-muted">Search and filter by category</div>
+                    </Link>
+                    
+                    <div className="py-2">
+                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        Orbital Mechanics
+                      </div>
+                      <Link
+                        href="/experiments/binary-orbit"
+                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>🌍</span>
+                          <span>Binary Orbit</span>
+                        </div>
+                        <div className="text-xs text-text-muted ml-6">Earth-Moon simulation</div>
+                      </Link>
+                    </div>
+                    
+                    <div className="py-2">
+                      <Link
+                        href="/experiments/three-body"
+                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>🔺</span>
+                          <span>Three-Body Problem</span>
+                        </div>
+                        <div className="text-xs text-text-muted ml-6">Chaotic N-body dynamics</div>
+                      </Link>
+                    </div>
+                    
+                    <div className="py-2 border-t border-space-border">
+                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        Gravity
+                      </div>
+                      <Link
+                        href="/experiments/black-hole"
+                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>⚫</span>
+                          <span>Black Hole</span>
+                        </div>
+                        <div className="text-xs text-text-muted ml-6">Extreme gravity simulation</div>
+                      </Link>
+                      <Link
+                        href="/experiments/stellar-collapse"
+                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>💫</span>
+                          <span>Stellar Collapse</span>
+                        </div>
+                        <div className="text-xs text-text-muted ml-6">Star collapsing to black hole</div>
+                      </Link>
+                    </div>
+                    
+                    <div className="py-2 border-t border-space-border">
+                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        Cosmology
+                      </div>
+                      <Link
+                        href="/experiments/big-bang"
+                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>💥</span>
+                          <span>Big Bang</span>
+                        </div>
+                        <div className="text-xs text-text-muted ml-6">Energy explosion from a point</div>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <ExternalLink
               href="https://osf.io/6agn8"
               label="OSF Project"
