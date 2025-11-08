@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-space-dark text-text-primary font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+  }
+  
+  code {
+    @apply font-mono text-sm;
+  }
+}
+
+@layer components {
+  .glow-text {
+    text-shadow: 0 0 20px currentColor;
+  }
+  
+  .glow-box {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  }
+  
+  .button-primary {
+    @apply bg-accent-chi hover:bg-accent-chi/80 text-space-dark font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+    @apply hover:shadow-lg hover:shadow-accent-chi/50;
+  }
+  
+  .button-secondary {
+    @apply border-2 border-accent-chi text-accent-chi hover:bg-accent-chi/10 font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+  }
+  
+  .panel {
+    @apply bg-space-panel border border-space-border rounded-lg p-6;
+  }
+  
+  .metric-display {
+    @apply flex items-center justify-between py-2 border-b border-space-border last:border-b-0;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141b3d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00d9ff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00a8cc;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
