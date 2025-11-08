@@ -17,6 +17,10 @@
 !/workspace/
 !/workspace/**
 
+# CRITICAL IP PROTECTION: Exclude commercial apps from public GitHub
+# These contain patent claims, revenue projections, and proprietary algorithms
+workspace/apps/
+
 # Explicitly ignore root-only directories/files that should never be published
 # (redundant due to /* rule, but kept for clarity and to prevent accidental whitelisting)
 /config/

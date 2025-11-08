@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# © 2025 Emergent Physics Lab. All rights reserved.
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+# Non-commercial use with attribution only; no distribution of modified material; commercial use requires prior written permission.
+# SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
@@ -1224,7 +1230,10 @@ class Tier2Harness(BaseTierHarness):
             t0 = time.time()
             
             # Evolve both packets
-            from core.lfm_equation import lattice_step
+            # NOTE: Removed inner re-import of lattice_step to avoid creating a local
+            # variable that shadows the outer imported symbol. The previous pattern
+            # caused an UnboundLocalError in code paths that used lattice_step before
+            # this inner import executed. The canonical import at module top is used.
             
             E_light_curr = E_light
             E_light_prev = Eprev_light

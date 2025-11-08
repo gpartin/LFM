@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# © 2025 Emergent Physics Lab. All rights reserved.
+# Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+# Non-commercial use with attribution only; no distribution of modified material; commercial use requires prior written permission.
+# SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
 """
 Pre-Commit Validation Script
 ============================
@@ -231,7 +236,7 @@ def main():
     for _tid, tr, _to in fast_tests:
         by_tier[tr] = by_tier.get(tr, 0) + 1
     pretty = ", ".join([f"T{tr}:{cnt}" for tr, cnt in sorted(by_tier.items())])
-    print(f"Selected {len(fast_tests)} tests (per-tier counts → {pretty})\n")
+    print(f"Selected {len(fast_tests)} tests (per-tier counts -> {pretty})\n")
 
     success, out, err = run_parallel(fast_tests)
 
@@ -241,18 +246,20 @@ def main():
     print("=" * 70)
     if out:
         tail = out if len(out) < 4000 else out[-4000:]
-        print(tail)
+        # Sanitize non-ASCII to avoid Windows cp1252 console encode errors
+        safe_tail = ''.join(ch if ord(ch) < 128 else '?' for ch in tail)
+        print(safe_tail)
     if err:
         print("\n[stderr]")
         print(err)
 
     if success:
-        print("\n✅ ALL VALIDATION TESTS PASSED")
-        print("✅ Safe to commit changes")
+        print("\nALL VALIDATION TESTS PASSED")
+        print("Safe to commit changes")
         return 0
     else:
-        print("\n❌ One or more validation tests failed (see summary above)")
-        print("\n⚠️  FIX FAILING TESTS BEFORE COMMITTING ⚠️")
+        print("\nOne or more validation tests failed (see summary above)")
+        print("\nFIX FAILING TESTS BEFORE COMMITTING")
         return 1
 
 

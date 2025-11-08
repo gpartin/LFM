@@ -1,0 +1,12 @@
+# Paths or globs to ignore for header checks
+**/.git/**
+**/.vscode/**
+**/node_modules/**
+**/.next/**
+**/coverage/**
+**/dist/**
+**/build/**
+**/out/**
+**/results/**
+**/uploads/**
+**/*.min.js
