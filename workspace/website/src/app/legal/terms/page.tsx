@@ -45,6 +45,22 @@ export default function TermsPage() {
             distribution of modified versions and no commercial use without a separate written
             agreement. See the LICENSE file for full terms.
           </p>
+          <p>
+            <strong>Commercial Licensing:</strong> Commercial use, derivative works, and proprietary 
+            applications require a separate paid license. See our{' '}
+            <a 
+              href="https://github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md" 
+              className="text-accent-chi hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Commercial License Request Guide
+            </a>{' '}
+            or contact{' '}
+            <a href="mailto:licensing@emergentphysicslab.com" className="text-accent-chi hover:underline">
+              licensing@emergentphysicslab.com
+            </a>.
+          </p>
 
           <h2 className="text-xl font-semibold text-text-primary">4. Third-Party Components</h2>
           <p>

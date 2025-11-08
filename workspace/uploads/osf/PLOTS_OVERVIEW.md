@@ -1,4 +1,4 @@
-﻿# Plots Overview
+# Plots Overview
 
 Staged representative PNG plots from results/ (limited per directory).
 

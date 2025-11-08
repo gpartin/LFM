@@ -1,10 +1,10 @@
 # Upload Manifest
 
-- Generated: 2025-11-06 19:53:06
+- Generated: 2025-11-08 10:15:06
 - Scope: OSF/Zenodo dry-run package (docs/upload)
 
 ## Provenance
-- Git SHA: 45fe4096d25832e7947d88c47bf1177d3834d660
+- Git SHA: 7993103752f507cb8b26bcb9f2961334f792a49b
 - Python: 3.13.9
 - NumPy: 2.3.4
 - CuPy: 13.6.0
@@ -14,9 +14,9 @@
 | File | Size (bytes) | SHA256 |
 |------|--------------:|--------|
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
-| MANIFEST.md | 12765 | `ec9b79451999b02ec6a965da56e639d08d741470d5b994accbdfb7521a8e8dd0` |
+| MANIFEST.md | 12765 | `856c9ef70c868bbbbd29ac414111fab5f98f80d9c160e67ae2dbbb3d701caf51` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 12370 | `829bd362231536f9a59c3dd127d24879500c20a4804243088d945c686f3bcb98` |
+| OSF_UPLOAD_OVERVIEW.md | 12370 | `50b8d578306d771d9070597457c24b96ff29b7532a9f17ae6a4f3200470576aa` |
 | plots/Electromagnetic/EM-01/em-01_analysis.png | 111255 | `cb67aa7abc5159fe69a2ca89f971a0396ff1c529cb931d3fadcad88b8950faed` |
 | plots/Electromagnetic/EM-02/magnetic_generation_verification.png | 140499 | `e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458` |
 | plots/Electromagnetic/EM-03/faraday_error_analysis.png | 42974 | `3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d` |
@@ -102,14 +102,14 @@
 | plots/Relativistic/REL-17/momentum_conservation_REL-17.png | 111926 | `65a92ba1ec6916381f7a062ebf314a8ea433be19d25c77bbed4a188ce50e0c61` |
 | PLOTS_OVERVIEW.md | 8528 | `00c9f0af1adc8c4bec96f40f6a200a804d11b5cad22b118050faf9041bd2d59f` |
 | README.md | 1868 | `2b3662e7bcb99a1137d8f1f4316d22970b72070772a49dd048a38345a19725c2` |
-| results_MASTER_TEST_STATUS.csv | 8122 | `76a99e578866979518789e1152fb29c29e8c37e322a1b86c8d628b9f05502f20` |
-| txt/Executive_Summary.txt | 6765 | `d0011c69656bc8446cd237eb75a10ab7a73c8817b715e326556b99731cbc1d65` |
-| txt/LFM_Core_Equations.txt | 10847 | `077de889b1d2551036bd091c3b99b997dfcac54eb4565ba3858dc2299e508a70` |
-| txt/LFM_Master.txt | 11919 | `8f554275379fccee77dfc549e0803bbc4635fa33a0c952d2c932028874189f10` |
-| txt/LFM_Phase1_Test_Design.txt | 10056 | `4f77ad2b2c665fada64e6ceac137081ab094355ddb76ec24b36785cb6eb9582b` |
+| results_MASTER_TEST_STATUS.csv | 8525 | `9eaa22b8028f93bcbf6689fbad221f418448fadaf53f0f87022d139d1de3ff52` |
+| txt/Executive_Summary.txt | 6930 | `21406c154d69a6c8f1ad8bfa92b429f6050d9c1bea8455381ac77eb841f6031b` |
+| txt/LFM_Core_Equations.txt | 11012 | `09108ceee0ce271bf2e3273335b4ab27c97d073e6b5588cd2c1650353bd9a653` |
+| txt/LFM_Master.txt | 12082 | `ad0e5bf00fb3081eaea7086a9575ca8286f01440df138acdfd5c6990a68483e7` |
+| txt/LFM_Phase1_Test_Design.txt | 10219 | `39886cc6fcd2cb40ea832d830be87896cadaba4b40967d788cc95f744b4a0d33` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
-| LFM_upload_bundle_20251106_v1.zip | 7362535 | `e8877c02c3b2ecfcc8a11795df8eb19ffe1c3c3b847b313a2fddd0398ba91c67` |
+| LFM_upload_bundle_20251108_v1.zip | 7363067 | `6191e14910132fdfaa801cad8d250dfc68944eb29b0599d40aeb6bf7e43d144a` |
 
 Notes:
 - MASTER_TEST_STATUS is refreshed from results/.

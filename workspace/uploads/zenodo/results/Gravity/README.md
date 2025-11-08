@@ -1,4 +1,4 @@
-﻿# Workspace Results Category Folders
+# Workspace Results Category Folders
 
 **Role in hierarchy**: `workspace/` → `results/` → `{category}/`
 

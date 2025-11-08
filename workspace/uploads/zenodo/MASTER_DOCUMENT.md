@@ -1,12 +1,12 @@
-﻿---
+---
 title: "LFM Master Document"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-06 19:53:07"
+url: "https://zenodo.org/records/17536484"
+generated: "2025-11-08 10:15:08"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Master Document — Conceptual Framework and
@@ -321,7 +321,10 @@ Lattice Framework for Emergent Relativity, Gravitation, and Quantization
 — Phase 1 Conceptual Hypothesis v1.0. Zenodo.
 https://doi.org/10.5281/zenodo.17478758
 
-Contact: latticefieldmediumresearch@gmail.com
+Contact & Licensing:
+Research Inquiries: research@emergentphysicslab.com
+Commercial Licensing: licensing@emergentphysicslab.com
+See: github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md
 
 
 ---

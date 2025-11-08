@@ -4,7 +4,7 @@
 # Non-commercial use with attribution only; no distribution of modified material; commercial use requires prior written permission.
 # SPDX-License-Identifier: CC-BY-NC-ND-4.0
 
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # Copyright (c) 2025 Greg D. Partin. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
@@ -64,6 +64,8 @@ CORE_DOCS = [
     'RESULTS_REPORT.md',
     'evidence_prior_art.txt',
     '.zenodo_upload_checklist.md',
+    'COMMERCIAL_LICENSE_REQUEST.md',
+    'LICENSE_MATRIX.md',
 ]
 
 OPTIONAL_DOCS = [

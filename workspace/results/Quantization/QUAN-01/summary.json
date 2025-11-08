@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-01",
   "description": "\u0394E Transfer \u2014 Low Energy",
-  "timestamp": 1762613711.4165049,
+  "timestamp": 1762613942.6898568,
   "hardware": {
     "backend": "CuPy"
   },

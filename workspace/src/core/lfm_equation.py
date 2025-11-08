@@ -9,7 +9,8 @@
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: latticefieldmediumresearch@gmail.com
+# Commercial licensing: https://github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md
+# Contact: research@emergentphysicslab.com | licensing@emergentphysicslab.com
 
 """
 lfm_equation.py — Canonical LFM lattice update (v1.5 — 3D Extended, χ-field safe)

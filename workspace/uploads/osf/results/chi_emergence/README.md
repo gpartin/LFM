@@ -1,4 +1,4 @@
-﻿# Chi Emergence Results
+# Chi Emergence Results
 
 **Role in hierarchy**: `workspace/` → `results/` → `chi_emergence/`
 

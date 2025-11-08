@@ -73,6 +73,16 @@ export default function Footer() {
                 <strong>Website Code:</strong><br />
                 MIT License
               </p>
+              <p>
+                <a
+                  href="https://github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent-chi hover:underline"
+                >
+                  Commercial Licensing →
+                </a>
+              </p>
               <p className="pt-2">
                 <strong>Author:</strong> Greg Partin
               </p>

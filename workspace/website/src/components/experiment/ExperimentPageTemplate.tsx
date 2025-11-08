@@ -266,7 +266,7 @@ export default function ExperimentPageTemplate({
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-space-dark">
-        <Header currentExperimentId={experimentId} />
+        <Header />
         <main className="flex-1 flex items-center justify-center pt-20">
           <div className="text-center">
             <div className="text-6xl mb-4">⚠️</div>
@@ -287,7 +287,7 @@ export default function ExperimentPageTemplate({
   
   return (
     <div className="min-h-screen flex flex-col bg-space-dark">
-      <Header currentExperimentId={experimentId} />
+      <Header />
       
       <main className="flex-1 pt-20">
         <div className="container mx-auto px-4 py-8">

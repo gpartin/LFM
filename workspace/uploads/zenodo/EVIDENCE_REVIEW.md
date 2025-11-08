@@ -6,12 +6,12 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-06 19:53:07"
+generated: "2025-11-08 10:15:08"
 ---
 
 # Evidence Review: Documentation vs. Test Results
 
-Generated: 2025-11-06 19:53:07
+Generated: 2025-11-08 10:15:08
 
 ## Overview
 
@@ -40,7 +40,7 @@ evidence, and flag any gaps between documentation and validated outcomes.
 
 ## Findings
 
-### Discovery Claims: 17
+### Discovery Claims: 30
 ### Test Results Available: 96
 
 ### Verified (Evidence References Test Results):
@@ -63,6 +63,11 @@ evidence, and flag any gaps between documentation and validated outcomes.
 - ⚠ GPU-Optimized Discrete Spacetime Framework (Computational) — Evidence: Complete codebase with validation
 - ⚠ Fused GPU Backend Validation and Promotion (Performance/Core) — Evidence: performance/benchmarks/fused_backend_benchmark.py results, Tier 1-2 validation runs
 - ⚠ Discrete Conservation Requires Matching Discretization Orders (Tier 3 - Numerical Methods) — Evidence: Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect.
+- ⚠ PLACEHOLDER discovery for test_1d_propagation.py (Tier 5 - Auto Inferred) — Evidence: test_1d_propagation.py
+- ⚠ PLACEHOLDER discovery for test_config_debug.py (Tier 5 - Auto Inferred) — Evidence: test_config_debug.py
+- ⚠ PLACEHOLDER discovery for test_double_slit_nogui.py (Tier 5 - Auto Inferred) — Evidence: test_double_slit_nogui.py
+- ⚠ PLACEHOLDER discovery for test_double_slit_scenario.py (Tier 5 - Auto Inferred) — Evidence: test_double_slit_scenario.py
+- ... and 9 more
 
 ## Recommendations
 

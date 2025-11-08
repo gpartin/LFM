@@ -350,7 +350,12 @@ This computational approach provides:
 - Incorporate into for-profit products or services
 - Use in industry-funded research without permission
 
-**📧 Commercial Licensing:** Contact latticefieldmediumresearch@gmail.com
+### � **Commercial Licensing**
+
+Commercial use, derivative works, and proprietary applications require a separate paid license.
+
+**📋 Request Process:** See [`workspace/COMMERCIAL_LICENSE_REQUEST.md`](workspace/COMMERCIAL_LICENSE_REQUEST.md)  
+**📧 Contact:** licensing@emergentphysicslab.com
 
 **📋 Full Terms:** See [`code/LICENSE`](code/LICENSE) for complete legal text.
 

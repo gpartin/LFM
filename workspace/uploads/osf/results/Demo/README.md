@@ -1,4 +1,4 @@
-﻿# Demo Results
+# Demo Results
 
 **Role in hierarchy**: `workspace/` → `results/` → `Demo/`
 
