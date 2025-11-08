@@ -1,0 +1,13 @@
+{
+  "_comment": "Per-test diagnostics activation. Add test IDs to enable granular recording during harness runs.",
+  "default_mode": "off",  
+  "modes": {
+    "off": {"enabled": false},
+    "basic": {"enabled": true, "sampling_stride": 20},
+    "full": {"enabled": true, "sampling_stride": 1}
+  },
+  "tests": {
+    "REL-01": "basic",
+    "GRAV-12": "full"
+  }
+}

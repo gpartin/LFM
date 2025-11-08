@@ -28,6 +28,7 @@ Benefits:
 """
 
 import json
+import os
 import math
 import shutil
 from pathlib import Path
@@ -129,6 +130,11 @@ class BaseTierHarness(NumericIntegrityMixin):
         backend_name = "GPU (CuPy)" if self.use_gpu else "CPU (NumPy)"
         log(f"[accel] Using {backend_name} backend.", "INFO")
         log(f"[physics] Using '{self.backend}' physics backend.", "INFO")
+        # ---------------- Diagnostics (env + override file) ----------------
+        # Global env var: LFM_DIAGNOSTICS = off|basic|full
+        self.global_diagnostics_mode = os.environ.get("LFM_DIAGNOSTICS", "off").strip().lower()
+        # Per-test overrides: workspace/config/diagnostics_overrides.json
+        self._diagnostics_overrides = self._load_diagnostics_overrides()
 
         # ---------------- Caching setup ----------------
         # Defaults: caching enabled unless explicitly disabled
@@ -242,6 +248,42 @@ class BaseTierHarness(NumericIntegrityMixin):
         outdir = base_dir / output_dir_hint
         outdir.mkdir(parents=True, exist_ok=True)
         return outdir
+
+    # ---------------- Diagnostics helpers ----------------
+    def _workspace_root(self) -> Path:
+        try:
+            return Path(__file__).resolve().parents[2]
+        except Exception:
+            return Path.cwd()
+
+    def _load_diagnostics_overrides(self) -> dict:
+        cfg_path = self._workspace_root() / "config" / "diagnostics_overrides.json"
+        try:
+            if cfg_path.exists():
+                with open(cfg_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    return data if isinstance(data, dict) else {}
+        except Exception as e:
+            log(f"[diag] Failed to read diagnostics_overrides.json: {e}", "WARN")
+        return {}
+
+    def get_diagnostics_mode(self, test_id: str) -> str:
+        # Priority: explicit test override > env var > file default
+        try:
+            # File override by test ID
+            tests = self._diagnostics_overrides.get("tests", {}) if isinstance(self._diagnostics_overrides, dict) else {}
+            if test_id in tests:
+                return str(tests[test_id]).strip().lower()
+        except Exception:
+            pass
+        # Env var
+        if self.global_diagnostics_mode in {"off", "basic", "full"}:
+            return self.global_diagnostics_mode
+        # File default
+        try:
+            return str(self._diagnostics_overrides.get("default_mode", "off")).strip().lower()
+        except Exception:
+            return "off"
     
     @staticmethod
     def hann_window(length: int) -> np.ndarray:
@@ -518,6 +560,16 @@ class BaseTierHarness(NumericIntegrityMixin):
             except Exception as e:
                 log(f"[cache] Error during cache lookup for {test_id}: {e}", "WARN")
 
+        # Inject diagnostics mode into test_config for fine-grained control
+        try:
+            mode = self.get_diagnostics_mode(test_id)
+        except Exception:
+            mode = "off"
+        if not isinstance(test_config, dict):
+            test_config = {}
+        test_config = {**test_config, "diagnostics": {"mode": mode}}
+        if mode != "off":
+            log(f"[diag] Diagnostics mode for {test_id}: {mode}", "INFO")
         # Run the real test
         result = test_func(config, test_config, output_dir)
 
