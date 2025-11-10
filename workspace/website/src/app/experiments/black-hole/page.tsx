@@ -13,6 +13,9 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import BackendBadge from '@/components/ui/BackendBadge';
+import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ParameterSlider from '@/components/ui/ParameterSlider';
+import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
@@ -300,21 +303,18 @@ export default function BlackHolePage() {
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-8">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <h1 className="text-4xl font-bold text-purple-400 mb-2">🌌 Black Hole Orbit Simulation</h1>
-                <p className="text-text-secondary">
-                  Witness extreme gravity in action. A tiny black hole warps spacetime—watch a moon dance in its gravitational grip.
-                </p>
-              </div>
-              <Link 
-                href="/about"
-                className="px-4 py-2 bg-yellow-500/20 border-2 border-yellow-500/50 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors whitespace-nowrap text-sm font-semibold"
-              >
-                ⚠️ Read About This Project
-              </Link>
+            <div className="mb-4">
+              <h1 className="text-4xl font-bold text-purple-400 mb-2">🌌 Black Hole Orbit Simulation</h1>
+              <p className="text-text-secondary">
+                Witness extreme gravity in action. A tiny black hole warps spacetime—watch a moon dance in its gravitational grip.
+              </p>
             </div>
-            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
+            
+            <ScientificDisclosure experimentName="Black Hole" />
+          </div>
+          
+          <div className="mb-8">
+            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded hidden">
               <p className="text-sm text-text-secondary">
                 <strong className="text-yellow-400">Scientific Disclosure:</strong> This is an exploratory simulation using emergent gravity from lattice fields. 
                 NOT a validated model of actual black holes. <Link href="/about" className="text-accent-chi hover:underline">Learn more →</Link>
@@ -325,22 +325,6 @@ export default function BlackHolePage() {
           {/* Backend Status */}
           <div className="mb-8">
             <BackendBadge backend={state.backend} />
-          </div>
-
-          {/* View Options */}
-          <div className="mb-6 panel">
-            <h3 className="text-sm font-bold text-purple-400 mb-3">Visualization Options</h3>
-            <div className="flex flex-wrap gap-x-6 gap-y-2" role="group" aria-label="Visualization options">
-              <ViewToggle label="Black Hole & Moon" checked={state.ui.showParticles} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showParticles', value: v } })} />
-              <ViewToggle label="Orbital Paths" checked={state.ui.showTrails} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showTrails', value: v } })} />
-              <ViewToggle label="Gravity Field (2D)" checked={state.ui.showChi} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showChi', value: v } })} />
-              <ViewToggle label="Simulation Grid" checked={state.ui.showLattice} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showLattice', value: v } })} />
-              <ViewToggle label="Force Arrows" checked={state.ui.showVectors} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showVectors', value: v } })} />
-              <ViewToggle label="Gravity Well (Surface)" checked={state.ui.showWell} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showWell', value: v } })} />
-              <ViewToggle label="Field Bubbles (3D)" checked={state.ui.showDomes} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showDomes', value: v } })} />
-              <ViewToggle label="Event Horizon Shell" checked={state.ui.showIsoShells} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showIsoShells', value: v } })} />
-              <ViewToggle label="Stars & Background" checked={state.ui.showBackground} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showBackground', value: v } })} />
-            </div>
           </div>
 
           {/* Main Experiment Area */}
@@ -471,6 +455,21 @@ export default function BlackHolePage() {
                 </div>
               </div>
 
+              <VisualizationOptions
+                toggles={[
+                  { key: 'showParticles', label: 'Black Hole & Moon', checked: state.ui.showParticles },
+                  { key: 'showTrails', label: 'Orbital Paths', checked: state.ui.showTrails },
+                  { key: 'showChi', label: 'Gravity Field (2D)', checked: state.ui.showChi },
+                  { key: 'showLattice', label: 'Simulation Grid', checked: state.ui.showLattice },
+                  { key: 'showVectors', label: 'Force Arrows', checked: state.ui.showVectors },
+                  { key: 'showWell', label: 'Gravity Well (Surface)', checked: state.ui.showWell },
+                  { key: 'showDomes', label: 'Field Bubbles (3D)', checked: state.ui.showDomes },
+                  { key: 'showIsoShells', label: 'Event Horizon Shell', checked: state.ui.showIsoShells },
+                  { key: 'showBackground', label: 'Stars & Background', checked: state.ui.showBackground },
+                ]}
+                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+              />
+
               {/* Metrics */}
               <div className="panel">
                 <h3 className="text-lg font-bold text-purple-400 mb-4">System Metrics</h3>
@@ -520,54 +519,6 @@ export default function BlackHolePage() {
 }
 
 // Reusable components
-function ParameterSlider({ 
-  label, 
-  value, 
-  min, 
-  max, 
-  step, 
-  unit, 
-  onChange,
-  onDragStart,
-  onDragEnd,
-  tooltip,
-}: { 
-  label: string; 
-  value: number; 
-  min: number; 
-  max: number; 
-  step: number; 
-  unit: string;
-  onChange: (value: number) => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
-  tooltip?: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-semibold text-text-primary" title={tooltip}>{label}</label>
-        <span className="text-sm font-mono text-purple-400">{value.toFixed(step < 0.01 ? 4 : step < 0.1 ? 3 : step < 1 ? 2 : 1)} {unit}</span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        onMouseDown={onDragStart}
-        onTouchStart={onDragStart}
-        onMouseUp={onDragEnd}
-        onTouchEnd={onDragEnd}
-        onBlur={onDragEnd}
-        title={tooltip}
-        className="w-full h-2 bg-space-border rounded-lg appearance-none cursor-pointer accent-purple-500"
-      />
-    </div>
-  );
-}
-
 function MetricDisplay({ 
   label, 
   value, 
@@ -589,32 +540,5 @@ function MetricDisplay({
       <span className="text-sm text-text-secondary">{label}</span>
       <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
     </div>
-  );
-}
-
-function ViewToggle({ 
-  label, 
-  checked, 
-  onChange 
-}: { 
-  label: string; 
-  checked: boolean; 
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center space-x-3 cursor-pointer group">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-5 h-5 rounded border-2 border-purple-500 checked:bg-purple-500 checked:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-colors"
-        aria-label={label}
-        aria-checked={checked}
-        role="switch"
-      />
-      <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
-        {label}
-      </span>
-    </label>
   );
 }

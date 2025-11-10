@@ -97,7 +97,7 @@ def evolve_coupled_fields(
     omega_snap is a diagnostic RMS proxy here.
     """
     import importlib
-    lfm_eq = importlib.import_module('lfm_equation')
+    lfm_eq = importlib.import_module('core.lfm_equation')
 
     E = np.asarray(E_init, dtype=np.float64).copy()
     chi = np.asarray(chi_init, dtype=np.float64).copy()

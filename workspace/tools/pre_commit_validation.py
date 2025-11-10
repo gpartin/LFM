@@ -222,6 +222,61 @@ def main():
     """Run pre-commit validation tests."""
     print("=" * 70)
     print("LFM Pre-Commit Validation")
+
+    # STEP 1: Validate website sync with test harness
+    print("\n" + "=" * 70)
+    print("STEP 1: Website Sync Validation")
+    print("=" * 70)
+    
+    # venv is at repository root (c:\LFM\.venv), not workspace
+    venv_python = Path(__file__).parent.parent.parent / ".venv" / "Scripts" / "python.exe"
+    validate_script = Path(__file__).parent / "validate_website_sync.py"
+    
+    if not venv_python.exists():
+        print(f"❌ Python executable not found: {venv_python}")
+        print(f"   Expected venv at: {venv_python.parent.parent}")
+        return 1
+    
+    if not validate_script.exists():
+        print(f"❌ Validation script not found: {validate_script}")
+        return 1
+    
+    try:
+        import os
+        env = os.environ.copy()
+        env.setdefault('PYTHONIOENCODING', 'utf-8')
+        env.setdefault('PYTHONUTF8', '1')
+        result = subprocess.run(
+            [str(venv_python), str(validate_script)],
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            timeout=30,
+            env=env
+        )
+        
+        print(result.stdout)
+        if result.stderr:
+            print("[stderr]", result.stderr)
+        
+        if result.returncode != 0:
+            print("\n❌ WEBSITE OUT OF SYNC WITH TEST HARNESS")
+            print("   Fix: node workspace/tools/generate_website_experiments.js")
+            print("   Then retry commit")
+            return 1
+        
+        print("✅ Website sync validated")
+        
+    except subprocess.TimeoutExpired:
+        print("❌ Website validation timeout")
+        return 1
+    except Exception as e:
+        print(f"❌ Website validation error: {e}")
+        return 1
+    # STEP 2: Physics Test Validation
+    print("\n" + "=" * 70)
+    print("STEP 2: Physics Test Validation")
+    print("=" * 70)
     print("=" * 70)
 
     # Determine tests: prefer telemetry-driven selection
@@ -240,9 +295,106 @@ def main():
 
     success, out, err = run_parallel(fast_tests)
 
+    # STEP 3: Test harness unit tests
+    print("\n" + "=" * 70)
+    print("STEP 3: Test Harness Unit Tests")
+    print("=" * 70)
+    
+    tests_dir = Path(__file__).parent.parent / "tests"
+    harness_tests_ok = False
+    
+    try:
+        harness_test_files = [
+            "test_harness_energy.py",
+            "test_validation.py",
+            "test_harness_metadata.py",
+            "test_harness_lattice_params.py",
+            "test_harness_config.py",
+            "test_harness_frequency.py",
+            "test_validation_evaluators.py",
+            "test_harness_integration.py"
+        ]
+        
+        print(f"Running {len(harness_test_files)} harness test suites...")
+        
+        import os
+        env = os.environ.copy()
+        env.setdefault('PYTHONIOENCODING', 'utf-8')
+        env.setdefault('PYTHONUTF8', '1')
+        
+        result_harness = subprocess.run(
+            [str(venv_python), "-m", "pytest"] + harness_test_files + ["-v", "--tb=short", "-q"],
+            cwd=str(tests_dir),
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            timeout=120,
+            env=env
+        )
+        
+        # Extract summary line (last line with "passed")
+        lines = result_harness.stdout.strip().split('\n')
+        summary = [l for l in lines if 'passed' in l.lower() or 'failed' in l.lower()]
+        if summary:
+            print(summary[-1])
+        
+        harness_tests_ok = (result_harness.returncode == 0)
+        
+        if harness_tests_ok:
+            print("✅ All harness tests passed")
+        else:
+            print("❌ Harness tests FAILED")
+            print(result_harness.stdout[-1000:] if len(result_harness.stdout) > 1000 else result_harness.stdout)
+            
+    except subprocess.TimeoutExpired:
+        print("❌ Harness tests timeout")
+        harness_tests_ok = False
+    except Exception as e:
+        print(f"❌ Harness tests error: {e}")
+        harness_tests_ok = False
+
+    # STEP 4: Metadata validation of executed tests
+    print("\n" + "=" * 70)
+    print("STEP 4: Metadata Result Conformance")
+    print("=" * 70)
+    try:
+        validator_script = Path(__file__).parent / "validate_metadata_results.py"
+        if not validator_script.exists():
+            print("[WARN] Metadata validator script missing; skipping.")
+            metadata_ok = True
+        else:
+            test_ids_csv = ",".join([tid for (tid, _tier, _to) in fast_tests])
+            venv_python = Path(__file__).parent.parent.parent / ".venv" / "Scripts" / "python.exe"
+            result_meta = subprocess.run(
+                [str(venv_python), str(validator_script), "--tests", test_ids_csv],
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                timeout=120
+            )
+            print(result_meta.stdout)
+            if result_meta.stderr:
+                print('[stderr]', result_meta.stderr)
+            metadata_ok = (result_meta.returncode == 0)
+            if not metadata_ok:
+                print("❌ Metadata validation FAILED")
+            else:
+                print("✅ Metadata validation passed")
+    except subprocess.TimeoutExpired:
+        print("❌ Metadata validation timeout")
+        metadata_ok = False
+    except Exception as e:
+        print(f"❌ Metadata validation error: {e}")
+        metadata_ok = False
+
     # Echo orchestrator summary (tail if long)
     print("\n" + "=" * 70)
-    print("VALIDATION SUMMARY (Parallel)")
+    print("FINAL VALIDATION SUMMARY")
+    print("=" * 70)
+    print(f"✅ Website sync: PASSED")
+    print(f"{'✅' if success else '❌'} Physics tests: {'PASSED' if success else 'FAILED'}")
+    print(f"{'✅' if harness_tests_ok else '❌'} Harness tests: {'PASSED' if harness_tests_ok else 'FAILED'}")
+    print(f"{'✅' if metadata_ok else '❌'} Metadata conformance: {'PASSED' if metadata_ok else 'FAILED'}")
     print("=" * 70)
     if out:
         tail = out if len(out) < 4000 else out[-4000:]
@@ -253,13 +405,18 @@ def main():
         print("\n[stderr]")
         print(err)
 
-    if success:
-        print("\nALL VALIDATION TESTS PASSED")
+    if success and harness_tests_ok and metadata_ok:
+        print("\n✅ ALL VALIDATION TESTS PASSED")
         print("Safe to commit changes")
         return 0
     else:
-        print("\nOne or more validation tests failed (see summary above)")
-        print("\nFIX FAILING TESTS BEFORE COMMITTING")
+        if not success:
+            print("\n❌ One or more physics tests failed (see summary above)")
+        if not harness_tests_ok:
+            print("\n❌ One or more harness unit tests failed")
+        if not metadata_ok:
+            print("\n❌ One or more tests violated tier metadata criteria")
+        print("\nFIX ISSUES BEFORE COMMITTING")
         return 1
 
 

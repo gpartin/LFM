@@ -2,11 +2,35 @@
   "id": "REL-02",
   "description": "Isotropy \u2014 Fine Grid",
   "passed": true,
-  "anisotropy": 0.0,
-  "omega_right": 39.72659048145927,
-  "omega_left": 39.72659048145927,
+  "anisotropy": 1.8236163975638796e-16,
+  "omega_right": 38.96338817249588,
+  "omega_left": 38.963388172495875,
+  "energy_drift": 4.474661399433463e-05,
+  "energy_initial_right": 6065.3726959277865,
+  "energy_final_right": 6065.644100818543,
+  "energy_initial_left": 6065.372695927788,
+  "energy_final_left": 6065.644100818526,
+  "energy_drift_threshold": 0.0001,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-02",
+    "energy": {
+      "ok": true,
+      "drift": 4.474661399433463e-05,
+      "threshold": 0.0001
+    },
+    "primary": {
+      "ok": true,
+      "metric": "anisotropy",
+      "value": 1.8236163975638796e-16,
+      "threshold": 0.01
+    },
+    "metrics": {
+      "anisotropy": 1.8236163975638796e-16
+    },
+    "timestamp": "2025-11-10 14:04:31"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:58:55.532090Z"
+  "timestamp": "2025-11-10T22:04:31.779302Z"
 }

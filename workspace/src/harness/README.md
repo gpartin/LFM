@@ -48,7 +48,37 @@ This workspace is distributed under CC BY-NC-ND 4.0. Commercial use is prohibite
 
 ## Harness
 
-- Tier orchestration and metrics.
+
+New modular validation architecture (2025-11-09):
+ - Shared validation utilities in `harness/validation.py` now centralize metadata-driven pass/fail logic.
+ - Tier runners should compute raw physics metrics only (e.g., anisotropy value, dispersion error, momentum drift) and delegate threshold comparison to `check_primary_metric()`.
+ - Energy conservation gating is standardized via `energy_conservation_check()`; runners no longer duplicate threshold fetch or drift formatting.
+ - Exit code propagation: each runner must exit non-zero if any test's `passed` flag is False so the parallel scheduler can correctly aggregate failures.
+
+Refactor plan (staged):
+ 1. Tier 1 integrated (metadata-driven checks added for all variants including isotropy, boosts, causality, dispersion, momentum, invariant mass).
+ 2. Introduce generic evaluators for common physics checks in `validation.py` (future):
+	 - `evaluate_isotropy(direction_freqs)`
+	 - `evaluate_dispersion(measured, theory)`
+	 - `evaluate_causality(measured_speed, c)`
+ 3. Migrate Tier 2–7 runners to call these evaluators, shrinking variant code.
+ 4. Add unit tests covering each evaluator with synthetic inputs.
+ 5. Enhance `validate_metadata_results.py` to optionally re-run failed tests to confirm reproducibility before marking failure.
+
+Pre-commit integration:
+ - `tools/pre_commit_validation.py` now runs: website sync → parallel fast tests → metadata conformance.
+ - Fails early if any metadata criteria violated (prevents drift of locked thresholds, e.g., Tier 1).
+
+Developer guidance:
+ - When adding a new test metric, update `PRIMARY_METRIC_KEY_MAP` in `validation.py` to maintain proper metadata mapping.
+ - Keep metadata authoritative; do not hardcode thresholds inside runners.
+ - Use `summary.json` to store raw metric values; derived pass/fail status should reflect only metadata comparisons.
+ - For complex multi-metric tests, store all raw metrics; choose one primary gate in metadata.
+
+Future enhancements:
+ - Cross-tier consistency validator (e.g., dispersion series REL-11→14 monotonic behavior) implemented as secondary checks with informative warnings, not gating.
+ - Automatic dt refinement suggestions logged when energy drift near threshold (numerical helper module TBD).
+ - Performance regression hooks: compare runtime/resource metrics against historical telemetry and flag large slowdowns.
 
 
 ---

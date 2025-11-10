@@ -7,11 +7,14 @@
  * SPDX-License-Identifier: CC-BY-NC-ND-4.0
  */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import BackendBadge from '@/components/ui/BackendBadge';
+import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ParameterSlider from '@/components/ui/ParameterSlider';
+import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
@@ -21,6 +24,9 @@ import { WebGPUErrorBoundary } from '@/components/ErrorBoundary';
 export default function BinaryOrbitPage() {
   // Consolidated state management (replaces 20+ individual useState calls)
   const [state, dispatch] = useSimulationState();
+  
+  // CPU mode toggle for testing (TEMPORARY - for user testing only)
+  const [forceCPU, setForceCPU] = useState(false);
   
   // Ref mirror to avoid stale closure issues inside RAF callbacks
   const isRunningRef = useRef<boolean>(false);
@@ -52,29 +58,40 @@ export default function BinaryOrbitPage() {
       }
     }, [dispatch]);
   
-  // Detect backend on mount
+  // Detect backend on mount (override with CPU if toggle is on)
   useEffect(() => {
     detectBackend().then((caps) => {
+      const actualBackend = forceCPU ? 'cpu' : caps.backend;
+      const actualCaps = forceCPU ? { ...caps, backend: 'cpu' as const } : caps;
       dispatch({ 
         type: 'SET_BACKEND', 
-        payload: { backend: caps.backend, capabilities: caps } 
+        payload: { 
+          backend: actualBackend, 
+          capabilities: actualCaps 
+        } 
       });
     });
-  }, [dispatch]);
+  }, [dispatch, forceCPU]);
 
   // Recreate simulation whenever backend or structural params change
   useEffect(() => {
-    if (state.backend !== 'webgpu') {
-      stopSimulation();
-      return;
-    }
     let cancelled = false;
     async function initSim() {
       try {
-        const adapter = await navigator.gpu?.requestAdapter();
-        const device = await adapter?.requestDevice();
-        if (!device || cancelled) return;
-        deviceRef.current = device;
+        let device: GPUDevice | null = null;
+        
+        // Only request GPU if not forcing CPU
+        if (state.backend === 'webgpu' && !forceCPU) {
+          const adapter = await navigator.gpu?.requestAdapter();
+          device = await adapter?.requestDevice() || null;
+          if (!device) {
+            console.warn('[BinaryOrbit] GPU requested but not available');
+            return;
+          }
+          deviceRef.current = device;
+        }
+        
+        if (cancelled) return;
         // Recompute masses from ratio (total mass kept constant for scaling stability)
         // massRatio = Earth/Moon ratio, so m1 (Earth) is larger
         const totalMass = 2.0;
@@ -100,7 +117,7 @@ export default function BinaryOrbitPage() {
         } catch (e) {
           console.error('[BinaryOrbit] Error destroying previous simulation:', e);
         }
-        const sim = new BinaryOrbitSimulation(device, config);
+        const sim = new BinaryOrbitSimulation(device, config, forceCPU);
         await sim.initialize();
         if (cancelled) { sim.destroy(); return; }
         simRef.current = sim;
@@ -127,7 +144,7 @@ export default function BinaryOrbitPage() {
       simRef.current = null;
       deviceRef.current = null;
     };
-  }, [state.backend, state.params.latticeSize, state.params.dt, state.params.chiStrength, state.params.sigma, state.params.massRatio, state.params.orbitalDistance, state.params.startAngleDeg, state.params.velocityScale, state.resetTrigger, state.capabilities, stopSimulation, dispatch]);
+  }, [state.backend, state.params.latticeSize, state.params.dt, state.params.chiStrength, state.params.sigma, state.params.massRatio, state.params.orbitalDistance, state.params.startAngleDeg, state.params.velocityScale, state.resetTrigger, state.capabilities, stopSimulation, dispatch, forceCPU]);
 
   // Environment-based diagnostics toggle (no UI exposure)
   // NEXT_PUBLIC_LFM_DIAGNOSTICS=off|basic|full
@@ -160,7 +177,6 @@ export default function BinaryOrbitPage() {
 
   // Apply parameter changes on the fly
   useEffect(() => {
-    if (state.backend !== 'webgpu') return;
     const sim = simRef.current;
     if (!sim) return;
 
@@ -216,27 +232,9 @@ export default function BinaryOrbitPage() {
 
     const MAX_STEPS_PER_FRAME = 2000;
 
-    // Speed smoothing only for moderate changes; large jumps apply immediately (handled in simSpeed effect)
-    const target = state.params.simSpeed;
-    const current = effectiveSpeedRef.current;
-    if (target !== current) {
-      const largeJump = Math.abs(target - current) > current * 0.5 || target <= 100; // small speeds: immediate
-      if (largeJump) {
-        effectiveSpeedRef.current = target;
-      } else {
-        const maxDelta = Math.max(25, Math.round(current * 0.35)); // slightly faster ramp
-        const delta = Math.sign(target - current) * Math.min(Math.abs(target - current), maxDelta);
-        effectiveSpeedRef.current = current + delta;
-      }
-      dispatch({ 
-        type: 'UPDATE_METRICS', 
-        payload: { effectiveSpeed: Math.round(effectiveSpeedRef.current).toString() } 
-      });
-    }
-
-  // Get steps per frame from slider value - this controls emergent spacetime evolution rate
-  const effSpeed = Math.round(effectiveSpeedRef.current);
-  const stepsPerFrame = mapSimSpeed(effSpeed);
+    // Fixed optimal steps per frame based on backend (no user control)
+    // This provides smooth motion without interfering with dt (Playback Speed)
+    const stepsPerFrame = state.backend === 'webgpu' ? 50 : 20;
   
   // Fast-forward indicator (for UI feedback only)
   const ffActive = stepsPerFrame > 100;
@@ -254,19 +252,8 @@ export default function BinaryOrbitPage() {
       const chunk = Math.min(remaining, microBatchSize);
       await sim.stepBatch(chunk);
       remaining -= chunk;
-      // Keep within ~14ms UI budget
+      // Keep within ~14ms UI budget to maintain target framerate
       if (performance.now() - frameStart > 14) break;
-      // Mid-frame speed change responsiveness
-      const newTarget = state.params.simSpeed;
-      if (newTarget !== target) {
-        effectiveSpeedRef.current = newTarget;
-        dispatch({ 
-          type: 'UPDATE_METRICS', 
-          payload: { effectiveSpeed: Math.round(newTarget).toString() } 
-        });
-        // Do NOT alter physics progression mid-frame; trajectory must remain invariant.
-        // We simply ignore mid-frame replanning now.
-      }
     }
 
     // Update metrics every frame
@@ -312,67 +299,17 @@ export default function BinaryOrbitPage() {
 
     // Only schedule next frame if still running
     if (isRunningRef.current) rafRef.current = requestAnimationFrame(tick);
-  }, [state.params.simSpeed, dispatch, mapSimSpeed, state.ui.fastForward]);
-
-  // Immediate reaction for large speed slider changes & when paused
-  useEffect(() => {
-    if (!state.isRunning) {
-      effectiveSpeedRef.current = state.params.simSpeed;
-      dispatch({ 
-        type: 'UPDATE_METRICS', 
-        payload: { effectiveSpeed: Math.round(state.params.simSpeed).toString() } 
-      });
-      return;
-    }
-    const current = effectiveSpeedRef.current;
-    const target = state.params.simSpeed;
-    if (Math.abs(target - current) > current * 0.75) { // very large jump → snap
-      effectiveSpeedRef.current = target;
-      dispatch({ 
-        type: 'UPDATE_METRICS', 
-        payload: { effectiveSpeed: Math.round(target).toString() } 
-      });
-    }
-  }, [state.params.simSpeed, state.isRunning, dispatch]);
-
-  // Speed slider drag handlers: pause during drag, resume after
-  const handleSpeedDragStart = useCallback(() => {
-    wasRunningBeforeDragRef.current = isRunningRef.current;
-    if (isRunningRef.current) {
-      // Pause immediately
-      isRunningRef.current = false;
-      dispatch({ type: 'SET_RUNNING', payload: false });
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    }
-  }, [dispatch]);
-
-  const handleSpeedDragEnd = useCallback(() => {
-    // Snap effective speed to latest slider value
-    effectiveSpeedRef.current = state.params.simSpeed;
-    dispatch({ 
-      type: 'UPDATE_METRICS', 
-      payload: { effectiveSpeed: Math.round(state.params.simSpeed).toString() } 
-    });
-    if (wasRunningBeforeDragRef.current) {
-      // Resume
-      isRunningRef.current = true;
-      dispatch({ type: 'SET_RUNNING', payload: true });
-      rafRef.current = requestAnimationFrame(tick);
-    }
-  }, [state.params.simSpeed, tick, dispatch]);
+  }, [state.params.simSpeed, dispatch, state.ui.fastForward]);
 
   // (Removed legacy 2D draw routines)
 
   const startSimulation = useCallback(() => {
-    if (state.backend !== 'webgpu') return; // Only supported for WebGPU for now
+    if (!simRef.current) return;
     if (isRunningRef.current) return;
     isRunningRef.current = true; // set ref first so first tick sees it
     dispatch({ type: 'SET_RUNNING', payload: true });
     rafRef.current = requestAnimationFrame(tick);
-  }, [state.backend, tick, dispatch]);
+  }, [tick, dispatch]);
 
   // stopSimulation defined earlier to satisfy dependency order
 
@@ -407,47 +344,38 @@ export default function BinaryOrbitPage() {
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-8">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <h1 className="text-4xl font-bold text-accent-chi mb-2">Earth-Moon Orbit Simulation</h1>
-                <p className="text-text-secondary">
-                  Watch the Earth and Moon orbit due to emergent gravity from chi field gradients.
-                  Real Klein-Gordon physics running on your GPU—not Newtonian mechanics.
-                </p>
-              </div>
-              <Link 
-                href="/about"
-                className="px-4 py-2 bg-yellow-500/20 border-2 border-yellow-500/50 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors whitespace-nowrap text-sm font-semibold"
-              >
-                ⚠️ Read About This Project
-              </Link>
-            </div>
-            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
-              <p className="text-sm text-text-secondary">
-                <strong className="text-yellow-400">Scientific Disclosure:</strong> This is an exploratory simulation. 
-                We are NOT claiming this is proven physics. <Link href="/about" className="text-accent-chi hover:underline">Learn more about our approach and limitations →</Link>
+            <div className="mb-4">
+              <h1 className="text-4xl font-bold text-accent-chi mb-2">Earth-Moon Orbit Simulation</h1>
+              <p className="text-text-secondary">
+                Watch the Earth and Moon orbit due to emergent gravity from chi field gradients.
+                Real Klein-Gordon physics running on your GPU—not Newtonian mechanics.
               </p>
             </div>
+            
+            <ScientificDisclosure experimentName="Earth-Moon Orbit" />
           </div>
 
-          {/* Backend Status */}
+          {/* Backend Status with CPU Toggle (TEMPORARY) */}
           <div className="mb-8">
-            <BackendBadge backend={state.backend} />
-          </div>
-
-          {/* View Options - Horizontal layout above canvas */}
-          <div className="mb-6 panel">
-            <h3 className="text-sm font-bold text-accent-chi mb-3">What to Show</h3>
-            <div className="flex flex-wrap gap-x-6 gap-y-2" role="group" aria-label="Visualization options">
-              <ViewToggle label="Earth & Moon" checked={state.ui.showParticles} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showParticles', value: v } })} />
-              <ViewToggle label="Orbital Paths" checked={state.ui.showTrails} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showTrails', value: v } })} />
-              <ViewToggle label="Gravity Field (2D)" checked={state.ui.showChi} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showChi', value: v } })} />
-              <ViewToggle label="Simulation Grid" checked={state.ui.showLattice} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showLattice', value: v } })} />
-              <ViewToggle label="Force Arrows" checked={state.ui.showVectors} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showVectors', value: v } })} />
-              <ViewToggle label="Gravity Well (Surface)" checked={state.ui.showWell} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showWell', value: v } })} />
-              <ViewToggle label="Field Bubbles (3D)" checked={state.ui.showDomes} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showDomes', value: v } })} />
-              <ViewToggle label="Field Shells" checked={state.ui.showIsoShells} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showIsoShells', value: v } })} />
-              <ViewToggle label="Stars & Sun" checked={state.ui.showBackground} onChange={(v) => dispatch({ type: 'UPDATE_UI', payload: { key: 'showBackground', value: v } })} />
+            <div className="flex items-center gap-4">
+              <BackendBadge backend={state.backend} />
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={forceCPU}
+                    onChange={(e) => {
+                      setForceCPU(e.target.checked);
+                      // Stop simulation when switching backends
+                      stopSimulation();
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm text-blue-300 font-semibold">
+                    Force CPU Mode (Testing)
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
@@ -463,6 +391,23 @@ export default function BinaryOrbitPage() {
                 )}
                 {/* 3D Canvas renders full scene; no 2D overlay needed */}
                 {state.backend === 'webgpu' ? (
+                  <WebGPUErrorBoundary>
+                    <OrbitCanvas
+                      simulation={simRef}
+                      isRunning={state.isRunning}
+                      showParticles={state.ui.showParticles}
+                      showTrails={state.ui.showTrails}
+                      showChi={state.ui.showChi}
+                      showLattice={state.ui.showLattice}
+                      showVectors={state.ui.showVectors}
+                      showDomes={state.ui.showDomes}
+                      showIsoShells={state.ui.showIsoShells}
+                      showWell={state.ui.showWell}
+                      showBackground={state.ui.showBackground}
+                      chiStrength={state.params.chiStrength}
+                    />
+                  </WebGPUErrorBoundary>
+                ) : (state.backend === 'cpu' || forceCPU) ? (
                   <WebGPUErrorBoundary>
                     <OrbitCanvas
                       simulation={simRef}
@@ -496,11 +441,11 @@ export default function BinaryOrbitPage() {
               <div className="mt-4 flex items-center justify-center space-x-4" role="group" aria-label="Simulation controls">
                 <button
                   onClick={startSimulation}
-                  disabled={state.backend !== 'webgpu' || state.isRunning}
+                  disabled={!simRef.current || state.isRunning}
                   aria-label="Start simulation"
-                  aria-disabled={state.backend !== 'webgpu' || state.isRunning}
+                  aria-disabled={!simRef.current || state.isRunning}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                    state.backend !== 'webgpu' || state.isRunning
+                    !simRef.current || state.isRunning
                       ? 'bg-accent-glow/40 text-space-dark/60 cursor-not-allowed'
                       : 'bg-accent-glow hover:bg-accent-glow/80 text-space-dark'
                   }`}
@@ -651,25 +596,13 @@ export default function BinaryOrbitPage() {
                   />
                   <ParameterSlider 
                     label="Playback Speed" 
-                    value={state.params.simSpeed} 
-                    min={1} 
-                    max={500} 
-                    step={1} 
-                    unit="×" 
-                    onChange={(v) => dispatch({ type: 'UPDATE_PARAM', payload: { key: 'simSpeed', value: v } })} 
-                    onDragStart={handleSpeedDragStart} 
-                    onDragEnd={handleSpeedDragEnd} 
-                    tooltip="Controls how fast the emergent spacetime evolves - higher = more physics steps per frame."
-                  />
-                  <ParameterSlider 
-                    label="Timestep (dt)" 
                     value={state.params.dt} 
                     min={0.001} 
-                    max={0.005} 
+                    max={0.01} 
                     step={0.0005} 
                     unit="" 
                     onChange={(v) => dispatch({ type: 'UPDATE_PARAM', payload: { key: 'dt', value: v } })} 
-                    tooltip="Physics integration timestep - smaller = more accurate but needs more steps. Affects numerical stability."
+                    tooltip="Controls how fast emergent spacetime evolves - larger timestep = faster orbit motion. Too large may become unstable."
                   />
                 </div>
 
@@ -696,6 +629,21 @@ export default function BinaryOrbitPage() {
                   </details>
                 </div>
               </div>
+
+              <VisualizationOptions
+                toggles={[
+                  { key: 'showParticles', label: 'Earth & Moon', checked: state.ui.showParticles },
+                  { key: 'showTrails', label: 'Orbital Paths', checked: state.ui.showTrails },
+                  { key: 'showChi', label: 'Gravity Field (2D)', checked: state.ui.showChi },
+                  { key: 'showLattice', label: 'Simulation Grid', checked: state.ui.showLattice },
+                  { key: 'showVectors', label: 'Force Arrows', checked: state.ui.showVectors },
+                  { key: 'showWell', label: 'Gravity Well (Surface)', checked: state.ui.showWell },
+                  { key: 'showDomes', label: 'Field Bubbles (3D)', checked: state.ui.showDomes },
+                  { key: 'showIsoShells', label: 'Field Shells', checked: state.ui.showIsoShells },
+                  { key: 'showBackground', label: 'Stars & Sun', checked: state.ui.showBackground },
+                ]}
+                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+              />
 
               {/* Metrics */}
               <div className="panel">
@@ -746,7 +694,7 @@ export default function BinaryOrbitPage() {
                   Want to understand the full scientific context?
                 </p>
                 <Link 
-                  href="/about" 
+                  href="/about?from=Earth-Moon Orbit" 
                   className="inline-flex items-center gap-2 text-accent-chi hover:text-accent-particle transition-colors font-semibold"
                 >
                   <span>Read our full About page</span>
@@ -762,54 +710,6 @@ export default function BinaryOrbitPage() {
       </main>
 
       <Footer />
-    </div>
-  );
-}
-
-function ParameterSlider({ 
-  label, 
-  value, 
-  min, 
-  max, 
-  step, 
-  unit, 
-  onChange,
-  onDragStart,
-  onDragEnd,
-  tooltip,
-}: { 
-  label: string; 
-  value: number; 
-  min: number; 
-  max: number; 
-  step: number; 
-  unit: string;
-  onChange: (value: number) => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
-  tooltip?: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-semibold text-text-primary" title={tooltip}>{label}</label>
-        <span className="text-sm font-mono text-accent-chi">{value.toFixed(1)} {unit}</span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        onMouseDown={onDragStart}
-        onTouchStart={onDragStart}
-        onMouseUp={onDragEnd}
-        onTouchEnd={onDragEnd}
-        onBlur={onDragEnd}
-        title={tooltip}
-        className="w-full h-2 bg-space-border rounded-lg appearance-none cursor-pointer accent-accent-chi"
-      />
     </div>
   );
 }
@@ -835,32 +735,5 @@ function MetricDisplay({
       <span className="text-sm text-text-secondary">{label}</span>
       <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
     </div>
-  );
-}
-
-function ViewToggle({ 
-  label, 
-  checked, 
-  onChange 
-}: { 
-  label: string; 
-  checked: boolean; 
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center space-x-3 cursor-pointer group">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-5 h-5 rounded border-2 border-accent-chi checked:bg-accent-chi checked:border-accent-chi focus:ring-2 focus:ring-accent-chi/50 transition-colors"
-        aria-label={label}
-        aria-checked={checked}
-        role="switch"
-      />
-      <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
-        {label}
-      </span>
-    </label>
   );
 }

@@ -13,6 +13,7 @@
  */
 
 import { LFMLatticeWebGPU, LatticeConfig, ParticleState } from '../core/lattice-webgpu';
+import { LFMLatticeCPU } from '../core/lattice-cpu';
 import { DiagnosticLogger } from '../diagnostics/DiagnosticLogger';
 import { ORBIT_CONSTANTS, PHYSICS_DEFAULTS } from '@/lib/constants';
 
@@ -51,7 +52,7 @@ export interface OrbitDiagnostics {
 }
 
 export class BinaryOrbitSimulation {
-  private lattice: LFMLatticeWebGPU;
+  private lattice: LFMLatticeWebGPU | LFMLatticeCPU;
   private config: OrbitConfig;
   private state: OrbitState;
   
@@ -70,7 +71,7 @@ export class BinaryOrbitSimulation {
   // Hybrid force model: sample lattice once per micro-batch, use analytic within batch
   private latticeCalibrationForces: Map<ParticleState, [number, number, number]> = new Map();
 
-  constructor(device: GPUDevice, config: OrbitConfig) {
+  constructor(device: GPUDevice | null, config: OrbitConfig, useCPU: boolean = false) {
     // Set up lattice configuration
     this.latticeConfig = {
       size: config.latticeSize,
@@ -82,7 +83,13 @@ export class BinaryOrbitSimulation {
       sigma: config.sigma ?? 2.0,
     };
 
-    this.lattice = new LFMLatticeWebGPU(device, this.latticeConfig);
+    // Choose backend based on useCPU flag
+    if (useCPU || !device) {
+      this.lattice = new LFMLatticeCPU(this.latticeConfig);
+    } else {
+      this.lattice = new LFMLatticeWebGPU(device!, this.latticeConfig);
+    }
+    
     this.config = config;
 
     // Initialize particle states

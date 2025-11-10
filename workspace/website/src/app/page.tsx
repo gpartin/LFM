@@ -51,7 +51,7 @@ export default function Home() {
                 <Link href="/experiments/binary-orbit" className="button-primary text-lg">
                   🪐 Launch Orbital Experiment
                 </Link>
-                <Link href="/about" className="button-secondary text-lg">
+                <Link href="/about?from=Home" className="button-secondary text-lg">
                   📚 Read the Science
                 </Link>
               </div>
@@ -69,9 +69,9 @@ export default function Home() {
                   description="Conservation verified"
                 />
                 <StatCard 
-                  value="5 Forces" 
+                  value="7 Domains" 
                   label="Emerge" 
-                  description="Gravity, EM, relativity, quantum"
+                  description="Gravity, EM, relativity, quantum, thermodynamics"
                 />
               </div>
             </div>
@@ -87,8 +87,8 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               <ExperimentCard
-                title="Binary Orbit"
-                icon="🪐"
+                title="Earth-Moon Orbit"
+                icon="🌍"
                 description="Watch two masses orbit due to emergent gravity from chi field gradients. Real-time parameter control."
                 href="/experiments/binary-orbit"
                 status="available"
@@ -158,7 +158,7 @@ export default function Home() {
               <FeatureCard
                 icon="🎯"
                 title="Energy Conservation"
-                description="Every simulation tracks energy drift. See for yourself that conservation laws hold to <0.01% — just like the published research."
+                description="Every simulation tracks energy drift. See for yourself that conservation laws hold to <0.01% — as documented in our OSF/Zenodo records."
               />
             </div>
           </div>
@@ -168,11 +168,11 @@ export default function Home() {
         <section className="py-20 bg-space-panel/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6 text-accent-chi">
-              Based on Published Research
+              Publicly Disclosed Research
             </h2>
             <p className="text-lg text-text-secondary mb-8 max-w-3xl mx-auto">
-              This website demonstrates the Lattice Field Medium framework, a peer-reviewed research project
-              exploring how fundamental physics can emerge from discrete field dynamics.
+              This website demonstrates the Lattice Field Medium framework, an open research project with
+              public disclosures on OSF and Zenodo. It has not yet undergone formal peer review.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

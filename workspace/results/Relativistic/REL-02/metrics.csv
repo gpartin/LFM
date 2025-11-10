@@ -1,4 +1,5 @@
 metric,value
-anisotropy,0.0
-omega_right,39.72659048145927
-omega_left,39.72659048145927
+anisotropy,1.8236163975638796e-16
+omega_right,38.96338817249588
+omega_left,38.963388172495875
+energy_drift,4.474661399433463e-05

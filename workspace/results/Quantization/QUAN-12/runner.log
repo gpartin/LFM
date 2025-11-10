@@ -1,5 +1,0 @@
-[97m[00:39:52] [INFO] Run settings: quick_mode=False; use_gpu=False; verbose=False[0m
-[97m[00:39:52] [INFO] === Running Single Test: QUAN-12 ===[0m
-[97m[00:39:53] [INFO] [QUAN-12] Tunneling test: ω=2.500, χ_barrier=3.500, L_barrier=5.120[0m
-[97m[00:39:57] [INFO] [QUAN-12] PASS ✅ Tunneling: T=4.85e-01 (theory=1.28e-11, err=1057.9%)[0m
-[97m[00:39:57] [INFO] [QUAN-12] QUANTUM SIGNATURE: Barrier penetration confirmed! (E < V, T > 0)[0m

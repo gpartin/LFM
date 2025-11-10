@@ -8,10 +8,26 @@
  */
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Header() {
   const [experimentsOpen, setExperimentsOpen] = useState(false);
+  const pathname = usePathname();
+  
+  // Determine "from" parameter for About link based on current page
+  const getFromParam = () => {
+    if (pathname === '/') return 'Home';
+    if (pathname.includes('/experiments/binary-orbit')) return 'Earth-Moon Orbit';
+    if (pathname.includes('/experiments/three-body')) return 'Three-Body Problem';
+    if (pathname.includes('/experiments/black-hole')) return 'Black Hole';
+    if (pathname.includes('/experiments/stellar-collapse')) return 'Stellar Collapse';
+    if (pathname.includes('/experiments/big-bang')) return 'Big Bang';
+    if (pathname.includes('/experiments/browse')) return 'Browse Experiments';
+    if (pathname.includes('/experiments')) return 'Experiments';
+    return 'Home';
+  };
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-space-dark/95 backdrop-blur-sm border-b border-space-border">
       <div className="container mx-auto px-4 py-4">
@@ -63,9 +79,9 @@ export default function Header() {
                       >
                         <div className="flex items-center space-x-2">
                           <span>🌍</span>
-                          <span>Binary Orbit</span>
+                          <span>Earth-Moon Orbit</span>
                         </div>
-                        <div className="text-xs text-text-muted ml-6">Earth-Moon simulation</div>
+                        <div className="text-xs text-text-muted ml-6">Emergent gravity simulation</div>
                       </Link>
                     </div>
                     
@@ -147,7 +163,7 @@ export default function Header() {
               icon="💻"
             />
             <Link
-              href="/about"
+              href={`/about?from=${encodeURIComponent(getFromParam())}`}
               className="px-4 py-2 text-text-secondary hover:text-accent-chi transition-colors"
             >
               About

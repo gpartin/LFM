@@ -1,15 +1,37 @@
 {
   "id": "REL-17",
-  "description": "Linear Momentum Conservation \u2014 Two-Packet Collision",
+  "description": "Invariant Mass \u2014 Lorentz Invariance",
   "passed": true,
-  "momentum_initial": 5.6025978456553106e-09,
-  "momentum_final": 5.602598442955298e-09,
-  "momentum_change": 5.972999875461192e-16,
-  "relative_change": 1.0661125499295153e-07,
+  "invariant_mass_error": 0.0,
+  "m2_lab": -1.0778676484424283,
+  "m2_boost": -1.0778676484424283,
+  "beta": 0.3,
+  "gamma": 1.0482848367219182,
+  "chi": 0.05,
   "tolerance": 0.01,
-  "runtime_sec": 0.0,
   "backend": "GPU",
+  "test_type": "lorentz_invariance",
+  "boost_method": "analytic",
+  "interp_error_diagnostic": null,
+  "validation": {
+    "test_id": "REL-17",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.001
+    },
+    "primary": {
+      "ok": true,
+      "metric": "invariant_mass_error",
+      "value": 0.0,
+      "threshold": 0.01
+    },
+    "metrics": {
+      "invariant_mass_error": 0.0
+    },
+    "timestamp": "2025-11-10 14:04:44"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T02:16:54.811561Z"
+  "timestamp": "2025-11-10T22:04:45.290725Z"
 }

@@ -2,11 +2,11 @@
   "test_id": "COUP-02",
   "description": "Wave Propagation Speed (1D Analytical Validation with L2 Convergence)",
   "passed": true,
-  "runtime_sec": 4.231298600003356,
+  "runtime_sec": 25.086083100002725,
   "energy_drift": 0.0,
-  "primary_metric": 0.0001472683567149681,
-  "metric_name": "finest_L2_error",
+  "primary_metric": 0.5396956033038788,
+  "metric_name": "coupling_strength_error",
   "convergence_validated": true,
-  "notes": "L2_conv_ratio=2.06, L2_extrap=2.4e-07, max_L2=2.6e-03",
-  "timestamp": "2025-11-06T14:50:55.696148+00:00"
+  "notes": "L2_conv_ratio=2.06, L2_extrap=2.4e-07, c_measured=0.460304",
+  "timestamp": "2025-11-10T22:16:06.161961+00:00"
 }

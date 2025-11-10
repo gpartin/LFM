@@ -22,3 +22,39 @@ SRC_DIR = PROJECT_ROOT / "src"
 
 if SRC_DIR.exists():
     sys.path.insert(0, str(SRC_DIR))
+
+
+# Shared fixtures for harness tests
+import pytest
+from harness.lfm_test_harness import BaseTierHarness
+
+
+@pytest.fixture
+def minimal_harness(tmp_path):
+    """
+    Create minimal BaseTierHarness for testing helper methods.
+    
+    Returns:
+        BaseTierHarness instance with minimal config
+    """
+    cfg = {
+        "parameters": {},
+        "run_settings": {"use_gpu": False},
+        "tolerances": {}
+    }
+    return BaseTierHarness(cfg, tmp_path)
+
+
+@pytest.fixture
+def minimal_config():
+    """
+    Create minimal config dict for testing.
+    
+    Returns:
+        Minimal valid config dictionary
+    """
+    return {
+        "parameters": {},
+        "run_settings": {"use_gpu": False},
+        "tolerances": {}
+    }

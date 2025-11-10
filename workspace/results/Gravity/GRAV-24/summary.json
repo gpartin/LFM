@@ -11,9 +11,27 @@
   "E_energy_final": 0.34754038783353447,
   "G_coupling": 0.1,
   "chi_bg": 0.05,
-  "runtime_sec": 0.07163214683532715,
+  "runtime_sec": 0.17174267768859863,
   "on_gpu": true,
+  "validation": {
+    "test_id": "GRAV-24",
+    "energy": {
+      "ok": true,
+      "drift": 0.564269678512778,
+      "threshold": Infinity
+    },
+    "primary": {
+      "ok": false,
+      "metric": "coupling_strength_error",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "amplitude_error": 0.012032611056794953
+    },
+    "timestamp": "2025-11-10 14:10:34"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T05:08:45.907781Z"
+  "timestamp": "2025-11-10T22:10:34.004106Z"
 }

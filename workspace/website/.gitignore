@@ -32,3 +32,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Auto-generated files (regenerated from test harness configs at build time)
+/src/data/research-experiments-generated.ts

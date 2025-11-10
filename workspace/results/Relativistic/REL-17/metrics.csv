@@ -1,4 +1,4 @@
 metric,value
-momentum_initial,5.6025978456553106e-09
-momentum_final,5.602598442955298e-09
-relative_change,1.0661125499295153e-07
+invariant_mass_error,0.0
+m2_lab,-1.0778676484424283
+m2_boost,-1.0778676484424283

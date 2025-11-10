@@ -1,0 +1,12 @@
+{
+  "test_id": "COUP-12",
+  "description": "Saturation - coupling strength limit (Phase 2)",
+  "passed": true,
+  "runtime_sec": 67.12024930003099,
+  "energy_drift": 4.682082207344366e-06,
+  "primary_metric": 0.13137084989847608,
+  "metric_name": "saturation_threshold_error",
+  "convergence_validated": false,
+  "notes": "E_sat=0.160 (theory=0.141), T_initial=0.485, ΔT=0.000",
+  "timestamp": "2025-11-10T22:17:22.943990+00:00"
+}

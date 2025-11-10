@@ -76,7 +76,7 @@ def log_run_config(cfg: dict, out_dir=None):
     """
     # Print a compact summary to console
     rs = cfg.get("run_settings", {}) if isinstance(cfg, dict) else {}
-    msg = f"Run settings: quick_mode={rs.get('quick_mode', False)}; use_gpu={rs.get('use_gpu', False)}; verbose={rs.get('verbose', False)}"
+    msg = f"Run settings: quick_mode={rs.get('quick_mode', False)}; use_gpu={rs.get('use_gpu', True)}; verbose={rs.get('verbose', False)}"
     log(msg, "INFO")
     # Also write structured copy to the results folder if available
     if out_dir is not None:

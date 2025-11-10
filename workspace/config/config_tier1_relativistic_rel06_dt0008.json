@@ -1,0 +1,64 @@
+{
+  "run_settings": {
+    "quick_mode": false,
+    "use_gpu": true,
+    "use_fused_cuda": true,
+    "output_dir": "results/Relativistic/",
+    "precision": "float64",
+    "show_progress": true,
+    "progress_percent_stride": 5,
+    "debug": {
+      "enable_diagnostics": true,
+      "energy_tol": 1e-6,
+      "quiet_run": true,
+      "print_probe_steps": false
+    },
+    "numeric_integrity": {
+      "energy_tol": 1e-6,
+      "quiet_warnings": true
+    }
+  },
+  "diagnostics": {
+    "energy_monitor_every": 100,
+    "diagnostics_path": "diagnostics_core.csv"
+  },
+  "parameters": {
+    "grid_points": 512,
+    "steps": 6000,
+    "dx": 0.008,
+    "dt": 0.0025,
+    "alpha": 0.5,
+    "beta": 0.5,
+    "chi": 0.0,
+    "stencil_order": 2,
+    "boundary": "periodic",
+    "tiles": [1,1,1],
+    "absorb_width": 1,
+    "absorb_factor": 1.0
+  },
+  "tolerances": {
+    "energy_drift": 1e-6,
+    "anisotropy_max": 0.01,
+    "phase_error_max": 0.02,
+    "ratio_error_max": 0.05
+  },
+  "variants": [
+  { "test_id": "REL-01", "description": "Isotropy — Coarse Grid", "k_fraction": 0.05, "dt": 0.0010 },
+  { "test_id": "REL-02", "description": "Isotropy — Fine Grid", "k_fraction": 0.10, "grid_points": 1024, "dt": 0.0007 },
+  { "test_id": "REL-03", "description": "Lorentz Boost — Low Velocity", "boost_factor": 0.2, "steps": 60000, "dt": 0.00005, "grid_points": 2048 },
+    { "test_id": "REL-04", "description": "Lorentz Boost — High Velocity", "boost_factor": 0.6 },
+    { "test_id": "REL-05", "description": "Causality — Pulse Propagation", "pulse_width": 0.1 },
+    { "test_id": "REL-06", "description": "Causality — Noise Perturbation", "noise_amp": 0.1, "dt": 0.0008 },
+    { "test_id": "REL-07", "description": "Phase Independence Test", "k_fraction": 0.15 },
+    { "test_id": "REL-08", "description": "Superposition Principle Test", "k_fraction": 0.10 },
+    { "test_id": "REL-09", "description": "3D Isotropy — Directional Equivalence", "k_fraction": 0.08, "dimensions": 3, "grid_points": 64, "steps": 1000 },
+    { "test_id": "REL-10", "description": "3D Isotropy — Spherical Symmetry", "k_fraction": 0.06, "dimensions": 3, "grid_points": 64, "steps": 800 },
+    { "test_id": "REL-11", "description": "Dispersion Relation — Non-relativistic (χ/k≈10)", "k_fraction": 0.02, "chi": 0.2, "steps": 4000 },
+    { "test_id": "REL-12", "description": "Dispersion Relation — Weakly Relativistic (χ/k≈1)", "k_fraction": 0.05, "chi": 0.05, "steps": 4000 },
+    { "test_id": "REL-13", "description": "Dispersion Relation — Relativistic (χ/k≈0.5)", "k_fraction": 0.10, "chi": 0.05, "steps": 4000 },
+    { "test_id": "REL-14", "description": "Dispersion Relation — Ultra-relativistic (χ/k≈0.1)", "k_fraction": 0.15, "chi": 0.015, "steps": 4000 },
+    { "test_id": "REL-15", "description": "Causality — Space-like correlation test (light cone violation check)", "mode": "correlation_lightcone", "dimensions": 1, "grid_points": 256, "steps": 200, "dt": 0.01, "dx": 0.1, "perturbation_amp": 0.1, "perturbation_width": 2.0, "correlation_threshold": 1e-6 },
+    { "test_id": "REL-16", "description": "Linear Momentum Conservation — Two-Packet Collision", "mode": "momentum_conservation", "dimensions": 1, "grid_points": 512, "steps": 2000, "dt": 0.005, "dx": 0.02, "chi": 0.0, "packet1_pos": 0.3, "packet2_pos": 0.7, "packet1_k": 2.0, "packet2_k": -2.0, "packet_width": 0.05, "momentum_tolerance": 0.01 },
+    { "test_id": "REL-17", "description": "Invariant Mass — Lorentz Invariance", "mode": "invariant_mass", "boost_factor": 0.3, "packet_width": 0.08, "grid_points": 512, "dx": 0.02, "chi": 0.05, "invariant_mass_tolerance": 0.01 }
+  ]
+}

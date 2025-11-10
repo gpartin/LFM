@@ -62,7 +62,14 @@ function Particles({ simulation, showParticles, showTrails }: { simulation: Reac
     if (!trailGroupRef.current) return;
     const createTrail = (color: string): TrailData => {
       const geometry = new THREE.BufferGeometry();
-      const material = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.5 });
+      const material = new THREE.LineBasicMaterial({ 
+        color, 
+        transparent: true, 
+        opacity: 0.8,  // Increased from 0.5 for better visibility
+        linewidth: 2,
+        depthTest: true,
+        depthWrite: false  // Prevent z-fighting
+      });
       const line = new THREE.Line(geometry, material);
       trailGroupRef.current!.add(line);
       // Preallocate buffer for max trail length (eliminates per-frame allocations)
@@ -89,30 +96,26 @@ function Particles({ simulation, showParticles, showTrails }: { simulation: Reac
     // Trails (optimized with ring buffer - no per-frame allocations)
     if (showTrails) {
       const addPoint = (trail: TrailData, pos: THREE.Vector3) => {
+        if (!trail.line) return; // Guard against uninitialized trail
+        
         trail.points.push(pos.clone());
         if (trail.points.length > maxPoints) trail.points.shift();
         
-        // Reuse preallocated buffer instead of creating new Float32Array
-        const buffer = trail.positionBuffer!;
+        // Only proceed if we have points to draw
+        if (trail.points.length === 0) return;
+        
+        // Create a properly sized buffer for current points only
+        const pointsBuffer = new Float32Array(trail.points.length * 3);
         trail.points.forEach((p, i) => {
-          buffer[i * 3] = p.x;
-          buffer[i * 3 + 1] = p.y;
-          buffer[i * 3 + 2] = p.z;
+          pointsBuffer[i * 3] = p.x;
+          pointsBuffer[i * 3 + 1] = p.y;
+          pointsBuffer[i * 3 + 2] = p.z;
         });
         
-        // Only update geometry if buffer changed (dirty tracking)
-        const geometry = trail.line!.geometry;
-        const existingAttr = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
-        
-        // Initialize or update attribute
-        if (!existingAttr || existingAttr.array !== buffer) {
-          geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3));
-          trail.isDirty = true;
-        } else if (trail.isDirty) {
-          existingAttr.needsUpdate = true;
-          trail.isDirty = false;
-        }
-        
+        // Update geometry attribute
+        const geometry = trail.line.geometry;
+        geometry.setAttribute('position', new THREE.BufferAttribute(pointsBuffer, 3));
+        geometry.attributes.position.needsUpdate = true;
         geometry.setDrawRange(0, trail.points.length);
         geometry.computeBoundingSphere();
       };

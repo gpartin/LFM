@@ -7,20 +7,40 @@
   "ratio_parallel": 1.0,
   "ratio_theory": 1.0,
   "omegaA_serial": 240.0,
-  "omegaB_serial": 53.40249562263489,
+  "omegaB_serial": 149.35553860664368,
   "omegaA_parallel": 240.0,
-  "omegaB_parallel": 53.40249562263489,
+  "omegaB_parallel": 149.35553860664368,
   "omegaA_theory": 240.0,
   "omegaB_theory": 0.0,
   "chiA": 0.15000000596046448,
   "chiB": 0.15000000596046448,
   "freq_shift_theory_pct": 0.0,
   "freq_shift_measured_pct": 0.0,
+  "ratio_match_error": 0.0,
+  "local_frequency_ratio_error": 0.0,
   "N": 128,
   "dx": 1.0,
   "dt": 0.02,
   "steps": 12000,
+  "validation": {
+    "test_id": "GRAV-15",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "passed",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "local_frequency_ratio_error": 0.0
+    },
+    "timestamp": "2025-11-10 14:14:03"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T03:11:01.025572Z"
+  "timestamp": "2025-11-10T22:14:03.007307Z"
 }

@@ -10,8 +10,8 @@
     "analytical_verification": "Amp\u00e8re's law \u2207\u00d7B = \u03bc\u2080(J + \u03b5\u2080\u2202E/\u2202t) verified analytically"
   },
   "tolerance": 0.02,
-  "runtime_sec": 0.6844971179962158,
+  "runtime_sec": 0.9436624050140381,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-05T00:57:38.842622Z"
+  "timestamp": "2025-11-10T22:15:17.797691Z"
 }

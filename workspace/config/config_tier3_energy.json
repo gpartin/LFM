@@ -145,8 +145,8 @@
       "packet2_k": -2.0,
       "packet_width": 0.05,
       "momentum_tolerance": 0.01,
-      "skip": true,
-      "comment": "Validates momentum conservation from Noether's theorem - currently has calculation issues"
+      "skip": false,
+      "comment": "Validates momentum conservation from Noether's theorem"
     }
   ],
   "notes": "Tier-3 unified test: verifies energy conservation, wave integrity, entropy growth under variable chi(x)."

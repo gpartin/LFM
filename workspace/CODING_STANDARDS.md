@@ -283,3 +283,100 @@ sys.stdout.reconfigure(encoding='utf-8')
 This is a **CRITICAL** requirement. All pull requests will be reviewed for encoding compliance.
 
 **Automated check coming soon:** Pre-commit hook to detect missing `encoding=` parameters.
+
+---
+
+## Metrics Recording Pattern
+
+### **Automatic Metrics Recording in BaseTierHarness**
+
+**Overview:** As of 2025-11-10, all test executions automatically record metrics to `test_metrics_history.json` via the centralized system in `BaseTierHarness`.
+
+**How It Works:**
+1. `BaseTierHarness.run_with_standard_wrapper()` automatically calls `TestMetrics.record_run()` after every test
+2. Works for ALL execution paths:
+   - Direct tier runner invocation (`python run_tier5_electromagnetic.py --test EM-01`)
+   - Parallel suite (`python run_parallel_suite.py --tiers "5,6,7"`)
+   - Cached results (metrics updated even on cache hits)
+3. Metrics extracted from:
+   - Result object attributes (`result.passed`, `result.runtime_sec`, etc.)
+   - Cached `summary.json` files (for cache hits)
+   - Default values for missing fields
+
+**Tier Runner Pattern** (NO manual metrics code needed):
+
+```python
+# ✓ CORRECT - Metrics recorded automatically by BaseTierHarness
+class TierNHarness(BaseTierHarness):
+    def run_variant(self, v: Dict) -> TestSummary:
+        # Test implementation
+        result = TestSummary(
+            test_id=v["test_id"],
+            description=v["description"],
+            passed=passed,
+            runtime_sec=runtime,
+            # ... other fields
+        )
+        return result  # Metrics automatically recorded here
+
+def main():
+    harness = TierNHarness(cfg, out_root, config_name)
+    results = harness.run()
+    # NO need to call TestMetrics.record_run() manually
+    update_master_test_status()  # Update master status as usual
+```
+
+```python
+# ✗ WRONG - Redundant manual metrics recording
+def main():
+    harness = TierNHarness(cfg, out_root, config_name)
+    results = harness.run()
+    
+    # DON'T DO THIS - metrics already recorded!
+    test_metrics = TestMetrics()
+    for r in results:
+        test_metrics.record_run(r["test_id"], {...})  # Redundant!
+```
+
+**Benefits:**
+- **DRY principle**: Single source of truth for metrics recording
+- **Zero maintenance**: New tiers inherit automatically
+- **Cache-aware**: Metrics updated even when test doesn't re-run
+- **Fail-safe**: Metrics errors don't break tests
+- **Thread-safe**: Works with parallel execution
+
+**Metrics Schema:**
+```python
+{
+    "exit_code": 0,              # 0=pass, 1=fail
+    "runtime_sec": 2.45,         # Wall-clock time
+    "peak_cpu_percent": 85.0,    # Peak CPU usage
+    "peak_memory_mb": 450.0,     # Peak RAM usage
+    "peak_gpu_memory_mb": 2048.0,# Peak GPU memory
+    "timestamp": "2025-11-10T21:26:00Z"  # ISO-8601 UTC
+}
+```
+
+**Testing:**
+- Unit tests: `workspace/tests/test_metrics_recording.py`
+- Integration coverage: Metrics automatically recorded in all tier test runs
+- Validation: Run `analysis/analyze_cache_metrics_consistency.py` to check metrics coverage
+
+**Migration:**
+- Tiers 1-4: Removed redundant manual `record_run()` calls (2025-11-10)
+- Tiers 5-7: Never had manual recording, now automatically covered
+- **NO action needed for new tiers** - metrics just work!
+
+---
+
+## Implementation Notes
+
+**Location:** `workspace/src/harness/lfm_test_harness.py`
+
+**Key Methods:**
+- `run_with_standard_wrapper()`: Entry point for all test executions, calls metrics recording
+- `_extract_metrics_for_tracking()`: Extracts metrics from result objects or summary.json
+
+**Safety Net:** `run_parallel_suite.py` includes backup metrics recording for edge cases.
+
+**Last Updated:** 2025-11-10

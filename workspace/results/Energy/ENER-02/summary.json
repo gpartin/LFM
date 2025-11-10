@@ -3,28 +3,30 @@
   "category": "Energy",
   "test_id": "ENER-02",
   "description": "Global conservation \u2014 long",
-  "timestamp": "2025-11-03T03:26:01.926954+00:00",
-  "hardware": {
-    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
-    "cuda_runtime": 12090,
-    "python": "3.13.9",
-    "backend": "CuPy"
-  },
   "parameters": {
     "N": 256,
-    "steps": 20000,
     "dt": 0.0005,
     "dx": 0.005,
-    "c": 1.0,
-    "cfl": 0.1,
-    "stencil_order": 4
+    "steps": 20000,
+    "stencil_order": 2
   },
-  "metrics": {
-    "energy_rel_drift": 0.007121457601215409,
-    "entropy_monotonic": true,
-    "wave_max_drop": 0.010316869699101254
+  "energy_drift": 0.007110527209833629,
+  "wave_drop": null,
+  "partition_balance": null,
+  "dissipation_rate_error": null,
+  "thermalization_convergence": null,
+  "entropy_monotonic": true,
+  "validation": {
+    "energy_ok": true,
+    "energy_threshold": 0.01,
+    "primary_ok": true,
+    "primary_metric": "energy_drift",
+    "primary_value": 0.007110527209833629,
+    "primary_threshold": 0.01
   },
-  "status": "Passed",
+  "passed": true,
+  "runtime_sec": 67.26043796539307,
   "schema_version": "1.0",
-  "license": "CC BY-NC-ND 4.0"
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-10T22:12:12.917462Z"
 }
