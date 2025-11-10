@@ -47,7 +47,7 @@ from scipy.optimize import curve_fit
 from scipy.stats import linregress
 
 from core.lfm_backend import to_numpy, get_array_module, pick_backend
-from core.lfm_equation import lattice_step, energy_total
+from core.lfm_equation import lattice_step
 from utils.lfm_results import ensure_dirs, write_csv, save_summary, update_master_test_status
 from ui.lfm_console import log
 from harness.lfm_test_harness import BaseTierHarness
@@ -160,7 +160,7 @@ def fit_boltzmann_temperature(mode_energies, mode_indices):
 
 # ======================== TEST IMPLEMENTATIONS ========================
 
-def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
+def run_entropy_increase(harness, test, out_dir: Path) -> TestResult:
     """
     THERM-01: Second Law of Thermodynamics — Entropy Increase
     
@@ -176,6 +176,7 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
     ensure_dirs(out_dir)
     test_id = test['test_id']
     desc = test['description']
+    xp = harness.xp
     
     N = int(test.get('N', 512))
     dx = float(test.get('dx', 0.1))
@@ -201,7 +202,7 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
     apply_dirichlet_1d(E_prev)
     
     # Normalize to unit energy
-    E0_energy = energy_total(E, E_prev, dt, dx, c, chi)
+    E0_energy = harness.compute_field_energy(E, E_prev, dt, dx, c, chi, dims='1d')
     scale = 1.0 / np.sqrt(E0_energy)
     E = E * scale
     E_prev = E_prev * scale
@@ -221,7 +222,7 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
     for step in range(steps + 1):
         if step % measure_every == 0:
             S = compute_entropy_shannon(E, dx, xp)
-            E_total = energy_total(E, E_prev, dt, dx, c, chi)
+            E_total = harness.compute_field_energy(E, E_prev, dt, dx, c, chi, dims='1d')
             
             entropy_log.append(S)
             energy_log.append(E_total)
@@ -253,7 +254,7 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
     E_drift = np.abs(energy_log - energy_log[0]) / energy_log[0]
     max_energy_drift = np.max(E_drift)
     
-    tolerance_increase_min = float(tol.get('entropy_increase_min', 0.10))
+    tolerance_increase_min = float(harness.tol.get('entropy_increase_min', 0.10))
     # Pass if net increase > threshold
     #  Note: Klein-Gordon is nearly time-reversible, so entropy increases slowly via phase mixing
     #  Entropy evolution is typically non-linear (rapid initial increase, then plateau/oscillation)
@@ -303,7 +304,10 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
         "description": desc,
         "passed": passed,
         "metrics": metrics,
-        "runtime_sec": runtime
+        "runtime_sec": runtime,
+        # Ensure master status and downstream tools can classify correctly
+        "tier": 7,
+        "category": "Thermodynamics"
     }
     save_summary(out_dir, test_id, summary)
     
@@ -312,7 +316,7 @@ def run_entropy_increase(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRe
     
     return TestResult(test_id, desc, passed, metrics, runtime)
 
-def run_irreversibility(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
+def run_irreversibility(harness, test, out_dir: Path) -> TestResult:
     """
     THERM-02: Irreversibility — Arrow of Time
     
@@ -329,6 +333,7 @@ def run_irreversibility(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     ensure_dirs(out_dir)
     test_id = test['test_id']
     desc = test['description']
+    xp = harness.xp
     
     N = int(test.get('N', 512))
     dx = float(test.get('dx', 0.1))
@@ -411,7 +416,7 @@ def run_irreversibility(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     # With dissipation: w_final >> w_initial (remains dispersed)
     reversibility_ratio = w_final / w_initial
     
-    tolerance = float(tol.get('irreversibility_tolerance', 0.90))
+    tolerance = float(harness.tol.get('irreversibility_tolerance', 0.90))
     # Pass if final width is > 90% of mid-dispersion width (i.e., does NOT re-localize)
     passed = reversibility_ratio > tolerance
     
@@ -455,7 +460,9 @@ def run_irreversibility(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
         "description": desc,
         "passed": passed,
         "metrics": metrics,
-        "runtime_sec": runtime
+        "runtime_sec": runtime,
+        "tier": 7,
+        "category": "Thermodynamics"
     }
     save_summary(out_dir, test_id, summary)
     
@@ -464,7 +471,7 @@ def run_irreversibility(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     
     return TestResult(test_id, desc, passed, metrics, runtime)
 
-def run_equipartition(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
+def run_equipartition(harness, test, out_dir: Path) -> TestResult:
     """
     THERM-03: Equipartition Theorem
     
@@ -482,6 +489,7 @@ def run_equipartition(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResul
     ensure_dirs(out_dir)
     test_id = test['test_id']
     desc = test['description']
+    xp = harness.xp
     
     N = int(test.get('N', 512))
     dx = float(test.get('dx', 0.1))
@@ -554,7 +562,7 @@ def run_equipartition(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResul
     E_std = np.std(mode_E_final[:modes_to_check])
     coeff_variation = E_std / E_mean if E_mean > 1e-12 else 1e6
     
-    tolerance = float(tol.get('equipartition_error', 0.90))
+    tolerance = float(harness.tol.get('equipartition_error', 0.90))
     # Note: Klein-Gordon is nearly time-reversible, so equipartition is weak
     # We only expect CV < 0.9 (not perfect equipartition CV < 0.15)
     passed = coeff_variation < tolerance
@@ -606,7 +614,9 @@ def run_equipartition(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResul
         "description": desc,
         "passed": passed,
         "metrics": metrics,
-        "runtime_sec": runtime
+        "runtime_sec": runtime,
+        "tier": 7,
+        "category": "Thermodynamics"
     }
     save_summary(out_dir, test_id, summary)
     
@@ -615,7 +625,7 @@ def run_equipartition(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResul
     
     return TestResult(test_id, desc, passed, metrics, runtime)
 
-def run_thermalization_time(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
+def run_thermalization_time(harness, test, out_dir: Path) -> TestResult:
     """
     THERM-04: Thermalization Timescale
     
@@ -628,6 +638,7 @@ def run_thermalization_time(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
     ensure_dirs(out_dir)
     test_id = test['test_id']
     desc = test['description']
+    xp = harness.xp
     
     N = int(test.get('N', 512))
     dx = float(test.get('dx', 0.1))
@@ -699,8 +710,8 @@ def run_thermalization_time(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
         fit_success = False
     
     # Check if τ is reasonable (should be ~ 50-1000 time units for weak dissipation)
-    tau_min = float(tol.get('thermalization_tau_min', 50.0))
-    tau_max = float(tol.get('thermalization_tau_max', 1000.0))
+    tau_min = float(harness.tol.get('thermalization_tau_min', 50.0))
+    tau_max = float(harness.tol.get('thermalization_tau_max', 1000.0))
     
     passed = fit_success and (tau_min < tau_fitted < tau_max)
     
@@ -737,7 +748,9 @@ def run_thermalization_time(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
         "description": desc,
         "passed": passed,
         "metrics": metrics,
-        "runtime_sec": runtime
+        "runtime_sec": runtime,
+        "tier": 7,
+        "category": "Thermodynamics"
     }
     save_summary(out_dir, test_id, summary)
     
@@ -746,7 +759,7 @@ def run_thermalization_time(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
     
     return TestResult(test_id, desc, passed, metrics, runtime)
 
-def run_temperature_emergence(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResult:
+def run_temperature_emergence(harness, test, out_dir: Path) -> TestResult:
     """
     THERM-05: Temperature Emergence — Boltzmann Distribution
     
@@ -763,6 +776,7 @@ def run_temperature_emergence(params, tol, test, out_dir: Path, xp, on_gpu) -> T
     ensure_dirs(out_dir)
     test_id = test['test_id']
     desc = test['description']
+    xp = harness.xp
     
     N = int(test.get('N', 512))
     dx = float(test.get('dx', 0.1))
@@ -793,7 +807,7 @@ def run_temperature_emergence(params, tol, test, out_dir: Path, xp, on_gpu) -> T
     apply_dirichlet_1d(E_prev)
     
     # Normalize to target energy
-    E0_energy = energy_total(E, E_prev, dt, dx, c, chi)
+    E0_energy = harness.compute_field_energy(E, E_prev, dt, dx, c, chi, dims='1d')
     scale = np.sqrt(total_energy / E0_energy)
     E = E * scale
     E_prev = E_prev * scale
@@ -836,7 +850,7 @@ def run_temperature_emergence(params, tol, test, out_dir: Path, xp, on_gpu) -> T
     mode_indices = np.arange(1, num_modes + 1)
     T_fitted, R_squared = fit_boltzmann_temperature(mode_E_eq, mode_indices)
     
-    tolerance_r_sq_min = float(tol.get('temperature_r_squared_min', 0.10))
+    tolerance_r_sq_min = float(harness.tol.get('temperature_r_squared_min', 0.10))
     # Pass if R² > tolerance (weak Boltzmann fit in nearly-conservative system)
     passed = (T_fitted is not None) and (R_squared > tolerance_r_sq_min)
     
@@ -883,7 +897,9 @@ def run_temperature_emergence(params, tol, test, out_dir: Path, xp, on_gpu) -> T
         "description": desc,
         "passed": passed,
         "metrics": metrics,
-        "runtime_sec": runtime
+        "runtime_sec": runtime,
+        "tier": 7,
+        "category": "Thermodynamics"
     }
     save_summary(out_dir, test_id, summary)
     
@@ -898,7 +914,8 @@ class Tier7Harness(BaseTierHarness):
     """Test harness for Tier 7 - Thermodynamics & Statistical Mechanics"""
     
     def __init__(self, cfg: Dict, out_root: Path, backend: str = "baseline"):
-        super().__init__(cfg, out_root, config_name="config_tier7_thermodynamics.json", backend=backend)
+        # tier_number=7 triggers automatic metadata loading in BaseTierHarness
+        super().__init__(cfg, out_root, config_name="config_tier7_thermodynamics.json", backend=backend, tier_number=7)
         self.tests = cfg["tests"]
     
     def run_single_test(self, test: Dict) -> TestResult:
@@ -911,17 +928,17 @@ class Tier7Harness(BaseTierHarness):
         out_dir = self.out_root / test_id
         ensure_dirs(out_dir)
         
-        # Dispatch by mode
+        # Dispatch by mode (pass self for access to compute_field_energy and other helpers)
         if mode == "entropy_increase":
-            result = run_entropy_increase(self.base, self.tol, test, out_dir, self.xp, self.use_gpu)
+            result = run_entropy_increase(self, test, out_dir)
         elif mode == "irreversibility":
-            result = run_irreversibility(self.base, self.tol, test, out_dir, self.xp, self.use_gpu)
+            result = run_irreversibility(self, test, out_dir)
         elif mode == "equipartition":
-            result = run_equipartition(self.base, self.tol, test, out_dir, self.xp, self.use_gpu)
+            result = run_equipartition(self, test, out_dir)
         elif mode == "thermalization_time":
-            result = run_thermalization_time(self.base, self.tol, test, out_dir, self.xp, self.use_gpu)
+            result = run_thermalization_time(self, test, out_dir)
         elif mode == "temperature_emergence":
-            result = run_temperature_emergence(self.base, self.tol, test, out_dir, self.xp, self.use_gpu)
+            result = run_temperature_emergence(self, test, out_dir)
         else:
             raise ValueError(f"Unknown mode: {mode}")
         
@@ -978,9 +995,10 @@ def main():
     # Load config
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
     
-    # Determine output directory
-    outdir = Path(cfg.get("output_dir", "results/Thermodynamics"))
-    outdir.mkdir(parents=True, exist_ok=True)
+    # Determine output directory (canonical: workspace/results/Thermodynamics)
+    # Use BaseTierHarness.resolve_outdir to avoid writing under src/results/
+    outdir_hint = cfg.get("output_dir", "results/Thermodynamics")
+    outdir = BaseTierHarness.resolve_outdir(outdir_hint)
     
     # Create harness
     harness = Tier7Harness(cfg, outdir, backend=args.backend)

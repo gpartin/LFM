@@ -24,13 +24,21 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # Still needed for unmigrated sections
 
 from core.lfm_backend import to_numpy, get_array_module
 from utils.lfm_results import ensure_dirs, write_csv, save_summary, update_master_test_status
 from ui.lfm_console import log
 from harness.lfm_test_harness import BaseTierHarness
-from harness.lfm_test_metrics import TestMetrics
+# TestMetrics import removed - metrics now automatically recorded by BaseTierHarness
+from utils.result_logging import log_test_result
+from ui.plots_common import (
+    plot_energy_over_time, 
+    plot_dual_series,
+    plot_theory_vs_measured,
+    plot_scatter_with_fit,
+    plot_multi_series
+)
 
 @dataclass
 class TestResult:
@@ -187,30 +195,25 @@ def run_energy_transfer(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     write_csv(out_dir / "energy_evolution.csv", rows,
               ["time", "total_energy", "mode1_energy", "mode2_energy"])
     
-    # Plot
-    plt.figure(figsize=(12, 8))
-    
-    plt.subplot(2, 1, 1)
-    plt.plot(times, energy_log, 'b-', linewidth=2, label='Total Energy')
-    plt.axhline(E_initial, color='k', linestyle='--', alpha=0.5, label='Initial')
-    plt.ylabel('Total Energy', fontsize=12)
-    plt.title(f'{test_id}: Energy Conservation\nMax drift={max_drift*100:.3f}%', fontsize=14)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    plt.subplot(2, 1, 2)
-    plt.plot(times, mode1_energy_log, 'r-', linewidth=2, label=f'Mode {mode_1}')
-    plt.plot(times, mode2_energy_log, 'g-', linewidth=2, label=f'Mode {mode_2}')
-    plt.xlabel('Time', fontsize=12)
-    plt.ylabel('Mode Energy', fontsize=12)
-    plt.title('Energy Exchange Between Modes', fontsize=13)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
+    # Plot energy conservation
     ensure_dirs(out_dir / "plots")
-    plt.tight_layout()
-    plt.savefig(out_dir / "plots" / "energy_transfer.png", dpi=150)
-    plt.close()
+    plot_energy_over_time(
+        times, energy_log,
+        f'{test_id}: Energy Conservation (Max drift={max_drift*100:.3f}%)',
+        out_dir / "plots" / "energy_conservation.png",
+        ylabel="Total Energy",
+        show_initial=True
+    )
+    
+    # Plot mode exchange
+    plot_dual_series(
+        times, mode1_energy_log, mode2_energy_log,
+        f'Mode {mode_1}',
+        f'Mode {mode_2}',
+        'Energy Exchange Between Modes',
+        out_dir / "plots" / "mode_exchange.png",
+        ylabel='Mode Energy'
+    )
     
     summary = {
         "tier": 4,
@@ -230,7 +233,7 @@ def run_energy_transfer(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     save_summary(out_dir, test_id, summary)
     
     log(f"[{test_id}] {'PASS' if passed else 'FAIL'} — Energy drift: max={max_drift*100:.3f}%, mean={mean_drift*100:.3f}%", 
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
 
@@ -306,20 +309,16 @@ def run_spectral_linearity(params, tol, test, out_dir: Path, xp, on_gpu) -> Test
     write_csv(out_dir / "linearity_test.csv", rows,
               ["amplitude", "measured_energy", "predicted_energy", "rel_error"])
     
-    # Plot
-    plt.figure(figsize=(10, 6))
-    plt.plot(A_squared, energies, 'bo', markersize=10, label='Measured')
-    plt.plot(A_squared, E_predicted, 'r--', linewidth=2, label=f'Linear fit: E={c_fit:.4f}·A²')
-    plt.xlabel('Amplitude² (A²)', fontsize=12)
-    plt.ylabel('Energy', fontsize=12)
-    plt.title(f'{test_id}: Spectral Linearity Test\nMean error={mean_error*100:.2f}%', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
+    # Plot linearity
     ensure_dirs(out_dir / "plots")
-    plt.tight_layout()
-    plt.savefig(out_dir / "plots" / "spectral_linearity.png", dpi=150)
-    plt.close()
+    plot_scatter_with_fit(
+        A_squared, energies, E_predicted,
+        f'{test_id}: Spectral Linearity Test\nMean error={mean_error*100:.2f}%',
+        out_dir / "plots" / "spectral_linearity.png",
+        xlabel='Amplitude² (A²)',
+        ylabel='Energy',
+        fit_label=f'Linear fit: E={c_fit:.4f}·A²'
+    )
     
     summary = {
         "tier": 4,
@@ -340,7 +339,7 @@ def run_spectral_linearity(params, tol, test, out_dir: Path, xp, on_gpu) -> Test
     save_summary(out_dir, test_id, summary)
     
     log(f"[{test_id}] {'PASS' if passed else 'FAIL'} — Linearity error: {mean_error*100:.2f}%",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
 
@@ -496,7 +495,7 @@ def run_phase_amplitude_coupling(params, tol, test, out_dir: Path, xp, on_gpu) -
     save_summary(out_dir, test_id, summary)
     
     log(f"[{test_id}] {'PASS' if passed else 'FAIL'} — Linearity error: {linearity_error*100:.3f}% (scaling: {scaling_error*100:.3f}%, superposition: {superposition_error*100:.3f}%)",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
 
@@ -626,7 +625,7 @@ def run_wavefront_stability(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
     save_summary(out_dir, test_id, summary)
     
     log(f"[{test_id}] {'PASS' if passed else 'FAIL'} — Gradient growth: {grad_growth:.2f}x",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
 
@@ -748,7 +747,7 @@ def run_lattice_blowout(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
     save_summary(out_dir, test_id, summary)
     
     log(f"[{test_id}] {'PASS' if passed else 'FAIL'} — Max energy: {max_energy:.2e}, Blowup: {blew_up}",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
 
@@ -1611,19 +1610,15 @@ def run_cavity_spectroscopy(params, tol, test, out_dir: Path, xp, on_gpu) -> Tes
               ["time"] + [f"mode_{n}" for n in range(1, num_peaks+1)])
     
     # Plot: measured vs theoretical mode frequencies
-    plt.figure(figsize=(10,5))
-    modes_n = np.arange(1, num_peaks+1)
-    plt.plot(modes_n, theory_modes, 'bo-', label='Theory', markersize=8)
-    plt.plot(modes_n, measured_modes, 'rx-', label='Measured', markersize=8)
-    plt.xlabel('Mode number n')
-    plt.ylabel('Frequency ω')
-    plt.title(f'{test_id}: Cavity modes — mean err={mean_err*100:.2f}%')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
     ensure_dirs(out_dir/"plots")
-    plt.tight_layout()
-    plt.savefig(out_dir/"plots"/"cavity_spectrum.png", dpi=150)
-    plt.close()
+    modes_n = np.arange(1, num_peaks+1)
+    plot_theory_vs_measured(
+        modes_n, theory_modes, measured_modes,
+        f'{test_id}: Cavity modes — mean err={mean_err*100:.2f}%',
+        out_dir/"plots"/"cavity_spectrum.png",
+        xlabel='Mode number n',
+        ylabel='Frequency ω'
+    )
     
     summary = {
         "tier": 4,
@@ -1891,37 +1886,27 @@ def run_bound_state_quantization(params, tol, test, out_dir: Path, xp, on_gpu) -
               ["mode_n", "theory_energy", "measured_energy", "rel_error"])
     
     # Plot energy levels
-    plt.figure(figsize=(10, 6))
-    mode_numbers = np.arange(1, num_modes + 1)
-    plt.plot(mode_numbers, theory_energies, 'bo-', label='Theory (E_n)', markersize=10, linewidth=2)
-    plt.plot(mode_numbers, measured_energies, 'rx--', label='Measured', markersize=10, linewidth=2)
-    plt.xlabel('Quantum Number n', fontsize=12)
-    plt.ylabel('Energy E_n (ω_n)', fontsize=12)
-    plt.title(f'{test_id}: Discrete Energy Quantization\nMean Error={mean_error*100:.2f}%', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
-    # Add error bars
-    for i, (n, err) in enumerate(zip(mode_numbers, errors)):
-        plt.text(n, measured_energies[i], f'{err*100:.1f}%', fontsize=8, ha='center', va='bottom')
-    
     ensure_dirs(out_dir / "plots")
-    plt.tight_layout()
-    plt.savefig(out_dir / "plots" / "quantized_energies.png", dpi=150)
-    plt.close()
+    mode_numbers = np.arange(1, num_modes + 1)
+    plot_theory_vs_measured(
+        mode_numbers, theory_energies, measured_energies,
+        f'{test_id}: Discrete Energy Quantization\nMean Error={mean_error*100:.2f}%',
+        out_dir / "plots" / "quantized_energies.png",
+        xlabel='Quantum Number n',
+        ylabel='Energy E_n (ω_n)'
+    )
     
     # Plot mode amplitudes evolution
-    plt.figure(figsize=(12, 6))
-    for n in range(1, min(4, num_modes + 1)):  # Plot first 3 modes
-        plt.plot(snapshot_times, mode_amplitudes[:, n-1], label=f'Mode n={n}', alpha=0.7)
-    plt.xlabel('Time', fontsize=12)
-    plt.ylabel('Mode Amplitude', fontsize=12)
-    plt.title(f'{test_id}: Mode Oscillations', fontsize=14)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_dir / "plots" / "mode_evolution.png", dpi=150)
-    plt.close()
+    num_plot_modes = min(4, num_modes + 1)
+    y_data_list = [mode_amplitudes[:, n-1] for n in range(1, num_plot_modes)]
+    labels = [f'Mode n={n}' for n in range(1, num_plot_modes)]
+    plot_multi_series(
+        snapshot_times, y_data_list, labels,
+        f'{test_id}: Mode Oscillations',
+        out_dir / "plots" / "mode_evolution.png",
+        xlabel='Time',
+        ylabel='Mode Amplitude'
+    )
 
     # Plot theoretical bound-state mode shapes ψ_n(x) and save CSV
     try:
@@ -1981,7 +1966,7 @@ def run_bound_state_quantization(params, tol, test, out_dir: Path, xp, on_gpu) -
     
     status = "PASS ✅" if passed else "FAIL ❌"
     log(f"[{test_id}] {status} Quantization: mean_err={mean_error*100:.2f}%, max_err={max_error*100:.2f}%",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     log(f"[{test_id}] QUANTUM SIGNATURE: Discrete energy levels E_n confirmed!", "INFO")
     
     return TestResult(test_id, desc, passed, summary["metrics"], runtime)
@@ -2207,7 +2192,7 @@ def run_tunneling_test(params, tol, test, out_dir: Path, xp, on_gpu) -> TestResu
     
     status = "PASS ✅" if passed else "FAIL ❌"
     log(f"[{test_id}] {status} Tunneling: T={transmission_coeff:.2e} (theory={T_theory:.2e}, err={T_error*100:.1f}%)",
-        "INFO" if passed else "FAIL")
+        "PASS" if passed else "FAIL")
     if transmission_coeff > 0:
         log(f"[{test_id}] QUANTUM SIGNATURE: Barrier penetration confirmed! (E < V, T > 0)", "INFO")
     
@@ -2311,7 +2296,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='Tier-4 Quantization & Spectra Suite')
     parser.add_argument('--test', type=str, default=None, help='Run single test by ID (e.g., QUAN-09)')
-    parser.add_argument('--config', type=str, default='config/config_tier4_quantization.json')
+    parser.add_argument('--config', type=str, default=None, help='Path to config JSON (auto-detected if not specified)')
     # Optional post-run hooks
     parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
                         help='Run validator after the suite: "tier" validates Tier 4 + master status; "all" runs end-to-end')
@@ -2434,18 +2419,8 @@ def main():
     # Update master test status and metrics database
     update_master_test_status()
     
-    # Record metrics for resource tracking (now with REAL metrics!)
-    test_metrics = TestMetrics()
-    for r in results:
-        metrics_data = {
-            "exit_code": 0 if r.passed else 1,
-            "runtime_sec": r.runtime_sec,
-            "peak_cpu_percent": r.metrics.get("peak_cpu_percent", 0.0),
-            "peak_memory_mb": r.metrics.get("peak_memory_mb", 0.0),
-            "peak_gpu_memory_mb": r.metrics.get("peak_gpu_memory_mb", 0.0),
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        }
-        test_metrics.record_run(r.test_id, metrics_data)
+    # Metrics recording now handled automatically by BaseTierHarness.run_with_standard_wrapper()
+    # (removed redundant manual recording here)
 
     # Optional: post-run validation
     if args.post_validate:

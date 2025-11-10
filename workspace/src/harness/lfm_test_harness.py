@@ -38,7 +38,7 @@ import os
 import math
 import shutil
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 import numpy as np
 
 from core.lfm_backend import pick_backend
@@ -76,7 +76,8 @@ class BaseTierHarness(NumericIntegrityMixin):
         cfg: Dict,
         out_root: Path,
         config_name: str = "config.json",
-        backend: str = "baseline"
+        backend: str = "baseline",
+        tier_number: Optional[int] = None,
     ):
         """
         Initialize base harness with config and output directory.
@@ -95,8 +96,12 @@ class BaseTierHarness(NumericIntegrityMixin):
         self.tol = cfg.get("tolerances", {})
         self.quick = bool(self.run_settings.get("quick_mode", False))
         
-        # Backend selection
-        use_gpu = bool(self.run_settings.get("use_gpu", False))
+        # Backend selection - ALWAYS use GPU (NVIDIA GeForce RTX 4060 Laptop with CuPy)
+        # Check both use_gpu and gpu_enabled for compatibility with different config schemas
+        use_gpu = bool(
+            self.run_settings.get("use_gpu", True) or 
+            cfg.get("hardware", {}).get("gpu_enabled", True)
+        )
         self.xp, self.use_gpu = pick_backend(use_gpu)
         
         # Physics backend (baseline vs fused kernel)
@@ -136,6 +141,22 @@ class BaseTierHarness(NumericIntegrityMixin):
         backend_name = "GPU (CuPy)" if self.use_gpu else "CPU (NumPy)"
         log(f"[accel] Using {backend_name} backend.", "INFO")
         log(f"[physics] Using '{self.backend}' physics backend.", "INFO")
+        
+        # ---------------- Tier validation metadata auto-load ----------------
+        self.tier_number = tier_number
+        self.tier_meta: Dict = {}
+        # Maintain backward compatibility with existing code expecting _tier_meta
+        self._tier_meta: Dict = {}
+        if tier_number is not None:
+            try:
+                from harness.validation import load_tier_metadata  # lazy import to avoid circulars
+                self.tier_meta = load_tier_metadata(int(tier_number))
+                self._tier_meta = self.tier_meta
+                log(f"[integrity] Tier{tier_number} metadata loaded for validation checks", "INFO")
+            except FileNotFoundError as e:
+                log(f"[integrity] WARNING: Tier{tier_number} metadata file not found: {e}", "WARN")
+            except Exception as e:
+                log(f"[integrity] WARNING: Could not load Tier{tier_number} metadata: {type(e).__name__}: {e}", "WARN")
         # ---------------- Diagnostics (env + override file) ----------------
         # Global env var: LFM_DIAGNOSTICS = off|basic|full
         self.global_diagnostics_mode = os.environ.get("LFM_DIAGNOSTICS", "off").strip().lower()
@@ -178,13 +199,17 @@ class BaseTierHarness(NumericIntegrityMixin):
         Load configuration from JSON file.
         
         Search strategy:
-        1. If config_path provided, use it directly
-        2. Otherwise search in:
+        1. If config_path provided and is absolute, use it directly
+        2. If config_path provided and is relative, search for it:
+           - Relative to script directory
+           - Relative to script parent directory
+           - Relative to current working directory
+        3. If no config_path, search for default_config_name:
            - {script_dir}/config/{default_config_name}
            - {script_dir}/../config/{default_config_name}
         
         Args:
-            config_path: Explicit path to config file (optional)
+            config_path: Explicit path to config file (optional, can be relative)
             default_config_name: Default config filename to search for
             
         Returns:
@@ -198,20 +223,36 @@ class BaseTierHarness(NumericIntegrityMixin):
             ...     default_config_name="config_tier1_relativistic.json"
             ... )
         """
-        if config_path:
-            # Use explicit path if provided
-            cand = Path(config_path)
-            if cand.is_file():
-                with open(cand, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            raise FileNotFoundError(f"Config file not found: {config_path}")
-        
-        # Default: search in standard locations
         import inspect
         caller_frame = inspect.stack()[1]
         caller_file = Path(caller_frame.filename).resolve()
         script_dir = caller_file.parent
         
+        if config_path:
+            cand = Path(config_path)
+            
+            # If absolute path, try it directly
+            if cand.is_absolute():
+                if cand.is_file():
+                    with open(cand, "r", encoding="utf-8") as f:
+                        return json.load(f)
+                raise FileNotFoundError(f"Config file not found: {config_path}")
+            
+            # If relative path, try multiple locations
+            search_roots = [script_dir, script_dir.parent, Path.cwd()]
+            for root in search_roots:
+                full_path = root / config_path
+                if full_path.is_file():
+                    with open(full_path, "r", encoding="utf-8") as f:
+                        return json.load(f)
+            
+            # Not found in any location
+            raise FileNotFoundError(
+                f"Config file not found: {config_path} "
+                f"(searched relative to {script_dir}, {script_dir.parent}, and {Path.cwd()})"
+            )
+        
+        # No config_path provided, use default_config_name
         for root in (script_dir, script_dir.parent):
             cand = root / "config" / default_config_name
             if cand.is_file():
@@ -226,32 +267,46 @@ class BaseTierHarness(NumericIntegrityMixin):
     @staticmethod
     def resolve_outdir(output_dir_hint: str) -> Path:
         """
-        Resolve output directory relative to script location.
+        Resolve output directory to workspace/results/{category}.
+        
+        This method ensures all test results are written to the standard location:
+        workspace/results/{category} regardless of where the script is executed from.
         
         Args:
-            output_dir_hint: Directory path (e.g., "results/Tier1")
+            output_dir_hint: Directory path hint (e.g., "results/Energy", "Energy", "../results/Energy")
+                            The category name will be extracted automatically.
             
         Returns:
-            Resolved Path object, directory created if needed
+            Resolved Path object (workspace/results/{category}), directory created if needed
             
         Example:
-            >>> outdir = BaseTierHarness.resolve_outdir("results/MyTest")
+            >>> outdir = BaseTierHarness.resolve_outdir("results/Energy")
+            >>> # Returns: workspace/results/Energy (regardless of cwd)
         """
         import inspect
         caller_frame = inspect.stack()[1]
         caller_file = Path(caller_frame.filename).resolve()
         script_dir = caller_file.parent
 
-        # Prefer anchoring under the nearest 'workspace' ancestor if present,
-        # so results always go to <workspace>/results regardless of script subdir.
+        # Find workspace root by walking up the directory tree
         workspace_root = None
         for p in [script_dir] + list(script_dir.parents):
             if p.name.lower() == "workspace":
                 workspace_root = p
                 break
 
-        base_dir = workspace_root if workspace_root is not None else script_dir
-        outdir = base_dir / output_dir_hint
+        # If we can't find workspace root, use script_dir.parent as fallback
+        if workspace_root is None:
+            # Assume script is in workspace/src, so parent is workspace
+            workspace_root = script_dir.parent
+
+        # Extract category name from hint
+        # Handle formats like: "results/Energy", "Energy", "../results/Energy", "results\\Energy"
+        hint_path = Path(output_dir_hint)
+        category = hint_path.name  # Get the last component (e.g., "Energy" from "results/Energy")
+        
+        # Always resolve to workspace/results/{category}
+        outdir = workspace_root / "results" / category
         outdir.mkdir(parents=True, exist_ok=True)
         return outdir
 
@@ -414,6 +469,160 @@ class BaseTierHarness(NumericIntegrityMixin):
         
         slope, _ = np.linalg.lstsq(Aw, yw, rcond=None)[0]
         return float(abs(slope))
+    
+    def compute_field_energy(
+        self,
+        E,
+        E_prev,
+        dt: float,
+        dx: float,
+        c: float,
+        chi,
+        dims: str = '3d'
+    ) -> float:
+        """
+        Compute total Klein-Gordon field energy (universal across all tiers).
+        
+        Energy functional:
+            E_total = ∫ [½(∂E/∂t)² + ½c²|∇E|² + ½χ²E²] dV
+        
+        Components:
+            - Kinetic:   ½∫(∂E/∂t)² dV
+            - Gradient:  ½∫c²|∇E|² dV
+            - Potential: ½∫χ²E² dV
+        
+        This is the SINGLE SOURCE OF TRUTH for energy calculation.
+        All tiers should use this method instead of implementing their own.
+        
+        Args:
+            E: Current field state (1D, 2D, or 3D array)
+            E_prev: Previous field state (for time derivative)
+            dt: Time step
+            dx: Grid spacing (assumed uniform)
+            c: Wave speed (natural units, typically 1.0)
+            chi: Mass field parameter (scalar or array matching E shape)
+            dims: Dimensionality - '1d', '2d', or '3d'
+            
+        Returns:
+            Total energy (scalar float)
+            
+        Example:
+            >>> energy = harness.compute_field_energy(E, E_prev, dt, dx, c, chi, dims='3d')
+            >>> energy_drift = abs(energy - energy_initial) / energy_initial
+        
+        Notes:
+            - Uses 2nd-order central differences for spatial derivatives
+            - Assumes periodic boundary conditions (via roll)
+            - Backend-agnostic (works with NumPy or CuPy arrays)
+        """
+        # Get backend module (numpy or cupy)
+        try:
+            from core.lfm_backend import get_array_module
+            xp = get_array_module(E)
+        except Exception:
+            xp = self.xp
+        
+        # Time derivative: ∂E/∂t ≈ (E - E_prev) / dt
+        Et = (E - E_prev) / dt
+        
+        # Spatial derivatives with periodic boundaries
+        if dims == '1d':
+            # 1D: ∂E/∂x using central difference
+            Ex = (xp.roll(E, -1) - xp.roll(E, 1)) / (2 * dx)
+            grad_sq = Ex * Ex
+            dV = dx
+        elif dims == '2d':
+            # 2D: ∇E = (∂E/∂x, ∂E/∂y)
+            Ex = (xp.roll(E, -1, axis=1) - xp.roll(E, 1, axis=1)) / (2 * dx)
+            Ey = (xp.roll(E, -1, axis=0) - xp.roll(E, 1, axis=0)) / (2 * dx)
+            grad_sq = Ex * Ex + Ey * Ey
+            dV = dx * dx
+        else:  # 3d
+            # 3D: ∇E = (∂E/∂x, ∂E/∂y, ∂E/∂z)
+            Ex = (xp.roll(E, -1, axis=2) - xp.roll(E, 1, axis=2)) / (2 * dx)
+            Ey = (xp.roll(E, -1, axis=1) - xp.roll(E, 1, axis=1)) / (2 * dx)
+            Ez = (xp.roll(E, -1, axis=0) - xp.roll(E, 1, axis=0)) / (2 * dx)
+            grad_sq = Ex * Ex + Ey * Ey + Ez * Ez
+            dV = dx * dx * dx
+        
+        # Energy density: ε(x) = ½[(∂E/∂t)² + c²|∇E|² + χ²E²]
+        chi_sq = chi * chi if not hasattr(chi, 'shape') else chi * chi
+        energy_density = 0.5 * (Et * Et + c * c * grad_sq + chi_sq * E * E)
+        
+        # Total energy: E_total = ∫ ε(x) dV ≈ Σ ε(xᵢ) · dV
+        total_energy = xp.sum(energy_density) * dV
+        
+        # Convert to Python float (works with both numpy and cupy)
+        try:
+            return float(total_energy)
+        except Exception:
+            # Fallback for cupy arrays
+            return float(xp.asnumpy(total_energy))
+    
+    def make_lattice_params(
+        self,
+        dt: float,
+        dx: float,
+        c: float,
+        chi,
+        **kwargs
+    ) -> dict:
+        """
+        Create standardized parameter dict for lattice_step() calls.
+        
+        Eliminates boilerplate and ensures consistent parameter naming
+        across all tier tests. All tier tests should use this helper
+        instead of manually constructing parameter dicts.
+        
+        Standard keys:
+            - dt: Time step
+            - dx: Spatial step (uniform grid assumed)
+            - alpha: c² (correct form for Klein-Gordon equation)
+            - beta: Velocity scaling (default 1.0)
+            - chi: Mass field parameter
+            - backend: Physics backend ('baseline' or 'fused')
+        
+        Args:
+            dt: Time step
+            dx: Spatial grid spacing
+            c: Wave speed (natural units)
+            chi: Mass field parameter (scalar or array)
+            **kwargs: Additional tier-specific parameters
+                     (e.g., B_field for EM tests, source terms, etc.)
+        
+        Returns:
+            Dict with standardized keys ready for lattice_step()
+            
+        Example:
+            >>> params = harness.make_lattice_params(dt, dx, c, chi)
+            >>> E_next = lattice_step(E, E_prev, params)
+            
+            >>> # With tier-specific additions:
+            >>> params = harness.make_lattice_params(
+            ...     dt, dx, c, chi,
+            ...     B_field=B, source=source_term
+            ... )
+        
+        Notes:
+            - Always uses alpha=c² (not 'c' key) for correct equation form
+            - Automatically includes backend from harness state
+            - Additional kwargs merged without overwriting standard keys
+        """
+        params = {
+            'dt': dt,
+            'dx': dx,
+            'alpha': c * c,  # α = c² for Klein-Gordon equation
+            'beta': 1.0,     # Velocity scaling factor
+            'chi': chi,
+            'backend': self.backend
+        }
+        
+        # Merge tier-specific parameters (without overwriting standards)
+        for key, value in kwargs.items():
+            if key not in params:  # Don't allow override of standard keys
+                params[key] = value
+        
+        return params
     
     def start_test_tracking(self, background: bool = False):
         """
@@ -591,4 +800,93 @@ class BaseTierHarness(NumericIntegrityMixin):
         except Exception as e:
             log(f"[cache] Failed to store cache for {test_id}: {e}", "WARN")
 
+        # NEW: Record metrics automatically after test completes (cached or fresh)
+        try:
+            from harness.lfm_test_metrics import TestMetrics
+            metrics_tracker = TestMetrics()
+            
+            # Extract metrics from result object or summary.json
+            metrics_data = self._extract_metrics_for_tracking(
+                test_id, result, output_dir
+            )
+            
+            if metrics_data:
+                metrics_tracker.record_run(test_id, metrics_data)
+                log(f"[metrics] Recorded run metrics for {test_id}", "INFO")
+        except Exception as e:
+            log(f"[metrics] Failed to record metrics for {test_id}: {e}", "WARN")
+            # Don't fail test on metrics errors
+
         return result
+
+    def _extract_metrics_for_tracking(
+        self, 
+        test_id: str, 
+        result: Any, 
+        output_dir: Path
+    ) -> Optional[Dict]:
+        """
+        Extract metrics from test result for TestMetrics tracking.
+        
+        Handles both:
+        - Fresh test runs (result object with attributes)
+        - Cached results (reconstructed from summary.json)
+        
+        Args:
+            test_id: Test identifier
+            result: Test result object (may be fresh or cached)
+            output_dir: Directory containing test results
+        
+        Returns:
+            Dict with keys: exit_code, runtime_sec, peak_cpu_percent,
+            peak_memory_mb, peak_gpu_memory_mb, timestamp
+            Or None if metrics cannot be extracted
+        """
+        import time
+        
+        metrics = {
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+        
+        # Try extracting from result object
+        if hasattr(result, 'passed'):
+            metrics["exit_code"] = 0 if result.passed else 1
+        if hasattr(result, 'runtime_sec'):
+            metrics["runtime_sec"] = result.runtime_sec
+        if hasattr(result, 'peak_cpu_percent'):
+            metrics["peak_cpu_percent"] = result.peak_cpu_percent
+        if hasattr(result, 'peak_memory_mb'):
+            metrics["peak_memory_mb"] = result.peak_memory_mb
+        if hasattr(result, 'peak_gpu_memory_mb'):
+            metrics["peak_gpu_memory_mb"] = result.peak_gpu_memory_mb
+        
+        # If result object incomplete, try summary.json
+        summary_path = output_dir / "summary.json"
+        if summary_path.exists():
+            try:
+                data = json.loads(summary_path.read_text(encoding='utf-8'))
+                
+                # Override with summary.json data (more reliable for cached results)
+                if "passed" in data:
+                    metrics["exit_code"] = 0 if data["passed"] else 1
+                if "runtime_sec" in data:
+                    metrics["runtime_sec"] = data["runtime_sec"]
+                if "peak_cpu_percent" in data:
+                    metrics["peak_cpu_percent"] = data["peak_cpu_percent"]
+                if "peak_memory_mb" in data:
+                    metrics["peak_memory_mb"] = data["peak_memory_mb"]
+                if "peak_gpu_memory_mb" in data:
+                    metrics["peak_gpu_memory_mb"] = data["peak_gpu_memory_mb"]
+            except Exception as e:
+                log(f"[metrics] Error reading summary.json: {e}", "WARN")
+        
+        # Ensure required fields present
+        if "exit_code" not in metrics or "runtime_sec" not in metrics:
+            return None
+        
+        # Set defaults for optional fields
+        metrics.setdefault("peak_cpu_percent", 100.0)
+        metrics.setdefault("peak_memory_mb", 500.0)
+        metrics.setdefault("peak_gpu_memory_mb", 0.0)
+        
+        return metrics

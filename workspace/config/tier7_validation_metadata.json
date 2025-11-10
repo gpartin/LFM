@@ -1,0 +1,153 @@
+{
+  "_comment": "TIER 7 THERMODYNAMICS VALIDATION METADATA",
+  "_version": "0.1.0",
+  "_date_created": "2025-11-09",
+  "_status": "DRAFT — Conservative thresholds for baseline validation",
+  "_purpose": "Validation criteria for Tier 7 thermodynamic emergence tests. Focus: entropy increase, irreversibility, equipartition, thermalization timescales.",
+
+  "global_requirements": {
+    "energy_conservation": {
+      "description": "Total energy conservation in isolated system",
+      "measurement": "relative_drift = |E_final - E_initial| / |E_initial|",
+      "mandatory": true,
+      "default_threshold": 0.02,
+      "rationale": "Statistical mechanics requires microcanonical ensemble (fixed total energy). Allow 2% for numerical drift over long runs."
+    },
+    "numerical_method": {
+      "time_integrator": "Verlet (2nd-order) for E-field",
+      "spatial_stencil": "2nd-order central difference",
+      "boundary_conditions": "periodic (required for thermalization)",
+      "precision": "float64",
+      "run_duration": "Long-time integration (typically >1000 characteristic periods)"
+    },
+    "validation_hierarchy": [
+      "1. Entropy increase (2nd law)",
+      "2. Irreversibility (time asymmetry)",
+      "3. Equipartition (energy distribution across modes)",
+      "4. Thermalization timescale"
+    ]
+  },
+
+  "tests": {
+    "THERM-01": {
+      "name": "Entropy increase — isolated system",
+      "physics_property": "Second law: entropy monotonically increases (or stays constant)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "entropy_change",
+          "description": "ΔS = S_final - S_initial (should be ≥ 0)",
+          "threshold_min": 0.0
+        },
+        "entropy_monotonicity": {
+          "description": "dS/dt ≥ 0 at all timesteps (within numerical tolerance)",
+          "threshold_violations": 0.05,
+          "rationale": "Allow <5% of timesteps to show small negative fluctuations due to finite sampling"
+        },
+        "energy_conservation": {
+          "threshold": 0.02
+        }
+      },
+      "pass_criteria": "entropy_change >= 0.0 AND monotonicity_violations < 0.05 AND energy_drift < 0.02"
+    },
+
+    "THERM-02": {
+      "name": "Irreversibility — time asymmetry",
+      "physics_property": "Failure of time-reversed evolution to recover initial state",
+      "validation_criteria": {
+        "primary": {
+          "metric": "irreversibility_measure",
+          "description": "Distance between reversed state and initial state: D = ||E_reversed - E_initial|| / ||E_initial||",
+          "threshold_min": 0.20
+        },
+        "energy_conservation": {
+          "threshold": 0.02
+        }
+      },
+      "pass_criteria": "irreversibility_measure > 0.20 AND energy_drift < 0.02",
+      "rationale": "Significant (>20%) deviation from initial state indicates irreversible thermalization"
+    },
+
+    "THERM-03": {
+      "name": "Equipartition — energy distribution",
+      "physics_property": "Equal energy per degree of freedom (kT/2 per mode)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "equipartition_error",
+          "description": "Std dev of mode energies / mean mode energy",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "threshold": 0.02
+        }
+      },
+      "pass_criteria": "equipartition_error < 0.15 AND energy_drift < 0.02",
+      "rationale": "Statistical fluctuations: σ/μ ~ 1/√N_modes. Expect <15% for N_modes ≥ 100."
+    },
+
+    "THERM-04": {
+      "name": "Thermalization time — relaxation to equilibrium",
+      "physics_property": "Timescale for system to reach thermal equilibrium",
+      "validation_criteria": {
+        "primary": {
+          "metric": "thermalization_time_error",
+          "description": "|(t_measured - t_expected) / t_expected|",
+          "threshold": 0.30
+        },
+        "energy_conservation": {
+          "threshold": 0.02
+        }
+      },
+      "pass_criteria": "thermalization_time_error < 0.30 AND energy_drift < 0.02",
+      "rationale": "Relaxation timescale depends on nonlinearity, coupling strength. Allow 30% uncertainty."
+    },
+
+    "THERM-05": {
+      "name": "Temperature emergence — effective thermal ensemble",
+      "physics_property": "Emergent effective temperature from mode distribution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "temperature_fit_quality",
+          "description": "R² of Boltzmann distribution fit to mode energies",
+          "threshold_min": 0.90
+        },
+        "temperature_consistency": {
+          "description": "Temperature measured from different observables agrees within 10%",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.02
+        }
+      },
+      "pass_criteria": "temperature_fit_quality > 0.90 AND temperature_consistency < 0.10 AND energy_drift < 0.02"
+    }
+  },
+
+  "tier_summary": {
+    "total_tests": 5,
+    "rationale": "Smallest tier — thermodynamics is emergent from microscopic LFM dynamics, not fundamental. These tests validate statistical mechanics emergence."
+  },
+
+  "needed_evaluators": [
+    "evaluate_entropy_change(meta, tid, dS, violations_fraction)",
+    "evaluate_irreversibility(meta, tid, distance_metric)",
+    "evaluate_equipartition(meta, tid, mode_energy_std_over_mean)",
+    "evaluate_thermalization_time(meta, tid, t_measured, t_expected)",
+    "evaluate_temperature_emergence(meta, tid, R2_fit, temp_consistency)"
+  ],
+
+  "implementation_notes": {
+    "status": "Tier 7 already has Tier7Harness(BaseTierHarness) ✅",
+    "refactor_scope": "Add metadata-driven validation; integrate evaluator helpers",
+    "computational_challenge": "Long runs (>1000 periods) for thermalization — expect ~5-30 min/test on GPU",
+    "next_steps": [
+      "1. Run baseline validation on THERM-01, THERM-03 to verify thresholds",
+      "2. Implement thermodynamics-specific evaluators (entropy, equipartition, temp fitting)",
+      "3. Integrate evaluators into existing harness",
+      "4. Lock metadata after baseline sweep"
+    ],
+    "known_issues": [
+      "THERM-02 (irreversibility) may require very long runs to overcome Poincaré recurrence",
+      "THERM-05 (temperature) requires careful mode energy sampling and Boltzmann fit"
+    ]
+  }
+}

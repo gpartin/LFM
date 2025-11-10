@@ -1,0 +1,379 @@
+{
+  "_comment": "TIER 5 ELECTROMAGNETIC VALIDATION METADATA",
+  "_version": "0.1.0",
+  "_date_created": "2025-11-09",
+  "_status": "DRAFT — Conservative thresholds for baseline validation",
+  "_purpose": "Validation criteria for Tier 5 electromagnetic tests. Focus: Maxwell equations emergence, Gauss/Ampère/Faraday laws, EM wave propagation.",
+
+  "global_requirements": {
+    "energy_conservation": {
+      "description": "Total EM field energy conservation",
+      "measurement": "relative_drift = |E_final - E_initial| / |E_initial|",
+      "mandatory": true,
+      "default_threshold": 0.01,
+      "rationale": "Static or slowly-varying χ fields conserve energy. Tests with sources/sinks use diagnostic tracking."
+    },
+    "numerical_method": {
+      "time_integrator": "Verlet (2nd-order) or explicit RK for coupled systems",
+      "spatial_stencil": "2nd-order central difference",
+      "boundary_conditions": "periodic or absorbing (test-specific)",
+      "precision": "float64"
+    },
+    "validation_hierarchy": [
+      "1. Maxwell residual (divergence/curl equation satisfaction)",
+      "2. Energy conservation",
+      "3. Wave speed accuracy (c vs measured)"
+    ]
+  },
+
+  "tests": {
+    "EM-01": {
+      "name": "Gauss's law — static charge",
+      "physics_property": "∇·E = ρ/ε₀ verification for point charge",
+      "validation_criteria": {
+        "primary": {
+          "metric": "maxwell_residual",
+          "description": "|∇·E - ρ/ε₀| / |ρ/ε₀|",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "maxwell_residual < 0.05 AND energy_drift < 0.001"
+    },
+
+    "EM-02": {
+      "name": "Ampère's law — steady current",
+      "physics_property": "∇×B = μ₀J verification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "maxwell_residual",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "maxwell_residual < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-03": {
+      "name": "Faraday's law — time-varying flux",
+      "physics_property": "∇×E = -∂B/∂t verification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "maxwell_residual",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "maxwell_residual < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-04": {
+      "name": "EM wave equation",
+      "physics_property": "Wave equation satisfaction: ∇²E = (1/c²)∂²E/∂t²",
+      "validation_criteria": {
+        "primary": {
+          "metric": "wave_equation_residual",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "wave_equation_residual < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-05": {
+      "name": "Poynting vector — energy flux",
+      "physics_property": "Energy flux S = E×B verification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "poynting_flux_error",
+          "description": "|(S_measured - S_theory) / S_theory|",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "poynting_flux_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-06": {
+      "name": "EM wave propagation — plane wave",
+      "physics_property": "Plane wave propagates at speed c",
+      "validation_criteria": {
+        "primary": {
+          "metric": "wave_speed_error",
+          "description": "|(v_measured - c) / c|",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "wave_speed_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-07": {
+      "name": "Field coupling — E↔B mutual induction",
+      "physics_property": "E and B fields couple via Maxwell equations",
+      "validation_criteria": {
+        "primary": {
+          "metric": "coupling_strength_error",
+          "description": "Deviation from expected E-B amplitude ratio",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "coupling_strength_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-08": {
+      "name": "Polarization — linear",
+      "physics_property": "Linear polarization preservation",
+      "validation_criteria": {
+        "primary": {
+          "metric": "polarization_drift",
+          "description": "Rotation of polarization vector",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "polarization_drift < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-09": {
+      "name": "Polarization — circular",
+      "physics_property": "Circular polarization maintenance",
+      "validation_criteria": {
+        "primary": {
+          "metric": "polarization_ellipticity",
+          "description": "Deviation from circular (ellipticity error)",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "polarization_ellipticity < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-10": {
+      "name": "Dispersion — frequency-dependent propagation",
+      "physics_property": "Dispersion relation ω(k) verification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-11": {
+      "name": "Radiation — accelerated charge",
+      "physics_property": "Larmor formula verification for radiated power",
+      "validation_criteria": {
+        "primary": {
+          "metric": "larmor_power_error",
+          "description": "|(P_measured - P_Larmor) / P_Larmor|",
+          "threshold": 0.20
+        },
+        "energy_conservation": {
+          "role": "diagnostic",
+          "note": "Energy radiated away; track as diagnostic"
+        }
+      },
+      "pass_criteria": "larmor_power_error < 0.20"
+    },
+
+    "EM-12": {
+      "name": "Reflection — interface boundary",
+      "physics_property": "Fresnel reflection coefficients",
+      "validation_criteria": {
+        "primary": {
+          "metric": "reflection_coefficient_error",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "reflection_coefficient_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-13": {
+      "name": "Transmission — interface boundary",
+      "physics_property": "Fresnel transmission coefficients",
+      "validation_criteria": {
+        "primary": {
+          "metric": "transmission_coefficient_error",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "transmission_coefficient_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-14": {
+      "name": "Antenna — dipole radiation pattern",
+      "physics_property": "Dipole radiation angular distribution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "radiation_pattern_error",
+          "description": "Chi-squared vs theoretical dipole pattern",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "role": "diagnostic"
+        }
+      },
+      "pass_criteria": "radiation_pattern_error < 0.15"
+    },
+
+    "EM-15": {
+      "name": "Cavity — resonant modes",
+      "physics_property": "Cavity resonance frequency quantization",
+      "validation_criteria": {
+        "primary": {
+          "metric": "cavity_mode_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "cavity_mode_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "EM-16": {
+      "name": "Waveguide — mode propagation",
+      "physics_property": "Waveguide cutoff frequency and mode structure",
+      "validation_criteria": {
+        "primary": {
+          "metric": "waveguide_mode_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "waveguide_mode_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "EM-17": {
+      "name": "Interference — two-source",
+      "physics_property": "Interference fringe pattern",
+      "validation_criteria": {
+        "primary": {
+          "metric": "fringe_visibility",
+          "description": "(I_max - I_min)/(I_max + I_min)",
+          "threshold_min": 0.80
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "fringe_visibility > 0.80 AND energy_drift < 0.01"
+    },
+
+    "EM-18": {
+      "name": "Diffraction — single slit",
+      "physics_property": "Single-slit diffraction pattern",
+      "validation_criteria": {
+        "primary": {
+          "metric": "diffraction_minima_error",
+          "description": "Position error of diffraction minima",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "diffraction_minima_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-19": {
+      "name": "Diffraction — double slit",
+      "physics_property": "Double-slit interference + diffraction",
+      "validation_criteria": {
+        "primary": {
+          "metric": "double_slit_pattern_error",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "double_slit_pattern_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "EM-20": {
+      "name": "Coherence — temporal",
+      "physics_property": "Temporal coherence length measurement",
+      "validation_criteria": {
+        "primary": {
+          "metric": "coherence_length_error",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "coherence_length_error < 0.15 AND energy_drift < 0.01"
+    },
+
+    "EM-21": {
+      "name": "Coherence — spatial",
+      "physics_property": "Spatial coherence width measurement",
+      "validation_criteria": {
+        "primary": {
+          "metric": "coherence_width_error",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "coherence_width_error < 0.15 AND energy_drift < 0.01"
+    }
+  },
+
+  "tier_summary": {
+    "total_tests": 21
+  },
+
+  "needed_evaluators": [
+    "evaluate_maxwell_residual(meta, tid, residual)",
+    "evaluate_wave_speed(meta, tid, v_measured, c_expected)",
+    "evaluate_poynting_flux(meta, tid, flux_error)",
+    "evaluate_divergence_error(meta, tid, div_err)"
+  ],
+
+  "implementation_notes": {
+    "status": "Tier 5 already has Tier5ElectromagneticHarness(BaseTierHarness) ✅",
+    "caching": "Already uses run_test_with_cache() ✅",
+    "refactor_scope": "Add metadata-driven validation; remove hardcoded thresholds from test configs",
+    "next_steps": [
+      "1. Run baseline validation on EM-01, EM-06, EM-15 to verify thresholds",
+      "2. Implement EM-specific evaluators",
+      "3. Integrate evaluators into existing harness",
+      "4. Lock metadata after baseline sweep"
+    ]
+  }
+}

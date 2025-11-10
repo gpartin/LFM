@@ -1,0 +1,303 @@
+{
+  "_comment": "TIER 4 QUANTIZATION & SPECTRA VALIDATION METADATA",
+  "_version": "0.1.0",
+  "_date_created": "2025-11-09",
+  "_status": "DRAFT — Conservative thresholds for baseline validation",
+  "_purpose": "Validation criteria for Tier 4 quantization tests. Focus: bound states, tunneling, spectral linearity, quantum-like phenomena in Klein-Gordon field.",
+
+  "global_requirements": {
+    "energy_conservation": {
+      "description": "Energy conservation for bound state and spectral tests",
+      "measurement": "relative_drift = |E_final - E_initial| / |E_initial|",
+      "mandatory": true,
+      "default_threshold": 0.01,
+      "rationale": "Most quantization tests use static χ potentials (conservative). Exception: tests with explicit noise/damping."
+    },
+    "numerical_method": {
+      "time_integrator": "Verlet (2nd-order)",
+      "spatial_stencil": "2nd-order central difference",
+      "boundary_conditions": "periodic or reflecting (test-specific)",
+      "precision": "float64"
+    },
+    "validation_hierarchy": [
+      "1. Primary quantization metric (eigenvalue, tunneling probability, etc.)",
+      "2. Energy conservation",
+      "3. Numerical convergence (spectral accuracy)"
+    ]
+  },
+
+  "tests": {
+    "QUAN-01": {
+      "name": "Energy transfer — low energy modes",
+      "physics_property": "Energy conservation during mode exchange (modes 1↔2)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "energy_drift",
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "energy_drift < 0.01"
+    },
+
+    "QUAN-02": {
+      "name": "Energy transfer — high energy modes",
+      "physics_property": "Energy conservation during high-energy mode exchange (modes 3↔5)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "energy_drift",
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "energy_drift < 0.01"
+    },
+
+    "QUAN-03": {
+      "name": "Spectral linearity — coarse resolution",
+      "physics_property": "Spectral response scales linearly with amplitude",
+      "validation_criteria": {
+        "primary": {
+          "metric": "spectral_linearity_error",
+          "description": "Max deviation from linear scaling",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "spectral_linearity_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "QUAN-04": {
+      "name": "Spectral linearity — fine resolution",
+      "physics_property": "High-resolution spectral linearity verification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "spectral_linearity_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "spectral_linearity_error < 0.02 AND energy_drift < 0.01",
+      "rationale": "Finer resolution allows tighter tolerance"
+    },
+
+    "QUAN-05": {
+      "name": "Phase-amplitude coupling — low noise",
+      "physics_property": "Phase and amplitude decorrelation in low-noise regime",
+      "validation_criteria": {
+        "primary": {
+          "metric": "phase_amplitude_coupling",
+          "description": "Coupling strength (0=independent, 1=fully coupled)",
+          "threshold_max": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "phase_amplitude_coupling < 0.10 AND energy_drift < 0.01"
+    },
+
+    "QUAN-06": {
+      "name": "Phase-amplitude coupling — high noise",
+      "physics_property": "Phase-amplitude decorrelation with environmental noise",
+      "validation_criteria": {
+        "primary": {
+          "metric": "phase_amplitude_coupling",
+          "threshold_max": 0.15
+        },
+        "energy_conservation": {
+          "role": "diagnostic",
+          "note": "Noise breaks conservation; track as diagnostic"
+        }
+      },
+      "pass_criteria": "phase_amplitude_coupling < 0.15"
+    },
+
+    "QUAN-07": {
+      "name": "Wavefront stability",
+      "physics_property": "Plane wave maintains coherence over propagation",
+      "validation_criteria": {
+        "primary": {
+          "metric": "wavefront_dispersion",
+          "description": "Spatial phase variation growth",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "wavefront_dispersion < 0.15 AND energy_drift < 0.01"
+    },
+
+    "QUAN-08": {
+      "name": "Lattice blowout resistance",
+      "physics_property": "Field remains bounded under extreme initial conditions",
+      "validation_criteria": {
+        "primary": {
+          "metric": "max_field_amplitude",
+          "description": "Peak field value after evolution",
+          "threshold_max": 100.0
+        },
+        "energy_conservation": {
+          "role": "diagnostic"
+        }
+      },
+      "pass_criteria": "max_field_amplitude < 100.0"
+    },
+
+    "QUAN-09": {
+      "name": "Planck distribution",
+      "physics_property": "Thermal equilibrium spectral distribution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "planck_fit_error",
+          "description": "Chi-squared error vs Planck distribution",
+          "threshold": 0.50
+        },
+        "energy_conservation": {
+          "role": "diagnostic"
+        }
+      },
+      "pass_criteria": "planck_fit_error < 0.50",
+      "rationale": "Large tolerance for statistical distribution fit"
+    },
+
+    "QUAN-10": {
+      "name": "Zero-point energy",
+      "physics_property": "Ground state energy in quantum-like potential",
+      "validation_criteria": {
+        "primary": {
+          "metric": "zero_point_error",
+          "description": "|(E_measured - E_theory) / E_theory|",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "zero_point_error < 0.15 AND energy_drift < 0.01"
+    },
+
+    "QUAN-11": {
+      "name": "Wave-particle duality",
+      "physics_property": "Complementarity between wave and particle descriptions",
+      "validation_criteria": {
+        "primary": {
+          "metric": "duality_visibility_drop",
+          "description": "Fringe visibility reduction when particle-like",
+          "threshold_max": 0.20
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "duality_visibility_drop < 0.20 AND energy_drift < 0.01"
+    },
+
+    "QUAN-12": {
+      "name": "Cavity spectroscopy",
+      "physics_property": "Resonant modes in confined geometry",
+      "validation_criteria": {
+        "primary": {
+          "metric": "cavity_mode_error",
+          "description": "Frequency error vs theoretical cavity modes",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "cavity_mode_error < 0.02 AND energy_drift < 0.01"
+    },
+
+    "QUAN-13": {
+      "name": "Threshold test",
+      "physics_property": "Critical parameter threshold identification",
+      "validation_criteria": {
+        "primary": {
+          "metric": "threshold_error",
+          "description": "Uncertainty in measured threshold parameter",
+          "threshold": 0.30
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "threshold_error < 0.30 AND energy_drift < 0.01"
+    },
+
+    "QUAN-14": {
+      "name": "Bound state quantization",
+      "physics_property": "Discrete energy levels in confining potential",
+      "validation_criteria": {
+        "primary": {
+          "metric": "bound_state_error",
+          "description": "|(E_n_measured - E_n_theory) / E_n_theory|",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "bound_state_error < 0.02 AND energy_drift < 0.01"
+    },
+
+    "QUAN-15": {
+      "name": "Tunneling test",
+      "physics_property": "Barrier penetration probability",
+      "validation_criteria": {
+        "primary": {
+          "metric": "tunneling_error",
+          "description": "|(T_measured - T_WKB) / T_WKB|",
+          "threshold": 2.0
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "tunneling_error < 2.0 AND energy_drift < 0.01",
+      "rationale": "Large tolerance due to exponential sensitivity to barrier parameters"
+    },
+
+    "QUAN-16": {
+      "name": "Uncertainty test",
+      "physics_property": "Heisenberg uncertainty relation ΔxΔp ≥ ℏ/2",
+      "validation_criteria": {
+        "primary": {
+          "metric": "uncertainty_violation",
+          "description": "Fractional violation of uncertainty bound",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "uncertainty_violation < 0.05 AND energy_drift < 0.01"
+    }
+  },
+
+  "tier_summary": {
+    "total_tests": 16,
+    "note": "Config lists 14 tests; metadata includes 16 for completeness (QUAN-05/06 split)"
+  },
+
+  "needed_evaluators": [
+    "evaluate_eigenvalue_error(meta, tid, eig_measured, eig_theory)",
+    "evaluate_tunneling_probability(meta, tid, T_measured, T_theory)",
+    "evaluate_spectral_linearity(meta, tid, linearity_err)",
+    "evaluate_uncertainty_product(meta, tid, delta_x_delta_p, hbar_over_2)"
+  ],
+
+  "implementation_notes": {
+    "priority": "Create Tier4Harness(BaseTierHarness) to unify 13 run_* functions",
+    "refactor_scope": "Consolidate functional test runners into single harness class with run_variant() dispatcher",
+    "next_steps": [
+      "1. Run baseline validation on QUAN-01, QUAN-14, QUAN-15 to verify thresholds",
+      "2. Implement quantization-specific evaluators",
+      "3. Refactor run_tier4_quantization.py to harness pattern",
+      "4. Lock metadata after baseline sweep"
+    ]
+  }
+}

@@ -284,6 +284,9 @@ def update_master_test_status(results_dir: Path = None):
             2: {"name": "Gravity Analogue", "prefix": "GRAV", "expected": 25, "dir": "Gravity"},
             3: {"name": "Energy Conservation", "prefix": "ENER", "expected": 11, "dir": "Energy"},
             4: {"name": "Quantization", "prefix": "QUAN", "expected": 9, "dir": "Quantization"},
+            5: {"name": "Electromagnetic", "prefix": "EM", "expected": 21, "dir": "Electromagnetic"},
+            6: {"name": "Multi-Domain Coupling", "prefix": "COUP", "expected": 12, "dir": "Coupling"},
+            7: {"name": "Thermodynamics & Statistical Mechanics", "prefix": "THERM", "expected": 5, "dir": "Thermodynamics"},
         }
     
     # Load presentation overrides (optional)

@@ -40,6 +40,13 @@ import matplotlib.pyplot as plt
 from core.lfm_backend import to_numpy, get_array_module
 from utils.lfm_results import ensure_dirs, write_csv, save_summary, update_master_test_status
 from ui.lfm_console import log
+from ui.plots_common import (
+    plot_energy_over_time,
+    plot_dual_series, 
+    plot_theory_vs_measured,
+    plot_scatter_with_fit,
+    plot_multi_series
+)
 from harness.lfm_test_harness import BaseTierHarness
 from harness.lfm_test_metrics import TestMetrics, compute_relative_error
 from physics.em_analytical_framework import (
@@ -2196,7 +2203,8 @@ class Tier5ElectromagneticHarness(BaseTierHarness):
         # Set output directory (anchor under workspace/results)
         out_root = BaseTierHarness.resolve_outdir(config.get("output_dir", "results/Electromagnetic"))
         
-        super().__init__(config, out_root, _default_config_name(), backend=backend)
+        # tier_number=5 triggers auto metadata loading in BaseTierHarness
+        super().__init__(config, out_root, _default_config_name(), backend=backend, tier_number=5)
         self.tier_name = "Electromagnetic"
         self.tier_number = 5
         self.config = config

@@ -3,14 +3,16 @@
   "description": "Equipartition Theorem \u2014 Energy Distribution Across Modes",
   "passed": true,
   "metrics": {
-    "coefficient_of_variation": 1.3694611089018094,
-    "mean_energy_final": 1.1263923803512887,
-    "std_energy_final": 1.5425505582544246,
+    "coefficient_of_variation": 1.3694611089018394,
+    "mean_energy_final": 1.1263923803517144,
+    "std_energy_final": 1.5425505582550412,
     "modes_checked": 8,
     "tolerance": 1.5
   },
-  "runtime_sec": 0.43758082389831543,
+  "runtime_sec": 32.693196296691895,
+  "tier": 7,
+  "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T03:44:05.099938Z"
+  "timestamp": "2025-11-10T22:17:19.658868Z"
 }

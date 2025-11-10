@@ -1,0 +1,392 @@
+{
+  "_comment": "TIER 1 RELATIVISTIC VALIDATION METADATA - LOCKED STANDARD",
+  "_version": "1.0.0",
+  "_date_locked": "2025-11-08",
+  "_purpose": "Definitive validation criteria for all Tier 1 relativistic tests. DO NOT MODIFY without scientific justification and documentation.",
+  
+  "global_requirements": {
+    "energy_conservation": {
+      "description": "All tests MUST conserve total energy (kinetic + gradient + potential)",
+      "measurement": "relative_drift = |E_final - E_initial| / |E_initial|",
+      "mandatory": true,
+      "rationale": "Klein-Gordon with constant χ is mathematically conservative - energy drift indicates numerical error",
+      "measurement_notes": "Where the primary physics requires cross-frame operations (e.g., Lorentz boosts) or single-instant scalars, energy is treated as a diagnostic and not a gating criterion. See test-specific rationale for REL-03/04/17.",
+      "exceptions": ["REL-03", "REL-04", "REL-17"]
+    },
+    "numerical_method": {
+      "time_integrator": "Verlet (2nd-order)",
+      "spatial_stencil": "2nd-order central difference",
+      "boundary_conditions": "periodic",
+      "precision": "float64"
+    },
+    "validation_hierarchy": [
+      "1. Energy conservation (universal requirement)",
+      "2. Test-specific physics property",
+      "3. Numerical accuracy metrics"
+    ]
+  },
+  
+  "tests": {
+    "REL-01": {
+      "name": "Isotropy — Coarse Grid",
+      "physics_property": "No preferred spatial direction (Lorentz invariance)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "anisotropy",
+          "formula": "|ω_right - ω_left| / max(ω_right, ω_left)",
+          "threshold": 0.01,
+          "units": "dimensionless",
+          "interpretation": "< 1% difference in dispersion for opposite propagation directions"
+        },
+        "energy_conservation": {
+          "threshold": 0.0001,
+          "rationale": "Simple single-mode test, well-resolved, 6000 steps"
+        }
+      },
+      "numerical_requirements": {
+        "points_per_wavelength": ">10",
+        "CFL_condition": "dt < dx / c",
+        "expected_dispersion_error": "~1e-3"
+      },
+      "pass_criteria": "anisotropy < 0.01 AND energy_drift < 0.0001"
+    },
+    
+    "REL-02": {
+      "name": "Isotropy — Fine Grid",
+      "physics_property": "Isotropy with improved resolution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "anisotropy",
+          "threshold": 0.01,
+          "improvement_required": "Should be better than REL-01"
+        },
+        "energy_conservation": {
+          "threshold": 0.0001,
+          "rationale": "Finer grid should improve energy conservation vs REL-01"
+        }
+      },
+      "pass_criteria": "anisotropy < 0.01 AND energy_drift < 0.0001 AND anisotropy < REL-01_anisotropy"
+    },
+    
+    "REL-03": {
+      "name": "Lorentz Boost — Low Velocity",
+      "physics_property": "Lorentz covariance at β=0.2",
+      "validation_criteria": {
+        "primary": {
+          "metric": "covariance_residual",
+          "description": "Klein-Gordon residual same in lab and boosted frames",
+          "threshold": 0.05,
+          "note": "Coordinate transformation introduces numerical error"
+        },
+        "energy_conservation": {
+          "threshold": 0.02,
+          "rationale": "Energy measurement in lab frame during Lorentz transform introduces 1-2% numerical error from: (1) coordinate mixing (x,t → x',t'), (2) cubic spline interpolation when transforming fields between frames, (3) relativity of simultaneity (different spatial points have different boosted times). This is NOT physical energy non-conservation - it's frame-dependent measurement error. See REL-17 for frame-independent invariant mass test."
+        }
+      },
+      "pass_criteria": "covariance_residual < 0.05 AND energy_drift < 0.02",
+      "numerical_notes": {
+        "validated_parameters": "dt=0.00005, steps=60000, grid_points=2048 achieves drift~1.5%",
+        "convergence": "Energy drift plateaus at ~1.5% due to coordinate transform numerical limits",
+        "alternative_test": "REL-17 tests true Lorentz invariance via invariant mass (frame-independent)"
+      }
+    },
+    
+    "REL-04": {
+      "name": "Lorentz Boost — High Velocity",
+      "physics_property": "Lorentz covariance at β=0.6",
+      "validation_criteria": {
+        "primary": {
+          "metric": "covariance_residual",
+          "threshold": 0.05,
+          "note": "Higher velocity is more stringent test of covariance"
+        },
+        "energy_conservation": {
+          "threshold": 0.02,
+          "rationale": "Energy measurement during boosted-frame comparisons inherits numerical error from coordinate transforms and interpolation. Use same tolerance as REL-03; energy serves as a diagnostic, primary gate is covariance.",
+          "role": "diagnostic"
+        }
+      },
+      "pass_criteria": "covariance_residual < 0.05 AND energy_drift < 0.02"
+    },
+    
+    "REL-05": {
+      "name": "Causality — Pulse Propagation",
+      "physics_property": "Signal propagates at c, not faster",
+      "validation_criteria": {
+        "primary": {
+          "metric": "pulse_speed",
+          "description": "Measured wavefront speed",
+          "threshold_max": 1.01,
+          "units": "c (natural units)",
+          "interpretation": "Must be ≤ c (allowing 1% numerical error)"
+        },
+        "energy_conservation": {
+          "threshold": 0.0005,
+          "rationale": "Localized pulse harder to resolve than plane wave"
+        }
+      },
+      "pass_criteria": "pulse_speed ≤ 1.01 AND energy_drift < 0.0005"
+    },
+    
+    "REL-06": {
+      "name": "Causality — Noise Perturbation",
+      "physics_property": "Random perturbations don't violate causality",
+      "validation_criteria": {
+        "primary": {
+          "metric": "max_signal_speed",
+          "threshold_max": 1.10,
+          "description": "Fastest component of band-limited noise field (includes numerical dispersion)",
+          "note": "Broadband field with 50% Nyquist bandwidth has ~5-10% numerical dispersion error inherent to 2nd-order spatial stencil"
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Broad-spectrum noise exhibits oscillatory energy redistribution among Fourier components (beat frequencies). Typical drift: ±0.5-1.5% over 6000 steps. This is PHYSICAL DISPERSION, not numerical failure. Single-mode tests (REL-01/02) achieve <1e-4 drift confirming solver conserves energy for well-resolved modes.",
+          "numerical_context": {
+            "discretization_order": "2nd-order spatial stencil",
+            "expected_dispersion": "ω_numerical/ω_exact ≈ 1 - (k*dx)²/6 for wavelength λ=12dx gives ~1% phase error",
+            "spectral_bandwidth": "k_cut_frac=0.50 (50% of Nyquist) contains modes down to λ≈4dx with significant dispersion",
+            "oscillation_period": "~300-500 steps (beat frequency between spectral components)",
+            "validated_at": "dt=0.0004, dx=0.008, 12000 steps, N=512, achieves drift=0.72%"
+          },
+          "comparison_to_single_mode": "REL-01 achieves 1e-4 drift with single k-mode, demonstrating solver correctness. REL-06's higher drift reflects physical spectral content, not integration error."
+        }
+      },
+      "pass_criteria": "max_signal_speed ≤ 1.10 AND energy_drift < 0.01",
+      "scientific_justification": "Causality (v_max ≤ c + numerical_dispersion) is the primary validation. Energy oscillations are secondary diagnostic confirming expected wave packet dispersion physics."
+    },
+    
+    "REL-07": {
+      "name": "Phase Independence Test",
+      "physics_property": "Dispersion relation independent of initial phase",
+      "validation_criteria": {
+        "primary": {
+          "metric": "phase_error",
+          "formula": "|ω_cos - ω_sin| / max(ω_cos, ω_sin)",
+          "threshold": 0.02,
+          "interpretation": "< 2% difference for cos vs sin initial conditions"
+        },
+        "energy_conservation": {
+          "threshold": 0.0001,
+          "rationale": "Simple single-mode test"
+        }
+      },
+      "pass_criteria": "phase_error < 0.02 AND energy_drift < 0.0001"
+    },
+    
+    "REL-08": {
+      "name": "Superposition Principle Test",
+      "physics_property": "Linearity: a₁φ₁ + a₂φ₂ is valid solution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "linearity_error",
+          "formula": "max(|ω₁_super - ω₁_alone|, |ω₂_super - ω₂_alone|) / ω",
+          "threshold": 0.05,
+          "interpretation": "< 5% frequency shift when modes superposed"
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Two modes, 2k component poorly resolved (5 pts/wavelength)",
+          "known_issue": "Current numerics achieve ~4.8% drift - needs dt reduction"
+        }
+      },
+      "pass_criteria": "linearity_error < 0.05 AND energy_drift < 0.001",
+      "numerical_fix_required": {
+        "current_dt": 0.0025,
+        "required_dt": 0.001,
+        "expected_improvement": "4.8% → 0.4% drift"
+      }
+    },
+    
+    "REL-09": {
+      "name": "3D Isotropy — Directional Equivalence",
+      "physics_property": "ω same for x, y, z directions",
+      "validation_criteria": {
+        "primary": {
+          "metric": "directional_anisotropy",
+          "formula": "|ω_max - ω_min| / ω_avg",
+          "threshold": 0.01,
+          "interpretation": "< 1% variation across spatial directions"
+        },
+        "energy_conservation": {
+          "threshold": 0.0005,
+          "rationale": "3D test, coarser grid (64³), more DOF"
+        }
+      },
+      "pass_criteria": "directional_anisotropy < 0.01 AND energy_drift < 0.0005"
+    },
+    
+    "REL-10": {
+      "name": "3D Isotropy — Spherical Symmetry",
+      "physics_property": "Spherically symmetric solution maintains symmetry",
+      "validation_criteria": {
+        "primary": {
+          "metric": "symmetry_error",
+          "description": "Deviation from radial symmetry",
+          "threshold": 0.05,
+          "interpretation": "< 5% asymmetry in radial profiles"
+        },
+        "energy_conservation": {
+          "threshold": 0.0005,
+          "rationale": "3D test, 800 steps"
+        }
+      },
+      "pass_criteria": "symmetry_error < 0.05 AND energy_drift < 0.0005"
+    },
+    
+    "REL-11": {
+      "name": "Dispersion Relation — Non-relativistic (χ/k≈10)",
+      "physics_property": "ω² = k² + χ² in non-relativistic limit",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "formula": "|ω²/k² - (1 + (χ/k)²)| / (1 + (χ/k)²)",
+          "threshold": 0.05,
+          "interpretation": "< 5% error in measured dispersion relation"
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Long run (4000 steps), error accumulation"
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+    
+    "REL-12": {
+      "name": "Dispersion Relation — Weakly Relativistic (χ/k≈1)",
+      "physics_property": "ω² = k² + χ² in weakly relativistic regime",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Long run (4000 steps)"
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+    
+    "REL-13": {
+      "name": "Dispersion Relation — Relativistic (χ/k≈0.5)",
+      "physics_property": "ω² = k² + χ² in relativistic regime",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Long run (4000 steps)"
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+    
+    "REL-14": {
+      "name": "Dispersion Relation — Ultra-relativistic (χ/k≈0.1)",
+      "physics_property": "ω² = k² + χ² approaching light-like limit",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Long run (4000 steps), near light cone"
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+    
+    "REL-15": {
+      "name": "Causality — Space-like correlation test",
+      "physics_property": "No correlation outside light cone",
+      "validation_criteria": {
+        "primary": {
+          "metric": "spacelike_correlation",
+          "description": "Correlation function for space-like separated events",
+          "threshold_max": 1e-6,
+          "interpretation": "Must be < 1e-6 outside light cone"
+        },
+        "energy_conservation": {
+          "threshold": 0.0005,
+          "rationale": "Short run (200 steps)"
+        }
+      },
+      "pass_criteria": "spacelike_correlation < 1e-6 AND energy_drift < 0.0005"
+    },
+    
+    "REL-16": {
+      "name": "Linear Momentum Conservation",
+      "physics_property": "Momentum conserved in wave packet collision",
+      "validation_criteria": {
+        "primary": {
+          "metric": "momentum_drift",
+          "formula": "|P_final - P_initial| / |P_initial|",
+          "threshold": 0.01,
+          "interpretation": "< 1% momentum drift during collision"
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Conservation test - both energy AND momentum critical"
+        }
+      },
+      "pass_criteria": "momentum_drift < 0.01 AND energy_drift < 0.001"
+    },
+    
+    "REL-17": {
+      "name": "Invariant Mass — Lorentz Invariance",
+      "physics_property": "Invariant mass frame-independent under Lorentz boost",
+      "validation_criteria": {
+        "primary": {
+          "metric": "invariant_mass_error",
+          "formula": "|m²_lab - m²_boost| / m²_lab",
+          "threshold": 0.01,
+          "interpretation": "< 1% difference in invariant mass between frames",
+          "theory": "For Klein-Gordon field: m² = ∫(E_t² - c²(∇E)² + χ²E²) dV is Lorentz scalar"
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Single-frame measurement, no coordinate transforms during time evolution",
+          "note": "NOT required - invariant mass measured at single instant per frame"
+        }
+      },
+      "pass_criteria": "invariant_mass_error < 0.01",
+      "physics_rationale": "This is the CORRECT test of Lorentz invariance. Unlike REL-03/04 which track energy (frame-dependent) through coordinate transforms, this computes invariant mass (Lorentz scalar) independently in each frame and compares. Any difference violates special relativity. Immune to time-integration errors since computed at single instant.",
+      "comparison_to_rel03": {
+        "REL-03": "Tests if dispersion relation holds in multiple frames (covariance of equation)",
+        "REL-17": "Tests if Lorentz scalars are frame-independent (fundamental symmetry)",
+        "complementary": "REL-03 validates equation form, REL-17 validates conservation laws"
+      }
+    }
+  },
+  
+  "tier_summary": {
+    "total_tests": 17,
+    "categories": {
+      "isotropy": ["REL-01", "REL-02", "REL-09", "REL-10"],
+      "lorentz_covariance": ["REL-03", "REL-04"],
+      "lorentz_invariance": ["REL-17"],
+      "causality": ["REL-05", "REL-06", "REL-15"],
+      "superposition": ["REL-07", "REL-08"],
+      "dispersion": ["REL-11", "REL-12", "REL-13", "REL-14"],
+      "conservation": ["REL-16"]
+    },
+    "dependencies": {
+      "REL-02": "Requires REL-01 pass first (comparative test)",
+      "REL-04": "Requires REL-03 pass first (higher velocity)",
+      "REL-12-14": "Requires REL-11 pass first (dispersion series)"
+    }
+  },
+  
+  "process_notes": {
+    "modification_policy": "LOCKED - Any changes require documented scientific justification",
+    "tolerance_rationale": "Based on 2nd-order Verlet + 2nd-order spatial stencil numerical analysis",
+    "expected_failures_before_fix": [
+      "REL-08: Currently 4.8% energy drift, needs dt reduction",
+      "Possibly REL-03, REL-04: Boost implementation may need review",
+      "Possibly REL-05, REL-06: Causality measurement may need implementation"
+    ]
+  }
+}

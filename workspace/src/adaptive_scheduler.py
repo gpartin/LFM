@@ -49,6 +49,8 @@ _TIER_TO_RUNNER: Dict[int, str] = {
     3: "run_tier3_energy.py",
     4: "run_tier4_quantization.py",
     5: "run_tier5_electromagnetic.py",
+    6: "run_tier6_coupling.py",  # Added Tier 6 (Coupling) support
+    7: "run_tier7_thermodynamics.py",  # Added Tier 7 (Thermodynamics) support
 }
 
 
@@ -82,6 +84,13 @@ class AdaptiveScheduler:
             str(runner_path),
             "--test", task.test_id,
         ]
+        # Propagate physics backend choice explicitly to runners (baseline/fused)
+        try:
+            backend = os.environ.get("LFM_PHYSICS_BACKEND")
+            if backend in ("baseline", "fused"):
+                cmd.extend(["--backend", backend])
+        except Exception:
+            pass
         # If parallel suite was given a config path in task.config, we could pass it here.
         # The current load_test_configs API generally handles configs internally.
         return cmd
@@ -107,12 +116,11 @@ class AdaptiveScheduler:
             cmd = self._build_command(task)
             if self.verbose:
                 print(f"→ START {task.test_id} (Tier {task.tier}) | cmd: {' '.join(cmd)}")
-            # Use cwd=workspace root so default config paths like 'config/...' resolve
-            # Script dir (src) is still added to sys.path automatically by Python
+            # CRITICAL: All tier runners expect to be launched from src/
+            # Running from workspace/src ensures relative paths and imports resolve per project rules
             src_dir = Path(__file__).resolve().parent
-            workspace_root = src_dir.parent
             # Windows: creationflags to hide new console windows not necessary here
-            proc = subprocess.Popen(cmd, cwd=str(workspace_root), env=env)
+            proc = subprocess.Popen(cmd, cwd=str(src_dir), env=env)
             running.append((task, proc))
             return True
 

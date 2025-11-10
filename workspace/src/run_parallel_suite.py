@@ -127,6 +127,9 @@ def build_test_list_from_ids(test_ids: List[str]) -> List[Tuple[str, int, Dict]]
         "GRAV": 2,
         "ENER": 3,
         "QUAN": 4,
+        "EM": 5,
+        "COUP": 6,
+        "THERM": 7,
         "UNIF": 0
     }
     
@@ -223,12 +226,76 @@ def main():
     # Run tests
     results = scheduler.schedule_tests(test_list, max_concurrent=args.max_concurrent)
     
+    # NEW: Safety net - record any tests missing from metrics
+    try:
+        import time
+        from harness.lfm_test_metrics import TestMetrics
+        metrics_tracker = TestMetrics()
+        
+        results_dir = Path(__file__).parent.parent / "results"
+        recorded_count = 0
+        
+        for test_id, tier, config in test_list:
+            # Check if test has result directory
+            test_dir = None
+            for category_dir in results_dir.iterdir():
+                if category_dir.is_dir():
+                    candidate = category_dir / test_id
+                    if candidate.exists():
+                        test_dir = candidate
+                        break
+            
+            if not test_dir:
+                continue
+            
+            # Check if metrics already recorded (from BaseTierHarness)
+            if test_id in metrics_tracker.data:
+                continue
+            
+            # Extract and record metrics
+            summary_path = test_dir / "summary.json"
+            if summary_path.exists():
+                try:
+                    import json
+                    data = json.loads(summary_path.read_text(encoding='utf-8'))
+                    metrics_data = {
+                        "exit_code": 0 if data.get("passed", False) else 1,
+                        "runtime_sec": data.get("runtime_sec", 0.0),
+                        "peak_cpu_percent": data.get("peak_cpu_percent", 100.0),
+                        "peak_memory_mb": data.get("peak_memory_mb", 500.0),
+                        "peak_gpu_memory_mb": data.get("peak_gpu_memory_mb", 0.0),
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                    }
+                    metrics_tracker.record_run(test_id, metrics_data)
+                    recorded_count += 1
+                    if verbose:
+                        print(f"[metrics] Safety net recorded {test_id}")
+                except Exception as e:
+                    if verbose:
+                        print(f"[metrics] Failed to record {test_id}: {e}")
+        
+        if recorded_count > 0 and verbose:
+            print(f"[metrics] Safety net recorded {recorded_count} additional tests")
+    except Exception as e:
+        if verbose:
+            print(f"[metrics] Safety net failed: {e}")
+    
+    # Update MASTER_TEST_STATUS.csv with latest results
+    try:
+        from utils.lfm_results import update_master_test_status
+        update_master_test_status()
+        if verbose:
+            print("[master_status] Updated MASTER_TEST_STATUS.csv")
+    except Exception as e:
+        if verbose:
+            print(f"[master_status] Failed to update: {e}")
+    
     # Print summary
     print("\n" + "="*70)
     print("FINAL SUMMARY")
     print("="*70)
     print(f"Total runtime: {results['total_runtime_sec']:.1f}s ({results['total_runtime_sec']/60:.1f} min)")
-    print(f"Tests passed: {results['completed']}")
+    print(f"Tests passed: {results['completed'] - results['failed']}")
     print(f"Tests failed: {results['failed']}")
     
     if results['failed'] > 0:

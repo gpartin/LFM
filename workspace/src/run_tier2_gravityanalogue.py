@@ -43,17 +43,24 @@ import numpy as np
 
 from core.lfm_backend import to_numpy
 from ui.lfm_console import log, suite_summary, report_progress
+from utils.result_logging import log_test_result
 from utils.lfm_results import save_summary, write_metadata_bundle, write_csv, update_master_test_status
 from utils.lfm_diagnostics import energy_total
 from ui.lfm_visualizer import visualize_concept
 from harness.lfm_test_harness import BaseTierHarness
 from utils.energy_monitor import EnergyMonitor
 from core.lfm_equation import advance, lattice_step
-from harness.lfm_test_metrics import TestMetrics
+# TestMetrics import removed - metrics now automatically recorded by BaseTierHarness
+# Unified validation framework
+from harness.validation import (
+    load_tier_metadata,
+    aggregate_validation,
+    validation_block,
+)
 # Optional: χ from energy density (Poisson approach, 1D) — dynamic import to avoid hard dependency
 try:
     import importlib as _importlib
-    _chi_mod = _importlib.import_module('chi_field_equation')
+    _chi_mod = _importlib.import_module('physics.chi_field_equation')
     compute_chi_from_energy_poisson = getattr(_chi_mod, 'compute_chi_from_energy_poisson', None)
 except Exception:
     compute_chi_from_energy_poisson = None
@@ -315,7 +322,8 @@ def _default_config_name() -> str:
  
 class Tier2Harness(BaseTierHarness):
     def __init__(self, cfg: Dict, out_root: Path, backend: str = "baseline"):
-        super().__init__(cfg, out_root, config_name="config_tier2_gravityanalogue.json", backend=backend)
+        # tier_number=2 triggers auto metadata loading in BaseTierHarness
+        super().__init__(cfg, out_root, config_name="config_tier2_gravityanalogue.json", backend=backend, tier_number=2)
         self.variants = cfg["variants"]
         
         # Optional per-variant skip flag: allow config to disable expensive or redundant cases
@@ -593,10 +601,10 @@ class Tier2Harness(BaseTierHarness):
             passed = bool(center_ok and profile_ok)
 
             status = "PASS [OK]" if passed else "FAIL [X]"
-            log(f"{tid} {status} self-consistency: omega_center={w_meas:.4f}, |chi_center|={chi_local:.4f}, ratio={ratio:.3f}, err={rel_err*100:.1f}%", "INFO" if passed else "FAIL")
+            log(f"{tid} {status} self-consistency: omega_center={w_meas:.4f}, |chi_center|={chi_local:.4f}, ratio={ratio:.3f}, err={rel_err*100:.1f}%", "PASS" if passed else "FAIL")
             log(f"Profile band: halfwidth={halfw} cells, median_ratio={median_ratio:.3f}, rel_err_median={rel_err_median*100:.2f}% (tol {band_tol*100:.1f}%), center_ok={center_ok}", "INFO")
 
-            # Persist summary
+            # Persist summary (+ unified validation block)
             summary = {
                 "id": tid, "description": desc, "passed": passed,
                 "rel_err_ratio": float(rel_err),
@@ -612,6 +620,16 @@ class Tier2Harness(BaseTierHarness):
                 "center_ok": bool(center_ok),
                 "profile_ok": bool(profile_ok)
             }
+            # Unified validation aggregation
+            try:
+                energy_drift = 0.0  # static chi; single-step local measurement
+                agg = aggregate_validation(self._tier_meta, tid, energy_drift, {
+                    "local_frequency_ratio_error": float(rel_err_median),
+                    "rel_err_ratio": float(rel_err),
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [("rel_err_ratio", rel_err), ("ratio_meas_serial", ratio), ("omega_center", w_meas), ("chi_center", chi_local),
                        ("profile_halfwidth_cells", halfw), ("profile_median_ratio", median_ratio), ("profile_rel_err_median", rel_err_median)]
             save_summary(test_dir, tid, summary, metrics=metrics)
@@ -668,7 +686,7 @@ class Tier2Harness(BaseTierHarness):
                 raise ValueError("dynamic_chi_wave mode currently supports 1D only")
             try:
                 import importlib as _importlib
-                _chi_mod = _importlib.import_module('chi_field_equation')
+                _chi_mod = _importlib.import_module('physics.chi_field_equation')
                 evolve_coupled_fields = getattr(_chi_mod, 'evolve_coupled_fields', None)
                 if evolve_coupled_fields is None:
                     raise ImportError('evolve_coupled_fields not found')
@@ -734,11 +752,11 @@ class Tier2Harness(BaseTierHarness):
             passed = bool(chi_grew and chi_dynamic_response)
             
             status = "PASS [OK]" if passed else "FAIL [X]"
-            log(f"{tid} {status} dynamic χ-wave: χ_pert_max={chi_pert_max:.6f}, χ_pert_rms={chi_pert_rms:.6f}, response_ratio={chi_pert_rms/chi_bg:.3f}", "INFO" if passed else "FAIL")
+            log(f"{tid} {status} dynamic χ-wave: χ_pert_max={chi_pert_max:.6f}, χ_pert_rms={chi_pert_rms:.6f}, response_ratio={chi_pert_rms/chi_bg:.3f}", "PASS" if passed else "FAIL")
             log(f"Edge spread: χ_edge={chi_pert_edge:.6f}, reached={chi_reached_edge}", "INFO")
             log(f"Energy: init={E_energy_init:.4f}, final={E_energy_final:.4f}, drift_frac={energy_drift_frac:.3f}", "INFO")
             
-            # Save summary
+            # Save summary (+ unified validation block)
             summary = {
                 "id": tid, "description": desc, "passed": passed,
                 "chi_pert_max": float(chi_pert_max),
@@ -753,6 +771,14 @@ class Tier2Harness(BaseTierHarness):
                 "c_chi": float(c_chi),
                 "chi_update_every": int(chi_update_every)
             }
+            # Unified validation aggregation
+            try:
+                agg = aggregate_validation(self._tier_meta, tid, float(energy_drift_frac), {
+                    "coupling_strength": float(chi_pert_rms),
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [
                 ("chi_pert_max", chi_pert_max),
                 ("chi_pert_rms", chi_pert_rms),
@@ -833,7 +859,7 @@ class Tier2Harness(BaseTierHarness):
                 raise ValueError("gravitational_wave mode currently supports 1D only")
             try:
                 import importlib as _importlib
-                _chi_mod = _importlib.import_module('chi_field_equation')
+                _chi_mod = _importlib.import_module('physics.chi_field_equation')
                 evolve_coupled_fields = getattr(_chi_mod, 'evolve_coupled_fields', None)
                 if evolve_coupled_fields is None:
                     raise ImportError('evolve_coupled_fields not found')
@@ -911,10 +937,10 @@ class Tier2Harness(BaseTierHarness):
             
             status = "PASS [OK]" if passed else "FAIL [X]"
             log(f"{tid} {status} χ-E coupling: χ_max={chi_pert_max:.6e}, χ_rms={chi_pert_rms:.6e}, responded={chi_responded}, stable={system_stable}", 
-                "INFO" if passed else "FAIL")
+                "PASS" if passed else "FAIL")
             log(f"E-energy: init={E_energy_init:.3e}, final={E_energy_final:.3e}", "INFO")
             
-            # Save summary
+            # Save summary (+ unified validation block)
             summary = {
                 "id": tid, "description": desc, "passed": passed,
                 "chi_pert_max": float(chi_pert_max),
@@ -929,6 +955,15 @@ class Tier2Harness(BaseTierHarness):
                 "runtime_sec": float(t_elapsed),
                 "on_gpu": self.on_gpu
             }
+            # Unified validation aggregation (use energy drift as diagnostic; primary falls back if not defined)
+            try:
+                energy_drift = abs(E_energy_final - E_energy_init) / max(E_energy_init, 1e-30)
+                agg = aggregate_validation(self._tier_meta, tid, float(energy_drift), {
+                    "amplitude_error": float(chi_pert_rms),
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [
                 ("chi_pert_max", chi_pert_max),
                 ("chi_pert_rms", chi_pert_rms),
@@ -1087,9 +1122,9 @@ class Tier2Harness(BaseTierHarness):
             
             status = "PASS [OK]" if passed else "FAIL [X]"
             log(f"{tid} {status} light bending: deflection={deflection_angle:.6f} rad, expected_x={expected_x:.1f}, actual_x={actual_x:.1f}",
-                "INFO" if passed else "FAIL")
+                "PASS" if passed else "FAIL")
             
-            # Save summary
+            # Save summary (+ unified validation block)
             summary = {
                 "id": tid, "description": desc, "passed": passed,
                 "deflection_angle": float(deflection_angle),
@@ -1102,6 +1137,17 @@ class Tier2Harness(BaseTierHarness):
                 "runtime_sec": float(t_elapsed),
                 "on_gpu": self.on_gpu
             }
+            # Unified validation aggregation
+            try:
+                energy_drift = 0.0
+                bend_err = abs(float(deflection_angle))
+                agg = aggregate_validation(self._tier_meta, tid, energy_drift, {
+                    "geodesic_deviation": bend_err,
+                    "bending_error": bend_err,
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [
                 ("deflection_angle", deflection_angle),
                 ("position_shift", actual_x - expected_x)
@@ -1285,9 +1331,9 @@ class Tier2Harness(BaseTierHarness):
             
             status = "PASS [OK]" if passed else "FAIL [X]"
             log(f"{tid} {status} equivalence: a_light={a_light:.6e}, a_heavy={a_heavy:.6e}, rel_diff={rel_diff*100:.2f}%",
-                "INFO" if passed else "FAIL")
+                "PASS" if passed else "FAIL")
             
-            # Save summary
+            # Save summary (+ unified validation block)
             summary = {
                 "id": tid, "description": desc, "passed": passed,
                 "acceleration_light": float(a_light),
@@ -1299,6 +1345,15 @@ class Tier2Harness(BaseTierHarness):
                 "runtime_sec": float(t_elapsed),
                 "on_gpu": self.on_gpu
             }
+            # Unified validation aggregation
+            try:
+                energy_drift = 0.0
+                agg = aggregate_validation(self._tier_meta, tid, energy_drift, {
+                    "geodesic_deviation": float(rel_diff),
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [
                 ("acceleration_light", a_light),
                 ("acceleration_heavy", a_heavy),
@@ -1619,7 +1674,7 @@ class Tier2Harness(BaseTierHarness):
             passed = bool(ratio_match <= 0.05 and rel_err_G <= 0.30)
             
             status = "PASS [OK]" if passed else "FAIL [X]"
-            log(f"{tid} {status} GR calibration (redshift): Δω/ω={delta_omega_over_omega:.4f}, Δχ/χ={delta_chi_over_chi:.4f}, match_err={ratio_match*100:.1f}%", "INFO" if passed else "FAIL")
+            log(f"{tid} {status} GR calibration (redshift): Δω/ω={delta_omega_over_omega:.4f}, Δχ/χ={delta_chi_over_chi:.4f}, match_err={ratio_match*100:.1f}%", "PASS" if passed else "FAIL")
             log(f"G_eff: measured={G_measured:.4e}, expected={G_expected:.4e}, rel_err={rel_err_G*100:.1f}%", "INFO")
             
             summary = {
@@ -1634,6 +1689,15 @@ class Tier2Harness(BaseTierHarness):
                 "chi_A": float(chiA), "chi_B": float(chiB),
                 "runtime_sec": 0.0, "on_gpu": self.on_gpu
             }
+            # Unified validation aggregation
+            try:
+                energy_drift = 0.0
+                agg = aggregate_validation(self._tier_meta, tid, energy_drift, {
+                    "redshift_ratio_error": float(ratio_match),
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [("delta_omega_over_omega", delta_omega_over_omega), ("delta_chi_over_chi", delta_chi_over_chi),
                        ("ratio_match_error", ratio_match), ("G_measured", G_measured), ("G_expected", G_expected), ("rel_err_G", rel_err_G)]
             save_summary(test_dir, tid, summary, metrics=metrics)
@@ -1697,7 +1761,7 @@ class Tier2Harness(BaseTierHarness):
             passed = bool(0.2 <= gr_correspondence_ratio <= 5.0)
             
             status = "PASS [OK]" if passed else "FAIL [X]"
-            log(f"{tid} {status} GR calibration (Shapiro): LFM={delay_theory_lfm:.6f}s, GR={delay_theory_gr:.6f}s, ratio={gr_correspondence_ratio:.3f}", "INFO" if passed else "FAIL")
+            log(f"{tid} {status} GR calibration (Shapiro): LFM={delay_theory_lfm:.6f}s, GR={delay_theory_gr:.6f}s, ratio={gr_correspondence_ratio:.3f}", "PASS" if passed else "FAIL")
             
             summary = {
                 "id": tid, "description": desc, "passed": passed,
@@ -1708,6 +1772,16 @@ class Tier2Harness(BaseTierHarness):
                 "L_slab": float(L_slab),
                 "runtime_sec": 0.0, "on_gpu": self.on_gpu
             }
+            # Unified validation aggregation
+            try:
+                energy_drift = 0.0
+                time_delay_err = abs(float(gr_correspondence_ratio) - 1.0)
+                agg = aggregate_validation(self._tier_meta, tid, energy_drift, {
+                    "time_delay_error": time_delay_err,
+                })
+                summary["validation"] = validation_block(agg)
+            except Exception:
+                pass
             metrics = [("delay_lfm", delay_theory_lfm), ("delay_gr", delay_theory_gr), ("correspondence_ratio", gr_correspondence_ratio)]
             save_summary(test_dir, tid, summary, metrics=metrics)
             
@@ -3230,7 +3304,7 @@ class Tier2Harness(BaseTierHarness):
             freq_shift_theory_pct = 0.0
             freq_shift_meas_pct = 0.0
 
-        save_summary(test_dir,tid,{"id":tid,"description":desc,"passed":passed,
+        summary = {"id":tid,"description":desc,"passed":passed,
             "rel_err_ratio":float(err),"ratio_serial":float(ratio_s),
             "ratio_parallel":float(ratio_p),"ratio_theory":float(ratio_th),
             "omegaA_serial":float(wA_s),"omegaB_serial":float(wB_s),
@@ -3239,11 +3313,37 @@ class Tier2Harness(BaseTierHarness):
             "chiA":float(chiA),"chiB":float(chiB),
             "freq_shift_theory_pct":float(freq_shift_theory_pct),
             "freq_shift_measured_pct":float(freq_shift_meas_pct),
+            "ratio_match_error": float(err),
+            # Explicit Tier-2 primary metrics for validator thresholds (expanded)
+            **({"redshift_ratio_error": float(err)} if mode == "redshift" else {}),
+            **({"local_frequency_ratio_error": float(err)} if mode not in ("redshift", "time_delay", "phase_delay", "phase_delay_diff", "time_dilation") else {}),
+            **({"time_dilation_ratio_error": float(err)} if mode == "time_dilation" else {}),
+            **({"time_delay_error": float(err)} if mode == "time_delay" else {}),
+            **({"phase_shift_error": float(err)} if mode in ("phase_delay", "phase_delay_diff") else {}),
             "N":int(N),"dx":float(dx),"dt":float(dt),"steps":int(steps),
-            **extra_fields})
+            **extra_fields}
+        # Embed unified validation block
+        try:
+            energy_drift = 0.0
+            # Choose primary metric name(s) based on mode
+            if mode == "redshift":
+                metrics_for_validation = {"redshift_ratio_error": float(err)}
+            elif mode == "time_dilation":
+                metrics_for_validation = {"time_dilation_ratio_error": float(err)}
+            elif mode == "time_delay":
+                metrics_for_validation = {"time_delay_error": float(err)}
+            elif mode in ("phase_delay", "phase_delay_diff"):
+                metrics_for_validation = {"phase_shift_error": float(err)}
+            else:
+                metrics_for_validation = {"local_frequency_ratio_error": float(err)}
+            agg = aggregate_validation(self._tier_meta, tid, energy_drift, metrics_for_validation)
+            summary["validation"] = validation_block(agg)
+        except Exception:
+            pass
+        save_summary(test_dir,tid,summary)
 
         log(f"{tid} {'PASS ✅' if passed else 'FAIL ❌'} "
-            f"(ratio_err={err*100:.2f}%)","INFO" if passed else "FAIL")
+            f"(ratio_err={err*100:.2f}%)","PASS" if passed else "FAIL")
         return VariantResult(tid,desc,passed,err,ratio_s,ratio_p,ratio_th,
                              t_serial+t_parallel,self.on_gpu)
 
@@ -3339,18 +3439,8 @@ def main():
     # Update master test status and metrics database
     update_master_test_status()
     
-    # Record metrics for resource tracking (now with REAL metrics!)
-    test_metrics = TestMetrics()
-    for r in results:
-        metrics_data = {
-            "exit_code": 0 if r["passed"] else 1,
-            "runtime_sec": r["runtime_sec"],
-            "peak_cpu_percent": r["peak_cpu_percent"],
-            "peak_memory_mb": r["peak_memory_mb"],
-            "peak_gpu_memory_mb": r["peak_gpu_memory_mb"],
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        }
-        test_metrics.record_run(r["test_id"], metrics_data)
+    # Metrics recording now handled automatically by BaseTierHarness.run_with_standard_wrapper()
+    # (removed redundant manual recording here)
 
     # Optional: post-run validation
     if args.post_validate:

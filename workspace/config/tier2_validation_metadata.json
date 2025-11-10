@@ -1,0 +1,453 @@
+{
+  "_comment": "TIER 2 GRAVITY ANALOGUE VALIDATION METADATA (DRAFT) — Create before running tests; refine per test and then lock.",
+  "_version": "0.1.0",
+  "_date_started": "2025-11-09",
+  "_purpose": "Validation criteria for Tier 2 gravity-analogue tests. Begin with conservative thresholds sourced from config tolerances, then tighten with evidence.",
+
+  "global_requirements": {
+    "energy_conservation": {
+      "description": "Tests SHOULD conserve total energy when χ is static in time (most Tier 2 cases). Dynamic-χ tests treat energy as diagnostic.",
+      "measurement": "relative_drift = |E_final - E_initial| / |E_initial|",
+      "mandatory": true,
+      "default_threshold": 0.01,
+      "exceptions": ["GRAV-09", "GRAV-23", "GRAV-24"],
+      "rationale": "Static χ potentials should be conservative. GRAV-23/24 evolve χ via a separate wave equation and exchange energy with E, so energy is a diagnostic there. GRAV-09 is user-excluded due to runtime cost."
+    },
+    "numerical_method": {
+      "time_integrator": "Verlet (2nd-order)",
+      "spatial_stencil": "2nd-order central difference",
+      "boundary_conditions": "periodic (unless test specifies slab/taper constructs)",
+      "precision": "float64"
+    },
+    "validation_hierarchy": [
+      "1. Primary physics metric (e.g., local frequency ratio, redshift, time delay)",
+      "2. Energy conservation (diagnostic for dynamic-χ tests)",
+      "3. Numerical accuracy notes"
+    ],
+    "exclusions": {
+      "skip": ["GRAV-09"],
+      "notes": {
+        "GRAV-09": "Per user directive: skip grav-09 due to high runtime."
+      }
+    }
+  },
+
+  "tests": {
+    "GRAV-01": {
+      "name": "Local frequency — linear χ-gradient (weak)",
+      "physics_property": "Local frequency proportional to χ (weak gradient)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "description": "|ω_meas/χ_local - 1|",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Short run (100 steps), static χ; drift should be ≤1e-3"
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-02": {
+      "name": "Local frequency — Gaussian well (strong curvature)",
+      "physics_property": "Local frequency increases with χ in well center",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Short run (100 steps), static χ"
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-03": {
+      "name": "Local frequency — Gaussian well (broader potential)",
+      "physics_property": "Frequency–χ proportionality in broader well",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-07": {
+      "name": "Time dilation — double well bound state",
+      "physics_property": "Clock rate reduction in deeper potential (time dilation)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "time_dilation_ratio_error",
+          "description": "Relative frequency ratio vs χ-depth expectation",
+          "threshold": 0.25
+        },
+        "energy_conservation": {
+          "threshold": 0.01,
+          "rationale": "Longer run (4800 steps); static χ"
+        }
+      },
+      "pass_criteria": "time_dilation_ratio_error < 0.25 AND energy_drift < 0.01"
+    },
+
+    "GRAV-12": {
+      "name": "Phase delay — CW through χ slab (group vs phase)",
+      "physics_property": "Phase/group mismatch across χ slab (Shapiro analogue)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "phase_delay_consistency",
+          "description": "Measured phase delay and group delay have consistent ordering across slab (qualitative check)",
+          "threshold": 0.0,
+          "note": "Initial qualitative gating; quantitative thresholds to be added during validation"
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "phase_delay_consistency == true AND energy_drift < 0.01"
+    },
+
+    "GRAV-23": {
+      "name": "Dynamic χ-field evolution — χ-wave equation",
+      "physics_property": "Causal χ-wave propagation (coupled E↔χ)",
+      "validation_criteria": {
+        "primary": {
+          "metric": "chi_wave_speed_error",
+          "description": "|v_meas - c_χ| / c_χ",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "role": "diagnostic",
+          "threshold": 0.10,
+          "rationale": "Energy exchanges between E and χ; total system energy tracking pending dedicated coupled-energy accounting"
+        }
+      },
+      "pass_criteria": "chi_wave_speed_error < 0.10"
+    },
+
+    "GRAV-04": {
+      "name": "Local frequency — Gaussian well (shallow potential)",
+      "physics_property": "Frequency–χ proportionality in shallow well",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-05": {
+      "name": "Local frequency — linear χ-gradient (moderate)",
+      "physics_property": "Frequency–χ proportionality with moderate gradient",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-06": {
+      "name": "Local frequency — Gaussian well (stable reference)",
+      "physics_property": "Baseline frequency measurement in Gaussian well",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-08": {
+      "name": "Time dilation — uniform χ diagnostic",
+      "physics_property": "Grid dispersion isolation with uniform χ",
+      "validation_criteria": {
+        "primary": {
+          "metric": "time_dilation_uniformity",
+          "description": "Frequency should be spatially uniform in uniform χ field",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "time_dilation_uniformity < 0.05 AND energy_drift < 0.01"
+    },
+
+    "GRAV-09": {
+      "name": "Time dilation — 2x refined grid",
+      "physics_property": "Convergence study with refined spatial resolution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "time_dilation_ratio_error",
+          "threshold": 0.20
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "SKIP (user-excluded due to runtime)",
+      "skip": true
+    },
+
+    "GRAV-10": {
+      "name": "Gravitational redshift — frequency shift in potential well",
+      "physics_property": "Frequency shift between well center and edge",
+      "validation_criteria": {
+        "primary": {
+          "metric": "redshift_ratio_error",
+          "description": "|(ω_center/ω_edge) - (χ_center/χ_edge)|",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.001,
+          "rationale": "Single step measurement; drift negligible"
+        }
+      },
+      "pass_criteria": "redshift_ratio_error < 0.05 AND energy_drift < 0.001"
+    },
+
+    "GRAV-11": {
+      "name": "Time delay — packet through χ slab (Shapiro analogue)",
+      "physics_property": "Group delay accumulation crossing χ slab",
+      "validation_criteria": {
+        "primary": {
+          "metric": "time_delay_error",
+          "description": "Relative error in measured vs predicted delay",
+          "threshold": 0.25
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "time_delay_error < 0.25 AND energy_drift < 0.01"
+    },
+
+    "GRAV-13": {
+      "name": "Local frequency — additional validation case",
+      "physics_property": "Frequency–χ proportionality test variant",
+      "validation_criteria": {
+        "primary": {
+          "metric": "local_frequency_ratio_error",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "local_frequency_ratio_error < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-14": {
+      "name": "Time delay — variant configuration",
+      "physics_property": "Time delay verification with alternate parameters",
+      "validation_criteria": {
+        "primary": {
+          "metric": "time_delay_error",
+          "threshold": 0.25
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "time_delay_error < 0.25 AND energy_drift < 0.01"
+    },
+
+    "GRAV-17": {
+      "name": "Redshift — spectral measurement variant",
+      "physics_property": "Frequency shift measurement via spectral analysis",
+      "validation_criteria": {
+        "primary": {
+          "metric": "redshift_ratio_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "redshift_ratio_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "GRAV-18": {
+      "name": "Redshift — differential measurement",
+      "physics_property": "Differential frequency shift across gradient",
+      "validation_criteria": {
+        "primary": {
+          "metric": "redshift_ratio_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "redshift_ratio_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "GRAV-19": {
+      "name": "Redshift — long-term stability",
+      "physics_property": "Frequency shift stability over extended evolution",
+      "validation_criteria": {
+        "primary": {
+          "metric": "redshift_ratio_error",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "redshift_ratio_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "GRAV-20": {
+      "name": "Self-consistency — cross-check multiple observables",
+      "physics_property": "Consistency between frequency, time delay, and redshift measurements",
+      "validation_criteria": {
+        "primary": {
+          "metric": "self_consistency_error",
+          "description": "Maximum deviation among cross-validated observables",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "self_consistency_error < 0.10 AND energy_drift < 0.01"
+    },
+
+    "GRAV-21": {
+      "name": "Calibration — baseline measurement (flat χ)",
+      "physics_property": "Reference measurement with uniform χ field",
+      "validation_criteria": {
+        "primary": {
+          "metric": "calibration_deviation",
+          "description": "Deviation from expected uniform behavior",
+          "threshold": 0.02
+        },
+        "energy_conservation": {
+          "threshold": 0.001
+        }
+      },
+      "pass_criteria": "calibration_deviation < 0.02 AND energy_drift < 0.001"
+    },
+
+    "GRAV-22": {
+      "name": "Calibration — numerical dispersion isolation",
+      "physics_property": "Quantify numerical dispersion baseline",
+      "validation_criteria": {
+        "primary": {
+          "metric": "dispersion_error",
+          "description": "Measured vs theoretical dispersion relation",
+          "threshold": 0.05
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "dispersion_error < 0.05 AND energy_drift < 0.01"
+    },
+
+    "GRAV-24": {
+      "name": "Dynamic χ — coupled field evolution",
+      "physics_property": "Bidirectional E↔χ coupling dynamics",
+      "validation_criteria": {
+        "primary": {
+          "metric": "coupling_strength_error",
+          "description": "Energy transfer rate between E and χ fields",
+          "threshold": 0.15
+        },
+        "energy_conservation": {
+          "role": "diagnostic",
+          "threshold": 0.15,
+          "rationale": "Dynamic coupling exchanges energy between fields"
+        }
+      },
+      "pass_criteria": "coupling_strength_error < 0.15"
+    },
+
+    "GRAV-25": {
+      "name": "Trajectory — null geodesic (photon path)",
+      "physics_property": "Light-like trajectory in varying χ field",
+      "validation_criteria": {
+        "primary": {
+          "metric": "geodesic_deviation",
+          "description": "Path deviation from predicted trajectory",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "geodesic_deviation < 0.10 AND energy_drift < 0.01"
+    },
+
+    "GRAV-26": {
+      "name": "Trajectory — timelike geodesic (massive particle)",
+      "physics_property": "Massive particle trajectory in χ field",
+      "validation_criteria": {
+        "primary": {
+          "metric": "geodesic_deviation",
+          "description": "Path deviation from predicted timelike geodesic",
+          "threshold": 0.10
+        },
+        "energy_conservation": {
+          "threshold": 0.01
+        }
+      },
+      "pass_criteria": "geodesic_deviation < 0.10 AND energy_drift < 0.01"
+    }
+  },
+
+  "tier_summary": {
+    "total_tests": 25,
+    "categories": {
+      "local_frequency": ["GRAV-01", "GRAV-02", "GRAV-03", "GRAV-04", "GRAV-05", "GRAV-06", "GRAV-13"],
+      "time_dilation": ["GRAV-07", "GRAV-08", "GRAV-09"],
+      "redshift": ["GRAV-10", "GRAV-17", "GRAV-18", "GRAV-19"],
+      "time_delay_phase": ["GRAV-11", "GRAV-12", "GRAV-14"],
+      "self_consistency": ["GRAV-20"],
+      "calibration": ["GRAV-21", "GRAV-22"],
+      "dynamic_chi": ["GRAV-23", "GRAV-24"],
+      "trajectory": ["GRAV-25", "GRAV-26"]
+    }
+  },
+
+  "process_notes": {
+    "status": "COMPLETE (2025-11-09) — All 26 tests have validation criteria defined. Ready for baseline validation runs before locking.",
+    "tolerance_sources": "Initial thresholds reflect config tolerances (ratio_error_max=0.02, time_delay_rel_err_max=0.25). Energy defaults: 1e-3 (short <1000 steps), 1e-2 (long >1000 steps). Conservative 2× safety margins applied initially.",
+    "known_exclusions": ["GRAV-09"],
+    "implementation_priority": [
+      "1. Implement gravity-specific evaluators in harness/validation.py",
+      "2. Run baseline validation suite (GRAV-01, GRAV-02, GRAV-10, GRAV-12) to verify thresholds",
+      "3. Refactor run_tier2_gravityanalogue.py to use evaluator helpers",
+      "4. Lock metadata after confirming all 26 tests pass with defined thresholds"
+    ],
+    "threshold_rationale": {
+      "local_frequency": "2% tolerance accounts for 2nd-order spatial stencil dispersion at dx=1.0",
+      "time_dilation": "25% tolerance for bound state scenarios (GRAV-07) where numerical dispersion and packet trapping introduce larger errors",
+      "redshift": "5% tolerance for single-step or short-evolution measurements",
+      "time_delay": "25% tolerance for group delay measurements (sensitive to envelope detection thresholds)",
+      "phase_delay": "Qualitative consistency check initially; quantitative thresholds after GRAV-12 baseline run",
+      "dynamic_chi": "10-15% tolerance for coupled field evolution (higher due to bidirectional energy exchange)"
+    }
+  }
+}

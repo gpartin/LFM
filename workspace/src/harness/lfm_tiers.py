@@ -131,8 +131,14 @@ def get_tiers() -> List[Dict]:
     global _REGISTRY_CACHE
     if _REGISTRY_CACHE is not None:
         return _REGISTRY_CACHE
-    registry_path = ROOT / "config" / "tiers_registry.json"
-    if registry_path.exists():
+    # Resolve registry path robustly: prefer workspace/config/tiers_registry.json
+    candidates = [
+        ROOT / "config" / "tiers_registry.json",  # historical mistake (likely nonexistent)
+        ROOT.parent.parent / "config" / "tiers_registry.json",  # workspace/config
+        Path.cwd().parent / "config" / "tiers_registry.json",  # when running from src/
+    ]
+    registry_path = next((p for p in candidates if p.exists()), None)
+    if registry_path and registry_path.exists():
         try:
             with open(registry_path, "r", encoding="utf-8") as f:
                 data = json.load(f)

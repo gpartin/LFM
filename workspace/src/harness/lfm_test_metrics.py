@@ -307,12 +307,51 @@ def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
 			return []
 		config_rel = tdef.get("config")
 		schema = tdef.get("config_schema", "variants")
-		config_path = Path(__file__).parent / config_rel if config_rel else None
+		# Resolve config path robustly: try multiple bases and keep track for debugging
+		config_path = None
+		tried: List[Path] = []
+		if config_rel:
+			candidates = [
+				Path(__file__).parent / config_rel,  # harness-relative (may be wrong)
+				Path(__file__).parent.parent.parent / config_rel,  # workspace root
+				Path.cwd().parent / config_rel,  # when running from src/
+			]
+			# Also support resolving against detected workspace root (…/workspace)
+			try:
+				ws_root = next(p for p in Path(__file__).resolve().parents if p.name.lower() == 'workspace')
+				candidates.append(ws_root / config_rel)
+			except StopIteration:
+				pass
+			for cp in candidates:
+				tried.append(cp)
+				if cp.exists():
+					config_path = cp
+					break
+			# Final fallback: use legacy mapping resolved from workspace root if not found yet
+			if config_path is None and int(tier) in legacy_map:
+				legacy_rel = legacy_map[int(tier)]
+				legacy_candidates = [
+					Path(__file__).parent.parent.parent / legacy_rel,
+					Path.cwd().parent / legacy_rel,
+				]
+				for cp in legacy_candidates:
+					tried.append(cp)
+					if cp.exists():
+						config_path = cp
+						break
 	else:
 		config_path = Path(__file__).parent / legacy_map.get(tier)
 		schema = "variants" if tier in (1, 2) else "tests"
 
 	if not config_path or not config_path.exists():
+		# Optional discovery debug
+		if os.environ.get("LFM_CONFIG_DISCOVERY_DEBUG", "0") == "1":
+			try:
+				print(f"[lfm_test_metrics] Tier {tier}: could not locate config file. Tried:")
+				for p in tried:
+					print(f"  - {p}")
+			except Exception:
+				pass
 		return []
 	with open(config_path, 'r', encoding='utf-8') as f:
 		cfg = json.load(f)
@@ -325,9 +364,13 @@ def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
 			test_id = v.get("test_id")
 			if not test_id:
 				continue
+			# Skip tests with skip=true flag
+			if v.get("skip", False):
+				continue
 			test_cfg = {**params, **v}
-			# Harmonize GPU flag
-			test_cfg["use_gpu"] = cfg.get("run_settings", {}).get("use_gpu", cfg.get("hardware", {}).get("gpu_enabled", True))
+			# ALWAYS enable GPU (system has NVIDIA GeForce RTX 4060 Laptop with CuPy)
+			test_cfg["use_gpu"] = True
+			test_cfg["gpu_enabled"] = True
 			tests.append((test_id, test_cfg))
 	else:  # schema == "tests"
 		test_list = cfg.get("tests", [])
@@ -335,8 +378,12 @@ def load_test_configs(tier: int) -> List[Tuple[str, Dict]]:
 			test_id = t.get("test_id") or t.get("id")  # Support both formats
 			if not test_id:
 				continue
+			# Skip tests with skip=true flag
+			if t.get("skip", False):
+				continue
 			test_cfg = {**params, **t}
-			# Harmonize GPU flag
-			test_cfg["gpu_enabled"] = cfg.get("hardware", {}).get("gpu_enabled", cfg.get("run_settings", {}).get("use_gpu", True))
+			# ALWAYS enable GPU (system has NVIDIA GeForce RTX 4060 Laptop with CuPy)
+			test_cfg["use_gpu"] = True
+			test_cfg["gpu_enabled"] = True
 			tests.append((test_id, test_cfg))
 	return tests
