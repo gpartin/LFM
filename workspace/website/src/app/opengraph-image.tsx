@@ -1,17 +1,16 @@
 // -*- coding: utf-8 -*-
 /**
  * Dynamic Open Graph image generator (1200x630 PNG)
- * URL: /og-image.png
- * Uses Next.js ImageResponse (Edge runtime).
+ * Next.js file-based metadata convention
  */
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-
+export const alt = 'Emergent Physics Lab - Klein-Gordon Field Simulations';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export async function GET() {
+export default async function Image() {
   const { width, height } = size;
   const title = 'Emergent Physics Lab';
   const subtitle = 'Interactive Physics Simulations';
