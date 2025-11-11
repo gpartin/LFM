@@ -292,30 +292,66 @@ export default function ExperimentPageTemplate({
       <main className="flex-1 pt-20">
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
                 <h1 className="text-4xl font-bold text-accent-chi mb-2">{metadata.title}</h1>
                 <p className="text-text-secondary">{metadata.fullDescription}</p>
               </div>
-              <Link 
-                href={`/about?from=${experimentId}`}
-                className="px-4 py-2 bg-yellow-500/20 border-2 border-yellow-500/50 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors whitespace-nowrap text-sm font-semibold"
-              >
-                ⚠️ Read About This Project
-              </Link>
-            </div>
-            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
-              <p className="text-sm text-text-secondary">
-                <strong className="text-yellow-400">Scientific Disclosure:</strong> This is an exploratory simulation. 
-                We are NOT claiming this is proven physics. <Link href={`/about?from=${experimentId}`} className="text-accent-chi hover:underline">Learn more about our approach and limitations →</Link>
-              </p>
             </div>
           </div>
 
-          {/* Backend Status */}
-          <div className="mb-8">
-            <BackendBadge backend={backend} />
+          {/* Visualization Options Bar */}
+          <div className="mb-6 panel">
+            <div className="flex items-center justify-between gap-6 flex-wrap">
+              <h3 className="text-lg font-bold text-accent-chi whitespace-nowrap">Visualization Options</h3>
+              <div className="flex items-center gap-6 flex-wrap">
+                <label className="flex items-center space-x-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={views.showParticles ?? true}
+                    onChange={(e) => setViews(prev => ({ ...prev, showParticles: e.target.checked }))}
+                    className="w-4 h-4 rounded border-space-border bg-space-dark checked:bg-accent-chi checked:border-accent-chi focus:ring-2 focus:ring-accent-chi/50 cursor-pointer"
+                  />
+                  <span className="text-text-primary group-hover:text-accent-chi transition-colors text-sm">
+                    Show Particles
+                  </span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={views.showTrails ?? true}
+                    onChange={(e) => setViews(prev => ({ ...prev, showTrails: e.target.checked }))}
+                    className="w-4 h-4 rounded border-space-border bg-space-dark checked:bg-accent-chi checked:border-accent-chi focus:ring-2 focus:ring-accent-chi/50 cursor-pointer"
+                  />
+                  <span className="text-text-primary group-hover:text-accent-chi transition-colors text-sm">
+                    Show Trails
+                  </span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={views.showField ?? false}
+                    onChange={(e) => setViews(prev => ({ ...prev, showField: e.target.checked }))}
+                    className="w-4 h-4 rounded border-space-border bg-space-dark checked:bg-accent-chi checked:border-accent-chi focus:ring-2 focus:ring-accent-chi/50 cursor-pointer"
+                  />
+                  <span className="text-text-primary group-hover:text-accent-chi transition-colors text-sm">
+                    Show Field
+                  </span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={views.showGrid ?? false}
+                    onChange={(e) => setViews(prev => ({ ...prev, showGrid: e.target.checked }))}
+                    className="w-4 h-4 rounded border-space-border bg-space-dark checked:bg-accent-chi checked:border-accent-chi focus:ring-2 focus:ring-accent-chi/50 cursor-pointer"
+                  />
+                  <span className="text-text-primary group-hover:text-accent-chi transition-colors text-sm">
+                    Show Grid
+                  </span>
+                </label>
+              </div>
+            </div>
           </div>
 
           {/* Main Experiment Area */}
@@ -453,6 +489,26 @@ export default function ExperimentPageTemplate({
           
           {/* Custom content slot */}
           {customContent}
+
+          {/* Backend Status & Scientific Disclosure (Bottom) */}
+          <div className="mt-8 space-y-4">
+            <BackendBadge backend={backend} />
+            
+            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
+              <div className="flex items-start justify-between gap-4">
+                <p className="text-sm text-text-secondary flex-1">
+                  <strong className="text-yellow-400">Scientific Disclosure:</strong> This is an exploratory simulation. 
+                  We are NOT claiming this is proven physics. <Link href={`/about?from=${experimentId}`} className="text-accent-chi hover:underline">Learn more about our approach and limitations →</Link>
+                </p>
+                <Link 
+                  href={`/about?from=${experimentId}`}
+                  className="px-4 py-2 bg-yellow-500/20 border-2 border-yellow-500/50 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors whitespace-nowrap text-sm font-semibold shrink-0"
+                >
+                  ⚠️ Read About This Project
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 

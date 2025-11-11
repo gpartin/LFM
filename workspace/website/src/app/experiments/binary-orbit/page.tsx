@@ -9,12 +9,10 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import BackendBadge from '@/components/ui/BackendBadge';
-import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ExperimentLayout, { VisualizationCheckbox } from '@/components/experiment/ExperimentLayout';
+import StandardVisualizationOptions from '@/components/experiment/StandardVisualizationOptions';
+import StandardMetricsPanel, { MetricConfig } from '@/components/experiment/StandardMetricsPanel';
 import ParameterSlider from '@/components/ui/ParameterSlider';
-import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
@@ -337,52 +335,71 @@ export default function BinaryOrbitPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-space-dark">
-      <Header />
-      
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold text-accent-chi mb-2">Earth-Moon Orbit Simulation</h1>
-              <p className="text-text-secondary">
-                Watch the Earth and Moon orbit due to emergent gravity from chi field gradients.
-                Real Klein-Gordon physics running on your GPU—not Newtonian mechanics.
-              </p>
+    <ExperimentLayout
+      title="Earth-Moon Orbit Simulation"
+      description="Watch the Earth and Moon orbit due to emergent gravity from chi field gradients. Real Klein-Gordon physics running on your GPU—not Newtonian mechanics."
+      backend={state.backend}
+      experimentId="binary-orbit"
+      visualizationOptions={
+        <StandardVisualizationOptions
+          state={state.ui}
+          onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+          showAdvancedOptions={true}
+          labelOverrides={{
+            showParticles: 'Earth & Moon',
+            showTrails: 'Orbital Paths',
+          }}
+          additionalControls={
+            /* CPU Toggle (TEMPORARY for testing) */
+            <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/20 border border-blue-500/50 rounded ml-4">
+              <input
+                type="checkbox"
+                checked={forceCPU}
+                onChange={(e) => {
+                  setForceCPU(e.target.checked);
+                  stopSimulation();
+                }}
+                className="w-4 h-4"
+              />
+              <span className="text-xs text-blue-300 font-semibold">Force CPU</span>
             </div>
-            
-            <ScientificDisclosure experimentName="Earth-Moon Orbit" />
-          </div>
-
-          {/* Backend Status with CPU Toggle (TEMPORARY) */}
-          <div className="mb-8">
-            <div className="flex items-center gap-4">
-              <BackendBadge backend={state.backend} />
-              <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={forceCPU}
-                    onChange={(e) => {
-                      setForceCPU(e.target.checked);
-                      // Stop simulation when switching backends
-                      stopSimulation();
-                    }}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm text-blue-300 font-semibold">
-                    Force CPU Mode (Testing)
-                  </span>
-                </label>
-              </div>
+          }
+        />
+      }
+      footerContent={
+        <div className="mt-8 panel">
+          <h3 className="text-xl font-bold text-accent-chi mb-4">What You're Seeing</h3>
+          <div className="prose prose-invert max-w-none text-text-secondary">
+            <p className="mb-4">
+              This is <strong className="text-accent-chi">not a traditional gravity simulation</strong>. 
+              Instead of using Newton's laws, the Earth-Moon orbit <strong>emerges naturally</strong> from a wave-like field equation:
+            </p>
+            <div className="bg-space-dark p-4 rounded-lg font-mono text-accent-chi text-center my-4">
+              ∂²E/∂t² = c²∇²E − χ²(x,t)E
             </div>
+            <p className="mb-4 text-text-primary">
+              <strong>Think of it like this:</strong> Imagine space as a pond. Each body creates ripples (the chi field). 
+              These ripples push objects together — that's gravity! No mysterious "force at a distance" needed.
+            </p>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><strong>No Newton's laws programmed in</strong> — Gravity naturally emerges from the field</li>
+              <li><strong>Like ripples in a pond</strong> — Each body creates a "dip" in the field that pulls objects toward it</li>
+              <li><strong>Energy stays constant</strong> — Just like a pendulum, total energy is conserved (watch "Energy Conservation" stay near 0%)</li>
+              <li><strong>Real physics</strong> — Earth is 81× more massive than the Moon, so it barely moves while Moon orbits</li>
+            </ul>
+            <p className="mt-4">
+              <strong>Try experimenting:</strong> Increase "Gravity Strength" to make orbits tighter. 
+              Increase "Distance Between Bodies" to make orbits wider. Change "Earth/Moon Mass Ratio" to see different scenarios 
+              (like Jupiter and its moons!). The <strong>🌍🌙 Reset to Defaults</strong> button brings back Earth-Moon.
+            </p>
           </div>
-
-          {/* Main Experiment Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 3D Canvas (Left side - 2/3 width) */}
-            <div className="lg:col-span-2">
+        </div>
+      }
+    >
+      {/* Main Experiment Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* 3D Canvas (Left side - 3/4 width) */}
+            <div className="lg:col-span-3">
               <div ref={canvasContainerRef} className="panel h-[600px] relative overflow-hidden">
                 {state.ui.fastForward && (
                   <div className="absolute top-2 right-2 z-10 px-3 py-1 rounded bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 text-xs font-semibold tracking-wide">
@@ -630,110 +647,24 @@ export default function BinaryOrbitPage() {
                 </div>
               </div>
 
-              <VisualizationOptions
-                toggles={[
-                  { key: 'showParticles', label: 'Earth & Moon', checked: state.ui.showParticles },
-                  { key: 'showTrails', label: 'Orbital Paths', checked: state.ui.showTrails },
-                  { key: 'showChi', label: 'Gravity Field (2D)', checked: state.ui.showChi },
-                  { key: 'showLattice', label: 'Simulation Grid', checked: state.ui.showLattice },
-                  { key: 'showVectors', label: 'Force Arrows', checked: state.ui.showVectors },
-                  { key: 'showWell', label: 'Gravity Well (Surface)', checked: state.ui.showWell },
-                  { key: 'showDomes', label: 'Field Bubbles (3D)', checked: state.ui.showDomes },
-                  { key: 'showIsoShells', label: 'Field Shells', checked: state.ui.showIsoShells },
-                  { key: 'showBackground', label: 'Stars & Sun', checked: state.ui.showBackground },
-                ]}
-                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
-              />
-
               {/* Metrics */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-accent-chi mb-4">System Stats</h3>
-                
-                <div className="space-y-3">
-                  <MetricDisplay label="Total Energy" value={state.metrics.energy} status={state.metrics.energy === '—' ? 'neutral' : 'conserved'} />
-                  <MetricDisplay label="Energy Conservation" value={state.metrics.drift} status={state.metrics.drift === '—' ? 'neutral' : 'good'} />
-                  <MetricDisplay label="Spin (Angular Momentum)" value={state.metrics.angularMomentum} status={state.metrics.angularMomentum === '—' ? 'neutral' : 'conserved'} />
-                  <MetricDisplay label="Separation (r)" value={state.metrics.separation} status={state.metrics.separation === '—' ? 'neutral' : 'good'} />
-                  <MetricDisplay label="Speed / v_circ" value={state.metrics.vRatio} status={state.metrics.vRatio === '—' ? 'neutral' : 'warning'} />
-                  <MetricDisplay label="Effective Speed" value={state.metrics.effectiveSpeed + '×'} status={'good'} />
-                  <MetricDisplay label="Time for One Orbit" value={state.metrics.orbitalPeriod} status="neutral" />
-                  <MetricDisplay label="Frame Rate" value={state.metrics.fps} status={state.metrics.fps === '—' ? 'neutral' : 'good'} />
-                </div>
-              </div>
+              <StandardMetricsPanel
+                coreMetrics={{
+                  energy: state.metrics.energy,
+                  drift: state.metrics.drift,
+                  angularMomentum: state.metrics.angularMomentum,
+                }}
+                additionalMetrics={[
+                  { label: 'Separation (r)', value: state.metrics.separation, status: state.metrics.separation === '—' ? 'neutral' : 'good' },
+                  { label: 'Speed / v_circ', value: state.metrics.vRatio, status: state.metrics.vRatio === '—' ? 'neutral' : 'warning' },
+                  { label: 'Effective Speed', value: state.metrics.effectiveSpeed + '×', status: 'good' },
+                  { label: 'Time for One Orbit', value: state.metrics.orbitalPeriod, status: 'neutral' },
+                  { label: 'Frame Rate', value: state.metrics.fps, status: state.metrics.fps === '—' ? 'neutral' : 'good' },
+                ]}
+                title="System Metrics"
+              />
             </div>
           </div>
-
-          {/* Explanation Panel */}
-          <div className="mt-8 panel">
-            <h3 className="text-xl font-bold text-accent-chi mb-4">What You're Seeing</h3>
-            <div className="prose prose-invert max-w-none text-text-secondary">
-              <p className="mb-4">
-                This is <strong className="text-accent-chi">not a traditional gravity simulation</strong>. 
-                Instead of using Newton's laws, the Earth-Moon orbit <strong>emerges naturally</strong> from a wave-like field equation:
-              </p>
-              <div className="bg-space-dark p-4 rounded-lg font-mono text-accent-chi text-center my-4">
-                ∂²E/∂t² = c²∇²E − χ²(x,t)E
-              </div>
-              <p className="mb-4 text-text-primary">
-                <strong>Think of it like this:</strong> Imagine space as a pond. Each body creates ripples (the chi field). 
-                These ripples push objects together — that's gravity! No mysterious "force at a distance" needed.
-              </p>
-              <ul className="space-y-2 list-disc list-inside">
-                <li><strong>No Newton's laws programmed in</strong> — Gravity naturally emerges from the field</li>
-                <li><strong>Like ripples in a pond</strong> — Each body creates a "dip" in the field that pulls objects toward it</li>
-                <li><strong>Energy stays constant</strong> — Just like a pendulum, total energy is conserved (watch "Energy Conservation" stay near 0%)</li>
-                <li><strong>Real physics</strong> — Earth is 81× more massive than the Moon, so it barely moves while Moon orbits</li>
-              </ul>
-              <p className="mt-4">
-                <strong>Try experimenting:</strong> Increase "Gravity Strength" to make orbits tighter. 
-                Increase "Distance Between Bodies" to make orbits wider. Change "Earth/Moon Mass Ratio" to see different scenarios 
-                (like Jupiter and its moons!). The <strong>🌍🌙 Reset to Defaults</strong> button brings back Earth-Moon.
-              </p>
-              <div className="mt-6 p-4 bg-accent-chi/10 border-l-4 border-accent-chi rounded">
-                <p className="text-text-primary font-semibold mb-2">
-                  Want to understand the full scientific context?
-                </p>
-                <Link 
-                  href="/about?from=Earth-Moon Orbit" 
-                  className="inline-flex items-center gap-2 text-accent-chi hover:text-accent-particle transition-colors font-semibold"
-                >
-                  <span>Read our full About page</span>
-                  <span>→</span>
-                </Link>
-                <p className="text-sm text-text-secondary mt-2">
-                  Learn about the mathematics, limitations, and how to access our research data and source code.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-function MetricDisplay({ 
-  label, 
-  value, 
-  status 
-}: { 
-  label: string; 
-  value: string; 
-  status: 'conserved' | 'good' | 'neutral' | 'warning';
-}) {
-  const statusColors = {
-    conserved: 'text-accent-glow',
-    good: 'text-accent-glow',
-    neutral: 'text-text-primary',
-    warning: 'text-yellow-500',
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-space-border last:border-b-0">
-      <span className="text-sm text-text-secondary">{label}</span>
-      <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
-    </div>
+    </ExperimentLayout>
   );
 }

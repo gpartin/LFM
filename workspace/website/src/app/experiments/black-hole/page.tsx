@@ -10,12 +10,10 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import BackendBadge from '@/components/ui/BackendBadge';
-import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ExperimentLayout from '@/components/experiment/ExperimentLayout';
+import StandardVisualizationOptions from '@/components/experiment/StandardVisualizationOptions';
+import StandardMetricsPanel from '@/components/experiment/StandardMetricsPanel';
 import ParameterSlider from '@/components/ui/ParameterSlider';
-import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
@@ -296,41 +294,51 @@ export default function BlackHolePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-space-dark">
-      <Header />
-      
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold text-purple-400 mb-2">🌌 Black Hole Orbit Simulation</h1>
-              <p className="text-text-secondary">
-                Witness extreme gravity in action. A tiny black hole warps spacetime—watch a moon dance in its gravitational grip.
-              </p>
+    <ExperimentLayout
+      title="🌌 Black Hole Orbit Simulation"
+      description="Witness extreme gravity in action. A tiny black hole warps spacetime—watch a moon dance in its gravitational grip."
+      backend={state.backend}
+      experimentId="black-hole"
+      visualizationOptions={
+        <StandardVisualizationOptions
+          state={state.ui}
+          onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+          showAdvancedOptions={true}
+          labelOverrides={{
+            showParticles: 'Black Hole & Moon',
+            showTrails: 'Orbital Paths',
+            showIsoShells: 'Event Horizon Shell',
+          }}
+        />
+      }
+      footerContent={
+        <div className="mt-8 panel">
+          <h3 className="text-xl font-bold text-purple-400 mb-4">What You're Seeing</h3>
+          <div className="prose prose-invert max-w-none text-text-secondary">
+            <p className="mb-4">
+              This simulation places a <strong>tiny black hole</strong> at the center of the lattice with a moon in orbit. 
+              The black hole is represented by an <strong>extremely concentrated chi field</strong> (small σ, high mass).
+            </p>
+            <div className="bg-space-dark p-4 rounded-lg font-mono text-purple-400 text-center my-4">
+              Extreme χ²(x,t) → Strong spacetime curvature
             </div>
-            
-            <ScientificDisclosure experimentName="Black Hole" />
+            <ul className="space-y-2 list-disc list-inside">
+              <li><strong>Emergent event horizon</strong> — Field becomes so steep that escape requires extreme velocity</li>
+              <li><strong>Orbital precession</strong> — Moon's orbit may precess due to strong field gradients</li>
+              <li><strong>Inspiral dynamics</strong> — Energy loss (numerical or physical) causes moon to spiral inward</li>
+              <li><strong>Time dilation analogue</strong> — Timesteps near black hole effectively "slow down" in extreme field</li>
+            </ul>
+            <p className="mt-4 text-yellow-400">
+              <strong>⚠️ Exploratory Physics:</strong> This is NOT a validated model of real black holes. 
+              It explores emergent gravity from lattice field medium (LFM) with extreme parameters.
+            </p>
           </div>
-          
-          <div className="mb-8">
-            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded hidden">
-              <p className="text-sm text-text-secondary">
-                <strong className="text-yellow-400">Scientific Disclosure:</strong> This is an exploratory simulation using emergent gravity from lattice fields. 
-                NOT a validated model of actual black holes. <Link href="/about" className="text-accent-chi hover:underline">Learn more →</Link>
-              </p>
-            </div>
-          </div>
-
-          {/* Backend Status */}
-          <div className="mb-8">
-            <BackendBadge backend={state.backend} />
-          </div>
-
-          {/* Main Experiment Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        </div>
+      }
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* 3D Canvas */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <div ref={canvasContainerRef} className="panel h-[600px] relative overflow-hidden">
                 {state.ui.fastForward && (
                   <div className="absolute top-2 right-2 z-10 px-3 py-1 rounded bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 text-xs font-semibold tracking-wide">
@@ -455,90 +463,24 @@ export default function BlackHolePage() {
                 </div>
               </div>
 
-              <VisualizationOptions
-                toggles={[
-                  { key: 'showParticles', label: 'Black Hole & Moon', checked: state.ui.showParticles },
-                  { key: 'showTrails', label: 'Orbital Paths', checked: state.ui.showTrails },
-                  { key: 'showChi', label: 'Gravity Field (2D)', checked: state.ui.showChi },
-                  { key: 'showLattice', label: 'Simulation Grid', checked: state.ui.showLattice },
-                  { key: 'showVectors', label: 'Force Arrows', checked: state.ui.showVectors },
-                  { key: 'showWell', label: 'Gravity Well (Surface)', checked: state.ui.showWell },
-                  { key: 'showDomes', label: 'Field Bubbles (3D)', checked: state.ui.showDomes },
-                  { key: 'showIsoShells', label: 'Event Horizon Shell', checked: state.ui.showIsoShells },
-                  { key: 'showBackground', label: 'Stars & Background', checked: state.ui.showBackground },
-                ]}
-                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
-              />
-
               {/* Metrics */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-purple-400 mb-4">System Metrics</h3>
-                
-                <div className="space-y-3">
-                  <MetricDisplay label="Total Energy" value={state.metrics.energy} status="neutral" />
-                  <MetricDisplay label="Energy Drift" value={state.metrics.drift} status="neutral" />
-                  <MetricDisplay label="Angular Momentum" value={state.metrics.angularMomentum} status="neutral" />
-                  <MetricDisplay label="Distance from Black Hole" value={state.metrics.separation} status="warning" />
-                  <MetricDisplay label="Speed Ratio (v/v_circ)" value={state.metrics.vRatio} status="neutral" />
-                  <MetricDisplay label="Effective Speed" value={state.metrics.effectiveSpeed + '×'} status="good" />
-                  <MetricDisplay label="Frame Rate" value={state.metrics.fps} status="good" />
-                </div>
-              </div>
+              <StandardMetricsPanel
+                coreMetrics={{
+                  energy: state.metrics.energy,
+                  drift: state.metrics.drift,
+                  angularMomentum: state.metrics.angularMomentum,
+                }}
+                additionalMetrics={[
+                  { label: 'Distance from Black Hole', value: state.metrics.separation, status: 'warning' },
+                  { label: 'Speed Ratio (v/v_circ)', value: state.metrics.vRatio, status: 'neutral' },
+                  { label: 'Effective Speed', value: state.metrics.effectiveSpeed + '×', status: 'good' },
+                  { label: 'Frame Rate', value: state.metrics.fps, status: 'good' },
+                ]}
+                title="System Metrics"
+                titleColorClass="text-purple-400"
+              />
             </div>
           </div>
-
-          {/* Explanation Panel */}
-          <div className="mt-8 panel">
-            <h3 className="text-xl font-bold text-purple-400 mb-4">What You're Seeing</h3>
-            <div className="prose prose-invert max-w-none text-text-secondary">
-              <p className="mb-4">
-                This simulation places a <strong>tiny black hole</strong> at the center of the lattice with a moon in orbit. 
-                The black hole is represented by an <strong>extremely concentrated chi field</strong> (small σ, high mass).
-              </p>
-              <div className="bg-space-dark p-4 rounded-lg font-mono text-purple-400 text-center my-4">
-                Extreme χ²(x,t) → Strong spacetime curvature
-              </div>
-              <ul className="space-y-2 list-disc list-inside">
-                <li><strong>Emergent event horizon</strong> — Field becomes so steep that escape requires extreme velocity</li>
-                <li><strong>Orbital precession</strong> — Moon's orbit may precess due to strong field gradients</li>
-                <li><strong>Inspiral dynamics</strong> — Energy loss (numerical or physical) causes moon to spiral inward</li>
-                <li><strong>Time dilation analogue</strong> — Timesteps near black hole effectively "slow down" in extreme field</li>
-              </ul>
-              <p className="mt-4 text-yellow-400">
-                <strong>⚠️ Exploratory Physics:</strong> This is NOT a validated model of real black holes. 
-                It explores emergent gravity from lattice field medium (LFM) with extreme parameters.
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-// Reusable components
-function MetricDisplay({ 
-  label, 
-  value, 
-  status 
-}: { 
-  label: string; 
-  value: string; 
-  status: 'conserved' | 'good' | 'neutral' | 'warning';
-}) {
-  const statusColors = {
-    conserved: 'text-accent-glow',
-    good: 'text-accent-glow',
-    neutral: 'text-text-primary',
-    warning: 'text-yellow-500',
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-space-border last:border-b-0">
-      <span className="text-sm text-text-secondary">{label}</span>
-      <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
-    </div>
+    </ExperimentLayout>
   );
 }

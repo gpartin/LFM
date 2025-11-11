@@ -8,12 +8,10 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import BackendBadge from '@/components/ui/BackendBadge';
-import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ExperimentLayout from '@/components/experiment/ExperimentLayout';
+import StandardVisualizationOptions from '@/components/experiment/StandardVisualizationOptions';
+import StandardMetricsPanel from '@/components/experiment/StandardMetricsPanel';
 import ParameterSlider from '@/components/ui/ParameterSlider';
-import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
@@ -177,33 +175,47 @@ export default function StellarCollapsePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-space-dark">
-      <Header />
-
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold text-purple-400 mb-2">⭐ Stellar Collapse Simulation</h1>
-              <p className="text-text-secondary">
-                Watch a massive star collapse under its own chi field. As field concentration increases, 
-                the star's gravitational pull intensifies—demonstrating emergent gravity from extreme field gradients.
-              </p>
+    <ExperimentLayout
+      title="⭐ Stellar Collapse Simulation"
+      description="Watch a massive star collapse under its own chi field. As field concentration increases, the star's gravitational pull intensifies—demonstrating emergent gravity from extreme field gradients."
+      backend={state.backend}
+      experimentId="stellar-collapse"
+      visualizationOptions={
+        <StandardVisualizationOptions
+          state={state.ui}
+          onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+          showAdvancedOptions={true}
+        />
+      }
+      footerContent={
+        <div className="mt-8 panel">
+          <h3 className="text-xl font-bold text-purple-400 mb-4">What You're Seeing</h3>
+          <div className="prose prose-invert max-w-none text-text-secondary">
+            <p className="mb-4">
+              This simulation demonstrates <strong>stellar collapse</strong> in the LFM framework. A massive star creates an 
+              extremely concentrated chi field—as the field concentration increases, the emergent gravitational pull intensifies.
+            </p>
+            <div className="bg-space-dark p-4 rounded-lg font-mono text-purple-400 text-center my-4">
+              Concentrated χ²(x,t) → Steep field gradients → Emergent gravity collapse
             </div>
-
-            <ScientificDisclosure experimentName="Stellar Collapse" />
+            <ul className="space-y-2 list-disc list-inside">
+              <li><strong>Field concentration</strong> — Small σ creates extremely steep field gradients near the star</li>
+              <li><strong>Emergent event horizon</strong> — Test particles cannot escape beyond critical radius</li>
+              <li><strong>Gravitational collapse</strong> — Star's own field creates inward acceleration</li>
+              <li><strong>Black hole formation analogue</strong> — Extreme concentration mimics event horizon physics</li>
+            </ul>
+            <p className="mt-4 text-yellow-400">
+              <strong>⚠️ MVP Note:</strong> This is a simplified demonstration using a test particle to visualize the collapsing 
+              field. Full self-consistent stellar collapse (with pressure, radiation, matter dynamics) requires extended LFM equations 
+              currently in development.
+            </p>
           </div>
-
-          {/* Backend Status */}
-          <div className="mb-8">
-            <BackendBadge backend={state.backend} />
-          </div>
-
-          {/* Main Experiment Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        </div>
+      }
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* 3D Canvas */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <div className="panel h-[600px] relative overflow-hidden">
                 {state.backend === 'webgpu' ? (
                   <OrbitCanvas
@@ -329,86 +341,18 @@ export default function StellarCollapsePage() {
                 </div>
               </div>
 
-              <VisualizationOptions
-                toggles={[
-                  { key: 'showParticles', label: 'Bodies', checked: state.ui.showParticles },
-                  { key: 'showTrails', label: 'Orbital Trails', checked: state.ui.showTrails },
-                  { key: 'showChi', label: 'Chi Field', checked: state.ui.showChi },
-                  { key: 'showLattice', label: 'Simulation Grid', checked: state.ui.showLattice },
-                  { key: 'showVectors', label: 'Force Arrows', checked: state.ui.showVectors },
-                  { key: 'showWell', label: 'Gravity Well', checked: state.ui.showWell },
-                  { key: 'showDomes', label: 'Field Bubbles', checked: state.ui.showDomes },
-                  { key: 'showIsoShells', label: 'Field Shells', checked: state.ui.showIsoShells },
-                  { key: 'showBackground', label: 'Stars & Background', checked: state.ui.showBackground },
-                ]}
-                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
-              />
-
               {/* Metrics */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-purple-400 mb-4">System Metrics</h3>
-
-                <div className="space-y-3">
-                  <MetricDisplay label="Total Energy" value={state.metrics.energy} status="neutral" />
-                  <MetricDisplay label="Energy Drift" value={state.metrics.drift} status="neutral" />
-                  <MetricDisplay label="Angular Momentum" value={state.metrics.angularMomentum} status="neutral" />
-                </div>
-              </div>
+              <StandardMetricsPanel
+                coreMetrics={{
+                  energy: state.metrics.energy,
+                  drift: state.metrics.drift,
+                  angularMomentum: state.metrics.angularMomentum,
+                }}
+                title="System Metrics"
+                titleColorClass="text-purple-400"
+              />
             </div>
           </div>
-
-          {/* Explanation Panel */}
-          <div className="mt-8 panel">
-            <h3 className="text-xl font-bold text-purple-400 mb-4">What You're Seeing</h3>
-            <div className="prose prose-invert max-w-none text-text-secondary">
-              <p className="mb-4">
-                This simulation demonstrates <strong>stellar collapse</strong> in the LFM framework. A massive star creates an 
-                extremely concentrated chi field—as the field concentration increases, the emergent gravitational pull intensifies.
-              </p>
-              <div className="bg-space-dark p-4 rounded-lg font-mono text-purple-400 text-center my-4">
-                Concentrated χ²(x,t) → Steep field gradients → Emergent gravity collapse
-              </div>
-              <ul className="space-y-2 list-disc list-inside">
-                <li><strong>Field concentration</strong> — Small σ creates extremely steep field gradients near the star</li>
-                <li><strong>Emergent event horizon</strong> — Test particles cannot escape beyond critical radius</li>
-                <li><strong>Gravitational collapse</strong> — Star's own field creates inward acceleration</li>
-                <li><strong>Black hole formation analogue</strong> — Extreme concentration mimics event horizon physics</li>
-              </ul>
-              <p className="mt-4 text-yellow-400">
-                <strong>⚠️ MVP Note:</strong> This is a simplified demonstration using a test particle to visualize the collapsing 
-                field. Full self-consistent stellar collapse (with pressure, radiation, matter dynamics) requires extended LFM equations 
-                currently in development.
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-function MetricDisplay({ 
-  label, 
-  value, 
-  status 
-}: { 
-  label: string; 
-  value: string; 
-  status: 'conserved' | 'good' | 'neutral' | 'warning';
-}) {
-  const statusColors = {
-    conserved: 'text-accent-glow',
-    good: 'text-accent-glow',
-    neutral: 'text-text-primary',
-    warning: 'text-yellow-500',
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-space-border last:border-b-0">
-      <span className="text-sm text-text-secondary">{label}</span>
-      <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
-    </div>
+    </ExperimentLayout>
   );
 }

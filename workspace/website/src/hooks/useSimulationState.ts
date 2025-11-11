@@ -101,12 +101,12 @@ const initialUI: SimulationUI = {
   showParticles: true,
   showTrails: true,
   showChi: false,
-  showLattice: true,
+  showLattice: false,  // Default OFF - Simulation Grid should be hidden
   showVectors: true,
   showWell: true,
   showDomes: false,
   showIsoShells: false,
-  showBackground: false,
+  showBackground: true,  // Default ON - Stars & Background should be visible
   fastForward: false,
 };
 

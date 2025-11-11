@@ -8,12 +8,10 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import BackendBadge from '@/components/ui/BackendBadge';
-import ScientificDisclosure from '@/components/ui/ScientificDisclosure';
+import ExperimentLayout from '@/components/experiment/ExperimentLayout';
+import StandardVisualizationOptions from '@/components/experiment/StandardVisualizationOptions';
+import StandardMetricsPanel from '@/components/experiment/StandardMetricsPanel';
 import ParameterSlider from '@/components/ui/ParameterSlider';
-import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { NBodyOrbitSimulation, createFigure8ThreeBody } from '@/physics/forces/n-body-orbit';
 import NBodyCanvas from '@/components/visuals/NBodyCanvas';
@@ -136,31 +134,49 @@ export default function ThreeBodyPage() {
   }, [state.isRunning, dispatch]);
 
   return (
-    <div className="min-h-screen bg-space-dark text-text-primary flex flex-col">
-      <Header />
-      
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold text-accent-chi mb-2">🔺 Three-Body Problem</h1>
-              <p className="text-text-secondary">
-                Watch three equal masses perform the famous figure-8 orbit—a choreographed dance discovered in 2000. 
-                This chaotic system emerges purely from chi field gradients with no programmed gravitational equations.
-              </p>
-              <p className="text-sm text-yellow-400 mt-2">
-                <strong>Note:</strong> Using the Chenciner-Montgomery figure-8 solution. Parameter controls coming soon!
-              </p>
-            </div>
-            
-            <ScientificDisclosure experimentName="Three-Body Problem" />
+    <ExperimentLayout
+      title="🔺 Three-Body Problem"
+      description="Watch three equal masses perform the famous figure-8 orbit—a choreographed dance discovered in 2000. This chaotic system emerges purely from chi field gradients with no programmed gravitational equations."
+      backend={backend}
+      experimentId="three-body"
+      visualizationOptions={
+        <StandardVisualizationOptions
+          state={state.ui}
+          onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+          showAdvancedOptions={true}
+        />
+      }
+      footerContent={
+        <div className="mt-8 panel">
+          <h2 className="text-2xl font-bold text-accent-chi mb-4">The Famous Figure-8 Orbit</h2>
+          <div className="prose prose-invert max-w-none text-text-secondary space-y-4">
+            <p className="text-sm text-yellow-400 mb-4">
+              <strong>Note:</strong> Using the Chenciner-Montgomery figure-8 solution. Parameter controls coming soon!
+            </p>
+            <p>
+              This simulation demonstrates the <strong>three-body problem</strong>—one of physics' most famous challenges. 
+              Unlike two-body systems (which have analytical solutions), three bodies create chaotic dynamics where tiny 
+              changes in initial conditions lead to completely different outcomes.
+            </p>
+            <p>
+              <strong className="text-text-primary">The Figure-8 Solution:</strong> Discovered by Chenciner & Montgomery in 2000, 
+              this is a special periodic orbit where three equal masses chase each other in a figure-8 pattern. It's one of the 
+              few stable three-body configurations—most are chaotic and unpredictable.
+            </p>
+            <p>
+              <strong className="text-text-primary">In LFM:</strong> No gravitational force equations are programmed. Three masses 
+              create overlapping chi fields, and their motion emerges purely from field gradients. The choreographed dance you see 
+              arises naturally from the lattice dynamics—gravity is emergent, not fundamental.
+            </p>
+            <p className="text-yellow-400">
+              <strong>Coming Soon:</strong> Interactive controls for mass ratios, different initial configurations (Lagrange points, 
+              unstable chaos), and 4+ body systems!
+            </p>
           </div>
-
-          <div className="mb-8">
-            <BackendBadge backend={backend} />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        </div>
+      }
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <div className="bg-space-panel rounded-lg overflow-hidden border border-space-border h-[600px]">
                 {backend === 'webgpu' ? (
@@ -248,76 +264,16 @@ export default function ThreeBodyPage() {
                 </div>
               </div>
 
-              <VisualizationOptions
-                toggles={[
-                  { key: 'showParticles', label: 'Bodies', checked: state.ui.showParticles },
-                  { key: 'showTrails', label: 'Orbital Trails', checked: state.ui.showTrails },
-                  { key: 'showBackground', label: 'Stars & Background', checked: state.ui.showBackground },
-                ]}
-                onChange={(key, value) => dispatch({ type: 'UPDATE_UI', payload: { key: key as any, value } })}
+              <StandardMetricsPanel
+                coreMetrics={{
+                  energy: state.metrics.energy,
+                  drift: state.metrics.drift,
+                  angularMomentum: state.metrics.angularMomentum,
+                }}
+                title="System Metrics"
               />
-
-              <div className="panel">
-                <h3 className="text-lg font-bold mb-4">System Metrics</h3>
-                <div className="space-y-3">
-                  <MetricDisplay label="Energy" value={state.metrics.energy} status="conserved" />
-                  <MetricDisplay label="Angular Momentum" value={state.metrics.angularMomentum} status="conserved" />
-                  <MetricDisplay label="Energy Drift" value={state.metrics.drift} status="good" />
-                </div>
-              </div>
             </div>
           </div>
-
-          <div className="mt-12 panel">
-            <h2 className="text-2xl font-bold text-accent-chi mb-4">The Famous Figure-8 Orbit</h2>
-            <div className="prose prose-invert max-w-none text-text-secondary space-y-4">
-              <p>
-                This simulation demonstrates the <strong>three-body problem</strong>—one of physics' most famous challenges. 
-                Unlike two-body systems (which have analytical solutions), three bodies create chaotic dynamics where tiny 
-                changes in initial conditions lead to completely different outcomes.
-              </p>
-              <p>
-                <strong className="text-text-primary">The Figure-8 Solution:</strong> Discovered by Chenciner & Montgomery in 2000, 
-                this is a special periodic orbit where three equal masses chase each other in a figure-8 pattern. It's one of the 
-                few stable three-body configurations—most are chaotic and unpredictable.
-              </p>
-              <p>
-                <strong className="text-text-primary">In LFM:</strong> No gravitational force equations are programmed. Three masses 
-                create overlapping chi fields, and their motion emerges purely from field gradients. The choreographed dance you see 
-                arises naturally from the lattice dynamics—gravity is emergent, not fundamental.
-              </p>
-              <p className="text-yellow-400">
-                <strong>Coming Soon:</strong> Interactive controls for mass ratios, different initial configurations (Lagrange points, 
-                unstable chaos), and 4+ body systems!
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function MetricDisplay({ 
-  label, 
-  value, 
-  status 
-}: { 
-  label: string; 
-  value: string; 
-  status: 'conserved' | 'good' | 'neutral' | 'warning';
-}) {
-  const statusColors = {
-    conserved: 'text-accent-glow',
-    good: 'text-accent-glow',
-    neutral: 'text-text-primary',
-    warning: 'text-yellow-500',
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-space-border last:border-b-0">
-      <span className="text-sm text-text-secondary">{label}</span>
-      <span className={`text-sm font-mono font-semibold ${statusColors[status]}`}>{value}</span>
-    </div>
+    </ExperimentLayout>
   );
 }
