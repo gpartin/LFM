@@ -7,9 +7,9 @@ This is a dry-run staging area. Upload the following files to OSF:
 | COMMERCIAL_LICENSE_REQUEST.md | 6315 | `ff51aefada3dd36c39933d94699a796fe991533b73cde7172091bd5178a17ec8` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
 | LICENSE_MATRIX.md | 1867 | `f5603691357873cbdc4bc63420403dbf7e9cb1aa869d906a960c9710044f1541` |
-| MANIFEST.md | 14239 | `83c8913606a02d51e69eb3b2d3fe039bb4b6b587a8d7074a4ecfef49db5dd9a4` |
+| MANIFEST.md | 14122 | `8bf897c74fea48cc790fe988313feada714e29bb7a60249a682eeed22c07bc0b` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 13844 | `7070274f56524d139403cd8f0981431ffe15838252c3ad098fd07a8aec2b21ad` |
+| OSF_UPLOAD_OVERVIEW.md | 13726 | `d39a609f7135f13bac10813e9a0e5f6426f032fd1f1f2365ffa864f8be663727` |
 | plots/Electromagnetic/EM-01/em-01_analysis.png | 111255 | `cb67aa7abc5159fe69a2ca89f971a0396ff1c529cb931d3fadcad88b8950faed` |
 | plots/Electromagnetic/EM-02/magnetic_generation_verification.png | 140499 | `e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458` |
 | plots/Electromagnetic/EM-03/faraday_error_analysis.png | 42974 | `3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d` |
@@ -104,7 +104,7 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Relativistic/REL-17/momentum_conservation_REL-17.png | 111926 | `65a92ba1ec6916381f7a062ebf314a8ea433be19d25c77bbed4a188ce50e0c61` |
 | PLOTS_OVERVIEW.md | 8403 | `755658da31f948eb398b4c0805b8c5dccb1124e9fbdba30ad374f7dbdf1ae79e` |
 | README.md | 1868 | `2b3662e7bcb99a1137d8f1f4316d22970b72070772a49dd048a38345a19725c2` |
-| results_MASTER_TEST_STATUS.csv | 9207 | `e3c4d77e8b0f8402962989630c6e96647b58d0d2ecba15cf1f5abb4251db80bc` |
+| results_MASTER_TEST_STATUS.csv | 10110 | `44b2d280c9157fa3bac87371a771ae392b77d9606376d10781ddf4ea4e3fbc31` |
 | SKIP_DISCLOSURE.md | 1851 | `96add8a4b31945c05e3b57d91dd90c2bd62945eeee4a43821feea4d45cf82892` |
 | txt/Executive_Summary.txt | 6930 | `21406c154d69a6c8f1ad8bfa92b429f6050d9c1bea8455381ac77eb841f6031b` |
 | txt/LFM_Core_Equations.txt | 11012 | `09108ceee0ce271bf2e3273335b4ab27c97d073e6b5588cd2c1650353bd9a653` |
@@ -112,4 +112,3 @@ This is a dry-run staging area. Upload the following files to OSF:
 | txt/LFM_Phase1_Test_Design.txt | 10219 | `39886cc6fcd2cb40ea832d830be87896cadaba4b40967d788cc95f744b4a0d33` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
-| LFM_upload_bundle_20251110_v1.zip | 8298563 | `7df662a2dc1de054c4d3305f03457198a26359a38858bd7df1cc9b7ce86eefc9` |

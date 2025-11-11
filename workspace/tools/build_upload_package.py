@@ -80,39 +80,88 @@ STAGED_GENERATED = [
 
 
 def _read_master_skip_list() -> list[dict]:
-    """Parse results/MASTER_TEST_STATUS.csv and return rows with Status == SKIP.
-    Returns: list of dicts with keys: test_id, tier, category, description, skip_reason.
+    """Parse MASTER_TEST_STATUS.csv and return rows with Status == SKIP.
+    Supports both legacy (Test_ID,Description,Status,Notes) and extended (Test_ID,Tier,Category,Status,Description,Skip_Reason,...) formats.
+    Prefers results/MASTER_TEST_STATUS.csv; falls back to docs/upload/results_MASTER_TEST_STATUS.csv.
+    Returns list of dicts: test_id, tier, category, description, skip_reason.
     """
     master = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
-    skips: list[dict] = []
     if not master.exists():
-        return skips
+        staged = UPLOAD / 'results_MASTER_TEST_STATUS.csv'
+        if staged.exists():
+            master = staged
+        else:
+            return []
     try:
-        lines = master.read_text(encoding='utf-8').splitlines()
-        # Find the detailed section header we emit: Test_ID,Tier,Category,Status,Description,Skip_Reason,Runtime_Sec,Timestamp
-        start_idx = None
-        for i, line in enumerate(lines):
-            if line.startswith('Test_ID,Tier,Category,Status,Description,Skip_Reason'):
-                start_idx = i + 1
-                break
-        if start_idx is None:
-            return skips
-        import csv as _csv
-        reader = _csv.DictReader(lines[start_idx:])
+        text = master.read_text(encoding='utf-8')
+    except Exception:
+        return []
+    lines = text.splitlines()
+    # Collect all sections starting with a header containing Test_ID
+    sections: list[list[str]] = []
+    current: list[str] = []
+    in_section = False
+    for line in lines:
+        if line.startswith('Test_ID,'):
+            # Flush previous
+            if current:
+                sections.append(current)
+            current = [line]
+            in_section = True
+            continue
+        if in_section:
+            if line.startswith('TIER ') and current:
+                sections.append(current)
+                current = []
+                in_section = False
+            else:
+                current.append(line)
+    if current:
+        sections.append(current)
+
+    import csv as _csv
+    skips: list[dict] = []
+    for sec in sections:
+        if not sec:
+            continue
+        header = sec[0]
+        # Normalize header variants
+        reader = _csv.DictReader(sec)
         for row in reader:
             if not row:
                 continue
             status = (row.get('Status') or '').strip().upper()
-            if status == 'SKIP':
-                skips.append({
-                    'test_id': (row.get('Test_ID') or '').strip(),
-                    'tier': (row.get('Tier') or '').strip(),
-                    'category': (row.get('Category') or '').strip(),
-                    'description': (row.get('Description') or '').strip(),
-                    'skip_reason': (row.get('Skip_Reason') or '').strip(),
-                })
-    except Exception:
-        return skips
+            if status != 'SKIP':
+                continue
+            test_id = (row.get('Test_ID') or '').strip()
+            description = (row.get('Description') or '').strip()
+            # Tier/category may be absent in legacy format; derive from test_id prefix
+            tier = (row.get('Tier') or '').strip()
+            category = (row.get('Category') or '').strip()
+            if not tier or not category:
+                # Attempt heuristic mapping from prefix
+                prefix = test_id.split('-')[0]
+                mapping = {
+                    'REL': (1, 'Relativistic'),
+                    'GRAV': (2, 'Gravity Analogue'),
+                    'ENER': (3, 'Energy Conservation'),
+                    'QUAN': (4, 'Quantization'),
+                    'EM': (5, 'Electromagnetic'),
+                    'COUP': (6, 'Multi-Domain Coupling'),
+                    'THERM': (7, 'Thermodynamics & Statistical Mechanics'),
+                }
+                if prefix in mapping:
+                    tier_num, cat_name = mapping[prefix]
+                    tier = str(tier_num)
+                    category = cat_name
+            skip_reason = (row.get('Skip_Reason') or row.get('Notes') or '').strip()
+            skips.append({
+                'test_id': test_id,
+                'tier': tier,
+                'category': category,
+                'description': description,
+                'skip_reason': skip_reason,
+            })
     return skips
 
 
@@ -1761,7 +1810,12 @@ def _collect_tests_for_category(category_dir: str) -> list[dict]:
                     except Exception:
                         continue
     # Override statuses using authoritative MASTER_TEST_STATUS.csv (for SKIP etc.)
+    # Prefer authoritative MASTER_TEST_STATUS.csv from results, else fallback to staged copy in upload dir
     master_csv = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
+    if not master_csv.exists():
+        alt = UPLOAD / 'results_MASTER_TEST_STATUS.csv'
+        if alt.exists():
+            master_csv = alt
     if master_csv.exists():
         try:
             lines_csv = master_csv.read_text(encoding='utf-8').splitlines()
@@ -1831,27 +1885,27 @@ def generate_tier_achievements_from_template(tier: dict, dest_dir: Path, determi
     env = _jinja_env()
     tmpl = env.get_template('tier_achievements.md.j2')
     tests = _collect_tests_for_category(tier['category_dir'])
-    passed = sum(1 for t in tests if t['status'] == 'PASS')
+    total_tests = len(tests)
+    skip_tests = [t for t in tests if t['status'] == 'SKIP']
+    executed_tests = [t for t in tests if t['status'] != 'SKIP']
+    passed = sum(1 for t in executed_tests if t['status'] == 'PASS')
     content = tmpl.render(
         tier_name=tier['tier_name'],
         description=tier['description'],
         significance=tier['significance'],
-        test_count=len(tests) if tests else tier.get('test_count', 0),
+        test_count=len(executed_tests),  # denominator excludes skips
         passed=passed,
-        tests=tests,
+        tests=tests,  # still list all tests including skips
+        total_tests=total_tests,
+        executed_tests=len(executed_tests),
+        skipped_tests=len(skip_tests),
         deterministic_date=_deterministic_now_str() if deterministic else None,
         generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     )
-    # If any tests are SKIP in this tier, append a deterministic Skip Disclosure section
-    tier_skips = [t for t in tests if t.get('status') == 'SKIP']
-    if tier_skips:
-        # Base policy text
-        skip_section = []
-        skip_section.append('\n\n## Skip Disclosure')
-        # Reuse master text header (without full frontmatter)
+    if skip_tests:
+        skip_section = ['\n\n## Skip Disclosure']
         try:
             policy_md = _load_skip_disclosure_md(deterministic)
-            # Strip YAML frontmatter if present
             if policy_md.lstrip().startswith('---'):
                 parts = policy_md.split('---')
                 policy_body = ('---'.join(parts[2:]) if len(parts) > 2 else parts[-1]).strip()
@@ -1860,20 +1914,14 @@ def generate_tier_achievements_from_template(tier: dict, dest_dir: Path, determi
             skip_section.append('\n' + policy_body + '\n')
         except Exception:
             skip_section.append('\nPass rates are computed over executed tests only. Skipped tests are disclosed with rationale.\n')
-        # Add tier-specific table
         skip_section.append('\n| Test ID | Description | Reason |')
         skip_section.append('|---------|-------------|--------|')
-        for t in tier_skips:
+        master_skips = {r['test_id']: r for r in _read_master_skip_list()}
+        for t in skip_tests:
             desc = (t.get('description') or '').replace('\n', ' ')[:160]
-            # Lookup detailed reason from master CSV if available
-            reason = ''
-            for row in _read_master_skip_list():
-                if row.get('test_id') == t.get('id'):
-                    reason = row.get('skip_reason', '')
-                    break
-            reason = (reason or 'See master status CSV.').replace('\n', ' ')[:240]
+            reason = (master_skips.get(t['id'], {}).get('skip_reason') or 'See master status CSV.').replace('\n', ' ')[:240]
             skip_section.append(f"| {t.get('id')} | {desc} | {reason} |")
-        content = content + '\n' + '\n'.join(skip_section) + '\n'
+        content += '\n' + '\n'.join(skip_section) + '\n'
     dest_dir.mkdir(parents=True, exist_ok=True)
     fname = f"TIER_{tier['tier_number']}_ACHIEVEMENTS.md"
     (dest_dir / fname).write_text(content, encoding='utf-8')
@@ -1884,41 +1932,49 @@ def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, determin
     env = _jinja_env()
     tmpl = env.get_template('results_comprehensive.md.j2')
     tiers = []
-    total_tests = 0
+    total_defined = 0
+    total_executed = 0
     total_passed = 0
+    total_skipped = 0
     for t in tier_metadata.get('tiers', []):
-        # Always derive counts from actual results to avoid metadata drift
-        test_count = len(_collect_tests_for_category(t['category_dir']))
-        passed = _compute_pass_counts(t)
-        total_tests += test_count
+        all_tests = _collect_tests_for_category(t['category_dir'])
+        defined = len(all_tests)
+        skipped = sum(1 for x in all_tests if x['status'] == 'SKIP')
+        executed = defined - skipped
+        passed = sum(1 for x in all_tests if x['status'] == 'PASS')
+        total_defined += defined
+        total_executed += executed
         total_passed += passed
+        total_skipped += skipped
         tiers.append({
             'tier_number': t['tier_number'],
             'tier_name': t['tier_name'],
             'short_name': t.get('short_name', t['category_dir']),
-            'test_count': test_count,
+            'test_count': defined,  # still show defined tests in table for transparency
+            'executed_count': executed,
+            'skipped_count': skipped,
             'passed': passed,
             'description': t['description'],
             'key_validations': t.get('key_validations', []),
             'significance': t.get('significance', ''),
         })
+    pass_percentage = (100.0 * total_passed / total_executed) if total_executed else 0.0
     content = tmpl.render(
         results_overview=tier_metadata.get('document_templates', {}).get('results_comprehensive_overview', ''),
         tiers=tiers,
-        total_tests=total_tests,
+        total_tests=total_defined,
         total_passed=total_passed,
-        pass_percentage=(100.0 * total_passed / total_tests) if total_tests else 0.0,
+        pass_percentage=pass_percentage,
+        total_executed=total_executed,
+        total_skipped=total_skipped,
         deterministic_date=_deterministic_now_str() if deterministic else None,
         generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     )
-    # Append a global Skip Disclosure section (deterministic)
     try:
         skips = _read_master_skip_list()
         if skips:
-            section = []
-            section.append('\n\n## Skip Disclosure')
+            section = ['\n\n## Skip Disclosure']
             policy_md = _load_skip_disclosure_md(deterministic)
-            # Strip YAML frontmatter if present
             if policy_md.lstrip().startswith('---'):
                 parts = policy_md.split('---')
                 policy_body = ('---'.join(parts[2:]) if len(parts) > 2 else parts[-1]).strip()
@@ -1931,10 +1987,9 @@ def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, determin
                 desc = (r.get('description') or '').replace('\n', ' ')[:120]
                 reason = (r.get('skip_reason') or 'See master status CSV.').replace('\n', ' ')[:200]
                 section.append(f"| {r.get('test_id')} | {r.get('tier')} | {r.get('category')} | {desc} | {reason} |")
-            content = content + '\n' + '\n'.join(section) + '\n'
+            content += '\n' + '\n'.join(section) + '\n'
     except Exception:
         pass
-
     (dest_dir / 'RESULTS_COMPREHENSIVE.md').write_text(content, encoding='utf-8')
     return 'RESULTS_COMPREHENSIVE.md'
 
