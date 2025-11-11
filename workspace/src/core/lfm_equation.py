@@ -10,7 +10,7 @@
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
 # Commercial licensing: https://github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md
-# Contact: research@emergentphysicslab.com | licensing@emergentphysicslab.com
+# Contact: latticefieldmediumresearch@gmail.com | licensing@emergentphysicslab.com
 
 """
 lfm_equation.py — Canonical LFM lattice update (v1.5 — 3D Extended, χ-field safe)

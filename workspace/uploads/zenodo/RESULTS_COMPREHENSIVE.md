@@ -3,17 +3,17 @@ title: "LFM Phase 1 Comprehensive Test Results"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "research@emergentphysicslab.com"
+contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
----
+generated: "2025-11-10 17:24:12"---
 
 # Comprehensive Test Results
 
 ## Overview
 
 This document provides a high-level summary of LFM validation test results across all tiers. For detailed test-by-test results, see the individual tier achievement reports.
-Generated: 2025-11-10 17:13:48
+Generated: 2025-11-10 17:24:12
 
 ## Test Summary
 

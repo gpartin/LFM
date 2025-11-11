@@ -9,7 +9,7 @@
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: research@emergentphysicslab.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 Tier-4 — Quantization & Spectra Tests

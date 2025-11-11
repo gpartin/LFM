@@ -143,7 +143,7 @@ A: Yes—indicate urgency in your request. We can fast-track evaluation for crit
 licensing@emergentphysicslab.com
 
 **General Research Questions:**  
-research@emergentphysicslab.com
+latticefieldmediumresearch@gmail.com
 
 **Security Disclosures:**  
 security@emergentphysicslab.com

@@ -9,7 +9,7 @@
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: research@emergentphysicslab.com
+# Contact: latticefieldmediumresearch@gmail.com
 
 """
 Build OSF/Zenodo upload package (dry-run)
@@ -1396,7 +1396,7 @@ def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
         'author: "Greg D. Partin"',
         'institution: "LFM Research, Los Angeles CA USA"',
         'license: "CC BY-NC-ND 4.0"',
-    'contact: "research@emergentphysicslab.com"',
+    'contact: "latticefieldmediumresearch@gmail.com"',
         'orcid: "https://orcid.org/0009-0004-0327-6528"',
         'url: "https://zenodo.org/records/17536484"',
         f'generated: "{stamp}"',
@@ -2015,7 +2015,7 @@ def _txt_to_markdown(txt_path: Path, title: str, deterministic: bool = False) ->
     lines.append('author: "Greg D. Partin"')
     lines.append('institution: "LFM Research, Los Angeles CA USA"')
     lines.append('license: "CC BY-NC-ND 4.0"')
-    lines.append('contact: "research@emergentphysicslab.com"')
+    lines.append('contact: "latticefieldmediumresearch@gmail.com"')
     lines.append('orcid: "https://orcid.org/0009-0004-0327-6528"')
     lines.append('url: "https://zenodo.org/records/17536484"')
     if deterministic:

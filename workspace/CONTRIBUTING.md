@@ -224,7 +224,7 @@ Violations will result in warnings, temporary bans, or permanent exclusion at ma
 ## 📞 Questions & Contact
 
 - **General Questions**: Open a GitHub Discussion or Issue
-- **Research Inquiries**: research@emergentphysicslab.com
+- **Research Inquiries**: latticefieldmediumresearch@gmail.com
 - **Commercial Licensing**: licensing@emergentphysicslab.com
 - **Security Issues**: security@emergentphysicslab.com
 
@@ -270,4 +270,4 @@ By contributing, you certify that:
 
 **Last Updated**: 2025-11-08  
 **Version**: 1.0  
-**Maintainer**: Greg D. Partin | research@emergentphysicslab.com
+**Maintainer**: Greg D. Partin | latticefieldmediumresearch@gmail.com

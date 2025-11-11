@@ -23,4 +23,4 @@ This matrix clarifies which licenses apply to each class of artifacts in this re
 Notes
 - This matrix is informational; license headers and top‑of‑file SPDX identifiers are authoritative where present.
 - For commercial licensing or permissions beyond CC BY‑NC‑ND, see `COMMERCIAL_LICENSE_REQUEST.md` or contact: licensing@emergentphysicslab.com
-- General research inquiries: research@emergentphysicslab.com
+- General research inquiries: latticefieldmediumresearch@gmail.com
