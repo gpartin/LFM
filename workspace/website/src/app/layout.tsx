@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     description: 'Interactive demonstrations of emergent physics: gravity, quantum mechanics, and electromagnetism from Klein-Gordon lattice field dynamics.',
     images: [
       {
-        url: '/og-image.png',  // TODO: Create this image
+        url: '/opengraph-image',
         width: 1200,
         height: 630,
         alt: 'Emergent Physics Lab - Klein-Gordon Field Simulations',
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Emergent Physics Lab',
     description: 'Interactive physics simulations showing emergent phenomena from lattice field dynamics',
-    images: ['/og-image.png'],  // TODO: Create this image
+    images: ['/opengraph-image'],
     creator: '@EmergentPhysics',  // TODO: Create Twitter account
   },
   alternates: {
