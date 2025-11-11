@@ -15,6 +15,7 @@ import MetricsPanel from './MetricsPanel';
 import ValidationPanel from './ValidationPanel';
 import VisualizationOptions from '@/components/ui/VisualizationOptions';
 import Link from 'next/link';
+import { testStatistics } from '@/data/test-statistics';
 
 interface ExperimentTemplateProps {
   experiment: ExperimentDefinition;
@@ -215,6 +216,20 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
         <p className="text-text-secondary leading-relaxed max-w-4xl">
           {experiment.description}
         </p>
+
+        {/* Canonical Validation Banner */}
+        <div className="mt-4 rounded border border-accent-chi/40 bg-accent-chi/5 p-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-sm text-text-secondary">
+                <span className="font-semibold text-accent-chi">Canonical Validation Status:</span> All physics validation tests passing ({testStatistics.passing}/{testStatistics.total} executed; {testStatistics.passRate}). Skip-designated tests excluded by executed-only policy.
+              </p>
+            </div>
+            <Link href="/research" className="text-xs px-3 py-2 rounded bg-accent-glow text-space-dark font-semibold hover:bg-accent-glow/80 transition-colors whitespace-nowrap">
+              View Validation Summary →
+            </Link>
+          </div>
+        </div>
       </div>
       
       {/* GRAV-09 Skip Warning Banner */}

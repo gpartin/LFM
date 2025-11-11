@@ -16,10 +16,14 @@ import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
+import { decideSimulationProfile } from '@/physics/core/simulation-profile';
+import SimpleCanvas from '@/components/visuals/SimpleCanvas';
 
 export default function BigBangPage() {
   const [state, dispatch] = useSimulationState();
   const [backend, setBackend] = useState<'webgpu' | 'cpu'>('webgpu');
+  const [uiMode, setUiMode] = useState<'advanced' | 'simple'>('advanced');
+  const [dimMode, setDimMode] = useState<'3d' | '1d'>('3d');
   
   const deviceRef = useRef<GPUDevice | null>(null);
   const simRef = useRef<BinaryOrbitSimulation | null>(null);
@@ -46,6 +50,9 @@ export default function BigBangPage() {
         payload: { backend: effectiveBackend, capabilities: caps } 
       });
       setBackend(effectiveBackend);
+      const prof = decideSimulationProfile(effectiveBackend, caps, 'classical');
+      setUiMode(prof.ui);
+      setDimMode(prof.dim);
     });
   }, [dispatch]);
 
@@ -219,7 +226,7 @@ export default function BigBangPage() {
             {/* 3D Canvas */}
             <div className="lg:col-span-3">
               <div className="panel h-[600px] relative overflow-hidden">
-                {state.backend === 'webgpu' ? (
+                {uiMode === 'advanced' ? (
                   <OrbitCanvas
                     simulation={simRef}
                     isRunning={state.isRunning}
@@ -235,15 +242,11 @@ export default function BigBangPage() {
                     chiStrength={state.params.chiStrength || 0.8}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <h3 className="text-2xl font-bold text-purple-400 mb-2">WebGPU Required</h3>
-                      <p className="text-text-secondary mb-6">
-                        Big bang simulations require WebGPU. Upgrade your browser or enable experimental flags.
-                      </p>
-                    </div>
-                  </div>
+                  <SimpleCanvas
+                    isRunning={state.isRunning}
+                    parameters={{ ...state.params, __dim: dimMode }}
+                    views={{ showGrid: false, showField: false }}
+                  />
                 )}
               </div>
 
@@ -251,10 +254,10 @@ export default function BigBangPage() {
               <div className="mt-4 flex items-center justify-center space-x-4" role="group" aria-label="Simulation controls">
                 <button
                   onClick={startSimulation}
-                  disabled={state.backend !== 'webgpu' || state.isRunning}
+                  disabled={uiMode !== 'advanced' || state.isRunning}
                   aria-label="Start simulation"
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                    state.backend !== 'webgpu' || state.isRunning
+                    uiMode !== 'advanced' || state.isRunning
                       ? 'bg-accent-glow/40 text-space-dark/60 cursor-not-allowed'
                       : 'bg-accent-glow hover:bg-accent-glow/80 text-space-dark'
                   }`}
@@ -286,10 +289,10 @@ export default function BigBangPage() {
             {/* Control Panel */}
             <div className="space-y-6">
               {/* Parameters */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-purple-400 mb-4">Big Bang Parameters</h3>
+              <div className="panel" data-panel="experiment-parameters">
+                <h3 className="text-lg font-bold text-purple-400 mb-4">Experiment Parameters</h3>
 
-                <div className="space-y-4">
+                <div className="space-y-4" data-section="profile-parameters">
                   <ParameterSlider
                     label="Initial Energy"
                     value={state.params.massRatio}
@@ -351,6 +354,7 @@ export default function BigBangPage() {
                     tooltip="Simulation speed - higher = more physics steps per frame to see expansion evolution faster."
                   />
                 </div>
+                <div className="sr-only" aria-hidden="true" data-section="experiment-parameters" />
               </div>
 
               {/* Metrics */}

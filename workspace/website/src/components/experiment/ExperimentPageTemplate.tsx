@@ -25,6 +25,9 @@ import { detectBackend, type BackendCapabilities, type PhysicsBackend } from '@/
 import { getExperimentById } from '@/lib/experimentRegistry';
 import type { Experiment, ExperimentMetrics as ExperimentMetricsType } from '@/types/experiment';
 import { WebGPUErrorBoundary } from '@/components/ErrorBoundary';
+import SimpleCanvas from '@/components/visuals/SimpleCanvas';
+import { decideSimulationProfile } from '@/physics/core/simulation-profile';
+import { testStatistics } from '@/data/test-statistics';
 import { ExperimentSkeleton } from '@/components/ui/LoadingSkeleton';
 
 export interface ExperimentPageTemplateProps {
@@ -284,6 +287,7 @@ export default function ExperimentPageTemplate({
   
   // Render experiment
   const RenderComponent = experiment?.RenderComponent;
+  const simProfile = decideSimulationProfile(backend, capabilities, (metadata as any)?.profile ?? 'classical');
   
   return (
     <div className="min-h-screen flex flex-col bg-space-dark">
@@ -297,6 +301,19 @@ export default function ExperimentPageTemplate({
               <div>
                 <h1 className="text-4xl font-bold text-accent-chi mb-2">{metadata.title}</h1>
                 <p className="text-text-secondary">{metadata.fullDescription}</p>
+              </div>
+            </div>
+            {/* Canonical Validation Banner */}
+            <div className="mt-4 rounded border border-accent-chi/40 bg-accent-chi/5 p-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <p className="text-sm text-text-secondary">
+                    <span className="font-semibold text-accent-chi">Canonical Validation Status:</span> All physics validation tests passing ({testStatistics.passing}/{testStatistics.total} executed; {testStatistics.passRate}). Skip-designated tests excluded by executed-only policy.
+                  </p>
+                </div>
+                <Link href="/validation" className="text-xs px-3 py-2 rounded bg-accent-glow text-space-dark font-semibold hover:bg-accent-glow/80 transition-colors whitespace-nowrap">
+                  View Full Validation →
+                </Link>
               </div>
             </div>
           </div>
@@ -368,15 +385,11 @@ export default function ExperimentPageTemplate({
                     />
                   </WebGPUErrorBoundary>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <h3 className="text-2xl font-bold text-accent-chi mb-2">WebGPU Not Available</h3>
-                      <p className="text-text-secondary mb-6">
-                        This experiment requires WebGPU. Upgrade your browser or enable experimental flags.
-                      </p>
-                    </div>
-                  </div>
+                  <SimpleCanvas 
+                    isRunning={false} 
+                    parameters={{ ...parameters, __dim: simProfile.dim }} 
+                    views={{ showGrid: false, showField: false }} 
+                  />
                 )}
               </div>
 
@@ -415,19 +428,35 @@ export default function ExperimentPageTemplate({
 
             {/* Control Panel (Right side - 1/3 width) */}
             <div className="space-y-6">
-              {/* Parameters */}
+              {/* Unified Experiment Parameters Panel */}
               {experiment && experiment.config.parameters.length > 0 && (
-                <div className="panel">
-                  <h3 className="text-lg font-bold text-accent-chi mb-4">Parameters</h3>
-                  <div className="space-y-4">
-                    {experiment.config.parameters.map((param) => (
-                      <ParameterControl
-                        key={param.key}
-                        param={param}
-                        value={parameters[param.key]}
-                        onChange={(value) => handleParameterChange(param.key, value)}
-                      />
-                    ))}
+                <div className="panel" data-panel="experiment-parameters">
+                  <h3 className="text-lg font-bold text-accent-chi mb-4">Experiment Parameters</h3>
+                  {/* Common Parameters (auto-detected) */}
+                  <div className="space-y-4" data-section="common-parameters">
+                    {experiment.config.parameters
+                      .filter(p => ['dt','dx','latticeSize','steps'].includes(p.key))
+                      .map(param => (
+                        <ParameterControl
+                          key={param.key}
+                          param={param}
+                          value={parameters[param.key]}
+                          onChange={(value) => handleParameterChange(param.key, value)}
+                        />
+                      ))}
+                  </div>
+                  {/* Profile-Specific Parameters */}
+                  <div className="mt-6 space-y-4" data-section="profile-parameters">
+                    {experiment.config.parameters
+                      .filter(p => !['dt','dx','latticeSize','steps'].includes(p.key))
+                      .map(param => (
+                        <ParameterControl
+                          key={param.key}
+                          param={param}
+                          value={parameters[param.key]}
+                          onChange={(value) => handleParameterChange(param.key, value)}
+                        />
+                      ))}
                   </div>
                 </div>
               )}

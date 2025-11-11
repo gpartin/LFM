@@ -18,12 +18,13 @@ Generated: {{ deterministic_date if deterministic_date else generation_time }}
 
 ## Test Summary
 
-| Tier | Category | Tests | Pass Rate | Tier Achievement Report |
-|------|----------|--------|-----------|------------------------|
+| Tier | Category | Executed Tests | Pass Rate | Tier Achievement Report |
+|------|----------|----------------|-----------|------------------------|
 {% for t in tiers -%}
-| {{ t.tier_name }} | {{ t.short_name }} | {{ t.test_count }} | {{ t.passed }}/{{ t.test_count }} ({{ (100 * t.passed / t.test_count) | round(1) }}%) | TIER_{{ t.tier_number }}_ACHIEVEMENTS.md |
+| {{ t.tier_name }} | {{ t.short_name }} | {{ t.executed_count }} | {{ t.passed }}/{{ t.executed_count }} ({{ (100 * t.passed / t.executed_count) | round(1) }}%) | TIER_{{ t.tier_number }}_ACHIEVEMENTS.md |
 {% endfor %}
-**Total: {{ total_passed }}/{{ total_tests }} tests passing ({{ pass_percentage | round(1) }}%)**
+**Total (executed-only)**: {{ total_passed }}/{{ total_executed }} tests passing ({{ pass_percentage | round(1) }}%)  
+_Skipped tests disclosed separately; excluded from denominator to prevent distortion._
 
 ---
 
@@ -38,7 +39,7 @@ Generated: {{ deterministic_date if deterministic_date else generation_time }}
 - {{ kv }}
 {%- endfor %}
 
-**Pass rate:** {{ t.passed }}/{{ t.test_count }} ({{ (100 * t.passed / t.test_count) | round(1) }}%)  
+**Pass rate (executed-only):** {{ t.passed }}/{{ t.executed_count }} ({{ (100 * t.passed / t.executed_count) | round(1) }}%)  
 **See:** TIER_{{ t.tier_number }}_ACHIEVEMENTS.md
 
 {%- endfor %}

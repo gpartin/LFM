@@ -182,7 +182,7 @@ function Scene({ simulation, isRunning, showParticles, showTrails, showBackgroun
 export default function NBodyCanvas({ simulation, isRunning, showParticles, showTrails, showBackground = true }: NBodyCanvasProps) {
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 8, 12], fov: 60 }}>
+      <Canvas frameloop="always" camera={{ position: [0, 8, 12], fov: 60 }}>
         <Scene 
           simulation={simulation} 
           isRunning={isRunning}

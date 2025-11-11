@@ -1,0 +1,230 @@
+/*
+ * © 2025 Emergent Physics Lab. All rights reserved.
+ * Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+ * Non-commercial use with attribution only; no distribution of modified material; commercial use requires prior written permission.
+ * SPDX-License-Identifier: CC-BY-NC-ND-4.0
+ */
+
+'use client';
+
+import { useEffect, useRef } from 'react';
+
+interface Props {
+  simulation: React.MutableRefObject<any>;
+  isRunning: boolean;
+  showGrid?: boolean;
+  showWave?: boolean; // draw intensity curve
+  showBarrier?: boolean; // draw aperture plane marker
+  showMetricsOverlay?: boolean;
+  fringeSpacing?: string;
+  visibility?: string;
+  slitIntensityRatio?: string;
+  updateInterval?: number; // frames between redraws
+}
+
+export default function FieldInterferenceCanvas({
+  simulation,
+  isRunning,
+  showGrid = true,
+  showWave = true,
+  showBarrier = true,
+  showMetricsOverlay = true,
+  fringeSpacing = '—',
+  visibility = '—',
+  slitIntensityRatio = '—',
+  updateInterval = 3,
+}: Props) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameCounterRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    let animationId: number;
+
+    const render = () => {
+      const sim = simulation.current;
+      if (!sim || !ctx) return;
+
+      frameCounterRef.current = (frameCounterRef.current + 1) % updateInterval;
+      if (frameCounterRef.current !== 0) {
+        if (isRunning) animationId = requestAnimationFrame(render);
+        return;
+      }
+
+      const width = rect.width;
+      const height = rect.height;
+      ctx.fillStyle = '#0a0a1a';
+      ctx.fillRect(0, 0, width, height);
+
+      // Optional grid
+      if (showGrid) {
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 10; i++) {
+          const x = (i / 10) * width;
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (let i = 0; i <= 5; i++) {
+          const y = (i / 5) * height;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+      }
+
+      // Draw 2D field intensity (THE ACTUAL INTERFERENCE PATTERN!)
+      if (showWave && sim.lattice) {
+        const lattice = sim.lattice;
+        const N = sim.params?.latticeSize ?? 128;
+        
+        // Get full 3D field
+        let field: Float32Array | null = null;
+        if (typeof lattice.getField === 'function') {
+          field = lattice.getField();
+        }
+        
+        if (!field) {
+          ctx.fillStyle = '#6b7280';
+          ctx.font = '14px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('Reading field data…', width / 2, height / 2);
+          if (isRunning) animationId = requestAnimationFrame(render);
+          return;
+        }
+
+        // Find max intensity for normalization
+        let maxIntensity = 0;
+        for (let i = 0; i < field.length; i++) {
+          const intensity = field[i] * field[i];
+          if (intensity > maxIntensity) maxIntensity = intensity;
+        }
+        if (maxIntensity === 0) maxIntensity = 1;
+
+        // Draw 2D slice at z=N/2 (middle of box) showing interference pattern
+        const z = Math.floor(N / 2);
+        const cellWidth = width / N;
+        const cellHeight = height / N;
+
+        for (let iy = 0; iy < N; iy++) {
+          for (let ix = 0; ix < N; ix++) {
+            const idx = z * N * N + iy * N + ix;
+            const val = field[idx];
+            const intensity = (val * val) / maxIntensity;
+            
+            // Vibrant color mapping: blue (low) -> cyan -> yellow -> red (high)
+            let r, g, b;
+            if (intensity < 0.25) {
+              // Dark blue -> Blue
+              const t = intensity / 0.25;
+              r = Math.floor(t * 30);
+              g = Math.floor(t * 60);
+              b = Math.floor(120 + t * 135);
+            } else if (intensity < 0.5) {
+              // Blue -> Cyan
+              const t = (intensity - 0.25) / 0.25;
+              r = Math.floor(30 + t * 30);
+              g = Math.floor(60 + t * 135);
+              b = 255;
+            } else if (intensity < 0.75) {
+              // Cyan -> Yellow
+              const t = (intensity - 0.5) / 0.25;
+              r = Math.floor(60 + t * 195);
+              g = Math.floor(195 + t * 60);
+              b = Math.floor(255 * (1 - t));
+            } else {
+              // Yellow -> Red
+              const t = (intensity - 0.75) / 0.25;
+              r = 255;
+              g = Math.floor(255 * (1 - t * 0.5));
+              b = 0;
+            }
+            
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(ix * cellWidth, iy * cellHeight, cellWidth + 1, cellHeight + 1);
+          }
+        }
+      }
+
+      // Draw aperture marker on left
+      if (showBarrier && typeof sim.params?.apertureX === 'number' && sim.slitCentersY) {
+        ctx.strokeStyle = '#ef4444';
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.18)';
+        ctx.lineWidth = 2;
+        // Slits positions (y) as horizontal gaps visualization hint
+        const N = sim.params?.latticeSize ?? 128;
+        const toY = (idx: number) => (idx / (N - 1)) * height;
+        const slitW = sim.params?.slitWidth ?? 6;
+        const [s1, s2] = sim.slitCentersY as [number, number];
+        const y1a = toY(Math.max(0, s1 - Math.floor(slitW / 2)));
+        const y1b = toY(Math.min(N - 1, s1 + Math.floor(slitW / 2)));
+        const y2a = toY(Math.max(0, s2 - Math.floor(slitW / 2)));
+        const y2b = toY(Math.min(N - 1, s2 + Math.floor(slitW / 2)));
+        // Draw red sidebar and hollow windows for slits
+        const barX = 8;
+        const barW = 10;
+        ctx.fillRect(barX, 0, barW, height);
+        ctx.clearRect(barX, y1a, barW, y1b - y1a);
+        ctx.clearRect(barX, y2a, barW, y2b - y2a);
+        ctx.strokeStyle = '#ef4444';
+        ctx.strokeRect(barX, 0, barW, height);
+        ctx.font = '11px sans-serif';
+        ctx.fillStyle = '#ef4444';
+        ctx.textAlign = 'left';
+        ctx.fillText('Aperture', barX + barW + 6, 14);
+      }
+
+      // Metrics overlay panel
+      if (showMetricsOverlay) {
+        const panelW = 200;
+        const panelH = 86;
+        const x = width - panelW - 12;
+        const y = 12;
+        ctx.fillStyle = 'rgba(17,24,39,0.85)';
+        ctx.strokeStyle = '#374151';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        (ctx as any).roundRect?.(x, y, panelW, panelH, 6);
+        if (!(ctx as any).roundRect) {
+          // fallback rounded panel
+          ctx.rect(x, y, panelW, panelH);
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#e0e7ff';
+        ctx.fillText('Interference Metrics', x + 10, y + 18);
+        ctx.font = '11px monospace';
+        ctx.fillStyle = '#93c5fd';
+        ctx.fillText(`Δy: ${fringeSpacing}`, x + 10, y + 36);
+        ctx.fillStyle = '#fde68a';
+        ctx.fillText(`Visibility: ${visibility}`, x + 10, y + 52);
+        ctx.fillStyle = '#a7f3d0';
+        ctx.fillText(`Slit Ratio: ${slitIntensityRatio}`, x + 10, y + 68);
+      }
+
+      if (isRunning) animationId = requestAnimationFrame(render);
+    };
+
+    render();
+    return () => { if (animationId) cancelAnimationFrame(animationId); };
+  }, [simulation, isRunning, showGrid, showWave, showBarrier, showMetricsOverlay, fringeSpacing, visibility, slitIntensityRatio, updateInterval]);
+
+  return (
+    <canvas ref={canvasRef} className="w-full h-full" style={{ background: '#0a0a1a' }} />
+  );
+}

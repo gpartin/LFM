@@ -61,16 +61,18 @@ interface VisualizationOptionsProps {
 export default function VisualizationOptions({ toggles, onChange }: VisualizationOptionsProps) {
   return (
     <div className="panel">
-      <h3 className="text-lg font-bold text-purple-400 mb-4">Visualization Options</h3>
-      <div className="space-y-3">
-        {toggles.map((toggle) => (
-          <ViewToggle
-            key={toggle.key}
-            label={toggle.label}
-            checked={toggle.checked}
-            onChange={(checked) => onChange(toggle.key, checked)}
-          />
-        ))}
+      <div className="flex items-center justify-between gap-6 flex-wrap">
+        <h3 className="text-lg font-bold text-purple-400 whitespace-nowrap">Visualization Options</h3>
+        <div className="flex items-center gap-6 flex-wrap">
+          {toggles.map((toggle) => (
+            <ViewToggle
+              key={toggle.key}
+              label={toggle.label}
+              checked={toggle.checked}
+              onChange={(checked) => onChange(toggle.key, checked)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,828 @@
+{
+  "generatedAt": "2025-11-11T21:41:17.768903",
+  "sourceFiles": [
+    "C:\\LFM\\workspace\\results\\MASTER_TEST_STATUS.csv",
+    "C:\\LFM\\workspace\\results\\parallel_test_results.json"
+  ],
+  "skipExempt": {
+    "GRAV-09": "Discrete lattice cannot represent required continuous potential gradient resolution (documented physical invalidity)."
+  },
+  "summary": {
+    "total_including_skips": 106,
+    "skipped": 1,
+    "skip_exempt_count": 1,
+    "executed": 105,
+    "passed": 105,
+    "failed": 0,
+    "public_total": 105,
+    "public_pass_rate": 100.0,
+    "formula": "public_pass_rate = passed / (executed) ; executed excludes SKIP including exempt"
+  },
+  "tiers": {
+    "1": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "REL-01",
+          "description": "Isotropy \u2014 Coarse Grid",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-02",
+          "description": "Isotropy \u2014 Fine Grid",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-03",
+          "description": "Lorentz Boost \u2014 Low Velocity",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-04",
+          "description": "Lorentz Boost \u2014 High Velocity",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-05",
+          "description": "Causality \u2014 Pulse Propagation",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-06",
+          "description": "Causality \u2014 Noise Perturbation",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-07",
+          "description": "Phase Independence Test",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-08",
+          "description": "Superposition Principle Test",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-09",
+          "description": "3D Isotropy \u2014 Directional Equivalence",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-10",
+          "description": "3D Isotropy \u2014 Spherical Symmetry",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-11",
+          "description": "Dispersion Relation \u2014 Non-relativistic (\u03c7/k\u224810)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-12",
+          "description": "Dispersion Relation \u2014 Weakly Relativistic (\u03c7/k\u22481)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-13",
+          "description": "Dispersion Relation \u2014 Relativistic (\u03c7/k\u22480.5)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-14",
+          "description": "Dispersion Relation \u2014 Ultra-relativistic (\u03c7/k\u22480.1)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-15",
+          "description": "Causality \u2014 Space-like correlation test (light cone violation check)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-16",
+          "description": "Linear Momentum Conservation \u2014 Two-Packet Collision",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "REL-17",
+          "description": "Invariant Mass \u2014 Lorentz Invariance",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "2": {
+      "executed": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 1,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "GRAV-01",
+          "description": "Local frequency \u2014 linear \u03c7-gradient (weak)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-02",
+          "description": "Local frequency \u2014 Gaussian well (strong curvature)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-03",
+          "description": "Local frequency \u2014 Gaussian well (broader potential)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-04",
+          "description": "Local frequency \u2014 Gaussian well (shallow potential)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-05",
+          "description": "Local frequency \u2014 linear \u03c7-gradient (moderate)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-06",
+          "description": "Local frequency \u2014 Gaussian well (stable reference)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-07",
+          "description": "Time dilation \u2014 bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-08",
+          "description": "Time dilation \u2014 uniform \u03c7 diagnostic (isolate grid dispersion)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-09",
+          "description": "Time dilation \u2014 2x refined grid (N=128; dx=0.5) [OPTIMIZED: matched baseline duration for fair convergence comparison]",
+          "status": "SKIP",
+          "skip_exempt": true,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-10",
+          "description": "Gravitational redshift \u2014 measure frequency shift in 1D potential well",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-11",
+          "description": "Time delay \u2014 packet through \u03c7 slab (Shapiro-like)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-12",
+          "description": "Phase delay \u2014 continuous wave through \u03c7 slab (DEMONSTRATES: Klein-Gordon phase/group velocity mismatch - testable prediction!)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-13",
+          "description": "Local frequency \u2014 double well (\u03c9\u221d\u03c7 verification)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-14",
+          "description": "Group delay \u2014 differential timing with vs without slab",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-15",
+          "description": "3D radial energy dispersion visualizer \u2014 central excitation; volumetric snapshots for MP4",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-16",
+          "description": "3D double-slit interference \u2014 quantum wave through slits showing \u03c7-field localization",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-17",
+          "description": "Gravitational redshift \u2014 frequency shift climbing out of \u03c7-well",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-18",
+          "description": "Gravitational redshift \u2014 linear gradient (Pound-Rebka analogue)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-19",
+          "description": "Gravitational redshift \u2014 radial \u03c7-profile (Schwarzschild analogue)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-20",
+          "description": "Self-consistent chi from E-energy (Poisson) - verify omega~=chi at center (1D)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-21",
+          "description": "GR calibration - redshift to G_eff mapping (weak-field limit)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-22",
+          "description": "GR calibration - Shapiro delay correspondence (group velocity through slab)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-23",
+          "description": "Dynamic \u03c7-field evolution \u2014 full wave equation \u25a1\u03c7=-4\u03c0G\u03c1 with causal propagation (gravitational wave analogue)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-24",
+          "description": "Gravitational wave propagation \u2014 oscillating source radiates \u03c7-waves; validate 1/r decay and propagation speed",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-25",
+          "description": "Light bending \u2014 ray tracing through \u03c7-gradient; measure deflection angle",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "GRAV-26",
+          "description": "Weak Equivalence Principle \u2014 mass-independent gravitational acceleration",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "3": {
+      "executed": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "ENER-01",
+          "description": "Global conservation \u2014 short",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-02",
+          "description": "Global conservation \u2014 long",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-03",
+          "description": "Wave integrity \u2014 mild curvature",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-04",
+          "description": "Wave integrity \u2014 steep curvature",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-05",
+          "description": "Hamiltonian partitioning \u2014 uniform \u03c7 (KE \u2194 GE flow)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-06",
+          "description": "Hamiltonian partitioning \u2014 with mass term (KE \u2194 GE \u2194 PE flow)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-07",
+          "description": "Hamiltonian partitioning \u2014 \u03c7-gradient field (energy flow in curved spacetime)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-08",
+          "description": "Dissipation \u2014 weak damping (exponential decay; \u03b3=1e-3 per unit time)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-09",
+          "description": "Dissipation \u2014 strong damping (exponential decay; \u03b3=1e-2 per unit time)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-10",
+          "description": "Thermalization \u2014 noise + damping reaches steady state",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "ENER-11",
+          "description": "Momentum conservation \u2014 two-packet collision",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "4": {
+      "executed": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "QUAN-01",
+          "description": "\u0394E Transfer \u2014 Low Energy",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-02",
+          "description": "\u0394E Transfer \u2014 High Energy",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-03",
+          "description": "Spectral Linearity \u2014 Coarse Steps",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-04",
+          "description": "Spectral Linearity \u2014 Fine Steps",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-05",
+          "description": "Phase-Amplitude Coupling \u2014 Low Noise",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-06",
+          "description": "Phase-Amplitude Coupling \u2014 High Noise",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-07",
+          "description": "Nonlinear Wavefront Stability",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-08",
+          "description": "High-Energy Lattice Blowout Test",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-09",
+          "description": "Heisenberg uncertainty \u2014 \u0394x\u00b7\u0394k \u2248 1/2",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-10",
+          "description": "Bound state quantization \u2014 discrete energy eigenvalues E_n emerge from boundary conditions",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-11",
+          "description": "Zero-point energy \u2014 ground state E\u2080 = \u00bd\u210f\u03c9 \u2260 0 (vacuum fluctuations)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-12",
+          "description": "Quantum tunneling \u2014 barrier penetration when E < V (classically forbidden)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-13",
+          "description": "Wave-particle duality \u2014 which-way information destroys interference",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "QUAN-14",
+          "description": "Non-thermalization \u2014 validates Klein-Gordon conserves energy (doesn't approach Planck)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "5": {
+      "executed": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "EM-01",
+          "description": "Gauss's Law Verification: \u2207\u00b7E = \u03c1/\u03b5\u2080",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-02",
+          "description": "Magnetic Field Generation: \u2207\u00d7B = \u03bc\u2080J",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-03",
+          "description": "Faraday's Law Implementation: \u2207\u00d7E = -\u2202B/\u2202t",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-04",
+          "description": "Amp\u00e8re's Law with Displacement Current: \u2207\u00d7B = \u03bc\u2080(J + \u03b5\u2080\u2202E/\u2202t)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-05",
+          "description": "Electromagnetic Wave Propagation (FDTD)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-06",
+          "description": "Poynting Vector Conservation: \u2207\u00b7S + \u2202u/\u2202t = 0",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-07",
+          "description": "\u03c7-Field Electromagnetic Coupling: LFM mediates EM wave propagation",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-08",
+          "description": "Mass-Energy Equivalence: E = mc\u00b2",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-09",
+          "description": "Photon-Matter Interaction",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-10",
+          "description": "Larmor Radiation from Accelerated Charges",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-11",
+          "description": "Electromagnetic Rainbow Lensing & Dispersion",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-12",
+          "description": "Time-Varying \u03c7-Field EM Response",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-13",
+          "description": "Electromagnetic Standing Waves in Cavity",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-14",
+          "description": "Doppler Effect and Relativistic Corrections",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-15",
+          "description": "Electromagnetic Scattering from \u03c7-Inhomogeneities",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-16",
+          "description": "Synchrotron Radiation from Accelerated Charges",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-17",
+          "description": "Electromagnetic Pulse Propagation (FDTD)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-18",
+          "description": "Multi-Scale EM-\u03c7 Coupling",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-19",
+          "description": "Gauge Invariance Verification: Physical fields unchanged under gauge transformations",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-20",
+          "description": "Charge Conservation: \u2202\u03c1/\u2202t + \u2207\u00b7J = 0",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "EM-21",
+          "description": "Time-Varying \u03c7-Field Pulse Response (FDTD)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "6": {
+      "executed": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "COUP-01",
+          "description": "Relativistic + Gravitational Time Dilation (Phase 1)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-02",
+          "description": "Wave Propagation Speed (1D Analytical Validation with L2 Convergence)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-03",
+          "description": "Light Deflection During Transverse Motion (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-04",
+          "description": "Bound State Energy Levels in \u03c7-Well (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-05",
+          "description": "Tunneling Rate Modulation by \u03c7-Field (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-06",
+          "description": "Wavepacket Collapse vs \u03c7-Gradient Interference (Phase 3)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-07",
+          "description": "EM Wave in \u03c7-Gradient (Phase 1)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-08",
+          "description": "Dynamic coupling - time-varying \u03c7 (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-09",
+          "description": "Asymmetric coupling - directional energy transfer (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-10",
+          "description": "Nonlinear coupling - self-interaction via \u03c7 feedback (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-11",
+          "description": "Interference - coupled field mixing (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "COUP-12",
+          "description": "Saturation - coupling strength limit (Phase 2)",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    },
+    "7": {
+      "executed": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "tests": [
+        {
+          "id": "THERM-01",
+          "description": "Entropy Increase \u2014 Second Law of Thermodynamics",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "THERM-02",
+          "description": "Irreversibility \u2014 Arrow of Time",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "THERM-03",
+          "description": "Equipartition Theorem \u2014 Energy Distribution Across Modes",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "THERM-04",
+          "description": "Thermalization Timescale \u2014 Relaxation to Equilibrium",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        },
+        {
+          "id": "THERM-05",
+          "description": "Temperature Emergence \u2014 Boltzmann Distribution",
+          "status": "PASS",
+          "skip_exempt": false,
+          "energy_drift": null
+        }
+      ]
+    }
+  }
+}

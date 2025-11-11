@@ -14,7 +14,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
   "sync:test-configs": "node ../tools/generate_website_experiments.js",
-  "generate:experiments": "npm run sync:test-configs"
+  "generate:experiments": "npm run sync:test-configs",
+  "validate:experiments": "ts-node scripts/validate-experiments.ts"
   },
   "dependencies": {
     "@react-three/drei": "^9.114.0",

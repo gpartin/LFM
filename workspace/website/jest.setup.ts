@@ -51,6 +51,57 @@ global.ResizeObserver = class ResizeObserver {
   unobserve() {}
 } as any;
 
+// Mock/override Canvas 2D context (jsdom throws not implemented); unconditional to ensure stability
+const __canvasNoop = () => {};
+(HTMLCanvasElement.prototype.getContext as any) = function getContext(this: HTMLCanvasElement, type: string) {
+  if (type === '2d') {
+    const self = this;
+    return {
+      canvas: self,
+      fillRect: __canvasNoop,
+      clearRect: __canvasNoop,
+      getImageData: () => ({ data: new Uint8ClampedArray(0) }),
+      putImageData: __canvasNoop,
+      createImageData: () => ({ data: new Uint8ClampedArray(0) }),
+      setTransform: __canvasNoop,
+      drawImage: __canvasNoop,
+      save: __canvasNoop,
+      restore: __canvasNoop,
+      beginPath: __canvasNoop,
+      closePath: __canvasNoop,
+      stroke: __canvasNoop,
+      fill: __canvasNoop,
+      clip: __canvasNoop,
+      moveTo: __canvasNoop,
+      lineTo: __canvasNoop,
+      arc: __canvasNoop,
+      quadraticCurveTo: __canvasNoop,
+      bezierCurveTo: __canvasNoop,
+      fillText: __canvasNoop,
+      strokeText: __canvasNoop,
+      measureText: (text: string) => ({ width: text.length * 8 }),
+      createLinearGradient: () => ({ addColorStop: __canvasNoop }),
+      createPattern: () => null,
+      createRadialGradient: () => ({ addColorStop: __canvasNoop }),
+      translate: __canvasNoop,
+      scale: __canvasNoop,
+      rotate: __canvasNoop,
+      setLineDash: __canvasNoop,
+      lineWidth: 1,
+      lineJoin: 'miter' as const,
+      lineCap: 'butt' as const,
+      font: '12px monospace',
+      textAlign: 'start' as const,
+      textBaseline: 'alphabetic' as const,
+      globalAlpha: 1,
+      globalCompositeOperation: 'source-over' as const,
+      strokeStyle: '#000',
+      fillStyle: '#000',
+    } as unknown as CanvasRenderingContext2D;
+  }
+  return null;
+};
+
 // Suppress console errors in tests (unless debugging)
 if (process.env.DEBUG !== 'true') {
   global.console = {

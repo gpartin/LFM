@@ -12,26 +12,97 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { 
-  getAllExperiments, 
-  searchExperiments, 
-  filterExperiments, 
-  getAllCategories, 
-  getAllTags,
-  getCategoryStats,
-} from '@/lib/experimentRegistry';
-import type { ExperimentCategory } from '@/types/experiment';
+import { getShowcaseExperiments, type ExperimentDefinition } from '@/data/experiments';
+
+// Adapter: Convert from new experiments.ts format to legacy registry format
+function adaptExperimentsToRegistry() {
+  const experiments = getShowcaseExperiments();
+  return experiments.map((exp) => ({
+    metadata: {
+      id: exp.id,
+      title: exp.displayName,
+      shortDescription: exp.tagline,
+      fullDescription: exp.description,
+      category: exp.category.toLowerCase().replace(/\s+/g, '-'),
+      tags: exp.links?.discovery ? ['emergent-physics', exp.category.toLowerCase()] : ['emergent-physics'],
+      difficulty: exp.difficulty || 'intermediate',
+      version: '1.0.0',
+      created: '2025-11-01T00:00:00Z',
+      updated: '2025-11-11T00:00:00Z',
+      featured: exp.featured || false,
+      backend: {
+        minBackend: exp.backend === 'both' ? 'cpu' : exp.backend,
+        requiredFeatures: exp.backend === 'webgpu' ? ['compute'] : [],
+        estimatedVRAM: 256,
+      },
+      education: {
+        whatYouSee: exp.description,
+        principles: [],
+        realWorld: '',
+        references: [],
+      },
+      thumbnail: `/thumbnails/${exp.id}.png`,
+      estimatedRuntime: 60,
+    },
+    loader: () => Promise.resolve({ default: () => null }), // Not used in browse
+  }));
+}
+
+function getAllExperiments() {
+  return adaptExperimentsToRegistry();
+}
+
+function searchExperiments(query: string) {
+  const experiments = adaptExperimentsToRegistry();
+  const q = query.toLowerCase();
+  return experiments.filter(exp =>
+    exp.metadata.title.toLowerCase().includes(q) ||
+    exp.metadata.shortDescription.toLowerCase().includes(q) ||
+    exp.metadata.tags.some(tag => tag.toLowerCase().includes(q))
+  );
+}
+
+function filterExperiments(filters: any) {
+  const experiments = adaptExperimentsToRegistry();
+  return experiments.filter(exp => {
+    if (filters.category && exp.metadata.category !== filters.category) return false;
+    if (filters.difficulty && exp.metadata.difficulty !== filters.difficulty) return false;
+    if (filters.tags && !filters.tags.some((tag: string) => exp.metadata.tags.includes(tag))) return false;
+    return true;
+  });
+}
+
+function getAllCategories() {
+  const experiments = adaptExperimentsToRegistry();
+  return Array.from(new Set(experiments.map(exp => exp.metadata.category)));
+}
+
+function getAllTags() {
+  const experiments = adaptExperimentsToRegistry();
+  const tags = new Set<string>();
+  experiments.forEach(exp => exp.metadata.tags.forEach(tag => tags.add(tag)));
+  return Array.from(tags);
+}
+
+function getCategoryStats() {
+  const experiments = adaptExperimentsToRegistry();
+  const stats: Record<string, number> = {};
+  experiments.forEach(exp => {
+    stats[exp.metadata.category] = (stats[exp.metadata.category] || 0) + 1;
+  });
+  return stats;
+}
 
 export default function ExperimentsBrowsePage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<ExperimentCategory | 'all'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
-  const allExperiments = getAllExperiments();
-  const allCategories = getAllCategories();
-  const allTags = getAllTags();
-  const categoryStats = getCategoryStats();
+  const allExperiments = useMemo(() => getAllExperiments(), []);
+  const allCategories = useMemo(() => getAllCategories(), []);
+  const allTags = useMemo(() => getAllTags(), []);
+  const categoryStats = useMemo(() => getCategoryStats(), []);
 
   // Filter experiments based on search and filters
   const filteredExperiments = useMemo(() => {

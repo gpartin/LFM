@@ -29,6 +29,14 @@ describe('WebGPUErrorBoundary', () => {
   it('should render error UI when child throws', () => {
     // Suppress console.error for this test
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // JSDOM reports render-time errors via window 'error' event even when React ErrorBoundary catches them.
+    // Prevent this specific test error from failing the suite.
+    const errorHandler = (event: ErrorEvent) => {
+      if (event.message && /Test error/.test(event.message)) {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('error', errorHandler);
     
     const ThrowError = () => {
       throw new Error('Test error');
@@ -43,6 +51,7 @@ describe('WebGPUErrorBoundary', () => {
     expect(screen.getByText(/GPU Simulation Error/i)).toBeInTheDocument();
     expect(screen.getByText(/Reload Simulation/i)).toBeInTheDocument();
     
+    window.removeEventListener('error', errorHandler);
     spy.mockRestore();
   });
 });

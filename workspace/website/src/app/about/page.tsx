@@ -10,6 +10,7 @@
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { testStatistics, formatSummary } from '@/data/test-statistics';
 
 function AboutContent() {
   const router = useRouter();
@@ -68,7 +69,7 @@ function AboutContent() {
               <li><strong>Energy conservation:</strong> &lt;0.01% drift across all domains (11 tests)</li>
             </ul>
             <p className="text-accent-chi font-semibold">
-              Current validation status: <strong>86 tests, 91.4% pass rate</strong> across five physics domains.
+              Current validation status: <strong>{formatSummary()}, {testStatistics.passRate} pass rate</strong> across seven physics domains.
             </p>
           </div>
         </div>

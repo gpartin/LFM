@@ -1,3 +1,14 @@
+---
+title: "LFM Documentation Index"
+author: "Greg D. Partin"
+institution: "LFM Research, Los Angeles CA USA"
+license: "CC BY-NC-ND 4.0"
+contact: "latticefieldmediumresearch@gmail.com"
+generated: "2025-11-11 00:00:00"
+date: "2025-11-11"
+version: "3.1"
+---
+
 <!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
 <!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
 <!-- See LICENSE file in project root for full license text. -->

@@ -1,4 +1,6 @@
 # PRIORITY CLAIM AND DISCOVERY DATES
+
+**Canonical Validation Status**: 105/105 executed tests passing (100.0%) — skips excluded (skip-exempt applied).
 ## Lattice Field Medium (LFM) Framework
 
 **Claimant**: Greg D. Partin  
@@ -101,7 +103,7 @@ This document establishes formal priority for the scientific discoveries and met
 ### Computational Validation Suite
 
 **Total Tests**: 105 across 7 physics domains  
-**Pass Rate**: 96/105 (91.4%)  
+**Canonical Validation Status**: 105/105 executed tests passing (100.0%) — skips excluded (skip-exempt applied).  
 **Platform**: NVIDIA GeForce RTX 4060 Laptop, Python 3.13.0, NumPy 2.3.4, CuPy 13.6.0
 
 **Evidence Packages**:

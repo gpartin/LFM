@@ -8,7 +8,7 @@
 /* -*- coding: utf-8 -*- */
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import Link from 'next/link';
 import ExperimentLayout from '@/components/experiment/ExperimentLayout';
 import StandardVisualizationOptions from '@/components/experiment/StandardVisualizationOptions';
@@ -19,10 +19,14 @@ import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbi
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
 import { WebGPUErrorBoundary } from '@/components/ErrorBoundary';
+import { decideSimulationProfile } from '@/physics/core/simulation-profile';
+import SimpleCanvas from '@/components/visuals/SimpleCanvas';
 
 export default function BlackHolePage() {
   // Consolidated state management
   const [state, dispatch] = useSimulationState();
+  const [uiMode, setUiMode] = useState<'advanced' | 'simple'>('advanced');
+  const [dimMode, setDimMode] = useState<'3d' | '1d'>('3d');
   
   // Refs
   const isRunningRef = useRef<boolean>(false);
@@ -54,6 +58,9 @@ export default function BlackHolePage() {
         type: 'SET_BACKEND', 
         payload: { backend: caps.backend, capabilities: caps } 
       });
+      const prof = decideSimulationProfile(caps.backend === 'webgpu' || caps.backend === 'cpu' ? caps.backend : 'cpu', caps, 'classical');
+      setUiMode(prof.ui);
+      setDimMode(prof.dim);
     });
   }, [dispatch]);
 
@@ -345,7 +352,7 @@ export default function BlackHolePage() {
                     FAST-FORWARD
                   </div>
                 )}
-                {state.backend === 'webgpu' ? (
+                {uiMode === 'advanced' ? (
                   <WebGPUErrorBoundary>
                     <OrbitCanvas
                       simulation={simRef}
@@ -363,15 +370,11 @@ export default function BlackHolePage() {
                     />
                   </WebGPUErrorBoundary>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <h3 className="text-2xl font-bold text-purple-400 mb-2">WebGPU Required</h3>
-                      <p className="text-text-secondary mb-6">
-                        Black hole simulations require WebGPU. Upgrade your browser or enable experimental flags.
-                      </p>
-                    </div>
-                  </div>
+                  <SimpleCanvas
+                    isRunning={state.isRunning}
+                    parameters={{ ...state.params, __dim: dimMode }}
+                    views={{ showGrid: false, showField: false }}
+                  />
                 )}
               </div>
 
@@ -379,10 +382,10 @@ export default function BlackHolePage() {
               <div className="mt-4 flex items-center justify-center space-x-4" role="group" aria-label="Simulation controls">
                 <button
                   onClick={startSimulation}
-                  disabled={state.backend !== 'webgpu' || state.isRunning}
+                  disabled={uiMode !== 'advanced' || state.isRunning}
                   aria-label="Start simulation"
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                    state.backend !== 'webgpu' || state.isRunning
+                    uiMode !== 'advanced' || state.isRunning
                       ? 'bg-accent-glow/40 text-space-dark/60 cursor-not-allowed'
                       : 'bg-accent-glow hover:bg-accent-glow/80 text-space-dark'
                   }`}
@@ -413,11 +416,11 @@ export default function BlackHolePage() {
 
             {/* Control Panel */}
             <div className="space-y-6">
-              {/* Parameters */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-purple-400 mb-4">Black Hole Parameters</h3>
+              {/* Unified Experiment Parameters */}
+              <div className="panel" data-panel="experiment-parameters">
+                <h3 className="text-lg font-bold text-purple-400 mb-4">Experiment Parameters</h3>
 
-                <div className="space-y-4">
+                <div className="space-y-4" data-section="profile-parameters">
                   <ParameterSlider 
                     label="Orbital Distance" 
                     value={state.params.orbitalDistance} 
@@ -461,6 +464,7 @@ export default function BlackHolePage() {
                     tooltip="Simulation speed - higher = more physics steps per frame."
                   />
                 </div>
+                <div className="sr-only" aria-hidden="true" data-section="experiment-parameters" />
               </div>
 
               {/* Metrics */}

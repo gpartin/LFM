@@ -8,6 +8,7 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
+import { testStatistics, formatSummary } from '@/data/test-statistics';
 
 export default function Home() {
   return (
@@ -59,9 +60,9 @@ export default function Home() {
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                 <StatCard 
-                  value="91.4%" 
+                  value={testStatistics.passRate} 
                   label="Tests Passing" 
-                  description="105 physics validation tests"
+                  description={formatSummary()}
                 />
                 <StatCard 
                   value="<0.01%" 

@@ -17,7 +17,7 @@
 
 import React, { useRef, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Stats, Effects } from '@react-three/drei';
+import { OrbitControls, Stats, Effects, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { BinaryOrbitSimulation } from '@/physics/forces/binary-orbit';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
@@ -153,85 +153,13 @@ function Particles({ simulation, showParticles, showTrails }: { simulation: Reac
   );
 }
 
-function Starfield() {
-  const starsRef = React.useRef<THREE.Points>(null);
-  
-  React.useEffect(() => {
-    if (!starsRef.current) return;
-    
-    const starCount = 2000;
-    const positions = new Float32Array(starCount * 3);
-    const colors = new Float32Array(starCount * 3);
-    const sizes = new Float32Array(starCount);
-    
-    // Generate stars in a large sphere around the scene
-    for (let i = 0; i < starCount; i++) {
-      // Random position in spherical volume
-      const radius = 50 + Math.random() * 100;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos((Math.random() * 2) - 1);
-      
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-      
-      // Slight color variation
-      const tint = Math.random();
-      if (tint < 0.1) {
-        colors[i * 3] = 0.7; colors[i * 3 + 1] = 0.8; colors[i * 3 + 2] = 1.0; // blue-ish
-      } else if (tint > 0.9) {
-        colors[i * 3] = 1.0; colors[i * 3 + 1] = 0.9; colors[i * 3 + 2] = 0.8; // warm
-      } else {
-        colors[i * 3] = 0.9; colors[i * 3 + 1] = 0.95; colors[i * 3 + 2] = 1.0; // white
-      }
-      
-      sizes[i] = 0.5 + Math.random() * 1.5;
-    }
-    
-    const geometry = starsRef.current.geometry;
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-  }, []);
-  
-  return (
-    <points ref={starsRef}>
-      <bufferGeometry />
-      <pointsMaterial
-        size={2}
-        sizeAttenuation={true}
-        vertexColors={true}
-        transparent={true}
-        opacity={0.8}
-        depthWrite={false}
-      />
-    </points>
-  );
-}
-
-function DecorativeSun() {
-  return (
-    <mesh position={[-25, 15, -40]}>
-      <sphereGeometry args={[3, 32, 32]} />
-      <meshBasicMaterial color="#FFEB9C" />
-      {/* Soft glow */}
-      <pointLight color="#FFD280" intensity={0.5} distance={20} decay={2} />
-    </mesh>
-  );
-}
-
 function Scene({ simulation, showParticles, showTrails, showChi = false, showLattice = false, showVectors = true, showWell = true, showDomes = false, showIsoShells = false, showBackground = false, isRunning, chiStrength }: OrbitCanvasProps) {
   // Soft ambient
   return (
     <>
       {/* Always apply a dark background color; optional decorative elements below */}
-      <color attach="background" args={[0.039, 0.055, 0.152]} /> {/* #0a0e27 */}
-      {showBackground && (
-        <>
-          <Starfield />
-          <DecorativeSun />
-        </>
-      )}
+      <color attach="background" args={['#0a0a1a']} />
+      {showBackground && <Stars radius={100} depth={50} count={5000} factor={4} fade speed={1} />}
       <ambientLight intensity={0.3} />
       <pointLight position={[8, 8, 8]} intensity={1.2} color={'#ffffff'} />
       <pointLight position={[-8, -6, -5]} intensity={0.8} color={'#4da4ff'} />
@@ -441,6 +369,7 @@ export const OrbitCanvas: React.FC<OrbitCanvasProps> = ({ simulation, isRunning,
   // Resize handling via R3F automatically; we can still limit pixel ratio for perf
   return (
     <Canvas
+      frameloop="always"
       camera={{ position: [0, 4, 8], fov: 45 }}
       gl={{ antialias: true, powerPreference: 'high-performance', alpha: true }}
       dpr={[1, 1.75]}

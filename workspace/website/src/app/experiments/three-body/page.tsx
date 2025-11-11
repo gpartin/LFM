@@ -16,10 +16,14 @@ import { detectBackend } from '@/physics/core/backend-detector';
 import { NBodyOrbitSimulation, createFigure8ThreeBody } from '@/physics/forces/n-body-orbit';
 import NBodyCanvas from '@/components/visuals/NBodyCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
+import { decideSimulationProfile } from '@/physics/core/simulation-profile';
+import SimpleCanvas from '@/components/visuals/SimpleCanvas';
 
 export default function ThreeBodyPage() {
   const [state, dispatch] = useSimulationState();
   const [backend, setBackend] = useState<'webgpu' | 'cpu'>('webgpu');
+  const [uiMode, setUiMode] = useState<'advanced' | 'simple'>('advanced');
+  const [dimMode, setDimMode] = useState<'3d' | '1d'>('3d');
   const [simReady, setSimReady] = useState(0); // Force re-render when sim initializes
   
   const deviceRef = useRef<GPUDevice | null>(null);
@@ -47,6 +51,9 @@ export default function ThreeBodyPage() {
         payload: { backend: effectiveBackend, capabilities: caps } 
       });
       setBackend(effectiveBackend);
+      const prof = decideSimulationProfile(effectiveBackend, caps, 'classical');
+      setUiMode(prof.ui);
+      setDimMode(prof.dim);
     });
   }, [dispatch]);
 
@@ -179,7 +186,7 @@ export default function ThreeBodyPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <div className="bg-space-panel rounded-lg overflow-hidden border border-space-border h-[600px]">
-                {backend === 'webgpu' ? (
+                {uiMode === 'advanced' ? (
                   <NBodyCanvas 
                     key={simReady}
                     simulation={simRef}
@@ -189,27 +196,20 @@ export default function ThreeBodyPage() {
                     showBackground={state.ui.showBackground}
                   />
                 ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <div className="text-center p-8">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <h3 className="text-2xl font-bold text-purple-400 mb-2">WebGPU Required</h3>
-                      <p className="text-text-secondary mb-4">
-                        Three-body simulations require WebGPU for real-time physics computation.
-                      </p>
-                      <p className="text-sm text-text-muted">
-                        Please use Chrome/Edge 113+ or enable experimental WebGPU flags in your browser.
-                      </p>
-                    </div>
-                  </div>
+                  <SimpleCanvas
+                    isRunning={state.isRunning}
+                    parameters={{ ...state.params, __dim: dimMode }}
+                    views={{ showGrid: false, showField: false }}
+                  />
                 )}
               </div>
               
               <div className="mt-4 flex gap-4">
                 <button
                   onClick={() => dispatch({ type: 'SET_RUNNING', payload: !state.isRunning })}
-                  disabled={backend !== 'webgpu'}
+                  disabled={uiMode !== 'advanced'}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                    backend !== 'webgpu'
+                    uiMode !== 'advanced'
                       ? 'bg-space-border cursor-not-allowed opacity-50'
                       : state.isRunning
                       ? 'bg-yellow-600 hover:bg-yellow-700'
@@ -231,9 +231,9 @@ export default function ThreeBodyPage() {
             </div>
 
             <div className="lg:col-span-1 space-y-6">
-              <div className="panel">
-                <h3 className="text-lg font-bold mb-4">Figure-8 Configuration</h3>
-                <div className="space-y-3 text-sm text-text-secondary">
+              <div className="panel" data-panel="experiment-parameters">
+                <h3 className="text-lg font-bold mb-4">Experiment Parameters</h3>
+                <div className="space-y-3 text-sm text-text-secondary" data-section="profile-parameters">
                   <div className="flex justify-between">
                     <span>Number of Bodies:</span>
                     <span className="text-accent-chi font-semibold">3</span>
@@ -255,7 +255,7 @@ export default function ThreeBodyPage() {
                     <span className="text-text-primary">64³</span>
                   </div>
                 </div>
-                <div className="mt-4 p-3 bg-blue-500/10 border-l-4 border-blue-500 rounded">
+                <div className="mt-4 p-3 bg-blue-500/10 border-l-4 border-blue-500 rounded" data-section="experiment-parameters">
                   <p className="text-xs text-text-secondary">
                     <strong className="text-blue-400">Info:</strong> This uses the Chenciner-Montgomery figure-8 solution 
                     with precise initial conditions. Interactive parameter controls and other configurations (Lagrange triangles, 

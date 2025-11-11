@@ -223,6 +223,37 @@ def main():
     print("=" * 70)
     print("LFM Pre-Commit Validation")
 
+    # STEP 0: Canonical Registry Consistency (fast-fail)
+    print("\n" + "=" * 70)
+    print("STEP 0: Canonical Pass-Rate Consistency")
+    print("=" * 70)
+    try:
+        # Run verifier as a subprocess to avoid import path issues
+        venv_python = Path(__file__).parent.parent.parent / ".venv" / "Scripts" / "python.exe"
+        verifier = Path(__file__).parent / "verify_canonical_consistency.py"
+        if not verifier.exists():
+            print(f"❌ Verifier not found: {verifier}")
+            return 1
+        import os
+        env = os.environ.copy()
+        env.setdefault('PYTHONIOENCODING', 'utf-8')
+        env.setdefault('PYTHONUTF8', '1')
+        proc = subprocess.run([str(venv_python), str(verifier), "--strict"], capture_output=True, text=True, encoding='utf-8', timeout=20, env=env)
+        if proc.returncode != 0:
+            print(proc.stdout)
+            if proc.stderr:
+                print('[stderr]', proc.stderr)
+            print("❌ Canonical registry is inconsistent with MASTER_TEST_STATUS.csv or uploads")
+            print("   Fix: run tools/build_upload_package.py, then re-run this validator")
+            return 1
+        print("✅ Canonical registry verified")
+    except subprocess.TimeoutExpired:
+        print("❌ Canonical verification timeout")
+        return 1
+    except Exception as e:
+        print(f"❌ Canonical verification error: {e}")
+        return 1
+
     # STEP 1: Validate website sync with test harness
     print("\n" + "=" * 70)
     print("STEP 1: Website Sync Validation")

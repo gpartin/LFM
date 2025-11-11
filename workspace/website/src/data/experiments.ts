@@ -81,6 +81,7 @@ export interface ExperimentDefinition {
   };
   
   // Visualization Configuration
+  visualizationPreset?: string;        // Preset name from visualization-presets.ts
   visualization: {
     showParticles: boolean;
     showTrails: boolean;
@@ -111,7 +112,7 @@ export interface ExperimentDefinition {
  */
 const SHOWCASE_EXPERIMENTS: ExperimentDefinition[] = [
   {
-    id: 'earth-moon',
+    id: 'binary-orbit',
     displayName: 'Earth-Moon Orbit',
     type: 'SHOWCASE',
     category: 'Orbital Mechanics',
@@ -305,6 +306,94 @@ const SHOWCASE_EXPERIMENTS: ExperimentDefinition[] = [
       showBackground: true
     },
     links: {},
+    status: 'production'
+  },
+  
+  {
+    id: 'quantum-tunneling',
+    displayName: 'Quantum Tunneling',
+    type: 'SHOWCASE',
+    category: 'Quantum Mechanics',
+    tagline: 'Wave packet tunneling through chi barrier',
+    description: 'Demonstrates quantum tunneling as wave packet interaction with finite potential barrier. Shows transmission (T), reflection (R), and conservation (T+R≈1) with real-time field visualization.',
+    icon: '⚛️',
+    difficulty: 'advanced',
+    featured: true,
+    simulation: 'wave-packet',
+    backend: 'both',
+    initialConditions: {
+      latticeSize: 64,
+      dt: 0.0002,
+      dx: 0.02,
+      steps: 5000,
+      chi: 0.0,
+      wavePacket: {
+        amplitude: 1.0,
+        width: 3.0,
+        k: [5.0, 0, 0]
+      }
+    },
+    validation: {
+      energyDrift: 1e-4
+    },
+    visualization: {
+      showParticles: false,
+      showTrails: false,
+      showChi: true,
+      showLattice: true,
+      showVectors: false,
+      showWell: false,
+      showDomes: false,
+      showIsoShells: false,
+      showBackground: false
+    },
+    links: {
+      discovery: 'Tier 4 - Quantization'
+    },
+    status: 'production'
+  }
+  ,
+  {
+    id: 'double-slit',
+    displayName: 'Quantum Double Slit',
+    type: 'SHOWCASE',
+    category: 'Quantum Mechanics',
+    tagline: 'Deterministic interference pattern from two apertures',
+    description: 'A plane-like wave passes through two narrow slits and forms a classic interference pattern on the screen. Live metrics show fringe spacing, visibility, and slit intensity ratio.',
+    icon: '🧪',
+    difficulty: 'beginner',
+    featured: true,
+    simulation: 'wave-packet',
+    backend: 'both',
+    initialConditions: {
+      latticeSize: 64,
+      dt: 0.001,
+      dx: 0.1,
+      steps: 6000,
+      chi: 0.0,
+      wavePacket: {
+        amplitude: 1.0,
+        width: 8.0,
+        k: [6.0, 0, 0]
+      }
+    },
+    validation: {
+      energyDrift: 1e-4
+    },
+    visualization: {
+      showParticles: false,
+      showTrails: false,
+      showChi: true,
+      showLattice: true,
+      showVectors: false,
+      showWell: false,
+      showDomes: false,
+      showIsoShells: false,
+      showBackground: false
+    },
+    links: {
+      discovery: 'Tier 4 - Quantization'
+    },
     status: 'production'
   }
 ];

@@ -49,6 +49,12 @@ export interface SimulationUI {
   showIsoShells: boolean;
   showBackground: boolean;
   fastForward: boolean;
+  // Quantum-specific toggles
+  showWave?: boolean;
+  showBarrier?: boolean;
+  showPhase?: boolean;
+  showEnergyDensity?: boolean;
+  showTransmissionPlot?: boolean;
 }
 
 export interface SimulationState {
@@ -108,6 +114,12 @@ const initialUI: SimulationUI = {
   showIsoShells: false,
   showBackground: true,  // Default ON - Stars & Background should be visible
   fastForward: false,
+  // Quantum defaults (used by quantum-profile pages)
+  showWave: true,
+  showBarrier: true,
+  showPhase: false,
+  showEnergyDensity: false,
+  showTransmissionPlot: true,
 };
 
 export const initialSimulationState: SimulationState = {

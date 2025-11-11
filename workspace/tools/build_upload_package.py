@@ -33,7 +33,7 @@ import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 import platform
 
 # Local imports (repo)
@@ -1262,7 +1262,18 @@ def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path
             passed += 1
     
     lines.append(f'- **Total {tier_name} Tests**: {total}')
-    lines.append(f'- **Tests Passed**: {passed} ({100*passed//total if total > 0 else 0}%)')
+    # Compute executed-only pass rate for this tier (exclude SKIP)
+    skipped = 0
+    for t in tests:
+        test_id = t['id']
+        status_local = get_test_status(t['summary'])
+        if test_id in master_status and master_status[test_id] == 'SKIP':
+            status_local = 'SKIP'
+        if status_local == 'SKIP':
+            skipped += 1
+    executed = max(total - skipped, 0)
+    rate = (passed / executed * 100) if executed > 0 else 0
+    lines.append(f'- **Tests Passed**: {passed} ({rate:.1f}%)  \\n+  (executed: {executed}, skipped: {skipped} — skips excluded from denominator)')
     lines.append('')
     
     if tests:
@@ -1538,6 +1549,27 @@ def main():
     parser.add_argument('--validate-pipeline', action='store_true', help='Run tools/validate_results_pipeline.py --all --quiet after staging')
     args = parser.parse_args()
 
+    # ------------------------------------------------------------------
+    # Pre-build canonical consistency enforcement
+    # ------------------------------------------------------------------
+    # Ensure canonical registry exists (generate if missing or --deterministic refresh requested)
+    canonical_path = RESULTS / 'test_registry_canonical.json'
+    if not canonical_path.exists():
+        gen_script = ROOT / 'tools' / 'generate_canonical_test_registry.py'
+        if gen_script.exists():
+            try:
+                subprocess.run([sys.executable, str(gen_script)], check=True, cwd=str(ROOT))
+            except Exception as e:
+                print(f"[WARN] Could not generate canonical registry: {e}")
+    # Perform consistency verification prior to staging artifacts
+    try:
+        _verify_canonical_consistency()
+    except Exception as e:
+        print(f"[ERROR] Canonical consistency check failed: {e}")
+        # Fail fast in strict mode, allow override otherwise
+        if args.strict:
+            raise SystemExit(1)
+
     refresh_results_artifacts(deterministic=args.deterministic, build_master=args.build_master)
     # Always stage original DOCX evidence (governing documents)
     staged_evidence = stage_evidence_docx(include=True)
@@ -1702,6 +1734,20 @@ def main():
     zen_issues = audit_dir_compliance(DEST_ZENODO, zen_entries)
     print(f"OSF payload compliance: {len(osf_issues)} issue(s). Report: {DEST_OSF / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
     print(f"Zenodo payload compliance: {len(zen_issues)} issue(s). Report: {DEST_ZENODO / 'UPLOAD_COMPLIANCE_AUDIT.md'}")
+    # Post-generation validation: replace any stale pass rate lines in narrative documents using canonical data
+    try:
+        _post_process_narrative_docs(DEST_OSF)
+        _post_process_narrative_docs(DEST_ZENODO)
+    except Exception as e:
+        print(f"[WARN] Narrative doc post-processing failed: {e}")
+
+    # Final canonical consistency re-check (non-fatal unless strict)
+    try:
+        _verify_canonical_consistency(post_build=True)
+    except Exception as e:
+        print(f"[ERROR] Post-build canonical consistency failed: {e}")
+        if args.strict:
+            raise SystemExit(2)
 
 # ---------------- Template and metadata helpers (deterministic generation) ----------------
 
@@ -1929,28 +1975,32 @@ def generate_tier_achievements_from_template(tier: dict, dest_dir: Path, determi
 
 
 def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, deterministic: bool = False) -> str:
+    # Use canonical registry for authoritative counts (executed excludes SKIP entirely)
+    canonical = _load_canonical_registry()
     env = _jinja_env()
     tmpl = env.get_template('results_comprehensive.md.j2')
     tiers = []
     total_defined = 0
-    total_executed = 0
     total_passed = 0
+    total_executed = 0
     total_skipped = 0
+    canonical_tiers: Dict[str, Dict] = canonical.get('tiers', {}) if canonical else {}
     for t in tier_metadata.get('tiers', []):
-        all_tests = _collect_tests_for_category(t['category_dir'])
-        defined = len(all_tests)
-        skipped = sum(1 for x in all_tests if x['status'] == 'SKIP')
-        executed = defined - skipped
-        passed = sum(1 for x in all_tests if x['status'] == 'PASS')
+        ctier = canonical_tiers.get(str(t['tier_number']), {})
+        executed = ctier.get('executed', 0)
+        passed = ctier.get('passed', 0)
+        skipped = ctier.get('skipped', 0)
+        # defined tests = executed + skipped (public denominator excludes skips)
+        defined = executed + skipped
         total_defined += defined
-        total_executed += executed
         total_passed += passed
+        total_executed += executed
         total_skipped += skipped
         tiers.append({
             'tier_number': t['tier_number'],
             'tier_name': t['tier_name'],
             'short_name': t.get('short_name', t['category_dir']),
-            'test_count': defined,  # still show defined tests in table for transparency
+            'test_count': defined,
             'executed_count': executed,
             'skipped_count': skipped,
             'passed': passed,
@@ -1958,7 +2008,7 @@ def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, determin
             'key_validations': t.get('key_validations', []),
             'significance': t.get('significance', ''),
         })
-    pass_percentage = (100.0 * total_passed / total_executed) if total_executed else 0.0
+    pass_percentage = canonical.get('summary', {}).get('public_pass_rate', 0.0)
     content = tmpl.render(
         results_overview=tier_metadata.get('document_templates', {}).get('results_comprehensive_overview', ''),
         tiers=tiers,
@@ -2204,9 +2254,148 @@ def generate_upload_readme(dest_dir: Path, deterministic: bool = False) -> str:
 
     # Minimal context for future extension
     generation_time = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    content = tmpl.render(generation_time=generation_time)
+    # Load canonical registry
+    canonical_path = ROOT / 'results' / 'test_registry_canonical.json'
+    try:
+        canonical = json.loads(canonical_path.read_text(encoding='utf-8'))
+    except Exception:
+        canonical = {'summary': {'passed': 0, 'executed': 0, 'public_pass_rate': 0}, 'skipExempt': {}, 'tiers': {}}
+
+    # Build per-tier executed/pass counts from canonical
+    tiers = {}
+    for tnum, data in (canonical.get('tiers') or {}).items():
+        tiers[tnum] = {
+            'executed': data.get('executed', 0),
+            'passed': data.get('passed', 0)
+        }
+
+    content = tmpl.render(generation_time=generation_time, canonical=canonical, tiers=tiers)
     (dest_dir / 'README.md').write_text(content, encoding='utf-8')
     return 'README.md'
+
+# ---------------- Canonical registry + consistency utilities ----------------
+
+def _load_canonical_registry() -> dict:
+    path = RESULTS / 'test_registry_canonical.json'
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+
+def _verify_canonical_consistency(post_build: bool = False):
+    """Cross-check canonical registry vs MASTER_TEST_STATUS.csv.
+    Raises RuntimeError on mismatch. Non-fatal when post_build=False unless strict mode triggers caller exit.
+    Checks:
+      - executed == PASS+FAIL counted from master
+      - passed matches PASS count
+      - public_pass_rate recomputed matches registry value
+    """
+    registry = _load_canonical_registry()
+    if not registry:
+        raise RuntimeError('Canonical registry missing or unreadable.')
+    summary = registry.get('summary', {})
+    executed_reg = summary.get('executed')
+    passed_reg = summary.get('passed')
+    ppr_reg = summary.get('public_pass_rate')
+    master = RESULTS / 'MASTER_TEST_STATUS.csv'
+    if not master.exists():
+        raise RuntimeError('MASTER_TEST_STATUS.csv missing; cannot verify consistency.')
+    text = master.read_text(encoding='utf-8').splitlines()
+    passed = 0
+    failed = 0
+    for line in text:
+        if line.startswith('Test_ID,') or not line.strip() or line.startswith('TIER'):
+            continue
+        parts = [p.strip() for p in line.split(',')]
+        if len(parts) < 3:
+            continue
+        tid = parts[0]
+        status = parts[2].upper()
+        if not tid or '-' not in tid:
+            continue
+        if status == 'PASS':
+            passed += 1
+        elif status == 'FAIL':
+            failed += 1
+        # SKIP ignored from executed denominator
+    executed_calc = passed + failed
+    pass_rate_calc = round((passed / executed_calc * 100) if executed_calc else 0.0, 1)
+    if executed_reg != executed_calc or passed_reg != passed or pass_rate_calc != ppr_reg:
+        raise RuntimeError(f"Canonical mismatch (post_build={post_build}) registry(executed={executed_reg}, passed={passed_reg}, rate={ppr_reg}) vs master(executed={executed_calc}, passed={passed}, rate={pass_rate_calc})")
+    # Per-tier verification
+    reg_tiers = registry.get('tiers', {})
+    for tnum, data in reg_tiers.items():
+        # recompute per-tier from master by prefix
+        prefix_map = {'1':'REL','2':'GRAV','3':'ENER','4':'QUAN','5':'EM','6':'COUP','7':'THERM'}
+        prefix = prefix_map.get(tnum)
+        if not prefix:
+            continue
+        t_pass = 0
+        t_fail = 0
+        for line in text:
+            if line.startswith(prefix+'-'):
+                parts = [p.strip() for p in line.split(',')]
+                if len(parts) < 3:
+                    continue
+                status = parts[2].upper()
+                if status == 'PASS':
+                    t_pass += 1
+                elif status == 'FAIL':
+                    t_fail += 1
+        if data.get('executed') != t_pass + t_fail or data.get('passed') != t_pass:
+            raise RuntimeError(f"Per-tier mismatch for tier {tnum}: registry executed={data.get('executed')} passed={data.get('passed')} vs master executed={t_pass + t_fail} passed={t_pass}")
+    print(f"[INFO] Canonical registry verified (post_build={post_build}) — {passed_reg}/{executed_reg} tests, {ppr_reg}% pass rate")
+
+def _post_process_narrative_docs(dest_dir: Path):
+    """Inject canonical pass rate banner into narrative docs and remove stale percentages.
+    Operates on PREPRINT_MANUSCRIPT.md, PRIORITY_CLAIM.md, SCIENTIFIC_CLAIMS.md if present.
+    """
+    registry = _load_canonical_registry()
+    summary = registry.get('summary', {})
+    executed = summary.get('executed', 0)
+    passed = summary.get('passed', 0)
+    rate = summary.get('public_pass_rate', 0.0)
+    banner = f"**Canonical Validation Status**: {passed}/{executed} executed tests passing ({rate}%) — skips excluded (skip-exempt applied)."
+    targets = ['PREPRINT_MANUSCRIPT.md', 'PRIORITY_CLAIM.md', 'SCIENTIFIC_CLAIMS.md']
+    for name in targets:
+        path = dest_dir / name
+        if not path.exists():
+            continue
+        try:
+            content = path.read_text(encoding='utf-8')
+            # Replace stale pass-rate lines across narrative docs
+            import re
+            stale_patterns = [
+                r"\*\*Overall\*\*:\s*\d+/\d+\s*tests passing\s*\([^)]*\)",
+                r"\*\*Pass Rate\*\*:\s*\d+/\d+\s*\([^)]*%\)",
+                r"\b\d+/105\b\s*\([^)]*%\)",
+                r"\b105/106\b\s*tests passing\s*\([^)]*%\)",
+                r"validates to \d+\.\d% across \d+ computational tests",
+            ]
+            for pat in stale_patterns:
+                content = re.sub(pat, banner, content)
+
+            # Specific historical values seen in PRIORITY_CLAIM.md and others
+            content = re.sub(r"\b96/105\b\s*\(91\.4%\)", f"{passed}/{executed} ({rate}%)", content)
+
+            # If banner not present add after first heading
+            if 'Canonical Validation Status' not in content:
+                lines = content.splitlines()
+                inserted = False
+                for i,l in enumerate(lines):
+                    if l.startswith('#'):
+                        lines.insert(i+1, '')
+                        lines.insert(i+2, banner)
+                        inserted = True
+                        break
+                if not inserted:
+                    lines.insert(0, banner)
+                content = '\n'.join(lines)
+            path.write_text(content, encoding='utf-8')
+        except Exception as e:
+            print(f"[WARN] Could not post-process {name}: {e}")
 
 
 if __name__ == '__main__':

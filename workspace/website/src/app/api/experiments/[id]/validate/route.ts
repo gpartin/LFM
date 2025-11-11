@@ -18,6 +18,17 @@ export async function POST(
     const body = await request.json();
     const { parameters, metrics: uiMetrics } = body;
     
+    // Early skip for user-specified exempt tests (do not spawn Python)
+    // GRAV-09 is documented as SKIP_EXEMPT due to discrete lattice limitation
+    if (experimentId === 'GRAV-09') {
+      return NextResponse.json({
+        status: 'SKIP_EXEMPT',
+        testId: experimentId,
+        reason: 'Discrete lattice cannot represent required continuous potential gradient resolution (documented physical invalidity).',
+        notes: 'Website validation short-circuited per canonical skip exemption; no harness executed.'
+      });
+    }
+    
     // Map experiment ID prefix to test harness tier runner
     // Uses prefix matching for all 105 tests
     const getTierInfo = (testId: string): { runner: string; tier: string; config: string; resultsDir: string } | null => {
@@ -106,7 +117,8 @@ export async function POST(
           testInfo.runner,
           '--test', experimentId,
           '--config', testInfo.config,
-          // GPU usage is controlled by config file (run_settings.use_gpu)
+          // Enforce GPU usage per project policy
+          '--gpu',
         ],
         {
           cwd: srcDir,

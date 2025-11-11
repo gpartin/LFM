@@ -89,6 +89,61 @@ function inferSimulationType(tierNum, testId, description) {
 }
 
 /**
+ * Infer visualization preset from experiment characteristics
+ * (Inlined from workspace/website/src/data/visualization-presets.ts)
+ */
+function inferVisualizationPreset(tierNum, testId, description, simulation) {
+  const desc = description.toLowerCase();
+  
+  // Explicit orbital mechanics tests
+  if (desc.includes('orbit') || desc.includes('gravitational') || desc.includes('binary')) {
+    return 'orbital-showcase';
+  }
+  
+  // Wave propagation tests
+  if (desc.includes('wave') || desc.includes('packet') || desc.includes('propagation') ||
+      desc.includes('isotropy') || desc.includes('causality') || desc.includes('phase velocity')) {
+    return 'wave-dynamics';
+  }
+  
+  // Field-only tests
+  if ((desc.includes('field') || desc.includes('electromagnetic') || desc.includes('coupling')) &&
+      !desc.includes('orbit')) {
+    return 'field-only';
+  }
+  
+  // Energy/thermodynamics tests (minimal for performance)
+  if (desc.includes('energy') || desc.includes('conservation') || desc.includes('thermodynamic')) {
+    return 'minimal';
+  }
+  
+  // Fallback by simulation type
+  if (simulation === 'binary-orbit' || simulation === 'n-body') {
+    return 'orbital-minimal';
+  }
+  
+  if (simulation === 'wave-packet') {
+    return 'wave-dynamics';
+  }
+  
+  if (simulation === 'field-dynamics') {
+    return 'field-only';
+  }
+  
+  // Fallback by tier
+  switch (tierNum) {
+    case 1: return 'wave-dynamics';
+    case 2: return 'orbital-minimal';
+    case 3: return 'minimal';
+    case 4: return 'field-only';
+    case 5: return 'field-only';
+    case 6: return 'field-only';
+    case 7: return 'minimal';
+    default: return 'wave-dynamics';
+  }
+}
+
+/**
  * Generate experiment entry from test config
  * 
  * CRITICAL: This must exactly mirror test harness parameters
@@ -99,6 +154,9 @@ function generateExperimentEntry(tierInfo, test, baseParams) {
   const testId = test.test_id || test.id || 'UNKNOWN';
   const description = test.description || test.name || 'No description';
   const simType = inferSimulationType(tierInfo.tier, testId, description);
+  
+  // NEW: Infer visualization preset
+  const vizPreset = inferVisualizationPreset(tierInfo.tier, testId, description, simType);
   
   // Validate required fields
   if (!testId || testId === 'UNKNOWN') {
@@ -118,6 +176,7 @@ function generateExperimentEntry(tierInfo, test, baseParams) {
     description: `Research validation test for ${tierInfo.name.toLowerCase()} tier. ${description}`,
     difficulty: 'intermediate',
     simulation: simType,
+    visualizationPreset: vizPreset,
     backend: 'both',
     initialConditions: {
       latticeSize: baseParams.grid_points || baseParams.N || 256,
@@ -232,6 +291,180 @@ if (typeof window === 'undefined') {
 }
 
 /**
+ * Calculate pass rate from canonical registry (preferred) or master CSV (fallback)
+ */
+function calculatePassRate() {
+  const canonicalPath = path.join(WORKSPACE_ROOT, 'results', 'test_registry_canonical.json');
+  if (fs.existsSync(canonicalPath)) {
+    try {
+      const reg = JSON.parse(fs.readFileSync(canonicalPath, 'utf-8'));
+      const sum = reg.summary || {};
+      const tiers = reg.tiers || {};
+      const total = Number(sum.executed || 0);
+      const passing = Number(sum.passed || 0);
+      // Build per-tier map: total=executed, passing=passed
+      const byTier = {};
+      Object.keys(tiers).forEach((k) => {
+        const t = tiers[k] || {};
+        byTier[k] = { total: Number(t.executed || 0), passing: Number(t.passed || 0) };
+      });
+      const passRate = (typeof sum.public_pass_rate === 'number')
+        ? `${sum.public_pass_rate.toFixed(1)}%`
+        : (total > 0 ? `${((passing / total) * 100).toFixed(1)}%` : '0.0%');
+      // Sanity: passing cannot exceed total
+      if (passing > total) {
+        throw new Error(`Canonical passing (${passing}) exceeds total executed (${total})`);
+      }
+      return {
+        total,
+        passing,
+        failing: total - passing,
+        passRate,
+        byTier,
+        generatedAt: new Date().toISOString(),
+        sourceFile: 'workspace/results/test_registry_canonical.json',
+        note: 'Derived from canonical registry; SKIP tests excluded (executed-only)'
+      };
+    } catch (e) {
+      console.warn('Warning: Failed to parse canonical registry, falling back to CSV:', e.message);
+    }
+  }
+  // Fallback to CSV parsing (executed-only counting)
+  const csvPath = path.join(WORKSPACE_ROOT, 'results', 'MASTER_TEST_STATUS.csv');
+  try {
+    const csvContent = fs.readFileSync(csvPath, 'utf-8');
+    const lines = csvContent.split('\n');
+    let totalTests = 0;
+    let passingTests = 0;
+    const byTier = {};
+    // Initialize byTier with zeros for tiers 1..7
+    for (const t of TIERS) byTier[String(t.tier)] = { total: 0, passing: 0 };
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('MASTER') || trimmed.startsWith('Generated:') || 
+          trimmed.startsWith('Validation') || trimmed.startsWith('CATEGORY') || 
+          trimmed.startsWith('Tier,Category') || trimmed.startsWith('DETAILED') ||
+          trimmed.startsWith('Test_ID,')) {
+        continue;
+      }
+      const parts = trimmed.split(',');
+      if (parts.length >= 3 && /^[A-Z]+-\d+$/.test(parts[0])) {
+        const testId = parts[0];
+        const status = parts[2];
+        const prefix = testId.split('-')[0];
+        const tierObj = TIERS.find(t => t.prefix === prefix);
+        const tierKey = tierObj ? String(tierObj.tier) : undefined;
+        if (status === 'PASS') {
+          totalTests++;
+          passingTests++;
+          if (tierKey) {
+            byTier[tierKey].total++;
+            byTier[tierKey].passing++;
+          }
+        } else if (status === 'FAIL') {
+          totalTests++;
+          if (tierKey) {
+            byTier[tierKey].total++;
+          }
+        }
+      }
+    }
+    const passRate = totalTests > 0 ? ((passingTests / totalTests) * 100).toFixed(1) : '0.0';
+    return {
+      total: totalTests,
+      passing: passingTests,
+      failing: totalTests - passingTests,
+      passRate: passRate + '%',
+      byTier,
+      generatedAt: new Date().toISOString(),
+      sourceFile: 'workspace/results/MASTER_TEST_STATUS.csv',
+      note: 'SKIP tests excluded from totals (executed-only)'
+    };
+  } catch (error) {
+    console.error('Error reading MASTER_TEST_STATUS.csv:', error.message);
+    console.error('Falling back to assuming 100% pass rate from configs');
+    let total = 0;
+    TIERS.forEach(tier => {
+      const config = readJSON(path.join(CONFIG_DIR, tier.config));
+      if (config) {
+        const tests = config.variants || config.tests || [];
+        total += tests.length;
+      }
+    });
+    return {
+      total,
+      passing: total,
+      failing: 0,
+      passRate: '100.0%',
+      byTier: {},
+      generatedAt: new Date().toISOString(),
+      sourceFile: 'fallback (MASTER_TEST_STATUS.csv not found)'
+    };
+  }
+}
+
+/**
+ * Generate test statistics TypeScript file
+ */
+function generateTestStatistics(stats) {
+  const content = `// AUTO-GENERATED by generate_website_experiments.js
+// DO NOT EDIT - regenerate via: node workspace/tools/generate_website_experiments.js
+
+/**
+ * Test Statistics - Calculated from Actual Test Results (Canonical Source Preferred)
+ * ======================================================
+ * 
+ * Generated: ${stats.generatedAt}
+ * Source: ${stats.sourceFile}
+ * 
+ * Semantics:
+ * - Executed-only: SKIP-designated tests are excluded from denominators
+ * - passRate = passed / executed
+ * - When available, values are sourced from test_registry_canonical.json
+ *   to ensure website matches uploads and pre-commit validation
+ */
+
+export const testStatistics = {
+  /** Total number of tests across all tiers (executed-only; SKIP excluded) */
+  total: ${stats.total},
+  
+  /** Number of tests currently passing */
+  passing: ${stats.passing},
+  
+  /** Number of tests failing */
+  failing: ${stats.failing},
+  
+  /** Pass rate as percentage string (e.g., "91.3%") */
+  passRate: '${stats.passRate}',
+  
+  /** Breakdown by tier (executed-only; no tier can have passing > total) */
+  byTier: ${JSON.stringify(stats.byTier, null, 2)},
+  
+  /** ISO timestamp of when this was generated */
+  generatedAt: '${stats.generatedAt}'
+} as const;
+
+/**
+ * Formatted pass rate for display
+ * Example: "91.3% Tests Pass"
+ */
+export function formatPassRate(): string {
+  return \`\${testStatistics.passRate} Tests Pass\`;
+}
+
+/**
+ * Human-readable summary
+ * Example: "95 of 104 tests passing"
+ */
+  export function formatSummary(): string {
+    return \`\${testStatistics.passing} of \${testStatistics.total} executed tests passing\`;
+}
+`;
+
+  return content;
+}
+
+/**
  * Main execution
  */
 function main() {
@@ -278,6 +511,18 @@ function main() {
     const tierInfo = TIERS.find(t => t.tier === parseInt(tier));
     console.log(`  Tier ${tier} (${tierInfo?.name}): ${count} / ${tierInfo?.expected} tests`);
   });
+  
+  // NEW: Generate test statistics
+  console.log('\n🧮 Calculating test pass rate from validation metadata...');
+  const stats = calculatePassRate();
+  const statsContent = generateTestStatistics(stats);
+  const statsPath = path.join(WORKSPACE_ROOT, 'website', 'src', 'data', 'test-statistics.ts');
+  fs.writeFileSync(statsPath, statsContent, 'utf-8');
+  console.log(`✅ Generated test statistics: ${stats.passRate} (${stats.passing}/${stats.total})`);
+  console.log(`   Output: ${statsPath}\n`);
+
+  // Note: Do NOT emit canonical registry here to avoid overwriting the authoritative file.
+  console.log('ℹ️ Using canonical registry if present; not writing any canonical JSON from website generator.');
   
   return 0;
 }

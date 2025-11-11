@@ -79,6 +79,29 @@ export class LFMLatticeCPU {
   }
 
   /**
+   * Seed initial field values (E_current) from a provided Float32Array.
+   * Length must equal size^3. Optionally clone into previous field to ensure
+   * zero initial time derivative for Verlet integration.
+   */
+  seedInitialField(values: Float32Array, cloneToPrevious: boolean = true): void {
+    const N3 = this.config.size ** 3;
+    if (values.length !== N3) {
+      throw new Error(`seedInitialField length mismatch: expected ${N3}, got ${values.length}`);
+    }
+    this.fieldCurrent.set(values);
+    if (cloneToPrevious) {
+      this.fieldPrevious.set(values);
+    }
+    this.energyHistory = [];
+    this.computeEnergy();
+  }
+
+  /** Clone current field into previous (zero initial dE/dt helper). */
+  cloneToPrevious(): void {
+    this.fieldPrevious.set(this.fieldCurrent);
+  }
+
+  /**
    * Initialize chi field with particle contributions
    */
   initializeChiField(particles: ParticleState[]): void {

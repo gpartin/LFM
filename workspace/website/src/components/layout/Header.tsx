@@ -9,20 +9,35 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { formatPassRate } from '@/data/test-statistics';
+import { getShowcaseExperiments, type ExperimentDefinition } from '@/data/experiments';
 
 export default function Header() {
   const [experimentsOpen, setExperimentsOpen] = useState(false);
-  const pathname = usePathname();
+  // In test environments, usePathname() can be null; default to empty string to avoid errors
+  const pathname = usePathname() ?? '';
+  
+  // Separate featured experiments for top-level display
+  const { featuredExperiments, otherExperiments } = useMemo(() => {
+    const experiments = getShowcaseExperiments();
+    const featured = experiments.filter(exp => exp.featured);
+    const other = experiments.filter(exp => !exp.featured);
+    
+    return { featuredExperiments: featured, otherExperiments: other };
+  }, []);
   
   // Determine "from" parameter for About link based on current page
   const getFromParam = () => {
     if (pathname === '/') return 'Home';
-    if (pathname.includes('/experiments/binary-orbit')) return 'Earth-Moon Orbit';
-    if (pathname.includes('/experiments/three-body')) return 'Three-Body Problem';
-    if (pathname.includes('/experiments/black-hole')) return 'Black Hole';
-    if (pathname.includes('/experiments/stellar-collapse')) return 'Stellar Collapse';
-    if (pathname.includes('/experiments/big-bang')) return 'Big Bang';
+    
+    // Try to match against registered experiments
+    const experiments = getShowcaseExperiments();
+    const currentExperiment = experiments.find(exp => 
+      pathname.includes(`/experiments/${exp.id}`)
+    );
+    if (currentExperiment) return currentExperiment.displayName;
+    
     if (pathname.includes('/experiments/browse')) return 'Browse Experiments';
     if (pathname.includes('/experiments')) return 'Experiments';
     return 'Home';
@@ -59,86 +74,74 @@ export default function Header() {
               </button>
               
               {experimentsOpen && (
-                <div className="absolute top-full left-0 pt-2 w-64">
-                  <div className="bg-space-panel border border-space-border rounded-lg shadow-xl overflow-hidden">
+                <div className="absolute top-full left-0 pt-2 w-80">
+                  <div className="bg-space-panel border border-space-border rounded-lg shadow-xl overflow-hidden max-h-[80vh] overflow-y-auto">
+                    {/* Featured Experiments - Always Visible */}
+                    <div className="px-4 py-3 bg-gradient-to-r from-accent-chi/10 to-accent-particle/10 border-b border-space-border">
+                      <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">
+                        ✨ Featured
+                      </div>
+                      <div className="space-y-1">
+                        {featuredExperiments.slice(0, 4).map(exp => (
+                          <Link
+                            key={exp.id}
+                            href={`/experiments/${exp.id}`}
+                            className="block px-3 py-2 rounded hover:bg-space-dark/50 transition-colors group"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{exp.icon}</span>
+                              <div className="flex-1">
+                                <div className="text-sm font-medium text-text-primary group-hover:text-accent-chi transition-colors">
+                                  {exp.displayName}
+                                </div>
+                                <div className="text-xs text-text-muted line-clamp-1">
+                                  {exp.tagline}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Browse All - Prominent */}
                     <Link
                       href="/experiments/browse"
-                      className="block px-4 py-3 hover:bg-space-dark transition-colors border-b border-space-border"
+                      className="block px-4 py-3 hover:bg-space-dark transition-colors border-b border-space-border bg-accent-chi/5"
                     >
-                      <div className="font-semibold text-accent-chi">Browse All Experiments</div>
-                      <div className="text-xs text-text-muted">Search and filter by category</div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-accent-chi">Browse All Experiments</div>
+                          <div className="text-xs text-text-muted">
+                            {featuredExperiments.length + otherExperiments.length} total experiments
+                          </div>
+                        </div>
+                        <svg className="w-5 h-5 text-accent-chi" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
                     </Link>
                     
-                    <div className="py-2">
-                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
-                        Orbital Mechanics
+                    {/* Other Experiments - Collapsed by default */}
+                    {otherExperiments.length > 0 && (
+                      <div className="py-2">
+                        <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                          More Experiments
+                        </div>
+                        {otherExperiments.map(exp => (
+                          <Link
+                            key={exp.id}
+                            href={`/experiments/${exp.id}`}
+                            className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span>{exp.icon}</span>
+                              <span className="text-sm">{exp.displayName}</span>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
-                      <Link
-                        href="/experiments/binary-orbit"
-                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span>🌍</span>
-                          <span>Earth-Moon Orbit</span>
-                        </div>
-                        <div className="text-xs text-text-muted ml-6">Emergent gravity simulation</div>
-                      </Link>
-                    </div>
-                    
-                    <div className="py-2">
-                      <Link
-                        href="/experiments/three-body"
-                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span>🔺</span>
-                          <span>Three-Body Problem</span>
-                        </div>
-                        <div className="text-xs text-text-muted ml-6">Chaotic N-body dynamics</div>
-                      </Link>
-                    </div>
-                    
-                    <div className="py-2 border-t border-space-border">
-                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
-                        Gravity
-                      </div>
-                      <Link
-                        href="/experiments/black-hole"
-                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span>⚫</span>
-                          <span>Black Hole</span>
-                        </div>
-                        <div className="text-xs text-text-muted ml-6">Extreme gravity simulation</div>
-                      </Link>
-                      <Link
-                        href="/experiments/stellar-collapse"
-                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span>💫</span>
-                          <span>Stellar Collapse</span>
-                        </div>
-                        <div className="text-xs text-text-muted ml-6">Star collapsing to black hole</div>
-                      </Link>
-                    </div>
-                    
-                    <div className="py-2 border-t border-space-border">
-                      <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
-                        Cosmology
-                      </div>
-                      <Link
-                        href="/experiments/big-bang"
-                        className="block px-4 py-2 hover:bg-space-dark transition-colors text-text-primary hover:text-accent-chi"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span>💥</span>
-                          <span>Big Bang</span>
-                        </div>
-                        <div className="text-xs text-text-muted ml-6">Energy explosion from a point</div>
-                      </Link>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -159,7 +162,7 @@ export default function Header() {
             <ExternalLink
               href="https://github.com/gpartin/LFM"
               label="GitHub"
-              badge="91.4% Tests Pass"
+              badge={formatPassRate()}
               icon="💻"
             />
             <Link

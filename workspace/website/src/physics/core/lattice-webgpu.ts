@@ -103,6 +103,39 @@ export class LFMLatticeWebGPU {
   }
 
   /**
+   * Seed initial field values (E_current) from a provided Float32Array.
+   * Length must equal size^3. Optionally clones into previous field to ensure
+   * zero initial time derivative for Verlet integration.
+   */
+  seedInitialField(values: Float32Array, cloneToPrevious: boolean = true): void {
+    const N3 = this.config.size ** 3;
+    if (values.length !== N3) {
+      throw new Error(`seedInitialField length mismatch: expected ${N3}, got ${values.length}`);
+    }
+  this.device.queue.writeBuffer(this.fieldCurrent, 0, (values as unknown as BufferSource));
+    if (cloneToPrevious) {
+  this.device.queue.writeBuffer(this.fieldPrevious, 0, (values as unknown as BufferSource));
+    }
+    this.energyHistory = [];
+  }
+
+  /** Clone current field into previous (zero initial dE/dt helper). */
+  async cloneToPrevious(): Promise<void> {
+    // Read current field then write to previous (GPU copy could be added later)
+  const current = await this.readBuffer(this.fieldCurrent);
+  this.device.queue.writeBuffer(this.fieldPrevious, 0, (current as unknown as BufferSource));
+  }
+
+  /** Replace chi field buffer contents directly (expects N^3 floats). */
+  setChiField(values: Float32Array): void {
+    const N3 = this.config.size ** 3;
+    if (values.length !== N3) {
+      throw new Error(`setChiField length mismatch: expected ${N3}, got ${values.length}`);
+    }
+  this.device.queue.writeBuffer(this.chiField, 0, (values as unknown as BufferSource));
+  }
+
+  /**
    * ============================================================================
    * CORE INVENTION: WebGPU Klein-Gordon Equation Solver
    * ============================================================================

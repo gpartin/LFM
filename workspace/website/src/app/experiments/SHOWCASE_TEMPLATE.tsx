@@ -28,6 +28,19 @@ import ParameterSlider from '@/components/ui/ParameterSlider';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { useSimulationState } from '@/hooks/useSimulationState';
 
+// ----------------------------------------------------------------------------
+// REQUIRED METADATA (keep structure; customize values in your experiment page)
+// ----------------------------------------------------------------------------
+// profile: 'classical' | 'quantum' (affects validator expectations & defaults)
+export const experimentMeta = {
+  id: 'your-experiment-id',
+  tier: 4, // set appropriately (1..7)
+  domain: 'quantization', // e.g., 'relativistic' | 'gravity' | 'quantization'
+  profile: 'classical' as 'classical' | 'quantum',
+  summary: 'Short one-line summary of the phenomenon.',
+  relatedTests: [], // e.g., ['QUAN-01']
+} as const;
+
 // ============================================================================
 // EXPERIMENT-SPECIFIC IMPORTS (CUSTOMIZE HERE)
 // ============================================================================

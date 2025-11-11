@@ -18,10 +18,14 @@ import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbi
 import OrbitCanvas from '@/components/visuals/OrbitCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
 import { WebGPUErrorBoundary } from '@/components/ErrorBoundary';
+import { decideSimulationProfile } from '@/physics/core/simulation-profile';
+import SimpleCanvas from '@/components/visuals/SimpleCanvas';
 
 export default function BinaryOrbitPage() {
   // Consolidated state management (replaces 20+ individual useState calls)
   const [state, dispatch] = useSimulationState();
+  const [uiMode, setUiMode] = useState<'advanced' | 'simple'>('advanced');
+  const [dimMode, setDimMode] = useState<'3d' | '1d'>('3d');
   
   // CPU mode toggle for testing (TEMPORARY - for user testing only)
   const [forceCPU, setForceCPU] = useState(false);
@@ -59,7 +63,7 @@ export default function BinaryOrbitPage() {
   // Detect backend on mount (override with CPU if toggle is on)
   useEffect(() => {
     detectBackend().then((caps) => {
-      const actualBackend = forceCPU ? 'cpu' : caps.backend;
+      const actualBackend = forceCPU ? 'cpu' : (caps.backend === 'webgpu' || caps.backend === 'cpu' ? caps.backend : 'cpu');
       const actualCaps = forceCPU ? { ...caps, backend: 'cpu' as const } : caps;
       dispatch({ 
         type: 'SET_BACKEND', 
@@ -68,6 +72,9 @@ export default function BinaryOrbitPage() {
           capabilities: actualCaps 
         } 
       });
+      const prof = decideSimulationProfile(actualBackend, actualCaps, 'classical');
+      setUiMode(prof.ui);
+      setDimMode(prof.dim);
     });
   }, [dispatch, forceCPU]);
 
@@ -407,24 +414,7 @@ export default function BinaryOrbitPage() {
                   </div>
                 )}
                 {/* 3D Canvas renders full scene; no 2D overlay needed */}
-                {state.backend === 'webgpu' ? (
-                  <WebGPUErrorBoundary>
-                    <OrbitCanvas
-                      simulation={simRef}
-                      isRunning={state.isRunning}
-                      showParticles={state.ui.showParticles}
-                      showTrails={state.ui.showTrails}
-                      showChi={state.ui.showChi}
-                      showLattice={state.ui.showLattice}
-                      showVectors={state.ui.showVectors}
-                      showDomes={state.ui.showDomes}
-                      showIsoShells={state.ui.showIsoShells}
-                      showWell={state.ui.showWell}
-                      showBackground={state.ui.showBackground}
-                      chiStrength={state.params.chiStrength}
-                    />
-                  </WebGPUErrorBoundary>
-                ) : (state.backend === 'cpu' || forceCPU) ? (
+                {uiMode === 'advanced' ? (
                   <WebGPUErrorBoundary>
                     <OrbitCanvas
                       simulation={simRef}
@@ -442,15 +432,11 @@ export default function BinaryOrbitPage() {
                     />
                   </WebGPUErrorBoundary>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <h3 className="text-2xl font-bold text-accent-chi mb-2">WebGPU Not Available</h3>
-                      <p className="text-text-secondary mb-6">
-                        Full 3D visualization requires WebGPU. Upgrade your browser or enable experimental flags.
-                      </p>
-                    </div>
-                  </div>
+                  <SimpleCanvas
+                    isRunning={state.isRunning}
+                    parameters={{ ...state.params, __dim: dimMode }}
+                    views={{ showGrid: false, showField: false }}
+                  />
                 )}
               </div>
 
@@ -458,11 +444,11 @@ export default function BinaryOrbitPage() {
               <div className="mt-4 flex items-center justify-center space-x-4" role="group" aria-label="Simulation controls">
                 <button
                   onClick={startSimulation}
-                  disabled={!simRef.current || state.isRunning}
+                  disabled={!simRef.current || state.isRunning || uiMode !== 'advanced'}
                   aria-label="Start simulation"
                   aria-disabled={!simRef.current || state.isRunning}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                    !simRef.current || state.isRunning
+                    !simRef.current || state.isRunning || uiMode !== 'advanced'
                       ? 'bg-accent-glow/40 text-space-dark/60 cursor-not-allowed'
                       : 'bg-accent-glow hover:bg-accent-glow/80 text-space-dark'
                   }`}
@@ -566,11 +552,12 @@ export default function BinaryOrbitPage() {
 
             {/* Control Panel (Right side - 1/3 width) */}
             <div className="space-y-6">
-              {/* Parameters */}
-              <div className="panel">
-                <h3 className="text-lg font-bold text-accent-chi mb-4">Parameters</h3>
+              {/* Unified Experiment Parameters */}
+              <div className="panel" data-panel="experiment-parameters">
+                <h3 className="text-lg font-bold text-accent-chi mb-4">Experiment Parameters</h3>
 
-                <div className="space-y-4">
+                {/* Common Parameters */}
+                <div className="space-y-4" data-section="common-parameters">
                   <ParameterSlider 
                     label="Earth/Moon Mass Ratio" 
                     value={state.params.massRatio} 
@@ -622,6 +609,8 @@ export default function BinaryOrbitPage() {
                     tooltip="Controls how fast emergent spacetime evolves - larger timestep = faster orbit motion. Too large may become unstable."
                   />
                 </div>
+                {/* Experiment-Specific metadata section marker for validator */}
+                <div className="sr-only" aria-hidden="true" data-section="experiment-parameters" />
 
                 {/* Educational preset readout */}
                 <div className="mt-3 text-[11px] text-gray-400 flex flex-wrap gap-x-3 gap-y-1 items-center">

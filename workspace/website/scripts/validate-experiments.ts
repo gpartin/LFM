@@ -30,6 +30,7 @@ const SHOWCASE_EXPERIMENTS = [
   'black-hole',
   'stellar-collapse',
   'big-bang',
+  'quantum-tunneling', // Newly added quantum profile experiment
 ];
 
 // STRICT CONSISTENCY REQUIREMENTS - ALL showcase experiments MUST match
@@ -43,8 +44,7 @@ const STRICT_REQUIREMENTS = {
   defaultShowLattice: false,  // Simulation Grid should default OFF
 };
 
-const REQUIRED_IMPORTS = [
-  'StandardVisualizationOptions',
+const REQUIRED_IMPORTS_BASE = [
   'StandardMetricsPanel',
   'ExperimentLayout',
   'useSimulationState',
@@ -89,8 +89,18 @@ function validateExperiment(experimentName: string): ValidationResult {
   }
 
   const content = fs.readFileSync(filePath, 'utf-8');
+  // Detect experiment profile:
+  // 1) Prefer explicit experimentMeta.profile if present
+  // 2) Fallback: infer quantum if QuantumVisualizationOptions is used
+  const metaProfileMatchTop = content.match(/experimentMeta[^]*profile:\s*['\"](quantum|classical)['\"]/);
+  const inferredQuantum = /QuantumVisualizationOptions/.test(content);
+  const profileTop = metaProfileMatchTop ? metaProfileMatchTop[1] : (inferredQuantum ? 'quantum' : 'classical');
+  const isQuantumTop = profileTop === 'quantum';
 
-  // Check required imports
+  // Check required imports (profile-aware)
+  const REQUIRED_IMPORTS = isQuantumTop
+    ? [...REQUIRED_IMPORTS_BASE, 'QuantumVisualizationOptions']
+    : [...REQUIRED_IMPORTS_BASE, 'StandardVisualizationOptions'];
   for (const requiredImport of REQUIRED_IMPORTS) {
     if (!content.includes(requiredImport)) {
       result.passed = false;
@@ -107,7 +117,15 @@ function validateExperiment(experimentName: string): ValidationResult {
   }
 
   // Check required patterns
-  for (const { pattern, message } of REQUIRED_PATTERNS) {
+  // Profile-aware required patterns
+  const REQUIRED_PATTERNS_PROFILE = [
+    { pattern: /<ExperimentLayout/, message: 'Must use ExperimentLayout wrapper' },
+    { pattern: /visualizationOptions=\{/, message: 'Must pass visualizationOptions prop to ExperimentLayout' },
+    { pattern: isQuantumTop ? /<QuantumVisualizationOptions/ : /<StandardVisualizationOptions/, message: isQuantumTop ? 'Quantum profile must use QuantumVisualizationOptions component' : 'Classical profile must use StandardVisualizationOptions component' },
+    { pattern: /<StandardMetricsPanel/, message: 'Must use StandardMetricsPanel component' },
+    { pattern: /useSimulationState/, message: 'Must use useSimulationState hook' },
+  ];
+  for (const { pattern, message } of REQUIRED_PATTERNS_PROFILE) {
     if (!pattern.test(content)) {
       result.passed = false;
       result.errors.push(message);
@@ -132,6 +150,11 @@ function validateExperiment(experimentName: string): ValidationResult {
     result.warnings.push('Backend detection pattern not found');
   }
 
+  // Check for profile-based UI/Sim decision usage (advisory)
+  if (!/decideSimulationProfile\(|__dim:/.test(content)) {
+    result.warnings.push('Advisory: consider using decideSimulationProfile() to choose advanced (3D) vs simple (1D) mode based on backend.');
+  }
+
   // Check for proper state management
   if (!content.includes('const [state, dispatch] = useSimulationState()')) {
     result.warnings.push('useSimulationState hook usage pattern not standard');
@@ -151,6 +174,11 @@ function checkVisualizationConfig(
   content: string,
   result: ValidationResult
 ): void {
+  // Detect experiment profile (same logic as validateExperiment)
+  const metaProfileMatch = content.match(/experimentMeta[^]*profile:\s*['\"](quantum|classical)['\"]/);
+  const inferredQuantum = /QuantumVisualizationOptions/.test(content);
+  const profile = metaProfileMatch ? metaProfileMatch[1] : (inferredQuantum ? 'quantum' : 'classical');
+  const isQuantum = profile === 'quantum';
   // STRICT: Check showAdvancedOptions is TRUE (required for all experiments)
   const showAdvancedMatch = content.match(/showAdvancedOptions=\{(true|false)\}/);
   if (showAdvancedMatch) {
@@ -162,7 +190,6 @@ function checkVisualizationConfig(
       result.passed = false;
     }
   } else {
-    // Default is true, but we require it to be explicit
     result.warnings.push('showAdvancedOptions should be explicitly set to {true}');
   }
 
@@ -183,6 +210,17 @@ function checkVisualizationConfig(
     result.passed = false;
   }
 
+  // NEW: Enforce unified parameters panel title
+  const hasUnifiedParamsTitle = /<h3[^>]*>\s*Experiment Parameters\s*<\/h3>/.test(content);
+  const hasUnifiedParamsDataAttr = /data-panel=\"experiment-parameters\"/.test(content);
+  if (!hasUnifiedParamsTitle) {
+    result.errors.push('Parameters panel title MUST be "Experiment Parameters"');
+    result.passed = false;
+  }
+  if (!hasUnifiedParamsDataAttr) {
+    result.warnings.push('Consider adding data-panel="experiment-parameters" for validator-friendly markup');
+  }
+
   // STRICT: Check grid layout
   if (!content.includes(STRICT_REQUIREMENTS.gridLayout)) {
     result.errors.push(
@@ -199,30 +237,42 @@ function checkVisualizationConfig(
     result.passed = false;
   }
 
-  // Check default UI state (must use useSimulationState with correct defaults)
-  // Note: All experiments should use the shared hook which has the correct defaults
+  // Default UI state validation adjusted for quantum profile
   if (!content.includes('useSimulationState')) {
     result.errors.push(
-      'Must use useSimulationState hook (ensures correct defaults: showBackground=true, showLattice=false)'
+      'Must use useSimulationState hook (ensures baseline defaults)'
     );
     result.passed = false;
   } else {
-    // Check for custom overrides that violate defaults
     const showBackgroundOverride = content.match(/showBackground:\s*false/);
     const showLatticeOverride = content.match(/showLattice:\s*true/);
-    
+
     if (showBackgroundOverride) {
-      result.errors.push(
-        'Stars & Background MUST default to ON (showBackground: true). Remove custom override.'
-      );
+      result.errors.push('Stars & Background MUST default to ON (showBackground: true).');
       result.passed = false;
     }
-    
+
     if (showLatticeOverride) {
-      result.errors.push(
-        'Simulation Grid MUST default to OFF (showLattice: false). Remove custom override.'
-      );
-      result.passed = false;
+      if (isQuantum) {
+        // Quantum experiments may start with lattice ON for barrier visualization
+        result.warnings.push('Quantum profile: lattice default ON accepted (showLattice: true).');
+      } else {
+        result.errors.push('Simulation Grid MUST default to OFF (showLattice: false) for classical profile.');
+        result.passed = false;
+      }
+    }
+  }
+
+  // Quantum-specific advisory metrics check (non-blocking for now)
+  if (isQuantum) {
+    const hasTransmission = /Transmission\b|T\b/.test(content);
+    const hasReflection = /Reflection\b|R\b/.test(content);
+    if (!hasTransmission || !hasReflection) {
+      result.warnings.push('Quantum profile: consider adding Transmission (T) and Reflection (R) metrics.');
+    }
+    // Advisory: Fallback simple UI when GPU not available
+    if (!/SimpleCanvas/.test(content)) {
+      result.warnings.push('Quantum profile: provide a simplified fallback UI (SimpleCanvas) when GPU is not available.');
     }
   }
 }
@@ -336,15 +386,120 @@ function printResults(results: ValidationResult[]): void {
   }
 }
 
+function checkRegistryEntries(): string[] {
+  const errors: string[] = [];
+  
+  try {
+    // Import experiments registry
+    const registryPath = path.join(__dirname, '../src/data/experiments.ts');
+    const registryContent = fs.readFileSync(registryPath, 'utf-8');
+    
+    // Extract experiment IDs from SHOWCASE_EXPERIMENTS array
+    const showcaseMatch = registryContent.match(/const SHOWCASE_EXPERIMENTS[^=]*=\s*\[([\s\S]*?)\];/);
+    if (!showcaseMatch) {
+      errors.push('Could not parse SHOWCASE_EXPERIMENTS array in experiments.ts');
+      return errors;
+    }
+    
+    const showcaseArrayContent = showcaseMatch[1];
+    const registeredIds: string[] = [];
+    
+    // Extract all "id: 'xxx'" entries
+    const idMatches = showcaseArrayContent.matchAll(/id:\s*['"]([^'"]+)['"]/g);
+    for (const match of idMatches) {
+      registeredIds.push(match[1]);
+    }
+    
+    console.log(`\n📋 Checking Experiment Registry Integration...\n`);
+    console.log(`  Found ${registeredIds.length} experiments in registry`);
+    console.log(`  Validating ${SHOWCASE_EXPERIMENTS.length} experiment pages\n`);
+    
+    // Check each validated page has registry entry
+    for (const expId of SHOWCASE_EXPERIMENTS) {
+      if (!registeredIds.includes(expId)) {
+        errors.push(`❌ ${expId}: Page validated but NOT in experiments registry`);
+        console.log(`  ❌ ${expId}: Missing from src/data/experiments.ts`);
+      } else {
+        console.log(`  ✅ ${expId}: Found in registry`);
+      }
+    }
+    
+    // Check for registry entries without pages (orphaned)
+    for (const regId of registeredIds) {
+      if (!SHOWCASE_EXPERIMENTS.includes(regId)) {
+        console.log(`  ⚠️  ${regId}: In registry but no page validated (might be in development)`);
+      }
+    }
+    
+  } catch (error) {
+    errors.push(`Failed to check registry: ${error}`);
+  }
+  
+  return errors;
+}
+
 function main() {
+  const args = process.argv.slice(2);
+  const targets = args.length > 0 ? args : SHOWCASE_EXPERIMENTS;
+
   console.log('🔬 Validating showcase experiment pages...\n');
-  console.log(`Checking ${SHOWCASE_EXPERIMENTS.length} experiments against specification\n`);
+  console.log(`Checking ${targets.length} experiment(s) against specification\n`);
 
   // Check canvas background color consistency first
   checkCanvasBackgroundConsistency();
 
-  const results = SHOWCASE_EXPERIMENTS.map(validateExperiment);
+  const results = targets.map(validateExperiment);
+  
+  // Check registry integration for selected targets
+  const registryErrors = checkRegistryEntriesForTargets(targets);
+  
+  if (registryErrors.length > 0) {
+    console.log('\n❌ Registry Integration Errors:\n');
+    for (const error of registryErrors) {
+      console.log(`  ${error}`);
+    }
+    console.log('\n📝 Action Required:');
+    console.log('  Ensure validated experiments are present in src/data/experiments.ts\n');
+  }
+  
   printResults(results);
+  
+  // Exit with error if registry validation failed
+  if (registryErrors.length > 0) {
+    process.exit(1);
+  }
+}
+
+function checkRegistryEntriesForTargets(targets: string[]): string[] {
+  const errors: string[] = [];
+  try {
+    const registryPath = path.join(__dirname, '../src/data/experiments.ts');
+    const registryContent = fs.readFileSync(registryPath, 'utf-8');
+    const showcaseMatch = registryContent.match(/const SHOWCASE_EXPERIMENTS[^=]*=\s*\[([\s\S]*?)\];/);
+    if (!showcaseMatch) {
+      errors.push('Could not parse SHOWCASE_EXPERIMENTS array in experiments.ts');
+      return errors;
+    }
+    const showcaseArrayContent = showcaseMatch[1];
+    const registeredIds: string[] = [];
+    const idMatches = showcaseArrayContent.matchAll(/id:\s*['"]([^'"]+)['"]/g);
+    for (const match of idMatches) {
+      registeredIds.push(match[1]);
+    }
+
+    console.log(`\n📋 Checking Experiment Registry Integration for ${targets.length} target(s)...\n`);
+    for (const expId of targets) {
+      if (!registeredIds.includes(expId)) {
+        errors.push(`❌ ${expId}: Page validated but NOT in experiments registry`);
+        console.log(`  ❌ ${expId}: Missing from src/data/experiments.ts`);
+      } else {
+        console.log(`  ✅ ${expId}: Found in registry`);
+      }
+    }
+  } catch (error) {
+    errors.push(`Failed to check registry: ${error}`);
+  }
+  return errors;
 }
 
 main();

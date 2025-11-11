@@ -207,6 +207,73 @@ export const EXPERIMENTS: ExperimentRegistryEntry[] = [
     },
     loader: () => import('@/experiments/gravity/stellar-collapse'),
   },
+  {
+    metadata: {
+      id: 'double-slit',
+      title: 'Quantum Double Slit',
+      shortDescription: 'Deterministic wave interference pattern from two apertures',
+      fullDescription: 'A plane-like wave passes through two narrow slits creating a classic interference pattern. Live metrics report fringe spacing, visibility, and slit intensity ratio using authentic LFM lattice physics.',
+      category: 'quantization',
+      tags: ['quantum', 'interference', 'wave', 'double-slit', 'superposition', 'webgpu'],
+      difficulty: 'beginner',
+      version: '1.0.0',
+      created: '2025-11-11T00:00:00Z',
+      updated: '2025-11-11T00:00:00Z',
+      featured: true,
+      backend: {
+        minBackend: 'webgpu',
+        requiredFeatures: ['compute'],
+        estimatedVRAM: 256,
+      },
+      education: {
+        whatYouSee: 'A right-moving wave generating bright and dark fringes after passing two slits.',
+        principles: [
+          'Interference from coherent path superposition',
+          'Fringe spacing tied to effective wavelength and slit separation',
+          'Visibility metric V = (Imax - Imin)/(Imax + Imin)',
+          'Energy conservation during wave propagation'
+        ],
+        realWorld: 'Foundational experiment illustrating wave nature of matter and light.',
+        references: []
+      },
+      thumbnail: '/thumbnails/double-slit.png',
+      estimatedRuntime: 45,
+    },
+    // NOTE: Double-slit implemented as Next.js page, not legacy experiment factory.
+    // Provide a stub factory wrapper to satisfy type expectation until migrated.
+    loader: async () => ({
+      default: (() => {
+        // Minimal stub returning an object conforming to Experiment for registry compatibility
+        return {
+          metadata: {
+            id: 'double-slit',
+            title: 'Quantum Double Slit',
+            shortDescription: 'Deterministic wave interference pattern from two apertures',
+            fullDescription: 'Stub metadata; actual rendering handled by Next.js page component.',
+            category: 'quantization',
+            tags: ['quantum'],
+            difficulty: 'beginner',
+            version: '1.0.0',
+            created: new Date().toISOString(),
+            updated: new Date().toISOString(),
+            backend: { minBackend: 'webgpu' },
+            education: { whatYouSee: 'Wave interference', principles: ['Interference'] },
+          },
+          config: { parameters: [] },
+          initialize: async () => {},
+          cleanup: async () => {},
+          reset: async () => {},
+          start: () => {},
+          pause: () => {},
+          updateParameters: () => {},
+          getMetrics: () => [],
+          getResults: () => ({ timestamp: new Date().toISOString(), parameters: {}, metrics: {} }),
+          exportResults: async () => '{}',
+          RenderComponent: () => null,
+        } as any;
+      }) as any,
+    }),
+  },
 ];
 
 /**
