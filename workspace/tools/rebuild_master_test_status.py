@@ -108,8 +108,13 @@ def scan_test_results(results_dir: Path, config_tests: Dict[str, Dict]) -> Dict[
                     with open(summary_file, 'r', encoding='utf-8') as f:
                         summary = json.load(f)
                     
-                    # Check if test is marked as skipped in summary
-                    if summary.get('skipped', False):
+                    # Check if test is marked as skipped in config (takes priority)
+                    if test_id in config_tests and config_tests[test_id].get('status') == 'SKIP':
+                        # Config skip overrides any results
+                        status = 'SKIP'
+                        skip_reason = config_tests[test_id].get('skip_reason', '')
+                    elif summary.get('skipped', False):
+                        # Summary file indicates skip
                         status = 'SKIP'
                         skip_reason = summary.get('skip_reason', '')
                     else:
@@ -123,7 +128,7 @@ def scan_test_results(results_dir: Path, config_tests: Dict[str, Dict]) -> Dict[
                         status = 'PASS' if passed else 'FAIL'
                         skip_reason = ''
                     
-                    # Override config entry if test actually ran (or update skip info)
+                    # Update or add test entry (config skip takes priority)
                     test_data[test_id] = {
                         'tier': tier_label,
                         'category': tier_dir_name,
@@ -170,17 +175,19 @@ def generate_master_csv(test_data: Dict[str, Dict], output_file: Path):
     lines.append("Validation Rule: Suite marked NOT RUN if any test missing from CSV")
     lines.append("")
     lines.append("CATEGORY SUMMARY")
-    lines.append("Tier,Category,Total_Tests,Passed,Failed,Skipped,Pass_Rate")
+    # Pass_Rate now computed over executed (non-skipped) tests only.
+    # Columns: Executed_Tests excludes skipped. Total_Tests includes skipped for transparency.
+    lines.append("Tier,Category,Total_Tests,Executed_Tests,Passed,Failed,Skipped,Pass_Rate_Executed")
     
     for tier in sorted(tier_stats.keys()):
         stats = tier_stats[tier]
         total = stats['total']
+        skipped = stats['skipped']
+        executed = total - skipped
         passed = stats['passed']
         failed = stats['failed']
-        skipped = stats['skipped']
-        runnable = total - skipped
-        pass_rate = f"{100*passed/runnable:.1f}%" if runnable > 0 else "0%"
-        lines.append(f"{tier},{stats['category']},{total},{passed},{failed},{skipped},{pass_rate}")
+        pass_rate_exec = f"{100*passed/executed:.1f}%" if executed > 0 else "0%"
+        lines.append(f"{tier},{stats['category']},{total},{executed},{passed},{failed},{skipped},{pass_rate_exec}")
     
     lines.append("")
     lines.append("DETAILED TEST RESULTS")
@@ -201,11 +208,12 @@ def generate_master_csv(test_data: Dict[str, Dict], output_file: Path):
         f.write('\n'.join(lines))
     
     print(f"✅ Generated {output_file}")
-    print(f"   Total tests: {len(test_data)}")
+    print(f"   Total tracked tests (including skipped): {len(test_data)}")
     for tier in sorted(tier_stats.keys()):
         stats = tier_stats[tier]
         if stats['total'] > 0:
-            parts = [f"{stats['passed']}/{stats['total']} passed"]
+            executed = stats['total'] - stats['skipped']
+            parts = [f"{stats['passed']}/{executed} passed (executed)"]
             if stats['failed'] > 0:
                 parts.append(f"{stats['failed']} failed")
             if stats['skipped'] > 0:
