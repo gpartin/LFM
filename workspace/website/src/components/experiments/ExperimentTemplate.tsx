@@ -5,9 +5,10 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ExperimentDefinition } from '@/data/experiments';
 import SimulationDispatcher from './SimulationDispatcher';
+import { SimulationControls } from './canvases/types';
 import ControlPanel from './ControlPanel';
 import ParameterPanel from './ParameterPanel';
 import MetricsPanel from './MetricsPanel';
@@ -20,6 +21,9 @@ interface ExperimentTemplateProps {
 }
 
 export default function ExperimentTemplate({ experiment }: ExperimentTemplateProps) {
+  // Determine mode from experiment type
+  const mode = experiment.type || 'SHOWCASE';
+  
   // Simulation state
   const [isRunning, setIsRunning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,6 +31,12 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
   
   // Parameters (initialized from experiment config)
   const [parameters, setParameters] = useState(experiment.initialConditions);
+  
+  // Simulation history for step-by-step navigation (RESEARCH mode)
+  const [simulationHistory, setSimulationHistory] = useState<any[]>([]);
+  
+  // Reference to simulation controls (for step forward/back)
+  const simulationRef = useRef<SimulationControls | null>(null);
   
   // Auto-pause when reaching max steps
   const maxSteps = parameters.steps || 6000;
@@ -73,7 +83,44 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
     setMetrics({});
     setValidationStatus('idle');
     setValidationResults(null);
+    setSimulationHistory([]);  // Clear history
   }, [experiment.initialConditions]);
+  
+  // Step forward handler (RESEARCH mode)
+  const handleStepForward = useCallback(() => {
+    if (currentStep >= maxSteps || !simulationRef.current) return;
+    
+    // 1. Capture current state BEFORE stepping
+    const currentState = simulationRef.current.getState();
+    
+    // 2. Store in history buffer (circular, keep last 100)
+    setSimulationHistory(prev => {
+      const newHistory = [...prev, currentState];
+      if (newHistory.length > 100) {
+        newHistory.shift(); // Remove oldest
+      }
+      return newHistory;
+    });
+    
+    // 3. Execute one physics step
+    simulationRef.current.step();
+    
+    // Note: currentStep is updated by the simulation's onStepUpdate callback
+  }, [currentStep, maxSteps]);
+  
+  // Step backward handler (RESEARCH mode)
+  const handleStepBackward = useCallback(() => {
+    if (currentStep === 0 || simulationHistory.length === 0 || !simulationRef.current) return;
+    
+    // 1. Pop last state from history
+    const prevState = simulationHistory[simulationHistory.length - 1];
+    setSimulationHistory(prev => prev.slice(0, -1));
+    
+    // 2. Restore simulation state
+    simulationRef.current.setState(prevState);
+    
+    // Note: currentStep is updated by setState's onStepUpdate callback
+  }, [currentStep, simulationHistory]);
   
   const handleParameterChange = useCallback((param: string, value: any) => {
     setParameters(prev => ({
@@ -129,11 +176,20 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <Link href="/research" className="text-accent-chi hover:underline">
-            ← Research
+          <Link href={mode === 'RESEARCH' ? '/research' : '/experiments'} className="text-accent-chi hover:underline">
+            ← {mode === 'RESEARCH' ? 'Research' : 'Experiments'}
           </Link>
           <span className="text-text-muted">/</span>
           <span className="text-text-secondary">{experiment.testId || experiment.id}</span>
+          {mode && (
+            <span className={`px-2 py-1 rounded text-xs font-bold ${
+              mode === 'RESEARCH' 
+                ? 'bg-indigo-600/30 text-indigo-300' 
+                : 'bg-green-600/30 text-green-300'
+            }`}>
+              {mode}
+            </span>
+          )}
         </div>
         
         <div className="flex items-start justify-between mb-4">
@@ -161,6 +217,40 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
         </p>
       </div>
       
+      {/* GRAV-09 Skip Warning Banner */}
+      {(experiment.testId === 'GRAV-09' || experiment.id === 'GRAV-09') && (
+        <div className="bg-yellow-900/30 border-2 border-yellow-600 rounded-lg p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 text-yellow-500 text-3xl">⚠️</div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-yellow-400 mb-2">Test Design Limitation (Skipped in Validation)</h3>
+              <p className="text-yellow-200/90 mb-3 leading-relaxed">
+                This test is <strong>skipped</strong> in the official validation suite due to a fundamental discretization artifact in Klein-Gordon field theory on finite grids.
+              </p>
+              <div className="space-y-2 text-yellow-100/80 text-sm leading-relaxed">
+                <p><strong>Scientific Context:</strong></p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Continuous Klein-Gordon allows bound states with ω≈χ (k→0 limit)</li>
+                  <li>Discrete grid with dx=0.5 requires k_min=2π/L ≈ 2.26 (36% of k_max)</li>
+                  <li>Any localized initial condition couples to grid modes where k² dominates χ² by factor ~100</li>
+                  <li>Both wells measure ω≈2.25 (dispersion relation), not χA=0.30, χB=0.14</li>
+                  <li>Makes ratio validation impossible (measured 1.03 vs expected 2.14)</li>
+                </ul>
+                <p className="mt-3"><strong>Why This Matters:</strong></p>
+                <p className="ml-4">
+                  This demonstrates an important lesson about discrete vs continuous field theory that physicists must account for when designing numerical tests. 
+                  The discrete grid introduces unavoidable k-content; tests must be designed recognizing ω²=k²+χ², not assuming ω≈χ.
+                </p>
+                <p className="mt-3"><strong>Alternative Validation:</strong></p>
+                <p className="ml-4">
+                  Tests GRAV-07, GRAV-08, GRAV-13, and GRAV-18 successfully validate χ-dependent effects without this discretization artifact.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Simulation Canvas */}
@@ -173,12 +263,14 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
               visualizationToggles={visualizationToggles}
               onMetricsUpdate={handleMetricsUpdate}
               onStepUpdate={setCurrentStep}
+              simulationRef={simulationRef}
             />
           </div>
           
           {/* Control Panel */}
           <div className="mt-4">
             <ControlPanel
+              mode={mode}
               isRunning={isRunning}
               speed={speed}
               currentStep={currentStep}
@@ -187,6 +279,8 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
               onPause={handlePause}
               onReset={handleReset}
               onSpeedChange={setSpeed}
+              onStepForward={mode === 'RESEARCH' ? handleStepForward : undefined}
+              onStepBackward={mode === 'RESEARCH' ? handleStepBackward : undefined}
             />
           </div>
         </div>
@@ -218,6 +312,7 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
           
           {/* Parameter Panel */}
           <ParameterPanel
+            mode={mode}
             experiment={experiment}
             parameters={parameters}
             onParameterChange={handleParameterChange}
@@ -233,12 +328,27 @@ export default function ExperimentTemplate({ experiment }: ExperimentTemplatePro
           
           {/* Validation Panel */}
           {experiment.validation && (
-            <ValidationPanel
-              experiment={experiment}
-              status={validationStatus}
-              results={validationResults}
-              onValidate={handleValidate}
-            />
+            <div className="space-y-4">
+              {/* Coming Soon Notice */}
+              <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">🔬</div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-blue-300 mb-1">Validation Coming Soon</h4>
+                    <p className="text-sm text-gray-400">
+                      Cryptographic validation with exact Python code reproduction will be available in the next update.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <ValidationPanel
+                experiment={experiment}
+                status={validationStatus}
+                results={validationResults}
+                onValidate={handleValidate}
+              />
+            </div>
           )}
           
           {/* Documentation Links */}

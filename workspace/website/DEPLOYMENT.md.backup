@@ -1,0 +1,342 @@
+# Deployment Guide - emergentphysicslab.com
+
+**Status**: Ready to deploy ✅  
+**Domain**: emergentphysicslab.com  
+**Platform**: Vercel  
+**Date**: November 10, 2025
+
+---
+
+## Step-by-Step Deployment (15 minutes to live)
+
+Follow these steps in order. Each step builds on the previous one.
+
+#### 1. Push to GitHub
+```bash
+cd c:\LFM
+git add workspace/website/
+git commit -m "Add deployment configuration and SEO optimization"
+git push origin main
+```
+
+#### 2. Connect Vercel
+1. Go to https://vercel.com/new
+2. Sign in with GitHub
+3. Import `LFM` repository
+4. **Root Directory**: Set to `workspace/website`
+5. **Framework Preset**: Next.js (auto-detected)
+6. **Build Command**: `npm run build` (already set)
+7. **Output Directory**: `.next` (default)
+8. Click **Deploy**
+
+#### 3. Connect Custom Domain
+1. Vercel Dashboard → Project Settings → Domains
+2. Add `emergentphysicslab.com`
+3. Add `www.emergentphysicslab.com` (recommended)
+4. Follow DNS configuration instructions:
+
+**In your domain registrar (GoDaddy/Namecheap/etc):**
+```
+Type    Name    Value
+A       @       76.76.21.21
+CNAME   www     cname.vercel-dns.com
+```
+
+**Wait 10-60 minutes for DNS propagation**
+
+#### 4. Verify Deployment
+- Visit https://emergentphysicslab.com
+- Check https://emergentphysicslab.com/sitemap.xml
+- Verify https://emergentphysicslab.com/robots.txt
+
+---
+
+### Option B: Deploy with Netlify
+
+#### 1. Push to GitHub (same as above)
+
+#### 2. Connect Netlify
+1. Go to https://app.netlify.com/start
+2. Connect GitHub repository
+3. **Base directory**: `workspace/website`
+4. **Build command**: `npm run build`
+5. **Publish directory**: `.next`
+6. Click **Deploy**
+
+#### 3. Connect Custom Domain
+1. Netlify Dashboard → Domain Settings
+2. Add custom domain: `emergentphysicslab.com`
+3. Configure DNS:
+```
+Type    Name    Value
+A       @       75.2.60.5
+CNAME   www     <your-site>.netlify.app
+```
+
+---
+
+## Environment Variables (Set in Vercel/Netlify Dashboard)
+
+```env
+NEXT_PUBLIC_SITE_URL=https://emergentphysicslab.com
+NEXT_PUBLIC_CONTACT_EMAIL=research@emergentphysicslab.com
+NEXT_PUBLIC_ENABLE_WEBGPU=true
+NEXT_PUBLIC_ENABLE_VALIDATION_SIGNING=false
+```
+
+**Note**: These are already in `.env.example` - Vercel will auto-detect some values.
+
+---
+
+## SEO Optimization (Already Configured)
+
+### ✅ What's Already Done:
+
+1. **Sitemap.xml** (`/sitemap.xml`)
+   - Auto-generated from all experiments
+   - Updates automatically when tests added
+   - 105+ research experiments indexed
+   - All showcase experiments indexed
+
+2. **Robots.txt** (`/robots.txt`)
+   - Allows all search engines
+   - Points to sitemap
+
+3. **Meta Tags** (check your layout.tsx)
+   - Need to verify/add Open Graph tags
+
+4. **Security Headers**
+   - CORS for WebGPU
+   - XSS protection
+   - Content type protection
+
+### 🔄 Post-Deployment SEO Tasks:
+
+#### Immediate (Day 1):
+1. **Google Search Console**
+   - Go to https://search.google.com/search-console
+   - Add property: `emergentphysicslab.com`
+   - Verify ownership (DNS or meta tag)
+   - Submit sitemap: `https://emergentphysicslab.com/sitemap.xml`
+
+2. **Bing Webmaster Tools**
+   - Go to https://www.bing.com/webmasters
+   - Add site
+   - Submit sitemap
+
+3. **Submit to Web Archives**
+   - Internet Archive: https://web.archive.org/save/
+   - Archive.today: http://archive.today/
+
+#### Week 1:
+1. **Create Google Analytics** (optional but recommended)
+   ```bash
+   # Add to .env
+   NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+   ```
+
+2. **Monitor Crawling**
+   - Check Google Search Console → Coverage
+   - Look for crawl errors
+
+3. **Performance Testing**
+   - Lighthouse audit: https://pagespeed.web.dev/
+   - Target: >90 score on all metrics
+
+#### Week 2-4:
+1. **Content Indexing**
+   - Monitor which experiments get indexed first
+   - Check for any 404 errors in Search Console
+
+2. **Social Media Setup**
+   - Twitter: @EmergentPhysicsLab (optional)
+   - LinkedIn company page
+   - Share experiment pages
+
+3. **Backlinks**
+   - Physics forums (PhysicsForums.com)
+   - ArXiv submission (links to website)
+   - Academic profiles
+
+---
+
+## Monitoring & Analytics
+
+### Built-in Vercel Analytics (Free)
+- Vercel Dashboard → Analytics tab
+- Real-time visitor count
+- Page performance metrics
+- Web Vitals tracking
+
+### Optional: Plausible Analytics (Privacy-focused)
+```bash
+# Add to .env
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=emergentphysicslab.com
+```
+
+Then add script to `app/layout.tsx`:
+```tsx
+<Script
+  defer
+  data-domain="emergentphysicslab.com"
+  src="https://plausible.io/js/script.js"
+/>
+```
+
+---
+
+## Future: Dynamic Content Setup
+
+### Phase 1: Validation Signing (Later)
+
+When ready to implement validation signatures:
+
+1. **Create API Route** (`app/api/validate/route.ts`):
+```typescript
+export async function POST(req: Request) {
+  // User submits validation evidence
+  // Store in database
+  // Generate signature
+  return Response.json({ signature: '...' });
+}
+```
+
+2. **Add Database** (Vercel Postgres or Supabase):
+```sql
+CREATE TABLE validations (
+  id UUID PRIMARY KEY,
+  experiment_id TEXT NOT NULL,
+  user_email TEXT,
+  validation_data JSONB,
+  signature TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+3. **Enable Feature Flag**:
+```env
+NEXT_PUBLIC_ENABLE_VALIDATION_SIGNING=true
+```
+
+### Phase 2: User Accounts (Optional)
+- NextAuth.js for authentication
+- Store validation history per user
+- Public validation leaderboard
+
+---
+
+## Troubleshooting
+
+### Build Fails: Cannot Find generate_website_experiments.js
+
+**Issue**: Vercel can't find the generation script
+
+**Fix**: The script is in `workspace/tools/`, ensure it's committed:
+```powershell
+cd c:\LFM
+git add workspace/tools/generate_website_experiments.js
+git commit -m "Add experiment generation script for build"
+git push origin main
+```
+
+Then redeploy in Vercel dashboard.
+
+### DNS Not Propagating
+
+**Check status**:
+```bash
+# Windows
+nslookup emergentphysicslab.com
+
+# Online
+https://www.whatsmydns.net/#A/emergentphysicslab.com
+```
+
+**Wait time**: Usually 10-60 minutes, can take up to 48 hours
+
+### WebGPU Not Working
+
+**Issue**: CORS headers not applied
+
+**Fix**: Verify `vercel.json` headers are set (already done above)
+
+---
+
+## Performance Checklist
+
+### Before Going Live:
+- [ ] Test all 105 research experiments load
+- [ ] Test showcase experiments work
+- [ ] Verify mobile responsive
+- [ ] Check GRAV-09 skip warning displays
+- [ ] Test step forward/back on research experiments
+- [ ] Verify sitemap.xml accessible
+- [ ] Check robots.txt accessible
+- [ ] Test page load speed (<3s)
+
+### After Going Live:
+- [ ] Submit sitemap to Google Search Console
+- [ ] Submit sitemap to Bing Webmaster Tools
+- [ ] Archive site on web.archive.org
+- [ ] Monitor Vercel Analytics
+- [ ] Check for broken links (dead link checker)
+- [ ] Monitor uptime (UptimeRobot - free)
+
+---
+
+## Cost Estimate
+
+### Vercel Free Tier (Sufficient for now):
+- ✅ 100 GB bandwidth/month
+- ✅ 1000 serverless function invocations/day
+- ✅ Automatic SSL
+- ✅ Custom domain
+- ✅ Preview deployments
+- **Cost**: $0/month
+
+### If/When Exceeding Free Tier:
+- Vercel Pro: $20/month (1 TB bandwidth)
+- Database (Vercel Postgres): $20/month (10 GB)
+- **Estimated**: $40-50/month once traffic picks up
+
+---
+
+## Next Steps (Immediate)
+
+1. **Push deployment config to GitHub**
+2. **Connect Vercel account** (takes 5 minutes)
+3. **Configure domain DNS** (takes 30 minutes + propagation)
+4. **Submit sitemap to search engines** (takes 5 minutes)
+5. **Monitor for 24 hours** - check for errors
+
+---
+
+## Contact & Support
+
+**Domain Issues**: Check with your registrar  
+**Deployment Issues**: github@vercel.com  
+**Website Issues**: latticefieldmediumresearch@gmail.com
+
+**Emergency Rollback**:
+```bash
+# In Vercel Dashboard:
+Deployments → Previous Deployment → "Promote to Production"
+```
+
+---
+
+## Success Metrics (First 30 Days)
+
+- [ ] Site live and accessible
+- [ ] Google indexes homepage (check: `site:emergentphysicslab.com`)
+- [ ] 50+ pages indexed (research experiments)
+- [ ] <2s average page load time
+- [ ] No critical errors in Search Console
+- [ ] 100+ unique visitors (from social/forums)
+- [ ] At least 1 experiment page ranked for "Klein Gordon lattice simulation" or similar
+
+---
+
+**Deployment prepared**: November 10, 2025  
+**Target go-live**: Within 24 hours  
+**First indexing expected**: 3-7 days after sitemap submission

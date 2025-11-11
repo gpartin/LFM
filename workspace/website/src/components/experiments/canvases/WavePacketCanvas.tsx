@@ -18,7 +18,11 @@ interface WavePacketCanvasProps {
   visualizationToggles: Record<string, boolean>;
   onMetricsUpdate: (metrics: Record<string, number | string>) => void;
   onStepUpdate: (step: number) => void;
+  onStepRequest?: () => void;  // Callback to request single step
+  simulationRef?: React.MutableRefObject<SimulationControls | null>;  // Expose controls
 }
+
+import { SimulationControls, SimulationState } from './types';
 
 /**
  * LFM Wave Packet Simulation - 1D Wave Equation Visualization
@@ -42,7 +46,9 @@ function WavePacketSimulation({
   isRunning,
   visualizationToggles,
   onMetricsUpdate,
-  onStepUpdate
+  onStepUpdate,
+  onStepRequest,
+  simulationRef
 }: WavePacketCanvasProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -60,6 +66,9 @@ function WavePacketSimulation({
     E_prev: new Float32Array(N),
     initialEnergy: 0
   });
+  
+  // Track if step was requested externally (for single-step mode)
+  const stepRequestedRef = useRef(false);
   
   // Initialize field on mount or parameter change
   useEffect(() => {
@@ -98,16 +107,8 @@ function WavePacketSimulation({
     setCurrentStep(0);
   }, [N, dx, dt, chi, parameters.alpha, parameters.beta]);
   
-  // Time-stepping loop
-  useFrame(() => {
-    if (!isRunning) return;
-    
-    // Stop at max steps
-    if (currentStep >= steps) {
-      // Signal parent to pause (will be handled by parent component)
-      return;
-    }
-    
+  // Extract single physics step as reusable function
+  const executePhysicsStep = () => {
     const { E, E_prev, initialEnergy } = fieldRef.current;
     const E_next = new Float32Array(N);
     
@@ -138,7 +139,11 @@ function WavePacketSimulation({
       E[i] = E_next[i];
     }
     
-    // Update visualization mesh
+    return E; // Return for visualization update
+  };
+  
+  // Update visualization mesh
+  const updateVisualization = (E: Float32Array) => {
     if (meshRef.current && visualizationToggles.showLattice) {
       const matrix = new THREE.Matrix4();
       const color = new THREE.Color();
@@ -169,45 +174,108 @@ function WavePacketSimulation({
         meshRef.current.instanceColor.needsUpdate = true;
       }
     }
+  };
+  
+  // Compute and update metrics
+  const updateMetrics = (newStep: number) => {
+    const { E, E_prev, initialEnergy } = fieldRef.current;
+    const alpha = parameters.alpha || 0.5;
+    const beta = parameters.beta || 0.5;
+    const chi2 = chi * chi;
     
-    // Compute metrics every 10 steps
-    const newStep = currentStep + 1;
-    if (newStep % 10 === 0) {
-      // Total energy: kinetic + gradient + potential
-      let kineticEnergy = 0;
-      let gradientEnergy = 0;
-      let potentialEnergy = 0;
+    // Total energy: kinetic + gradient + potential
+    let kineticEnergy = 0;
+    let gradientEnergy = 0;
+    let potentialEnergy = 0;
+    
+    for (let i = 0; i < N; i++) {
+      // Kinetic: (1/2) * (∂E/∂t)² ≈ (E - E_prev)²/dt²
+      const dE_dt = (E[i] - E_prev[i]) / dt;
+      kineticEnergy += 0.5 * beta * dE_dt * dE_dt * dx;
       
-      for (let i = 0; i < N; i++) {
-        // Kinetic: (1/2) * (∂E/∂t)² ≈ (E - E_prev)²/dt²
-        const dE_dt = (E[i] - E_prev[i]) / dt;
-        kineticEnergy += 0.5 * beta * dE_dt * dE_dt * dx;
-        
-        // Gradient: (1/2) * c² * (∇E)²
-        const i_plus = (i + 1) % N;
-        const dE_dx = (E[i_plus] - E[i]) / dx;
-        gradientEnergy += 0.5 * alpha * dE_dx * dE_dx * dx;
-        
-        // Potential: (1/2) * χ² * E²
-        potentialEnergy += 0.5 * chi2 * E[i] * E[i] * dx;
-      }
+      // Gradient: (1/2) * c² * (∇E)²
+      const i_plus = (i + 1) % N;
+      const dE_dx = (E[i_plus] - E[i]) / dx;
+      gradientEnergy += 0.5 * alpha * dE_dx * dE_dx * dx;
       
-      const totalEnergy = kineticEnergy + gradientEnergy + potentialEnergy;
-      const energyDrift = Math.abs(totalEnergy - initialEnergy) / Math.max(Math.abs(initialEnergy), 1e-30);
-      
-      // Anisotropy requires FFT analysis - set to 0 for now (proper calc in validation)
-      const anisotropy = 0.0;
-      
-      onMetricsUpdate({
-        energyDrift: energyDrift,
-        anisotropy: anisotropy,
-        currentEnergy: totalEnergy.toExponential(3),
-        step: newStep
-      });
+      // Potential: (1/2) * χ² * E²
+      potentialEnergy += 0.5 * chi2 * E[i] * E[i] * dx;
     }
     
+    const totalEnergy = kineticEnergy + gradientEnergy + potentialEnergy;
+    const energyDrift = Math.abs(totalEnergy - initialEnergy) / Math.max(Math.abs(initialEnergy), 1e-30);
+    
+    onMetricsUpdate({
+      energyDrift: energyDrift,
+      anisotropy: 0.0,  // Requires FFT
+      currentEnergy: totalEnergy.toExponential(3),
+      step: newStep
+    });
+  };
+  
+  // Expose simulation controls to parent (for step forward/back)
+  useEffect(() => {
+    if (simulationRef) {
+      simulationRef.current = {
+        step: () => {
+          if (currentStep >= steps) return;
+          
+          executePhysicsStep();
+          const newStep = currentStep + 1;
+          setCurrentStep(newStep);
+          onStepUpdate(newStep);
+          
+          // Update visualization
+          updateVisualization(fieldRef.current.E);
+          
+          // Update metrics every step in manual mode
+          updateMetrics(newStep);
+        },
+        
+        getState: () => ({
+          E: new Float32Array(fieldRef.current.E),
+          E_prev: new Float32Array(fieldRef.current.E_prev),
+          currentStep: currentStep,
+          initialEnergy: fieldRef.current.initialEnergy
+        }),
+        
+        setState: (state: SimulationState) => {
+          if (state.E) fieldRef.current.E = new Float32Array(state.E);
+          if (state.E_prev) fieldRef.current.E_prev = new Float32Array(state.E_prev);
+          if (state.initialEnergy !== undefined) fieldRef.current.initialEnergy = state.initialEnergy;
+          setCurrentStep(state.currentStep);
+          onStepUpdate(state.currentStep);
+          
+          // Update visualization immediately
+          updateVisualization(fieldRef.current.E);
+          updateMetrics(state.currentStep);
+        }
+      };
+    }
+  }, [currentStep, steps, N, dx, dt, chi, parameters.alpha, parameters.beta, simulationRef, onStepUpdate]);
+  
+  // Time-stepping loop (continuous mode)
+  useFrame(() => {
+    if (!isRunning) return;
+    
+    // Stop at max steps
+    if (currentStep >= steps) return;
+    
+    // Execute physics step
+    executePhysicsStep();
+    
+    // Update visualization
+    updateVisualization(fieldRef.current.E);
+    
+    // Update step counter
+    const newStep = currentStep + 1;
     setCurrentStep(newStep);
     onStepUpdate(newStep);
+    
+    // Compute metrics every 10 steps (less frequent for performance)
+    if (newStep % 10 === 0) {
+      updateMetrics(newStep);
+    }
   });
   
   return (

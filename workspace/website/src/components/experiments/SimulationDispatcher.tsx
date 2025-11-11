@@ -9,6 +9,7 @@ import { ExperimentDefinition } from '@/data/experiments';
 import WavePacketCanvas from './canvases/WavePacketCanvas';
 import FieldDynamicsCanvas from './canvases/FieldDynamicsCanvas';
 import NBodyCanvas from './canvases/NBodyCanvas';
+import { SimulationControls } from './canvases/types';
 
 interface SimulationDispatcherProps {
   experiment: ExperimentDefinition;
@@ -17,6 +18,7 @@ interface SimulationDispatcherProps {
   visualizationToggles: Record<string, boolean>;
   onMetricsUpdate: (metrics: Record<string, number | string>) => void;
   onStepUpdate: (step: number) => void;
+  simulationRef?: React.MutableRefObject<SimulationControls | null>;  // For external step control
 }
 
 export default function SimulationDispatcher({
@@ -25,7 +27,8 @@ export default function SimulationDispatcher({
   parameters,
   visualizationToggles,
   onMetricsUpdate,
-  onStepUpdate
+  onStepUpdate,
+  simulationRef
 }: SimulationDispatcherProps) {
   
   // Map simulation type to appropriate canvas component
@@ -39,6 +42,7 @@ export default function SimulationDispatcher({
           visualizationToggles={visualizationToggles}
           onMetricsUpdate={onMetricsUpdate}
           onStepUpdate={onStepUpdate}
+          simulationRef={simulationRef}
         />
       );
       
@@ -51,6 +55,7 @@ export default function SimulationDispatcher({
           visualizationToggles={visualizationToggles}
           onMetricsUpdate={onMetricsUpdate}
           onStepUpdate={onStepUpdate}
+          simulationRef={simulationRef}
         />
       );
       
@@ -64,6 +69,7 @@ export default function SimulationDispatcher({
           visualizationToggles={visualizationToggles}
           onMetricsUpdate={onMetricsUpdate}
           onStepUpdate={onStepUpdate}
+          simulationRef={simulationRef}
         />
       );
       

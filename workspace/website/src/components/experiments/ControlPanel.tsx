@@ -14,11 +14,18 @@ interface ControlPanelProps {
   onPause: () => void;
   onReset: () => void;
   onSpeedChange: (speed: number) => void;
+  mode?: 'SHOWCASE' | 'RESEARCH';  // Controls which buttons appear
+  onStepForward?: () => void;  // RESEARCH mode: advance 1 step
+  onStepBackward?: () => void;  // RESEARCH mode: revert 1 step
 }
 
 /**
  * Standardized control panel matching existing showcase experiments.
  * Uses Unicode symbols (▶ ⏸) consistent with binary-orbit, three-body, etc.
+ * 
+ * Modes:
+ * - SHOWCASE: Play/Pause/Reset with speed control (editable experiments)
+ * - RESEARCH: Play/Pause/Reset with Step Forward/Back (locked test configs)
  */
 export default function ControlPanel({
   isRunning,
@@ -28,7 +35,10 @@ export default function ControlPanel({
   onPlay,
   onPause,
   onReset,
-  onSpeedChange
+  onSpeedChange,
+  mode = 'SHOWCASE',
+  onStepForward,
+  onStepBackward
 }: ControlPanelProps) {
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
   
@@ -67,6 +77,36 @@ export default function ControlPanel({
         >
           🔄 Reset
         </button>
+        
+        {/* Step Controls (RESEARCH mode only) */}
+        {mode === 'RESEARCH' && onStepBackward && onStepForward && (
+          <>
+            <button
+              onClick={onStepBackward}
+              disabled={isRunning || currentStep === 0}
+              aria-label="Step backward one frame"
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors border-2 ${
+                isRunning || currentStep === 0
+                  ? 'border-slate-600 text-slate-600 cursor-not-allowed'
+                  : 'border-purple-500 text-purple-400 hover:bg-purple-500/10'
+              }`}
+            >
+              ⏮ Step Back
+            </button>
+            <button
+              onClick={onStepForward}
+              disabled={isRunning || currentStep >= totalSteps}
+              aria-label="Step forward one frame"
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors border-2 ${
+                isRunning || currentStep >= totalSteps
+                  ? 'border-slate-600 text-slate-600 cursor-not-allowed'
+                  : 'border-purple-500 text-purple-400 hover:bg-purple-500/10'
+              }`}
+            >
+              Step Forward ⏭
+            </button>
+          </>
+        )}
       </div>
       
       {/* Step Counter */}

@@ -50,6 +50,37 @@ export default function ResearchPage() {
           </p>
         </div>
         
+        {/* Validation System Coming Soon Notice */}
+        <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-lg p-6 mb-8">
+          <div className="flex items-start gap-4">
+            <div className="text-4xl">🔬</div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-blue-300 mb-2">
+                Cryptographic Validation System - Coming Soon
+              </h3>
+              <p className="text-gray-300 mb-3">
+                These experiments currently demonstrate the physics qualitatively using WebGPU. 
+                Soon, you'll be able to run the <strong>exact same Python code</strong> as our test harness 
+                and receive cryptographically signed validation certificates.
+              </p>
+              <ul className="text-sm text-gray-400 space-y-1 mb-4">
+                <li>✓ Run identical code via WebAssembly (Pyodide)</li>
+                <li>✓ Cryptographic signatures with RFC 3161 timestamps</li>
+                <li>✓ Your validations help establish scientific consensus</li>
+                <li>✓ Tamper-proof validation registry</li>
+              </ul>
+              <a 
+                href="https://github.com/gpartin/LFM/blob/main/analysis/validation_system_architecture.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-400 hover:text-blue-300 underline"
+              >
+                Learn about the validation system →
+              </a>
+            </div>
+          </div>
+        </div>
+        
         {/* Tier Selector */}
         <div className="mb-8 flex gap-2 flex-wrap">
           <button

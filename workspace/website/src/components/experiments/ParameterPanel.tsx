@@ -12,14 +12,19 @@ interface ParameterPanelProps {
   parameters: any;
   onParameterChange: (param: string, value: any) => void;
   disabled?: boolean;
+  mode?: 'SHOWCASE' | 'RESEARCH';  // Controls read-only behavior
 }
 
 export default function ParameterPanel({
   experiment,
   parameters,
   onParameterChange,
-  disabled = false
+  disabled = false,
+  mode = 'SHOWCASE'  // Default to editable
 }: ParameterPanelProps) {
+  
+  // RESEARCH experiments have read-only parameters (locked to test harness config)
+  const isReadOnly = mode === 'RESEARCH';
   
   // Extract editable parameters from initial conditions
   const renderParameter = (key: string, value: any) => {
@@ -64,7 +69,7 @@ export default function ParameterPanel({
             step={step}
             value={value}
             onChange={(e) => onParameterChange(key, parseFloat(e.target.value))}
-            disabled={disabled}
+            disabled={disabled || isReadOnly}
             className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer
                        disabled:opacity-50 disabled:cursor-not-allowed
                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
@@ -80,9 +85,17 @@ export default function ParameterPanel({
   
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-      <h3 className="text-lg font-bold text-white mb-4">Parameters</h3>
+      <h3 className="text-lg font-bold text-white mb-4">
+        {isReadOnly ? 'Test Configuration (Read-Only)' : 'Parameters'}
+      </h3>
       
-      {disabled && (
+      {isReadOnly && (
+        <p className="text-sm text-indigo-300 mb-4 bg-indigo-400/10 border border-indigo-400/30 rounded p-2">
+          🔒 Parameters locked to validated test harness configuration
+        </p>
+      )}
+      
+      {!isReadOnly && disabled && (
         <p className="text-sm text-yellow-400 mb-4 bg-yellow-400/10 border border-yellow-400/30 rounded p-2">
           ⚠️ Pause simulation to adjust parameters
         </p>

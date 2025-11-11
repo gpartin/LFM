@@ -7,6 +7,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ExperimentDefinition } from '@/data/experiments';
+import { SimulationControls, SimulationState } from './types';
 
 interface NBodyCanvasProps {
   experiment: ExperimentDefinition;
@@ -15,6 +16,7 @@ interface NBodyCanvasProps {
   visualizationToggles: Record<string, boolean>;
   onMetricsUpdate: (metrics: Record<string, number | string>) => void;
   onStepUpdate: (step: number) => void;
+  simulationRef?: React.MutableRefObject<SimulationControls | null>;
 }
 
 /**
@@ -35,10 +37,57 @@ export default function NBodyCanvas({
   parameters,
   visualizationToggles,
   onMetricsUpdate,
-  onStepUpdate
+  onStepUpdate,
+  simulationRef
 }: NBodyCanvasProps) {
   const animationRef = useRef<number | null>(null);
   const stepRef = useRef(0);
+  const energyDriftRef = useRef(0);
+  const orbitalPeriodRef = useRef(100);
+  
+  // Expose simulation controls to parent
+  useEffect(() => {
+    if (!simulationRef) return;
+    
+    simulationRef.current = {
+      step: () => {
+        executePhysicsStep();
+      },
+      getState: () => ({
+        currentStep: stepRef.current,
+        energyDrift: energyDriftRef.current,
+        orbitalPeriod: orbitalPeriodRef.current
+      }),
+      setState: (state: SimulationState) => {
+        stepRef.current = state.currentStep;
+        energyDriftRef.current = state.energyDrift ?? energyDriftRef.current;
+        orbitalPeriodRef.current = state.orbitalPeriod ?? orbitalPeriodRef.current;
+        onStepUpdate(stepRef.current);
+        onMetricsUpdate({
+          energyDrift: energyDriftRef.current,
+          orbital_period: orbitalPeriodRef.current,
+          step: stepRef.current
+        });
+      }
+    };
+  }, [simulationRef, onMetricsUpdate, onStepUpdate]);
+  
+  /**
+   * Execute one physics timestep (stub implementation)
+   * TODO: Replace with actual n-body physics simulation
+   */
+  const executePhysicsStep = () => {
+    stepRef.current += 1;
+    energyDriftRef.current = 1e-4 * Math.random();
+    orbitalPeriodRef.current = 100 + 5 * Math.random();
+    
+    onStepUpdate(stepRef.current);
+    onMetricsUpdate({
+      energyDrift: energyDriftRef.current,
+      orbital_period: orbitalPeriodRef.current,
+      step: stepRef.current
+    });
+  };
   
   useEffect(() => {
     if (!isRunning) {
@@ -50,16 +99,7 @@ export default function NBodyCanvas({
     }
     
     const animate = () => {
-      stepRef.current += 1;
-      onStepUpdate(stepRef.current);
-      
-      if (stepRef.current % 10 === 0) {
-        onMetricsUpdate({
-          energyDrift: 1e-4 * Math.random(),
-          orbital_period: 100 + 5 * Math.random(),
-          step: stepRef.current
-        });
-      }
+      executePhysicsStep();
       
       if (stepRef.current < parameters.steps) {
         animationRef.current = requestAnimationFrame(animate);

@@ -7,6 +7,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ExperimentDefinition } from '@/data/experiments';
+import { SimulationControls, SimulationState } from './types';
 
 interface FieldDynamicsCanvasProps {
   experiment: ExperimentDefinition;
@@ -15,6 +16,7 @@ interface FieldDynamicsCanvasProps {
   visualizationToggles: Record<string, boolean>;
   onMetricsUpdate: (metrics: Record<string, number | string>) => void;
   onStepUpdate: (step: number) => void;
+  simulationRef?: React.MutableRefObject<SimulationControls | null>;
 }
 
 /**
@@ -34,10 +36,57 @@ export default function FieldDynamicsCanvas({
   parameters,
   visualizationToggles,
   onMetricsUpdate,
-  onStepUpdate
+  onStepUpdate,
+  simulationRef
 }: FieldDynamicsCanvasProps) {
   const animationRef = useRef<number | null>(null);
   const stepRef = useRef(0);
+  const energyDriftRef = useRef(0);
+  const chiGradientRef = useRef(0.1);
+  
+  // Expose simulation controls to parent
+  useEffect(() => {
+    if (!simulationRef) return;
+    
+    simulationRef.current = {
+      step: () => {
+        executePhysicsStep();
+      },
+      getState: () => ({
+        currentStep: stepRef.current,
+        energyDrift: energyDriftRef.current,
+        chiGradient: chiGradientRef.current
+      }),
+      setState: (state: SimulationState) => {
+        stepRef.current = state.currentStep;
+        energyDriftRef.current = state.energyDrift ?? energyDriftRef.current;
+        chiGradientRef.current = state.chiGradient ?? chiGradientRef.current;
+        onStepUpdate(stepRef.current);
+        onMetricsUpdate({
+          energyDrift: energyDriftRef.current,
+          chi_gradient: chiGradientRef.current,
+          step: stepRef.current
+        });
+      }
+    };
+  }, [simulationRef, onMetricsUpdate, onStepUpdate]);
+  
+  /**
+   * Execute one physics timestep (stub implementation)
+   * TODO: Replace with actual field dynamics physics simulation
+   */
+  const executePhysicsStep = () => {
+    stepRef.current += 1;
+    energyDriftRef.current = 1e-5 * Math.random();
+    chiGradientRef.current = 0.1 + 0.01 * Math.random();
+    
+    onStepUpdate(stepRef.current);
+    onMetricsUpdate({
+      energyDrift: energyDriftRef.current,
+      chi_gradient: chiGradientRef.current,
+      step: stepRef.current
+    });
+  };
   
   useEffect(() => {
     if (!isRunning) {
@@ -49,16 +98,7 @@ export default function FieldDynamicsCanvas({
     }
     
     const animate = () => {
-      stepRef.current += 1;
-      onStepUpdate(stepRef.current);
-      
-      if (stepRef.current % 10 === 0) {
-        onMetricsUpdate({
-          energyDrift: 1e-5 * Math.random(),
-          chi_gradient: 0.1 + 0.01 * Math.random(),
-          step: stepRef.current
-        });
-      }
+      executePhysicsStep();
       
       if (stepRef.current < parameters.steps) {
         animationRef.current = requestAnimationFrame(animate);

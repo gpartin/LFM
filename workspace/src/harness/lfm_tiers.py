@@ -33,6 +33,7 @@ import re
 from typing import Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parent
+# Actual test counts as of November 2025: 104 active tests + 1 skipped (GRAV-09) = 105 total
 DEFAULTS: List[Dict] = [
     {
         "tier": 1,
@@ -44,7 +45,7 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier1_relativistic.py",
         "config": "config/config_tier1_relativistic.json",
         "config_schema": "variants",
-        "expected": 16,
+        "expected": 17,
     },
     {
         "tier": 2,
@@ -56,7 +57,7 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier2_gravityanalogue.py",
         "config": "config/config_tier2_gravityanalogue.json",
         "config_schema": "variants",
-        "expected": 26,
+        "expected": 24,  # Includes GRAV-09 (marked skip=true)
     },
     {
         "tier": 3,
@@ -80,7 +81,7 @@ DEFAULTS: List[Dict] = [
         "runner": "run_tier4_quantization.py",
         "config": "config/config_tier4_quantization.json",
         "config_schema": "tests",
-        "expected": 9,
+        "expected": 14,
     },
     {
         "tier": 5,

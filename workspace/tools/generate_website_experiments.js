@@ -38,12 +38,13 @@ const CONFIG_DIR = path.join(WORKSPACE_ROOT, 'config');
 const DISCOVERIES_PATH = path.join(WORKSPACE_ROOT, 'docs', 'discoveries', 'discoveries.json');
 const OUTPUT_PATH = path.join(WORKSPACE_ROOT, 'website', 'src', 'data', 'research-experiments-generated.ts');
 
-// Tier definitions (from workspace/src/harness/lfm_tiers.py)
+// Tier definitions (actual test counts as of Nov 2025)
+// Total: 104 tests (105 including GRAV-09 which is marked skip=true)
 const TIERS = [
-  { tier: 1, name: 'Relativistic', prefix: 'REL', config: 'config_tier1_relativistic.json', expected: 16 },
-  { tier: 2, name: 'Gravity', prefix: 'GRAV', config: 'config_tier2_gravityanalogue.json', expected: 26 },
+  { tier: 1, name: 'Relativistic', prefix: 'REL', config: 'config_tier1_relativistic.json', expected: 17 },
+  { tier: 2, name: 'Gravity', prefix: 'GRAV', config: 'config_tier2_gravityanalogue.json', expected: 24 },
   { tier: 3, name: 'Energy', prefix: 'ENER', config: 'config_tier3_energy.json', expected: 11 },
-  { tier: 4, name: 'Quantization', prefix: 'QUAN', config: 'config_tier4_quantization.json', expected: 9 },
+  { tier: 4, name: 'Quantization', prefix: 'QUAN', config: 'config_tier4_quantization.json', expected: 14 },
   { tier: 5, name: 'Electromagnetic', prefix: 'EM', config: 'config_tier5_electromagnetic.json', expected: 21 },
   { tier: 6, name: 'Coupling', prefix: 'COUP', config: 'config_tier6_coupling.json', expected: 12 },
   { tier: 7, name: 'Thermodynamics', prefix: 'THERM', config: 'config_tier7_thermodynamics.json', expected: 5 },

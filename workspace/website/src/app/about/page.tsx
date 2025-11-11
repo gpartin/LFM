@@ -7,13 +7,12 @@
  * SPDX-License-Identifier: CC-BY-NC-ND-4.0
  */
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function AboutPage() {
+function AboutContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const from = searchParams.get('from') || 'Simulation';
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-space-dark via-space-medium to-space-dark">
@@ -289,7 +288,7 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2 px-6 py-3 bg-accent-chi text-space-dark font-bold rounded-lg hover:bg-accent-particle transition-colors"
           >
             <span>←</span>
-            <span>Back to {from}</span>
+            <span>Back to Experiments</span>
           </button>
         </div>
 
@@ -305,5 +304,13 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AboutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-space-dark flex items-center justify-center text-text-secondary">Loading...</div>}>
+      <AboutContent />
+    </Suspense>
   );
 }
