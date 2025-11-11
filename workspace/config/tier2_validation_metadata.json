@@ -25,9 +25,9 @@
       "3. Numerical accuracy notes"
     ],
     "exclusions": {
-      "skip": ["GRAV-09"],
+      "skip": [],
       "notes": {
-        "GRAV-09": "Per user directive: skip grav-09 due to high runtime."
+        "GRAV-09_history": "Originally skipped due to 1-hour runtime (30,800 steps). RESOLVED 2025-11-10: Optimized to 9,600 steps (68% reduction), runtime now ~20 minutes. Test re-enabled."
       }
     }
   },
@@ -195,19 +195,29 @@
     },
 
     "GRAV-09": {
-      "name": "Time dilation — 2x refined grid",
-      "physics_property": "Convergence study with refined spatial resolution",
+      "name": "Time dilation — 2x refined grid (OPTIMIZED)",
+      "physics_property": "Convergence study with refined spatial resolution (2× finer grid)",
       "validation_criteria": {
         "primary": {
           "metric": "time_dilation_ratio_error",
-          "threshold": 0.20
+          "description": "Frequency ratio error should IMPROVE vs baseline GRAV-07 (convergence)",
+          "threshold": 0.20,
+          "convergence_expectation": "error < GRAV-07 error (demonstrate refinement benefit)"
         },
         "energy_conservation": {
-          "threshold": 0.01
+          "threshold": 0.01,
+          "rationale": "Optimized to 9,600 steps (48 time units, same as baseline)"
         }
       },
-      "pass_criteria": "SKIP (user-excluded due to runtime)",
-      "skip": true
+      "pass_criteria": "time_dilation_ratio_error < 0.20 AND energy_drift < 0.01",
+      "skip": false,
+      "runtime_optimization": {
+        "original_steps": 30800,
+        "optimized_steps": 9600,
+        "reduction": "68%",
+        "rationale": "Convergence studies should compare same physical duration with different spatial resolution. Reduced from 154 time units to 48 time units (matching GRAV-07/08 baseline).",
+        "expected_runtime": "~20 minutes (down from ~60 minutes)"
+      }
     },
 
     "GRAV-10": {
