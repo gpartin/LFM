@@ -9,7 +9,7 @@
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: latticefieldmediumresearch@gmail.com
+# Contact: research@emergentphysicslab.com
 
 """
 Build OSF/Zenodo upload package (dry-run)
@@ -77,6 +77,58 @@ OPTIONAL_DOCS = [
 STAGED_GENERATED = [
     'results_MASTER_TEST_STATUS.csv',
 ]
+
+
+def _read_master_skip_list() -> list[dict]:
+    """Parse results/MASTER_TEST_STATUS.csv and return rows with Status == SKIP.
+    Returns: list of dicts with keys: test_id, tier, category, description, skip_reason.
+    """
+    master = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
+    skips: list[dict] = []
+    if not master.exists():
+        return skips
+    try:
+        lines = master.read_text(encoding='utf-8').splitlines()
+        # Find the detailed section header we emit: Test_ID,Tier,Category,Status,Description,Skip_Reason,Runtime_Sec,Timestamp
+        start_idx = None
+        for i, line in enumerate(lines):
+            if line.startswith('Test_ID,Tier,Category,Status,Description,Skip_Reason'):
+                start_idx = i + 1
+                break
+        if start_idx is None:
+            return skips
+        import csv as _csv
+        reader = _csv.DictReader(lines[start_idx:])
+        for row in reader:
+            if not row:
+                continue
+            status = (row.get('Status') or '').strip().upper()
+            if status == 'SKIP':
+                skips.append({
+                    'test_id': (row.get('Test_ID') or '').strip(),
+                    'tier': (row.get('Tier') or '').strip(),
+                    'category': (row.get('Category') or '').strip(),
+                    'description': (row.get('Description') or '').strip(),
+                    'skip_reason': (row.get('Skip_Reason') or '').strip(),
+                })
+    except Exception:
+        return skips
+    return skips
+
+
+def _load_skip_disclosure_md(deterministic: bool = False) -> str:
+    """Load docs/text/Skip_Disclosure.txt and convert to markdown.
+    Falls back to a minimal default if missing.
+    """
+    src = ROOT / 'docs' / 'text' / 'Skip_Disclosure.txt'
+    title = 'Skip Disclosure Policy'
+    if src.exists():
+        try:
+            return _txt_to_markdown(src, title, deterministic)
+        except Exception:
+            pass
+    # Fallback minimal text
+    return '# Skip Disclosure Policy\n\nPass rates are computed over executed tests only. Skipped tests are disclosed with rationale.'
 
 
 def sha256_file(path: Path) -> str:
@@ -167,25 +219,43 @@ def refresh_results_artifacts(deterministic: bool = False, build_master: bool = 
         except Exception as e:
             print(f"[WARN] Master docs build failed: {e}")
 
-    # Ensure master status is up to date
-    out = update_master_test_status(RESULTS)
-    # Copy to docs/upload as results_MASTER_TEST_STATUS.csv
+    # Copy existing MASTER_TEST_STATUS.csv directly instead of regenerating.
+    # Rationale: We want the upload bundle to reflect the authoritative status
+    # already produced by the separate harness tool (which merges config skip flags).
+    master_src = RESULTS / 'MASTER_TEST_STATUS.csv'
     target = UPLOAD / 'results_MASTER_TEST_STATUS.csv'
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_bytes(Path(out).read_bytes())
-    # Normalize timestamp line for determinism
-    if deterministic and target.exists():
+    if master_src.exists():
         try:
-            txt = target.read_text(encoding='utf-8').splitlines()
-            fixed = []
-            for line in txt:
-                if line.startswith('Generated: '):
-                    fixed.append('Generated: ' + _deterministic_now_str())
-                else:
-                    fixed.append(line)
-            target.write_text('\n'.join(fixed) + ('\n' if txt and not txt[-1].endswith('\n') else ''), encoding='utf-8')
-        except Exception:
-            pass
+            # Straight copy preserves original timestamp for traceability.
+            target.write_bytes(master_src.read_bytes())
+            if deterministic:
+                # Only rewrite Generated: line when deterministic mode requested.
+                try:
+                    txt = target.read_text(encoding='utf-8').splitlines()
+                    fixed = []
+                    for line in txt:
+                        if line.startswith('Generated: '):
+                            fixed.append('Generated: ' + _deterministic_now_str())
+                        else:
+                            fixed.append(line)
+                    target.write_text('\n'.join(fixed) + ('\n' if txt and not txt[-1].endswith('\n') else ''), encoding='utf-8')
+                except Exception:
+                    pass
+        except Exception as e:
+            print(f"[WARN] Failed to copy existing MASTER_TEST_STATUS.csv: {e}. Falling back to regeneration.")
+            try:
+                out = update_master_test_status(RESULTS)
+                target.write_bytes(Path(out).read_bytes())
+            except Exception as e2:
+                print(f"[ERROR] Unable to regenerate master status CSV: {e2}")
+    else:
+        print('[INFO] Existing MASTER_TEST_STATUS.csv not found; regenerating.')
+        try:
+            out = update_master_test_status(RESULTS)
+            target.write_bytes(Path(out).read_bytes())
+        except Exception as e:
+            print(f"[ERROR] Unable to regenerate master status CSV: {e}")
 
     # Compile RESULTS_REPORT.md if not present; otherwise leave as-is
     # Prefer existing tool if available
@@ -212,6 +282,13 @@ def refresh_results_artifacts(deterministic: bool = False, build_master: bool = 
     # Stage legal/IP docs into upload if present at repo root or docs/
     stage_legal_docs()
     # Note: We no longer stage canonical txt sources; .txt will be derived from evidence DOCX
+
+    # Emit a standalone SKIP_DISCLOSURE.md in docs/upload for reuse
+    try:
+        skip_md = _load_skip_disclosure_md(deterministic)
+        (UPLOAD / 'SKIP_DISCLOSURE.md').write_text(skip_md, encoding='utf-8')
+    except Exception:
+        pass
 
 
 def stage_evidence_docx(include: bool = False) -> List[str]:
@@ -1082,9 +1159,58 @@ def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path
             return "SKIP"
         return status_upper
     
-    # Count passes
+    # Load master status CSV for authoritative SKIP overrides
+    master_status = {}
+    master_csv = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
+    if master_csv.exists():
+        try:
+            lines_csv = master_csv.read_text(encoding='utf-8').splitlines()
+            # Collect detailed test sections after a 'Test_ID,' header
+            collecting = False
+            section = []
+            for line in lines_csv:
+                if line.startswith('Test_ID,'):
+                    collecting = True
+                    section = [line]
+                    continue
+                if collecting:
+                    if line.startswith('TIER'):
+                        collecting = False
+                        # parse accumulated section
+                        import csv as _csv
+                        reader = _csv.DictReader(section)
+                        for row in reader:
+                            tid = row.get('Test_ID')
+                            status = row.get('Status')
+                            if tid and status:
+                                master_status[tid.strip()] = status.strip().upper()
+                        section = []
+                    else:
+                        section.append(line)
+            # Final section parse if file ended without new TIER header
+            if section:
+                import csv as _csv
+                reader = _csv.DictReader(section)
+                for row in reader:
+                    tid = row.get('Test_ID')
+                    status = row.get('Status')
+                    if tid and status:
+                        master_status[tid.strip()] = status.strip().upper()
+        except Exception:
+            pass
+
+    # Count passes using master status override (SKIP takes priority)
     total = len(tests)
-    passed = sum(1 for t in tests if get_test_status(t['summary']) == 'PASS')
+    passed = 0
+    for t in tests:
+        sid = t['id']
+        status_local = get_test_status(t['summary'])
+        if sid in master_status and master_status[sid] == 'SKIP':
+            status_effective = 'SKIP'
+        else:
+            status_effective = status_local
+        if status_effective == 'PASS':
+            passed += 1
     
     lines.append(f'- **Total {tier_name} Tests**: {total}')
     lines.append(f'- **Tests Passed**: {passed} ({100*passed//total if total > 0 else 0}%)')
@@ -1098,9 +1224,11 @@ def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path
         
         for test in sorted(tests, key=lambda x: x['id']):
             test_id = test['id']
-            status = get_test_status(test['summary'])
+            status_local = get_test_status(test['summary'])
+            if test_id in master_status and master_status[test_id] == 'SKIP':
+                status_local = 'SKIP'
             desc = test['summary'].get('description', 'No description')
-            lines.append(f"| {test_id} | {status} | {desc[:60]} |")
+            lines.append(f"| {test_id} | {status_local} | {desc[:60]} |")
         
         lines.append('')
     
@@ -1219,7 +1347,7 @@ def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
         'author: "Greg D. Partin"',
         'institution: "LFM Research, Los Angeles CA USA"',
         'license: "CC BY-NC-ND 4.0"',
-        'contact: "latticefieldmediumresearch@gmail.com"',
+    'contact: "research@emergentphysicslab.com"',
         'orcid: "https://orcid.org/0009-0004-0327-6528"',
         'url: "https://zenodo.org/records/17536484"',
         f'generated: "{stamp}"',
@@ -1632,6 +1760,48 @@ def _collect_tests_for_category(category_dir: str) -> list[dict]:
                         })
                     except Exception:
                         continue
+    # Override statuses using authoritative MASTER_TEST_STATUS.csv (for SKIP etc.)
+    master_csv = ROOT / 'results' / 'MASTER_TEST_STATUS.csv'
+    if master_csv.exists():
+        try:
+            lines_csv = master_csv.read_text(encoding='utf-8').splitlines()
+            # Parse sections beginning with header containing Test_ID
+            import csv as _csv
+            section = []
+            collecting = False
+            master_status: dict[str,str] = {}
+            for line in lines_csv:
+                if line.startswith('Test_ID,'):  # header start
+                    collecting = True
+                    section = [line]
+                    continue
+                if collecting:
+                    if line.startswith('TIER'):
+                        # process accumulated section
+                        reader = _csv.DictReader(section)
+                        for row in reader:
+                            tid = row.get('Test_ID')
+                            status = row.get('Status')
+                            if tid and status:
+                                master_status[tid.strip()] = status.strip().upper()
+                        collecting = False
+                        section = []
+                    else:
+                        section.append(line)
+            # Final section if file ended
+            if section:
+                reader = _csv.DictReader(section)
+                for row in reader:
+                    tid = row.get('Test_ID')
+                    status = row.get('Status')
+                    if tid and status:
+                        master_status[tid.strip()] = status.strip().upper()
+            # Apply overrides (only SKIP currently differs from summary content)
+            for t in tests:
+                if t['id'] in master_status and master_status[t['id']] == 'SKIP':
+                    t['status'] = 'SKIP'
+        except Exception:
+            pass
     return tests
 
 
@@ -1672,6 +1842,38 @@ def generate_tier_achievements_from_template(tier: dict, dest_dir: Path, determi
         deterministic_date=_deterministic_now_str() if deterministic else None,
         generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     )
+    # If any tests are SKIP in this tier, append a deterministic Skip Disclosure section
+    tier_skips = [t for t in tests if t.get('status') == 'SKIP']
+    if tier_skips:
+        # Base policy text
+        skip_section = []
+        skip_section.append('\n\n## Skip Disclosure')
+        # Reuse master text header (without full frontmatter)
+        try:
+            policy_md = _load_skip_disclosure_md(deterministic)
+            # Strip YAML frontmatter if present
+            if policy_md.lstrip().startswith('---'):
+                parts = policy_md.split('---')
+                policy_body = ('---'.join(parts[2:]) if len(parts) > 2 else parts[-1]).strip()
+            else:
+                policy_body = policy_md
+            skip_section.append('\n' + policy_body + '\n')
+        except Exception:
+            skip_section.append('\nPass rates are computed over executed tests only. Skipped tests are disclosed with rationale.\n')
+        # Add tier-specific table
+        skip_section.append('\n| Test ID | Description | Reason |')
+        skip_section.append('|---------|-------------|--------|')
+        for t in tier_skips:
+            desc = (t.get('description') or '').replace('\n', ' ')[:160]
+            # Lookup detailed reason from master CSV if available
+            reason = ''
+            for row in _read_master_skip_list():
+                if row.get('test_id') == t.get('id'):
+                    reason = row.get('skip_reason', '')
+                    break
+            reason = (reason or 'See master status CSV.').replace('\n', ' ')[:240]
+            skip_section.append(f"| {t.get('id')} | {desc} | {reason} |")
+        content = content + '\n' + '\n'.join(skip_section) + '\n'
     dest_dir.mkdir(parents=True, exist_ok=True)
     fname = f"TIER_{tier['tier_number']}_ACHIEVEMENTS.md"
     (dest_dir / fname).write_text(content, encoding='utf-8')
@@ -1685,10 +1887,9 @@ def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, determin
     total_tests = 0
     total_passed = 0
     for t in tier_metadata.get('tiers', []):
+        # Always derive counts from actual results to avoid metadata drift
+        test_count = len(_collect_tests_for_category(t['category_dir']))
         passed = _compute_pass_counts(t)
-        test_count = t.get('test_count', 0)
-        if test_count == 0:
-            test_count = len(_collect_tests_for_category(t['category_dir']))
         total_tests += test_count
         total_passed += passed
         tiers.append({
@@ -1710,6 +1911,30 @@ def generate_results_comprehensive(dest_dir: Path, tier_metadata: dict, determin
         deterministic_date=_deterministic_now_str() if deterministic else None,
         generation_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     )
+    # Append a global Skip Disclosure section (deterministic)
+    try:
+        skips = _read_master_skip_list()
+        if skips:
+            section = []
+            section.append('\n\n## Skip Disclosure')
+            policy_md = _load_skip_disclosure_md(deterministic)
+            # Strip YAML frontmatter if present
+            if policy_md.lstrip().startswith('---'):
+                parts = policy_md.split('---')
+                policy_body = ('---'.join(parts[2:]) if len(parts) > 2 else parts[-1]).strip()
+            else:
+                policy_body = policy_md
+            section.append('\n' + policy_body + '\n')
+            section.append('\n| Test ID | Tier | Category | Description | Reason |')
+            section.append('|---------|------|----------|-------------|--------|')
+            for r in skips:
+                desc = (r.get('description') or '').replace('\n', ' ')[:120]
+                reason = (r.get('skip_reason') or 'See master status CSV.').replace('\n', ' ')[:200]
+                section.append(f"| {r.get('test_id')} | {r.get('tier')} | {r.get('category')} | {desc} | {reason} |")
+            content = content + '\n' + '\n'.join(section) + '\n'
+    except Exception:
+        pass
+
     (dest_dir / 'RESULTS_COMPREHENSIVE.md').write_text(content, encoding='utf-8')
     return 'RESULTS_COMPREHENSIVE.md'
 
@@ -1735,7 +1960,7 @@ def _txt_to_markdown(txt_path: Path, title: str, deterministic: bool = False) ->
     lines.append('author: "Greg D. Partin"')
     lines.append('institution: "LFM Research, Los Angeles CA USA"')
     lines.append('license: "CC BY-NC-ND 4.0"')
-    lines.append('contact: "latticefieldmediumresearch@gmail.com"')
+    lines.append('contact: "research@emergentphysicslab.com"')
     lines.append('orcid: "https://orcid.org/0009-0004-0327-6528"')
     lines.append('url: "https://zenodo.org/records/17536484"')
     if deterministic:

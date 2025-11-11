@@ -9,7 +9,7 @@
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # See LICENSE file in project root for full license text.
 # Commercial use prohibited without explicit written permission.
-# Contact: latticefieldmediumresearch@gmail.com
+# Contact: research@emergentphysicslab.com
 
 """
 Tier-4 — Quantization & Spectra Tests
@@ -215,6 +215,7 @@ def run_energy_transfer(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
         ylabel='Mode Energy'
     )
     
+    # Provide canonical key 'energy_drift' expected by tier4_validation_metadata.json (primary metric for QUAN-01/02)
     summary = {
         "tier": 4,
         "category": "Quantization",
@@ -222,8 +223,11 @@ def run_energy_transfer(params, tol, test, out_dir: Path, xp, on_gpu) -> TestRes
         "description": desc,
         "timestamp": time.time(),
         "hardware": {"backend": "CuPy" if on_gpu else "NumPy"},
+        # Duplicate primary metric at top-level for legacy validators expecting direct key
+        "energy_drift": float(max_drift),
         "parameters": {"N": N, "dx": dx, "dt": dt, "chi": chi, "mode_1": mode_1, "mode_2": mode_2},
         "metrics": {
+            "energy_drift": float(max_drift),  # primary metric required by metadata
             "max_energy_drift": float(max_drift),
             "mean_energy_drift": float(mean_drift),
             "tolerance": tolerance
@@ -2297,6 +2301,8 @@ def main():
     parser = argparse.ArgumentParser(description='Tier-4 Quantization & Spectra Suite')
     parser.add_argument('--test', type=str, default=None, help='Run single test by ID (e.g., QUAN-09)')
     parser.add_argument('--config', type=str, default=None, help='Path to config JSON (auto-detected if not specified)')
+    parser.add_argument('--backend', type=str, choices=['baseline', 'fused'], default='baseline',
+                        help='Physics kernel backend (baseline|fused). Added for consistency with parallel suite harness.')
     # Optional post-run hooks
     parser.add_argument('--post-validate', choices=['tier', 'all'], default=None,
                         help='Run validator after the suite: "tier" validates Tier 4 + master status; "all" runs end-to-end')
@@ -2311,9 +2317,13 @@ def main():
     args = parser.parse_args()
 
     cfg = BaseTierHarness.load_config(args.config, default_config_name=_default_config_name())
+    # Propagate backend selection into config hardware block (non-breaking for existing logic)
+    hw = cfg.setdefault('hardware', {})
+    hw['backend'] = args.backend
     p, tol, tests = cfg['parameters'], cfg['tolerances'], cfg['tests']
 
     from core.lfm_backend import pick_backend
+    # Select backend; if fused requested but not implemented for this runner yet, fallback is handled downstream.
     xp, on_gpu = pick_backend(cfg.get('hardware', {}).get('gpu_enabled', True))
     dtype = xp.float64 if cfg.get('hardware', {}).get('precision', 'float64') == 'float64' else xp.float32
 
