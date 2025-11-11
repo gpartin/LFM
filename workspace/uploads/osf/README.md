@@ -193,7 +193,7 @@ If you use this work in research, please cite:
 
 **Author**: Greg D. Partin  
 **Institution**: LFM Research, Los Angeles CA USA  
-**Email**: research@emergentphysicslab.com  
+**Email**: latticefieldmediumresearch@gmail.com  
 **ORCID**: [0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)  
 **GitHub**: [github.com/gpartin/LFM](https://github.com/gpartin/LFM)
 

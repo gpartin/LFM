@@ -3,10 +3,10 @@ title: "Scientific Discoveries and Domains of Emergence"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "research@emergentphysicslab.com"
+contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 url: "https://zenodo.org/records/17536484"
-generated: "2025-11-10 17:13:47"
+generated: "2025-11-10 17:24:12"
 ---
 
 ## Summary Table
@@ -227,4 +227,4 @@ generated: "2025-11-10 17:13:47"
   - Evidence: GRAV-09 diagnostic runs showing ω_theory≈0.30/0.14 vs ω_measured≈2.28/2.21 (656%/1446% mismatch), k-estimate from dispersion (k≈2.26 vs IC prediction k≈0.027), energy drift triggering early exit
   - Links: config/config_tier2_gravityanalogue.json, src/run_tier2_gravityanalogue.py, results/Gravity/GRAV-09/, analysis/grav09_optimization_log.md
 
-Generated: 2025-11-10 17:13:47
+Generated: 2025-11-10 17:24:12

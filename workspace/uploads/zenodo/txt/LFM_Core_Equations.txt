@@ -141,6 +141,6 @@ Citation (Zenodo Record):
 Partin, G. D. (2025). Lattice-Field Medium (LFM): A Deterministic Lattice Framework for Emergent Relativity, Gravitation, and Quantization — Phase 1 Conceptual Hypothesis v1.0. Zenodo. https://doi.org/10.5281/zenodo.17478758
 
 Contact & Licensing:
-Research Inquiries: research@emergentphysicslab.com
+Research Inquiries: latticefieldmediumresearch@gmail.com
 Commercial Licensing: licensing@emergentphysicslab.com
 See: github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md
