@@ -74,6 +74,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://emergentphysicslab.com',
   },
+  manifest: '/manifest.json',
   verification: {
     google: '',  // TODO: Add after Google Search Console setup
     // yandex: '',

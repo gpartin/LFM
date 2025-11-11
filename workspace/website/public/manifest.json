@@ -1,0 +1,17 @@
+{
+  "name": "Emergent Physics Lab",
+  "short_name": "EPL",
+  "description": "Lattice Field Medium — A unified physics framework demonstrating emergent spacetime, gravity, and quantum phenomena from a modified Klein-Gordon equation",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
