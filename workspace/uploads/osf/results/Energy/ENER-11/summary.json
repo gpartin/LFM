@@ -1,0 +1,33 @@
+{
+  "tier": 3,
+  "category": "Energy",
+  "test_id": "ENER-11",
+  "description": "Momentum conservation \u2014 two-packet collision",
+  "parameters": {
+    "grid_points": 512,
+    "dt": 0.005,
+    "dx": 0.05,
+    "steps": 1000,
+    "mode": "momentum_conservation"
+  },
+  "momentum_initial": 1.8356333120195248e-11,
+  "momentum_final": 1.8356362263549642e-11,
+  "momentum_change": 2.9143354394471655e-17,
+  "momentum_drift": 1.5876457571152246e-06,
+  "energy_initial": 0.0939909238012671,
+  "energy_final": 0.09351435349245577,
+  "energy_drift": 0.005070386474964177,
+  "validation": {
+    "energy_ok": true,
+    "energy_threshold": 0.01,
+    "primary_ok": true,
+    "primary_metric": "momentum_drift",
+    "primary_value": 1.5876457571152246e-06,
+    "primary_threshold": 0.01
+  },
+  "passed": true,
+  "runtime_sec": 1.1079809665679932,
+  "schema_version": "1.0",
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-10T22:13:05.875696Z"
+}

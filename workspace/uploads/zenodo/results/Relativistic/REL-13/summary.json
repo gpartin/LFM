@@ -2,26 +2,48 @@
   "id": "REL-13",
   "description": "Dispersion Relation \u2014 Relativistic (\u03c7/k\u22480.5)",
   "passed": true,
-  "rel_err": 0.0071651593868806585,
-  "omega_meas": 39.74038902386529,
+  "rel_err": 0.009044925445653813,
+  "omega_meas": 39.70275032298124,
   "omega_theory": 39.88353182629546,
-  "omega2_over_k2_meas": 0.9928364009934996,
+  "omega2_over_k2_meas": 0.9909566319804082,
   "omega2_over_k2_theory": 1.0000015716414417,
   "k_ang": 39.88350048502667,
   "chi": 0.05,
   "chi_over_k": 0.0012536512440469295,
   "runtime_sec": 0.0,
   "backend": "GPU",
+  "energy_drift": 6.964178403034872e-05,
+  "energy_initial": 1198.975694524333,
+  "energy_final": 1199.0591933307087,
+  "energy_drift_threshold": 0.01,
   "params": {
     "N": 512,
     "dx": 0.008,
-    "dt": 0.0025,
+    "dt": 0.00125,
     "steps": 4000,
     "alpha": 0.5,
     "beta": 0.5,
     "chi": 0.05
   },
+  "validation": {
+    "test_id": "REL-13",
+    "energy": {
+      "ok": true,
+      "drift": 6.964178403034872e-05,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": true,
+      "metric": "rel_err",
+      "value": 0.009044925445653813,
+      "threshold": 0.05
+    },
+    "metrics": {
+      "rel_err": 0.009044925445653813
+    },
+    "timestamp": "2025-11-10 14:04:42"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:59:08.743598Z"
+  "timestamp": "2025-11-10T22:04:42.768391Z"
 }

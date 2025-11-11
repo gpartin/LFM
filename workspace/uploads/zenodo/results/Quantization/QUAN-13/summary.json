@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-13",
   "description": "Wave-particle duality \u2014 which-way information destroys interference",
-  "timestamp": 1762475971.0068607,
+  "timestamp": 1762812906.894647,
   "hardware": {
     "backend": "CuPy",
     "python": "3.13.9"

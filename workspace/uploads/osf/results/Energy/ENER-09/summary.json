@@ -3,28 +3,30 @@
   "category": "Energy",
   "test_id": "ENER-09",
   "description": "Dissipation \u2014 strong damping (exponential decay, \u03b3=1e-2 per unit time)",
-  "timestamp": "2025-11-03T03:27:38.908138+00:00",
-  "hardware": {
-    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
-    "cuda_runtime": 12090,
-    "python": "3.13.9",
-    "backend": "CuPy"
-  },
   "parameters": {
     "N": 256,
-    "steps": 5000,
     "dt": 0.0005,
     "dx": 0.005,
-    "c": 1.0,
-    "cfl": 0.1,
-    "stencil_order": 4
+    "steps": 5000,
+    "stencil_order": 2
   },
-  "metrics": {
-    "energy_rel_drift": 0.008850021041434066,
-    "entropy_monotonic": true,
-    "wave_max_drop": 0.03565585999984107
+  "energy_drift": 0.01260048240598788,
+  "wave_drop": null,
+  "partition_balance": null,
+  "dissipation_rate_error": 0.4997423953242381,
+  "thermalization_convergence": null,
+  "entropy_monotonic": true,
+  "validation": {
+    "energy_ok": true,
+    "energy_threshold": Infinity,
+    "primary_ok": true,
+    "primary_metric": "dissipation_rate_error",
+    "primary_value": 0.4997423953242381,
+    "primary_threshold": 0.5
   },
-  "status": "Passed",
+  "passed": true,
+  "runtime_sec": 9.1508948802948,
   "schema_version": "1.0",
-  "license": "CC BY-NC-ND 4.0"
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-10T22:12:59.229658Z"
 }

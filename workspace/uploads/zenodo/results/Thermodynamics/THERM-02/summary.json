@@ -3,14 +3,16 @@
   "description": "Irreversibility \u2014 Arrow of Time",
   "passed": true,
   "metrics": {
-    "width_initial": 5.656462673438855,
-    "width_mid": 20.565917414805,
-    "width_final": 5.656462673438847,
-    "reversibility_ratio": 0.9999999999999986,
+    "width_initial": 5.656462673438854,
+    "width_mid": 20.565917414804908,
+    "width_final": 5.656462673438873,
+    "reversibility_ratio": 1.0000000000000033,
     "tolerance": 0.9
   },
-  "runtime_sec": 0.20476818084716797,
+  "runtime_sec": 24.9610812664032,
+  "tier": 7,
+  "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T03:44:04.329891Z"
+  "timestamp": "2025-11-10T22:16:56.200984Z"
 }

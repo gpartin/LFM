@@ -8,7 +8,25 @@
   "light_speed": 1.0,
   "runtime_sec": 0.0,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-15",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.0005
+    },
+    "primary": {
+      "ok": true,
+      "metric": "max_violation",
+      "value": 0.0,
+      "threshold": 1e-06
+    },
+    "metrics": {
+      "max_violation": 0.0
+    },
+    "timestamp": "2025-11-10 14:04:41"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T00:39:24.868499Z"
+  "timestamp": "2025-11-10T22:04:42.320309Z"
 }

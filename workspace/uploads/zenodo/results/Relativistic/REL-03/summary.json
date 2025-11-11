@@ -2,16 +2,38 @@
   "id": "REL-03",
   "description": "Lorentz Boost \u2014 Low Velocity",
   "passed": true,
-  "rel_error": 1.8164966926832822,
-  "covariance_ratio": 2.816496692683282,
-  "residual_lab_rms": 22.87641636885593,
-  "residual_boost_rms": 64.43135104332843,
-  "omega_lab": 39.51969587586901,
+  "rel_error": 0.008174590345536359,
+  "covariance_ratio": 0.9918254096544636,
+  "residual_lab_rms": 8.70392429529781,
+  "residual_boost_rms": 8.632773279785189,
+  "omega_lab": 38.93156618782542,
   "beta": 0.2,
   "gamma": 1.0206207261596576,
   "backend": "GPU",
+  "energy_drift": 3.114139104095775e-05,
+  "energy_initial": 12332.662835656796,
+  "energy_final": 12332.278779380855,
+  "energy_drift_threshold": 0.02,
   "test_method": "actual_lorentz_transform",
+  "validation": {
+    "test_id": "REL-03",
+    "energy": {
+      "ok": true,
+      "drift": 3.114139104095775e-05,
+      "threshold": 0.02
+    },
+    "primary": {
+      "ok": true,
+      "metric": "rel_error",
+      "value": 0.008174590345536359,
+      "threshold": 0.05
+    },
+    "metrics": {
+      "rel_error": 0.008174590345536359
+    },
+    "timestamp": "2025-11-10 14:05:34"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:58:58.832133Z"
+  "timestamp": "2025-11-10T22:05:34.945731Z"
 }

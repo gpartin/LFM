@@ -4,7 +4,7 @@ This folder contains the outputs for a single LFM test run.
 
 ## Overview
 - Contains summary.json: True
-- Contains metrics.csv: False
+- Contains metrics.csv: True
 - CSV files (excluding metrics.csv): 0
 - Plot images: 0
 

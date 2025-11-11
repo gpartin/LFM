@@ -16,11 +16,31 @@
   "chiB": 0.05000000074505806,
   "freq_shift_theory_pct": 0.0,
   "freq_shift_measured_pct": 0.0,
+  "ratio_match_error": 0.2255448579330829,
+  "phase_shift_error": 0.2255448579330829,
   "N": 128,
   "dx": 1.0,
   "dt": 0.05,
   "steps": 2500,
+  "validation": {
+    "test_id": "GRAV-12",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "phase_delay_consistency",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "phase_shift_error": 0.2255448579330829
+    },
+    "timestamp": "2025-11-10 17:01:13"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-08T14:59:00.923033Z"
+  "timestamp": "2025-11-11T01:01:13.633630Z"
 }

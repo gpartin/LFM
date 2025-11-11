@@ -8,12 +8,30 @@
   "chi_dynamic_response": true,
   "chi_reached_edge": false,
   "energy_drift_frac": 0.512877832621141,
-  "runtime_sec": 0.021919727325439453,
+  "runtime_sec": 0.053624629974365234,
   "on_gpu": true,
   "G_coupling": 0.05,
   "c_chi": 1.0,
   "chi_update_every": 1,
+  "validation": {
+    "test_id": "GRAV-23",
+    "energy": {
+      "ok": true,
+      "drift": 0.512877832621141,
+      "threshold": Infinity
+    },
+    "primary": {
+      "ok": false,
+      "metric": "chi_wave_speed_error",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "coupling_strength": 0.0028272176356583206
+    },
+    "timestamp": "2025-11-10 14:10:31"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T05:08:50.896254Z"
+  "timestamp": "2025-11-10T22:10:31.011034Z"
 }

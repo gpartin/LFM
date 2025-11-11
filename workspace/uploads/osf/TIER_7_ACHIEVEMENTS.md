@@ -3,14 +3,14 @@ title: "Tier 7 — Thermodynamics & Statistical Mechanics Validation Achievement
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
+contact: "research@emergentphysicslab.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-08 10:15:07"---
+---
 
 # Tier 7 — Thermodynamics & Statistical Mechanics Validation Achievements
 
-Generated: 2025-11-08 10:15:07
+Generated: 2025-11-10 17:04:45
 
 ## Overview
 

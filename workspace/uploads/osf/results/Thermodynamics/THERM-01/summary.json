@@ -4,16 +4,18 @@
   "passed": true,
   "metrics": {
     "entropy_initial": 0.469260844348527,
-    "entropy_final": 0.5364437991094659,
-    "entropy_increase": 0.06718295476093894,
-    "entropy_increase_fraction": 0.14316761257634605,
-    "linear_fit_slope": -1.2764894280656448e-05,
-    "linear_fit_r_squared": 3.085753936859266e-05,
-    "max_energy_drift": 0.10534965430428778,
+    "entropy_final": 0.5364437991094665,
+    "entropy_increase": 0.0671829547609395,
+    "entropy_increase_fraction": 0.14316761257634722,
+    "linear_fit_slope": -1.2764894280665355e-05,
+    "linear_fit_r_squared": 3.0857539368635746e-05,
+    "max_energy_drift": 0.10534965430428755,
     "tolerance_increase_min": 0.1
   },
-  "runtime_sec": 0.1726834774017334,
+  "runtime_sec": 21.393908500671387,
+  "tier": 7,
+  "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T03:44:03.887957Z"
+  "timestamp": "2025-11-10T22:16:45.950411Z"
 }

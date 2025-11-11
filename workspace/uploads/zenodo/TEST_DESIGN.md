@@ -3,10 +3,9 @@ title: "LFM Phase 1 Test Design"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
+contact: "research@emergentphysicslab.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 url: "https://zenodo.org/records/17536484"
-generated: "2025-11-08 10:15:08"
 ---
 
 # ﻿Lattice-Field Medium (LFM): Phase 1 Test Design — Proof-of-Concept Validation System

@@ -2,11 +2,32 @@
   "id": "REL-08",
   "description": "Superposition Principle Test",
   "passed": true,
-  "linearity_error": 0.0,
-  "omega1": 39.72659048145927,
-  "omega2": 78.54366332803862,
+  "linearity_error": 2.6737578271981452e-05,
+  "omega1": 39.56761190447864,
+  "omega2": 78.43683474194683,
+  "energy_drift": 6.3147021635296e-05,
+  "energy_initial": 6251.503012056364,
+  "energy_final": 6251.108248260409,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-08",
+    "energy": {
+      "ok": true,
+      "drift": 6.3147021635296e-05,
+      "threshold": 0.001
+    },
+    "primary": {
+      "ok": true,
+      "metric": "linearity_error",
+      "value": 2.6737578271981452e-05,
+      "threshold": 0.05
+    },
+    "metrics": {
+      "linearity_error": 2.6737578271981452e-05
+    },
+    "timestamp": "2025-11-10 14:04:37"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:59:01.685536Z"
+  "timestamp": "2025-11-10T22:04:37.913865Z"
 }

@@ -9,7 +9,25 @@
   "tolerance": 0.01,
   "runtime_sec": 0.0,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-16",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.001
+    },
+    "primary": {
+      "ok": true,
+      "metric": "momentum_drift",
+      "value": 1.0661125499295153e-07,
+      "threshold": 0.01
+    },
+    "metrics": {
+      "momentum_drift": 1.0661125499295153e-07
+    },
+    "timestamp": "2025-11-10 14:04:44"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T02:25:18.414892Z"
+  "timestamp": "2025-11-10T22:04:44.624136Z"
 }

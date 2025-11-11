@@ -3,15 +3,15 @@ title: "Evidence Review: Documentation vs Test Results"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
+contact: "research@emergentphysicslab.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-08 10:15:08"
+generated: "2025-11-10 17:04:45"
 ---
 
 # Evidence Review: Documentation vs. Test Results
 
-Generated: 2025-11-08 10:15:08
+Generated: 2025-11-10 17:04:45
 
 ## Overview
 
@@ -40,8 +40,8 @@ evidence, and flag any gaps between documentation and validated outcomes.
 
 ## Findings
 
-### Discovery Claims: 30
-### Test Results Available: 96
+### Discovery Claims: 42
+### Test Results Available: 106
 
 ### Verified (Evidence References Test Results):
 - ✓ Lorentz Invariance from Discrete Lattice Rules (Tier 1 - Relativistic)
@@ -55,6 +55,16 @@ evidence, and flag any gaps between documentation and validated outcomes.
 - ✓ Quantum Bound States in Gravitational χ-Well (Tier 6 - Multi-Domain Coupling)
 - ✓ Analytical Solution Validation Superior to Feature Tracking (Tier 6 - Numerical Validation)
 - ✓ Thermodynamic Emergence from Time-Reversible Discrete Dynamics (Tier 7 - Thermodynamics & Statistical Mechanics)
+- ✓ Discrete Energy Eigenvalues from Boundary Conditions (Bound State Quantization) (Tier 4 - Quantization)
+- ✓ Quantum Tunneling Through Classically Forbidden Barrier (Tier 4 - Quantization)
+- ✓ Heisenberg Uncertainty Principle from Wave Packet Structure (Tier 4 - Quantization)
+- ✓ Zero-Point Energy: Non-Zero Ground State E₀ = ½ℏω (Vacuum Fluctuations) (Tier 4 - Quantization)
+- ✓ Wave-Particle Duality: Which-Way Information Destroys Interference (Tier 4 - Quantization)
+- ✓ Complete Maxwell Equations Emerge from Klein-Gordon with χ-Coupling (Tier 5 - Electromagnetic)
+- ✓ Poynting Vector Energy Flow from Field Dynamics (∇·S + ∂u/∂t = 0) (Tier 5 - Electromagnetic)
+- ✓ Gauge Invariance: Physical Fields Unchanged Under Gauge Transformations (Tier 5 - Electromagnetic)
+- ✓ Charge Conservation: Continuity Equation ∂ρ/∂t + ∇·J = 0 (Tier 5 - Electromagnetic)
+- ... and 16 more
 
 ### Needs Manual Review (No Direct Test Link):
 - ⚠ Unified Field Equation with Spatially-Varying χ-Field (Core Framework) — Evidence: Tier 1-5 computational validation
@@ -63,11 +73,6 @@ evidence, and flag any gaps between documentation and validated outcomes.
 - ⚠ GPU-Optimized Discrete Spacetime Framework (Computational) — Evidence: Complete codebase with validation
 - ⚠ Fused GPU Backend Validation and Promotion (Performance/Core) — Evidence: performance/benchmarks/fused_backend_benchmark.py results, Tier 1-2 validation runs
 - ⚠ Discrete Conservation Requires Matching Discretization Orders (Tier 3 - Numerical Methods) — Evidence: Tier 3 energy tests: stencil_order=2 gives 0.1-0.7% drift (PASS), stencil_order=4 gives 15-18% drift (FAIL). Analysis script demonstrates order mismatch effect.
-- ⚠ PLACEHOLDER discovery for test_1d_propagation.py (Tier 5 - Auto Inferred) — Evidence: test_1d_propagation.py
-- ⚠ PLACEHOLDER discovery for test_config_debug.py (Tier 5 - Auto Inferred) — Evidence: test_config_debug.py
-- ⚠ PLACEHOLDER discovery for test_double_slit_nogui.py (Tier 5 - Auto Inferred) — Evidence: test_double_slit_nogui.py
-- ⚠ PLACEHOLDER discovery for test_double_slit_scenario.py (Tier 5 - Auto Inferred) — Evidence: test_double_slit_scenario.py
-- ... and 9 more
 
 ## Recommendations
 

@@ -3,28 +3,30 @@
   "category": "Energy",
   "test_id": "ENER-03",
   "description": "Wave integrity \u2014 mild curvature",
-  "timestamp": "2025-11-03T03:27:08.051010+00:00",
-  "hardware": {
-    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
-    "cuda_runtime": 12090,
-    "python": "3.13.9",
-    "backend": "CuPy"
-  },
   "parameters": {
     "N": 256,
-    "steps": 10000,
     "dt": 0.0005,
     "dx": 0.005,
-    "c": 1.0,
-    "cfl": 0.1,
-    "stencil_order": 4
+    "steps": 10000,
+    "stencil_order": 2
   },
-  "metrics": {
-    "energy_rel_drift": 0.007772904086181365,
-    "entropy_monotonic": true,
-    "wave_max_drop": 0.009676700807772522
+  "energy_drift": 0.005627176952048953,
+  "wave_drop": 0.009019116002586595,
+  "partition_balance": null,
+  "dissipation_rate_error": null,
+  "thermalization_convergence": null,
+  "entropy_monotonic": true,
+  "validation": {
+    "energy_ok": true,
+    "energy_threshold": 0.01,
+    "primary_ok": true,
+    "primary_metric": "wave_drop",
+    "primary_value": 0.009019116002586595,
+    "primary_threshold": 0.05
   },
-  "status": "Passed",
+  "passed": true,
+  "runtime_sec": 34.56087684631348,
   "schema_version": "1.0",
-  "license": "CC BY-NC-ND 4.0"
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-10T22:11:49.236965Z"
 }

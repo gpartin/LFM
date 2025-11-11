@@ -8,7 +8,25 @@
   "omega_z": 36.68734522672823,
   "omega_mean": 36.68734522672824,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-09",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.0005
+    },
+    "primary": {
+      "ok": true,
+      "metric": "anisotropy",
+      "value": 1.9367515729713814e-16,
+      "threshold": 0.01
+    },
+    "metrics": {
+      "anisotropy": 1.9367515729713814e-16
+    },
+    "timestamp": "2025-11-10 14:05:04"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:59:12.601092Z"
+  "timestamp": "2025-11-10T22:05:04.592726Z"
 }

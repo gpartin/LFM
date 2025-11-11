@@ -3,13 +3,15 @@
   "description": "Thermalization Timescale \u2014 Relaxation to Equilibrium",
   "passed": true,
   "metrics": {
-    "tau_fitted": 358.33747913955966,
+    "tau_fitted": 358.33724918960814,
     "tau_min": 50.0,
     "tau_max": 1000.0,
     "fit_success": true
   },
-  "runtime_sec": 0.3269364833831787,
+  "runtime_sec": 23.914059162139893,
+  "tier": 7,
+  "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T03:44:05.755242Z"
+  "timestamp": "2025-11-10T22:17:13.027269Z"
 }

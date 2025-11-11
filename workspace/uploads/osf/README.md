@@ -185,7 +185,7 @@ If you use this work in research, please cite:
 - **NonCommercial** — No commercial use without permission
 - **NoDerivatives** — No modifications or derivatives
 
-**Commercial licensing**: Contact latticefieldmediumresearch@gmail.com
+**Commercial licensing**: Contact licensing@emergentphysicslab.com
 
 ---
 
@@ -193,7 +193,7 @@ If you use this work in research, please cite:
 
 **Author**: Greg D. Partin  
 **Institution**: LFM Research, Los Angeles CA USA  
-**Email**: latticefieldmediumresearch@gmail.com  
+**Email**: research@emergentphysicslab.com  
 **ORCID**: [0009-0004-0327-6528](https://orcid.org/0009-0004-0327-6528)  
 **GitHub**: [github.com/gpartin/LFM](https://github.com/gpartin/LFM)
 

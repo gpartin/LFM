@@ -10,7 +10,25 @@
   "L_slab": 25.599999999999994,
   "runtime_sec": 0.0,
   "on_gpu": true,
+  "validation": {
+    "test_id": "GRAV-22",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "rel_err",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "time_delay_error": 3.230004527321408
+    },
+    "timestamp": "2025-11-10 14:10:28"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T00:39:24.232413Z"
+  "timestamp": "2025-11-10T22:10:28.708937Z"
 }

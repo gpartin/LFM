@@ -3,30 +3,30 @@ title: "LFM Phase 1 Comprehensive Test Results"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
+contact: "research@emergentphysicslab.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-08 10:15:07"---
+---
 
 # Comprehensive Test Results
 
 ## Overview
 
 This document provides a high-level summary of LFM validation test results across all tiers. For detailed test-by-test results, see the individual tier achievement reports.
-Generated: 2025-11-08 10:15:07
+Generated: 2025-11-10 17:04:45
 
 ## Test Summary
 
 | Tier | Category | Tests | Pass Rate | Tier Achievement Report |
 |------|----------|--------|-----------|------------------------|
-| Tier 1 — Relativistic | Relativistic | 16 | 17/16 (106.2%) | TIER_1_ACHIEVEMENTS.md |
-| Tier 2 — Gravity Analogue | Gravity Analogue | 26 | 26/26 (100.0%) | TIER_2_ACHIEVEMENTS.md |
-| Tier 3 — Energy Conservation | Energy Conservation | 11 | 10/11 (90.9%) | TIER_3_ACHIEVEMENTS.md |
+| Tier 1 — Relativistic | Relativistic | 17 | 17/17 (100.0%) | TIER_1_ACHIEVEMENTS.md |
+| Tier 2 — Gravity Analogue | Gravity Analogue | 26 | 25/26 (96.2%) | TIER_2_ACHIEVEMENTS.md |
+| Tier 3 — Energy Conservation | Energy Conservation | 11 | 11/11 (100.0%) | TIER_3_ACHIEVEMENTS.md |
 | Tier 4 — Quantization | Quantization | 14 | 14/14 (100.0%) | TIER_4_ACHIEVEMENTS.md |
 | Tier 5 — Electromagnetic | Electromagnetic | 21 | 21/21 (100.0%) | TIER_5_ACHIEVEMENTS.md |
-| Tier 6 — Multi-Domain Coupling | Coupling | 12 | 1/12 (8.3%) | TIER_6_ACHIEVEMENTS.md |
+| Tier 6 — Multi-Domain Coupling | Coupling | 12 | 12/12 (100.0%) | TIER_6_ACHIEVEMENTS.md |
 | Tier 7 — Thermodynamics & Statistical Mechanics | Thermodynamics | 5 | 5/5 (100.0%) | TIER_7_ACHIEVEMENTS.md |
-**Total: 94/105 tests passing (89.5%)**
+**Total: 105/106 tests passing (99.1%)**
 
 ---
 
@@ -35,19 +35,19 @@ Generated: 2025-11-08 10:15:07
 This tier validates Lorentz invariance, isotropy, and causality constraints.
 
 **Key validations:**- Lorentz invariance (boosts at low and high velocities)- Isotropy (directional equivalence, spherical symmetry)- Causality (finite propagation speed, light cone constraints)- Dispersion relations across relativistic regimes (χ/k from 10 to 0.1)
-**Pass rate:** 17/16 (106.2%)  
+**Pass rate:** 17/17 (100.0%)  
 **See:** TIER_1_ACHIEVEMENTS.md### Tier 2 — Gravity Analogue
 
 This tier validates χ-field gradient effects including gravitational redshift, time dilation, and light bending analogues.
 
 **Key validations:**- Gravitational redshift (frequency shift in potential wells, linear gradients, radial profiles)- Time dilation (bound states, refined grids)- Light bending (ray deflection through χ-gradients)- Phase/group delay (Shapiro-like time delay)- Dynamic χ-field evolution (gravitational wave analogues)- GR calibration (redshift ↔ G_eff mapping)
-**Pass rate:** 26/26 (100.0%)  
+**Pass rate:** 25/26 (96.2%)  
 **See:** TIER_2_ACHIEVEMENTS.md### Tier 3 — Energy Conservation
 
 This tier validates energy conservation through Hamiltonian partitioning and dissipation analysis.
 
 **Key validations:**- Global energy conservation (short and long simulations)- Wave integrity in curved spacetime- Hamiltonian partitioning (KE ↔ GE ↔ PE energy flow)- Dissipation (exponential decay with controlled damping)- Thermalization (steady-state convergence)
-**Pass rate:** 10/11 (90.9%)  
+**Pass rate:** 11/11 (100.0%)  
 **See:** TIER_3_ACHIEVEMENTS.md### Tier 4 — Quantization
 
 This tier validates quantum mechanical phenomena including bound states, tunneling, and uncertainty relations.
@@ -65,7 +65,7 @@ This tier validates EM-analogous phenomena emergence from Klein-Gordon dynamics 
 This tier validates cross-domain coupling phenomena where relativistic, gravitational, and quantum effects interact.
 
 **Key validations:**- Gravitational time dilation from χ-field dispersion (COUP-01)- Wave propagation convergence validation (COUP-02)- Lorentz invariance of gravitational deflection (COUP-03)- Quantum bound states in χ-wells (COUP-04)
-**Pass rate:** 1/12 (8.3%)  
+**Pass rate:** 12/12 (100.0%)  
 **See:** TIER_6_ACHIEVEMENTS.md### Tier 7 — Thermodynamics & Statistical Mechanics
 
 This tier validates thermodynamic observables emerging from statistical coarse-graining of time-reversible Klein-Gordon dynamics.
@@ -76,7 +76,7 @@ This tier validates thermodynamic observables emerging from statistical coarse-g
 
 ## Detailed Test Results
 
-All detailed test-by-test results, including test IDs, descriptions, and status, are documented in the individual tier achievement reports:- **TIER_1_ACHIEVEMENTS.md** — Relativistic validation (16 tests)- **TIER_2_ACHIEVEMENTS.md** — Gravity Analogue validation (26 tests)- **TIER_3_ACHIEVEMENTS.md** — Energy Conservation validation (11 tests)- **TIER_4_ACHIEVEMENTS.md** — Quantization validation (14 tests)- **TIER_5_ACHIEVEMENTS.md** — Electromagnetic validation (21 tests)- **TIER_6_ACHIEVEMENTS.md** — Coupling validation (12 tests)- **TIER_7_ACHIEVEMENTS.md** — Thermodynamics validation (5 tests)
+All detailed test-by-test results, including test IDs, descriptions, and status, are documented in the individual tier achievement reports:- **TIER_1_ACHIEVEMENTS.md** — Relativistic validation (17 tests)- **TIER_2_ACHIEVEMENTS.md** — Gravity Analogue validation (26 tests)- **TIER_3_ACHIEVEMENTS.md** — Energy Conservation validation (11 tests)- **TIER_4_ACHIEVEMENTS.md** — Quantization validation (14 tests)- **TIER_5_ACHIEVEMENTS.md** — Electromagnetic validation (21 tests)- **TIER_6_ACHIEVEMENTS.md** — Coupling validation (12 tests)- **TIER_7_ACHIEVEMENTS.md** — Thermodynamics validation (5 tests)
 Each report includes:
 - Complete test result table (Test ID, Status, Description)
 - Pass rate statistics

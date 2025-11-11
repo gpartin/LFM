@@ -3,28 +3,30 @@
   "category": "Energy",
   "test_id": "ENER-07",
   "description": "Hamiltonian partitioning \u2014 \u03c7-gradient field (energy flow in curved spacetime)",
-  "timestamp": "2025-11-03T03:27:41.549557+00:00",
-  "hardware": {
-    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
-    "cuda_runtime": 12090,
-    "python": "3.13.9",
-    "backend": "CuPy"
-  },
   "parameters": {
     "N": 256,
-    "steps": 5000,
     "dt": 0.0005,
     "dx": 0.005,
-    "c": 1.0,
-    "cfl": 0.1,
-    "stencil_order": 4
+    "steps": 5000,
+    "stencil_order": 2
   },
-  "metrics": {
-    "energy_rel_drift": 0.003958346719953543,
-    "entropy_monotonic": true,
-    "wave_max_drop": 0.013425155711686995
+  "energy_drift": 0.002151189601496961,
+  "wave_drop": null,
+  "partition_balance": 0.0021511896014965166,
+  "dissipation_rate_error": null,
+  "thermalization_convergence": null,
+  "entropy_monotonic": true,
+  "validation": {
+    "energy_ok": true,
+    "energy_threshold": 0.01,
+    "primary_ok": true,
+    "primary_metric": "partition_balance",
+    "primary_value": 0.0021511896014965166,
+    "primary_threshold": 0.02
   },
-  "status": "Passed",
+  "passed": true,
+  "runtime_sec": 11.853047132492065,
   "schema_version": "1.0",
-  "license": "CC BY-NC-ND 4.0"
+  "license": "CC BY-NC-ND 4.0",
+  "timestamp": "2025-11-10T22:12:45.821243Z"
 }

@@ -16,11 +16,31 @@
   "chiB": 0.17933709919452667,
   "freq_shift_theory_pct": 0.0,
   "freq_shift_measured_pct": 0.0,
+  "ratio_match_error": 8.292177118403416e-12,
+  "redshift_ratio_error": 8.292177118403416e-12,
   "N": 64,
   "dx": 1.0,
   "dt": 0.01,
   "steps": 4800,
+  "validation": {
+    "test_id": "GRAV-19",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "ratio_match_error",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "redshift_ratio_error": 8.292177118403416e-12
+    },
+    "timestamp": "2025-11-10 14:15:02"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T03:23:32.960390Z"
+  "timestamp": "2025-11-10T22:15:02.179856Z"
 }

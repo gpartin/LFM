@@ -6,7 +6,25 @@
   "omega_cos": 0.41880921894214873,
   "omega_sin": 0.41880921894214873,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-07",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.0001
+    },
+    "primary": {
+      "ok": true,
+      "metric": "phase_error",
+      "value": 0.0,
+      "threshold": 0.02
+    },
+    "metrics": {
+      "phase_error": 0.0
+    },
+    "timestamp": "2025-11-10 14:04:31"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:59:10.146202Z"
+  "timestamp": "2025-11-10T22:04:31.694397Z"
 }

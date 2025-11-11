@@ -9,9 +9,28 @@
   "deflection_significant": true,
   "deflection_correct_sign": true,
   "time_delay": 20.539991411013922,
-  "runtime_sec": 2.3599445819854736,
+  "runtime_sec": 11.149503231048584,
   "on_gpu": true,
+  "validation": {
+    "test_id": "GRAV-25",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "geodesic_deviation",
+      "value": 0.8558329754589135,
+      "threshold": 0.1
+    },
+    "metrics": {
+      "geodesic_deviation": 0.8558329754589135,
+      "bending_error": 0.8558329754589135
+    },
+    "timestamp": "2025-11-10 14:10:47"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T03:28:26.850809Z"
+  "timestamp": "2025-11-10T22:10:47.805238Z"
 }

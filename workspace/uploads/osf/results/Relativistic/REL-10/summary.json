@@ -4,7 +4,25 @@
   "passed": true,
   "spherical_error": 1.680007563389655e-13,
   "backend": "GPU",
+  "validation": {
+    "test_id": "REL-10",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.0005
+    },
+    "primary": {
+      "ok": true,
+      "metric": "spherical_error",
+      "value": 1.680007563389655e-13,
+      "threshold": 0.05
+    },
+    "metrics": {
+      "spherical_error": 1.680007563389655e-13
+    },
+    "timestamp": "2025-11-10 14:04:38"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:59:03.747628Z"
+  "timestamp": "2025-11-10T22:04:38.356401Z"
 }

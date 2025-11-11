@@ -2,11 +2,18 @@
   "id": "REL-05",
   "description": "Causality \u2014 Pulse Propagation",
   "passed": true,
-  "rel_err": 0.981433081883511,
-  "v_measured": 0.01856691811648901,
+  "rel_err": 0.9814197346105741,
+  "v_measured": 0.018580265389425882,
   "v_theory": 1.0,
-  "max_violation": 0.0008565104618352692,
-  "runtime_sec": 10.610196352005005,
+  "max_violation": 0.0033565104618352715,
+  "energy_initial": 8.833976906851223,
+  "energy_final": 8.836055663758206,
+  "energy_drift": 0.00023310867384370817,
+  "energy_drift_threshold": 0.0005,
+  "kinetic_energy_final": 4.423322523086824,
+  "gradient_energy_final": 4.41273314067138,
+  "potential_energy_final": 0.0,
+  "runtime_sec": 8.796398878097534,
   "quick_mode": false,
   "backend": "GPU",
   "params": {
@@ -22,7 +29,26 @@
     "estimator": "causality",
     "steps": 6000
   },
+  "validation": {
+    "test_id": "REL-05",
+    "energy": {
+      "ok": true,
+      "drift": 0.00023310867384370817,
+      "threshold": 0.0005
+    },
+    "primary": {
+      "ok": true,
+      "metric": "v_measured",
+      "value": 0.018580265389425882,
+      "threshold": 1.01
+    },
+    "metrics": {
+      "v_measured": 0.018580265389425882,
+      "max_violation": 0.0033565104618352715
+    },
+    "timestamp": "2025-11-10 14:04:33"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-04T13:58:59.462848Z"
+  "timestamp": "2025-11-10T22:04:33.971245Z"
 }

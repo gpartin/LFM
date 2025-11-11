@@ -14,7 +14,25 @@
   "chi_B": 0.2044936567544937,
   "runtime_sec": 0.0,
   "on_gpu": true,
+  "validation": {
+    "test_id": "GRAV-21",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.001
+    },
+    "primary": {
+      "ok": false,
+      "metric": "calibration_deviation",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "redshift_ratio_error": 1.2880129014457119e-11
+    },
+    "timestamp": "2025-11-10 14:10:24"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-07T00:39:24.306814Z"
+  "timestamp": "2025-11-10T22:10:24.569101Z"
 }

@@ -14,7 +14,26 @@
   "profile_rel_err_median": 0.052754852709267386,
   "center_ok": true,
   "profile_ok": true,
+  "validation": {
+    "test_id": "GRAV-20",
+    "energy": {
+      "ok": true,
+      "drift": 0.0,
+      "threshold": 0.01
+    },
+    "primary": {
+      "ok": false,
+      "metric": "self_consistency_error",
+      "value": 0.0,
+      "threshold": null
+    },
+    "metrics": {
+      "local_frequency_ratio_error": 0.052754852709267386,
+      "rel_err_ratio": 0.05885389325759838
+    },
+    "timestamp": "2025-11-10 14:10:18"
+  },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-03T05:09:52.593388Z"
+  "timestamp": "2025-11-10T22:10:18.644045Z"
 }
