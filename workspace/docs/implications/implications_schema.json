@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lfm.local/schemas/implications.schema.json",
+  "title": "LFM Implications Registry Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "domain",
+    "tier_relevance",
+    "summary",
+    "derivation",
+    "evidence_tests",
+    "chain_of_reasoning",
+    "potential_claim_types",
+    "ip_strategy",
+    "prior_art_delta",
+    "required_followup_work",
+    "maturity_level",
+    "risk_assessment",
+    "created",
+    "updated"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^IMP-[0-9]{3,}$"},
+    "title": {"type": "string", "minLength": 3},
+    "domain": {
+      "type": "string",
+      "enum": [
+        "relativistic",
+        "gravity-analogue",
+        "energy",
+        "quantization",
+        "electromagnetic",
+        "materials",
+        "computation",
+        "sensing",
+        "control",
+        "security",
+        "astrophysics",
+        "geophysics",
+        "biophysics",
+        "acoustics",
+        "optics",
+        "numerics",
+        "ai-automation",
+        "product",
+        "policy",
+        "education",
+        "other"
+      ]
+    },
+    "tier_relevance": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^(REL|GRAV|ENER|QUAN|EM)-[0-9]{2}$"},
+      "uniqueItems": true
+    },
+    "summary": {"type": "string", "minLength": 10},
+    "derivation": {"type": "string", "minLength": 10},
+    "evidence_tests": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^(REL|GRAV|ENER|QUAN|EM)-[0-9]{2}$"},
+      "uniqueItems": true
+    },
+    "chain_of_reasoning": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 3},
+      "minItems": 1
+    },
+    "potential_claim_types": {
+      "type": "array",
+      "items": {"type": "string", "enum": [
+        "theory",
+        "method",
+        "apparatus",
+        "software",
+        "manufacture",
+        "composition",
+        "use",
+        "standard",
+        "dataset"
+      ]},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "ip_strategy": {"type": "string", "enum": ["provisional", "pct-ready", "defensive-publication", "undecided"]},
+    "prior_art_delta": {"type": "string"},
+    "required_followup_work": {"type": "array", "items": {"type": "string"}},
+    "maturity_level": {"type": "string", "enum": ["hypothesis", "evidence", "validated", "production"]},
+    "risk_assessment": {
+      "type": "object",
+      "required": ["likelihood", "impact"],
+      "properties": {
+        "likelihood": {"type": "string", "enum": ["low", "medium", "high"]},
+        "impact": {"type": "string", "enum": ["low", "medium", "high", "very-high"]}
+      },
+      "additionalProperties": false
+    },
+    "enabling_requirements": {"type": "array", "items": {"type": "string"}},
+    "market_impact": {"type": "array", "items": {"type": "string"}},
+    "ethical_considerations": {"type": "array", "items": {"type": "string"}},
+    "severity_if_false": {"type": "string"},
+    "cross_dependencies": {"type": "array", "items": {"type": "string", "pattern": "^IMP-[0-9]{3,}$"}},
+    "links": {"type": "array", "items": {"type": "string"}},
+    "created": {"type": "string", "format": "date"},
+    "updated": {"type": "string", "format": "date"}
+  }
+}

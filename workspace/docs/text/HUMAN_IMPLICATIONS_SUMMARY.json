@@ -1,0 +1,114 @@
+[
+  {
+    "id": "IMP-066",
+    "category": "mind-bender",
+    "plain_english": "If backward-pointing wave modes exist, sending messages into the past could be possible (information-level 'time travel', not people).",
+    "analogy": "Like sending a letter that arrives before you wrote it.",
+    "impact_tier": "mind-bender"
+  },
+  {
+    "id": "IMP-073",
+    "category": "mind-bender",
+    "plain_english": "If χ can shape spacetime locally, near-instant interstellar trips become feasible—paired with strict 'no-paradox' rules (IMP-104).",
+    "analogy": "Like folding a map so two distant cities touch, then stepping across.",
+    "impact_tier": "mind-bender"
+  },
+  {
+    "id": "IMP-062",
+    "category": "mind-bender",
+    "plain_english": "If the brain couples to a χ-like field, then copying and restoring a mind could be possible (IMP-072) → functional immortality and copies.",
+    "analogy": "Like saving and loading your mind as a file.",
+    "impact_tier": "mind-bender"
+  },
+  {
+    "id": "IMP-061",
+    "category": "mind-bender",
+    "plain_english": "If reality is computational and χ-programmable, then small regions of 'physics' might be editable—like changing gravity, transmission, or material behavior.",
+    "analogy": "Like having admin access to the laws of nature in a video game.",
+    "impact_tier": "mind-bender"
+  },
+  {
+    "id": "IMP-074",
+    "category": "mind-bender",
+    "plain_english": "If χ sets initial conditions, then 'spinning up' a pocket universe becomes an engineering question—paired with ethics and an off-switch (IMP-105).",
+    "analogy": "Like creating a new world in Minecraft, but for real.",
+    "impact_tier": "mind-bender"
+  },
+  {
+    "id": "IMP-071",
+    "category": "society-scale",
+    "plain_english": "If χ enables cheap energy/matter control, economies can lurch toward abundance—requiring new playbooks for jobs, prices, and stability (IMP-102).",
+    "analogy": "Like everyone suddenly having a magic 3D printer for anything.",
+    "impact_tier": "society-scale"
+  },
+  {
+    "id": "IMP-075",
+    "category": "society-scale",
+    "plain_english": "If local physics is editable, a χ-weapon is possible and a runaway 'vacuum collapse' accident might be too—existential risk, so global treaty needed (IMP-108).",
+    "analogy": "Like inventing a button that could break the world, so everyone agrees not to push it.",
+    "impact_tier": "society-scale"
+  },
+  {
+    "id": "IMP-072",
+    "category": "society-scale",
+    "plain_english": "If mind backup is possible, we must decide when a copy is still 'you' (identity rules: IMP-103).",
+    "analogy": "Like making a clone and asking who gets your bank account.",
+    "impact_tier": "society-scale"
+  },
+  {
+    "id": "IMP-041",
+    "category": "society-scale",
+    "plain_english": "If research splits into solid engineering and labeled speculation, and is internationally coordinated, we can move fast without breaking reality (IMP-101).",
+    "analogy": "Like having both a safe lane and an experimental lane on the highway.",
+    "impact_tier": "society-scale"
+  },
+  {
+    "id": "IMP-109",
+    "category": "society-scale",
+    "plain_english": "If 'grid-like reality' ideas land, humane messaging and mental-health framing matter to avoid panic or nihilism.",
+    "analogy": "Like giving people a gentle introduction to a big, weird truth.",
+    "impact_tier": "society-scale"
+  },
+  {
+    "id": "IMP-082",
+    "category": "near-term",
+    "plain_english": "If runs ship with math 'receipts', journals auto-verify, and results get sealed in a public logbook, science becomes trustable by default.",
+    "analogy": "Like every experiment coming with a tamper-proof receipt anyone can check.",
+    "impact_tier": "near-term"
+  },
+  {
+    "id": "IMP-096",
+    "category": "near-term",
+    "plain_english": "If interference 'gravimeters' and smarter beams for fog/clutter work, sensors get much better in tough conditions.",
+    "analogy": "Like giving your car night vision and x-ray eyes.",
+    "impact_tier": "near-term"
+  },
+  {
+    "id": "IMP-084",
+    "category": "near-term",
+    "plain_english": "If wave computing blocks are practical, tiny, low-power chips get much better at spotting patterns (voice, sensors, wearables).",
+    "analogy": "Like a hearing aid that never needs charging and always knows your name.",
+    "impact_tier": "near-term"
+  },
+  {
+    "id": "IMP-095",
+    "category": "near-term",
+    "plain_english": "If walls and controllers have built-in 'stay in bounds' rules, engineering becomes 'set the goal, get the safest/cheapest plan' by default.",
+    "analogy": "Like bowling with bumpers and a robot that picks the best ball for you.",
+    "impact_tier": "near-term"
+  },
+  {
+    "id": "IMP-093",
+    "category": "near-term",
+    "plain_english": "If classrooms have self-grading labs, students run experiments and the system checks the results.",
+    "analogy": "Like a science fair where the judge is a robot that never sleeps.",
+    "impact_tier": "near-term"
+  },
+  {
+    "id": "IMP-110",
+    "category": "near-term",
+    "plain_english": "If χ materials can be published and reused like apps, engineering accelerates—anyone can 'download a material.'",
+    "analogy": "Like an app store for building blocks of reality.",
+    "impact_tier": "near-term"
+  }
+]

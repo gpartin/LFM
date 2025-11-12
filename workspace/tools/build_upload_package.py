@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # © 2025 Emergent Physics Lab. All rights reserved.
 # Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
 # Non-commercial use with attribution only; no distribution of modified material; commercial use requires prior written permission.
@@ -495,7 +495,7 @@ def _stage_canonical_txt_sources() -> List[str]:
         return out
     dst_dir = UPLOAD / 'txt'
     dst_dir.mkdir(parents=True, exist_ok=True)
-    for name in ['Executive_Summary.txt', 'LFM_Master.txt', 'LFM_Core_Equations.txt', 'LFM_Phase1_Test_Design.txt']:
+    for name in ['Executive_Summary.txt', 'LFM_Master.txt', 'LFM_Core_Equations.txt', 'LFM_Phase1_Test_Design.txt', 'HUMAN_IMPLICATIONS_SUMMARY.txt']:
         src = src_dir / name
         if src.exists():
             dst = dst_dir / name
