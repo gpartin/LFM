@@ -1023,6 +1023,7 @@ def main():
             log(f"=== Running Single Test: {args.test} ===", "INFO")
             result = harness.run_single_test(test)
             harness.print_summary([result])
+            results = [result]
         else:
             log(f"Test {args.test} not found", "ERROR")
             return 1
@@ -1031,7 +1032,19 @@ def main():
         results = harness.run_all_tests(skip_passed=args.skip_passed)
         harness.print_summary(results)
     
-    return 0
+    # ------------------------------------------------------------------
+    # Exit code propagation (CRITICAL for parallel scheduler correctness)
+    # If any test failed, propagate non-zero exit code so run_parallel_suite
+    # can accurately count failures instead of assuming all completed tests
+    # passed. Previously the runner always exited 0, masking internal FAILs.
+    # ------------------------------------------------------------------
+    any_failed = any(not r.passed for r in results)
+    if any_failed:
+        failed_ids = ",".join([r.test_id for r in results if not r.passed])
+        log(f"[TIER7] Exiting with failure status (failed tests: {failed_ids})", "FAIL")
+        return 1
+    else:
+        return 0
 
 if __name__ == "__main__":
     exit(main())

@@ -3651,5 +3651,27 @@ def main():
         
         log("Tier 5 electromagnetic tests completed!", "INFO")
 
+    # ------------------------------------------------------------------
+    # Exit code propagation (CRITICAL for parallel scheduler correctness)
+    # If any test failed, propagate non-zero exit code so run_parallel_suite
+    # can accurately count failures instead of assuming all completed tests
+    # passed. Previously the runner always exited 0, masking internal FAILs.
+    # ------------------------------------------------------------------
+    try:
+        import sys
+        any_failed = total_tests > passed_tests
+        if any_failed:
+            log(f"[TIER5] Exiting with failure status ({total_tests - passed_tests} tests failed)", "FAIL")
+            sys.exit(1)
+        else:
+            sys.exit(0)
+    except SystemExit:
+        raise
+    except Exception as e:
+        # Fallback: if something unexpected happened, fail conservatively
+        log(f"[TIER5] Unexpected error determining exit code: {type(e).__name__}: {e}", "WARN")
+        import sys as _sys
+        _sys.exit(1)
+
 if __name__ == "__main__":
     main()

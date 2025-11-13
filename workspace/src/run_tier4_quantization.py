@@ -2483,5 +2483,28 @@ def main():
         except Exception as e:
             log(f"[TIER4] Upload package build encountered an error: {type(e).__name__}: {e}", "WARN")
 
+    # ------------------------------------------------------------------
+    # Exit code propagation (CRITICAL for parallel scheduler correctness)
+    # If any test failed, propagate non-zero exit code so run_parallel_suite
+    # can accurately count failures instead of assuming all completed tests
+    # passed. Previously the runner always exited 0, masking internal FAILs.
+    # ------------------------------------------------------------------
+    try:
+        import sys
+        any_failed = any(not r.passed for r in results)
+        if any_failed:
+            failed_ids = ",".join([r.test_id for r in results if not r.passed])
+            log(f"[TIER4] Exiting with failure status (failed tests: {failed_ids})", "FAIL")
+            sys.exit(1)
+        else:
+            sys.exit(0)
+    except SystemExit:
+        raise
+    except Exception as e:
+        # Fallback: if something unexpected happened, fail conservatively
+        log(f"[TIER4] Unexpected error determining exit code: {type(e).__name__}: {e}", "WARN")
+        import sys as _sys
+        _sys.exit(1)
+
 if __name__ == '__main__':
     main()

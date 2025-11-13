@@ -17,6 +17,25 @@ v1.0.0
 """
 
 import numpy as np, math
+from typing import Any
+
+try:
+    # Optional CuPy import for GPU-aware checks
+    import cupy as cp  # type: ignore
+    _HAS_CUPY = True
+except Exception:
+    cp = None  # type: ignore
+    _HAS_CUPY = False
+
+def _to_numpy_safe(x: Any) -> np.ndarray:
+    """Best-effort conversion to NumPy, handling CuPy if present.
+
+    This avoids NumPy/CuPy mixed-ufunc pitfalls during integrity checks
+    and prevents ambiguous truth-value errors on device arrays.
+    """
+    if _HAS_CUPY and isinstance(x, cp.ndarray):  # type: ignore[attr-defined]
+        return cp.asnumpy(x)  # transfer to host for robust checks
+    return np.asarray(x)
 from typing import Dict
 
 from ui.lfm_console import log
@@ -31,9 +50,14 @@ class NumericIntegrityMixin:
     the cached state is cleared so future violations will be reported.
     """
     def validate_field(self, E, label="field"):
-        if not np.all(np.isfinite(E)):
+        """Validate array finiteness and amplitude bounds.
+
+        GPU-safe: transparently converts CuPy arrays to NumPy for checks.
+        """
+        arr = _to_numpy_safe(E)
+        if not np.all(np.isfinite(arr)):
             raise ValueError(f"[{label}] NaN or Inf detected.")
-        if np.max(np.abs(E)) > 1e6:
+        if np.max(np.abs(arr)) > 1e6:
             raise ValueError(f"[{label}] amplitude blow-up > 1e6.")
         return True
 
