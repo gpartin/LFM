@@ -16,56 +16,88 @@ export default async function Image() {
   const subtitle = 'Interactive Physics Simulations';
   const tagline = 'Lattice Field Medium • Klein-Gordon ∂²E/∂t² = c²∇²E − χ²E';
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          padding: 64,
-          // Prefer backgroundColor over background for @vercel/og compatibility
-          backgroundColor: '#0a0f1a',
-          border: '2px solid #1e3a8a',
-          color: '#e5f0ff',
-          fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-        }}
-      >
-        {/* Visible top bar to avoid “all-white” appearance if backgroundColor is ignored */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 12, backgroundColor: '#1e3a8a' }} />
+  try {
+    return new ImageResponse(
+      (
         <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 24,
-            marginBottom: 40,
+            width: 1200,
+            height: 630,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            padding: 64,
+            position: 'relative',
+            background: '#0a0e27', // space.dark
+            backgroundColor: '#0a0e27',
+            color: '#e0e6ed', // text.primary
+            fontFamily:
+              'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
           }}
         >
+          {/* Accent strip */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: 1200, height: 14, backgroundColor: '#00d9ff' }} />
+
+          {/* Title block (mirrors homepage hero) */}
+          <div style={{ display: 'flex', flexDirection: 'column', marginBottom: 24 }}>
+            <div style={{ fontSize: 80, fontWeight: 800, color: '#00d9ff' /* accent.chi */ }}>Fundamental Forces</div>
+            <div style={{ fontSize: 64, fontWeight: 800, color: '#e0e6ed' }}>Emerging from</div>
+            <div style={{ fontSize: 64, fontWeight: 800, color: '#ff6b35' /* accent.particle */ }}>a Single Equation</div>
+          </div>
+
+          {/* Subtitle */}
+          <div style={{ fontSize: 28, color: '#8892a6', marginBottom: 28 }}>
+            Watch gravity, relativity, and quantum phenomena emerge from the Lattice Field Medium.
+          </div>
+
+          {/* Equation panel */}
           <div
             style={{
-              width: 96,
-              height: 96,
-              borderRadius: 24,
-              // Avoid conic/radial gradients; use solid color instead
-              backgroundColor: '#1e3a8a',
-              boxShadow: '0 10px 40px rgba(96,165,250,0.35)',
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: '#141b3d', // space.panel
+              border: '2px solid #1e2847', // space.border
+              borderRadius: 12,
+              padding: 20,
+              marginBottom: 24,
             }}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 72, fontWeight: 800, letterSpacing: -1 }}>{title}</div>
-            <div style={{ fontSize: 36, opacity: 0.9 }}>{subtitle}</div>
+          >
+            <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 34, color: '#00d9ff' }}>
+              d²E/dt² = c²∇²E - χ²(x,t)E
+            </div>
+            <div style={{ fontSize: 18, color: '#555d6e' }}>One equation. All fundamental forces.</div>
           </div>
+
+          {/* URL footer */}
+          <div style={{ fontSize: 22, color: '#8892a6' }}>emergentphysicslab.com</div>
         </div>
-        <div style={{ fontSize: 28, color: '#99a7c2', marginBottom: 24 }}>emergentphysicslab.com</div>
-        <div style={{ fontSize: 24, color: '#94a3b8' }}>{tagline}</div>
-      </div>
-    ),
-    {
-      width,
-      height,
-    }
-  );
+      ),
+      { width, height }
+    );
+  } catch (err) {
+    // Log detailed error to console for local debugging
+    console.error('[opengraph-image] generation failed:', err);
+    // Fallback: ultra-simple card that should never fail
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: 1200,
+            height: 630,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#111827',
+            color: '#ffffff',
+            fontSize: 54,
+            fontFamily: 'system-ui, Arial',
+          }}
+        >
+          Emergent Physics Lab
+        </div>
+      ),
+      { width, height }
+    );
+  }
 }

@@ -2,22 +2,22 @@
   "id": "GRAV-08",
   "description": "Time dilation \u2014 uniform \u03c7 diagnostic (isolate grid dispersion)",
   "passed": true,
-  "rel_err_ratio": 0.028800802497585876,
-  "ratio_serial": 1.0288008024975859,
-  "ratio_parallel": 1.0287961547801439,
+  "rel_err_ratio": 0.0,
+  "ratio_serial": 1.0,
+  "ratio_parallel": 1.0,
   "ratio_theory": 1.0,
-  "omegaA_serial": 0.27371929335812367,
-  "omegaB_serial": 0.2660566483751027,
-  "omegaA_parallel": 0.27371627415340066,
-  "omegaB_parallel": 0.26605491562309974,
+  "omegaA_serial": 0.2772682895819759,
+  "omegaB_serial": 0.2772682895819759,
+  "omegaA_parallel": 0.2772695358819031,
+  "omegaB_parallel": 0.2772695358819031,
   "omegaA_theory": 0.25,
   "omegaB_theory": 0.25,
   "chiA": 0.25,
   "chiB": 0.25,
   "freq_shift_theory_pct": 0.0,
-  "freq_shift_measured_pct": 2.8800802497585916,
-  "ratio_match_error": 0.028800802497585876,
-  "time_dilation_ratio_error": 0.028800802497585876,
+  "freq_shift_measured_pct": 0.0,
+  "ratio_match_error": 0.0,
+  "time_dilation_ratio_error": 0.0,
   "N": 64,
   "dx": 1.0,
   "dt": 0.01,
@@ -36,11 +36,11 @@
       "threshold": null
     },
     "metrics": {
-      "time_dilation_ratio_error": 0.028800802497585876
+      "time_dilation_ratio_error": 0.0
     },
-    "timestamp": "2025-11-10 14:10:25"
+    "timestamp": "2025-11-13 15:18:22"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:10:25.813187Z"
+  "timestamp": "2025-11-13T23:18:22.968739Z"
 }

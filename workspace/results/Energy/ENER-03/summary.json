@@ -25,8 +25,8 @@
     "primary_threshold": 0.05
   },
   "passed": true,
-  "runtime_sec": 34.56087684631348,
+  "runtime_sec": 15.699273824691772,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:11:49.236965Z"
+  "timestamp": "2025-11-13T20:03:40.464193Z"
 }

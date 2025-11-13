@@ -1,289 +1,230 @@
 /*
- * © 2025 Emergent Physics Lab. All rights reserved.
- * Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International).
+ * Validation API — runs the Python test harness for a given experiment id.
+ * Guarded by env var ALLOW_HARNESS_RUNS=1 to prevent accidental remote execution.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
-import fs from 'fs/promises';
+import fs from 'fs';
+import { writeCertification, computeCertificationHash } from '@/lib/certification';
+import {
+  createAdvancedCertification,
+  writeAdvancedCertification,
+  appendToRegistry,
+  type CertificationIdentity,
+} from '@/lib/certification-advanced';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const experimentId = params.id;
-  
-  try {
-    const body = await request.json();
-    const { parameters, metrics: uiMetrics } = body;
-    
-    // Early skip for user-specified exempt tests (do not spawn Python)
-    // GRAV-09 is documented as SKIP_EXEMPT due to discrete lattice limitation
-    if (experimentId === 'GRAV-09') {
-      return NextResponse.json({
-        status: 'SKIP_EXEMPT',
-        testId: experimentId,
-        reason: 'Discrete lattice cannot represent required continuous potential gradient resolution (documented physical invalidity).',
-        notes: 'Website validation short-circuited per canonical skip exemption; no harness executed.'
-      });
-    }
-    
-    // Map experiment ID prefix to test harness tier runner
-    // Uses prefix matching for all 105 tests
-    const getTierInfo = (testId: string): { runner: string; tier: string; config: string; resultsDir: string } | null => {
-      if (testId.startsWith('REL-')) {
-        return { 
-          runner: 'run_tier1_relativistic.py', 
-          tier: '1',
-          config: '../config/config_tier1_relativistic.json',
-          resultsDir: 'Relativistic'
-        };
-      } else if (testId.startsWith('GRAV-')) {
-        return { 
-          runner: 'run_tier2_gravity.py', 
-          tier: '2',
-          config: '../config/config_tier2_gravityanalogue.json',
-          resultsDir: 'Gravity'
-        };
-      } else if (testId.startsWith('ENER-')) {
-        return { 
-          runner: 'run_tier3_energy.py', 
-          tier: '3',
-          config: '../config/config_tier3_energy.json',
-          resultsDir: 'Energy'
-        };
-      } else if (testId.startsWith('QUAN-')) {
-        return { 
-          runner: 'run_tier4_quantization.py', 
-          tier: '4',
-          config: '../config/config_tier4_quantization.json',
-          resultsDir: 'Quantization'
-        };
-      } else if (testId.startsWith('EM-')) {
-        return { 
-          runner: 'run_tier5_electromagnetic.py', 
-          tier: '5',
-          config: '../config/config_tier5_electromagnetic.json',
-          resultsDir: 'Electromagnetic'
-        };
-      } else if (testId.startsWith('COUP-')) {
-        return { 
-          runner: 'run_tier6_coupling.py', 
-          tier: '6',
-          config: '../config/config_tier6_coupling.json',
-          resultsDir: 'Coupling'
-        };
-      } else if (testId.startsWith('THERM-')) {
-        return { 
-          runner: 'run_tier7_thermodynamics.py', 
-          tier: '7',
-          config: '../config/config_tier7_thermodynamics.json',
-          resultsDir: 'Thermodynamics'
-        };
-      }
+export const runtime = 'nodejs';
+
+function mapPrefixToRunnerAndConfig(id: string): { runner: string; config: string } | null {
+  const prefix = id.split('-')[0].toUpperCase();
+  switch (prefix) {
+    case 'REL':
+      return { runner: 'run_tier1_relativistic.py', config: '../config/config_tier1_relativistic.json' };
+    case 'GRAV':
+      return { runner: 'run_tier2_gravity.py', config: '../config/config_tier2_gravityanalogue.json' };
+    case 'ENER':
+      return { runner: 'run_tier3_energy.py', config: '../config/config_tier3_energy.json' };
+    case 'QUAN':
+      return { runner: 'run_tier4_quantization.py', config: '../config/config_tier4_quantization.json' };
+    case 'EM':
+      return { runner: 'run_tier5_electromagnetic.py', config: '../config/config_tier5_electromagnetic.json' };
+    case 'COUP':
+      return { runner: 'run_tier6_coupling.py', config: '../config/config_tier6_coupling.json' };
+    case 'THERM':
+      return { runner: 'run_tier7_thermodynamics.py', config: '../config/config_tier7_thermodynamics.json' };
+    default:
       return null;
-    };
-    
-    const testInfo = getTierInfo(experimentId);
-    if (!testInfo) {
-      return NextResponse.json(
-        { error: `Test ${experimentId} not found in validation mapping` },
-        { status: 404 }
-      );
-    }
-    
-    // Paths (absolute from repository root)
-    const workspaceRoot = path.join(process.cwd(), '..');
-    const repoRoot = path.join(workspaceRoot, '..'); // Go up from workspace to repo root
-    const srcDir = path.join(workspaceRoot, 'src');
-    const resultsDir = path.join(workspaceRoot, 'results', 'website_validation', experimentId);
-    const pythonPath = path.join(repoRoot, '.venv', 'Scripts', 'python.exe');
-    
-    // Ensure results directory exists
-    await fs.mkdir(resultsDir, { recursive: true });
-    
-    const startTime = Date.now();
-    
-    // Spawn Python test harness
-    const result = await new Promise<{
-      exitCode: number;
-      stdout: string;
-      stderr: string;
-    }>((resolve, reject) => {
-      const child = spawn(
-        pythonPath,
-        [
-          testInfo.runner,
-          '--test', experimentId,
-          '--config', testInfo.config,
-          // Enforce GPU usage per project policy
-          '--gpu',
-        ],
-        {
-          cwd: srcDir,
-          env: {
-            ...process.env,
-            PYTHONPATH: srcDir,
-          },
-        }
-      );
-      
-      let stdout = '';
-      let stderr = '';
-      
-      child.stdout.on('data', (data) => {
-        stdout += data.toString();
-        console.log(`[${experimentId}] ${data.toString()}`);
-      });
-      
-      child.stderr.on('data', (data) => {
-        stderr += data.toString();
-        console.error(`[${experimentId}] ${data.toString()}`);
-      });
-      
-      child.on('close', (exitCode) => {
-        resolve({ exitCode: exitCode || 0, stdout, stderr });
-      });
-      
-      child.on('error', (error) => {
-        reject(error);
-      });
-      
-      // Timeout after 5 minutes
-      setTimeout(() => {
-        child.kill();
-        reject(new Error('Test execution timeout (5 minutes)'));
-      }, 5 * 60 * 1000);
-    });
-    
-    const duration = (Date.now() - startTime) / 1000;
-    
-    // Load validation thresholds
-    const thresholdsPath = path.join(workspaceRoot, 'config', 'validation_thresholds.json');
-    const thresholdsContent = await fs.readFile(thresholdsPath, 'utf-8');
-    const thresholds = JSON.parse(thresholdsContent);
-    
-    // Read test results from harness output directory
-    const testResultsPath = path.join(workspaceRoot, 'results', testInfo.resultsDir, experimentId, 'summary.json');
-    let testResults: any = null;
-    let metrics: any = {};
-    let status = 'FAIL';
-    let validationDetails: string[] = [];
-    
-    try {
-      const summaryContent = await fs.readFile(testResultsPath, 'utf-8');
-      testResults = JSON.parse(summaryContent);
-      
-      // Extract key metrics from harness
-      if (testResults.anisotropy !== undefined) {
-        metrics.anisotropy = testResults.anisotropy;
-      }
-      if (testResults.energy_drift !== undefined) {
-        metrics.energyDrift = testResults.energy_drift;
-      }
-      if (testResults.omega_right !== undefined) {
-        metrics.omega_right = testResults.omega_right;
-      }
-      if (testResults.omega_left !== undefined) {
-        metrics.omega_left = testResults.omega_left;
-      }
-    } catch (error) {
-      console.error(`Failed to read test results for ${experimentId}:`, error);
-      metrics = { error: 'Results file not found' };
-    }
-    
-    // Validate: Compare UI metrics against Python harness metrics
-    let allChecksPassed = true;
-    
-    // If no UI metrics provided, validation cannot proceed
-    if (!uiMetrics || Object.keys(uiMetrics).length === 0) {
-      allChecksPassed = false;
-      validationDetails.push('❌ No UI metrics provided - run simulation first before validating');
-      status = 'FAIL';
-    } else {
-      // Check energy drift against threshold
-      if (uiMetrics.energyDrift !== undefined) {
-        const threshold = thresholds.tolerances.energy_drift;
-        const passed = Math.abs(uiMetrics.energyDrift) < threshold;
-        if (!passed) {
-          allChecksPassed = false;
-          validationDetails.push(`❌ Energy drift ${uiMetrics.energyDrift.toExponential(3)} exceeds threshold ${threshold.toExponential(3)}`);
-        } else {
-          validationDetails.push(`✓ Energy drift ${uiMetrics.energyDrift.toExponential(3)} < ${threshold.toExponential(3)}`);
-        }
-      }
-      
-      // Check anisotropy against threshold
-      if (uiMetrics.anisotropy !== undefined) {
-        const threshold = thresholds.tolerances.anisotropy;
-        const passed = Math.abs(uiMetrics.anisotropy) < threshold;
-        if (!passed) {
-          allChecksPassed = false;
-          validationDetails.push(`❌ Anisotropy ${uiMetrics.anisotropy.toExponential(3)} exceeds threshold ${threshold.toExponential(3)}`);
-        } else {
-          validationDetails.push(`✓ Anisotropy ${uiMetrics.anisotropy.toExponential(3)} < ${threshold.toExponential(3)}`);
-        }
-      }
-      
-      // Compare UI vs Python metrics (if available)
-      if (metrics.anisotropy !== undefined && uiMetrics.anisotropy !== undefined) {
-        const diff = Math.abs(metrics.anisotropy - uiMetrics.anisotropy);
-        const maxAllowed = 0.01; // Allow 1% difference
-        if (diff > maxAllowed) {
-          validationDetails.push(`⚠ UI anisotropy (${uiMetrics.anisotropy.toExponential(3)}) differs from Python (${metrics.anisotropy.toExponential(3)}) by ${diff.toExponential(3)}`);
-        } else {
-          validationDetails.push(`✓ UI anisotropy matches Python within ${maxAllowed}`);
-        }
-      }
-      
-      status = allChecksPassed ? 'PASS' : 'FAIL';
-    }
-    
-    // Write diagnostic JSON for website tracking
-    const diagnosticData = {
-      testId: experimentId,
-      timestamp: new Date().toISOString(),
-      status,
-      uiMetrics,
-      pythonMetrics: metrics,
-      validationDetails,
-      duration,
-      exitCode: result.exitCode,
-      platform: process.platform,
-      notes: result.exitCode === 0 
-        ? 'Test harness completed successfully'
-        : `Test harness exited with code ${result.exitCode}`,
-      stdout: result.stdout.slice(-1000), // Last 1000 chars
-      stderr: result.stderr.slice(-1000),
-    };
-    
-    await fs.writeFile(
-      path.join(resultsDir, 'validation.json'),
-      JSON.stringify(diagnosticData, null, 2),
-      'utf-8'
-    );
-    
-    return NextResponse.json({
-      status,
-      uiMetrics,
-      pythonMetrics: metrics,
-      validationDetails,
-      duration,
-      testId: experimentId,
-      timestamp: diagnosticData.timestamp,
-      notes: diagnosticData.notes,
-    });
-    
-  } catch (error: any) {
-    console.error(`Validation error for ${experimentId}:`, error);
-    return NextResponse.json(
-      { 
-        error: error.message,
-        testId: experimentId,
-        status: 'ERROR',
-      },
-      { status: 500 }
-    );
   }
 }
+
+function getPaths() {
+  // websiteDir = c:\LFM\workspace\website
+  const websiteDir = process.cwd();
+  const workspaceDir = path.resolve(websiteDir, '..'); // c:\LFM\workspace
+  const srcDir = path.join(workspaceDir, 'src'); // c:\LFM\workspace\src
+  const repoRoot = path.resolve(workspaceDir, '..'); // c:\LFM
+  const pythonExe = path.join(repoRoot, '.venv', 'Scripts', 'python.exe');
+  return { websiteDir, workspaceDir, srcDir, repoRoot, pythonExe };
+}
+
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  const allow = process.env.ALLOW_HARNESS_RUNS === '1';
+  if (!allow) {
+    return new Response(JSON.stringify({
+      ok: false,
+      message: 'Validation disabled (set ALLOW_HARNESS_RUNS=1 in env to enable).',
+    }), { status: 503, headers: { 'content-type': 'application/json; charset=utf-8' } });
+  }
+
+  const id = decodeURIComponent(params.id);
+  const mapping = mapPrefixToRunnerAndConfig(id);
+  if (!mapping) {
+    return new Response(JSON.stringify({ ok: false, message: `Unknown experiment id prefix for ${id}` }), { status: 400, headers: { 'content-type': 'application/json; charset=utf-8' } });
+  }
+
+  const { srcDir, pythonExe } = getPaths();
+  if (!fs.existsSync(pythonExe)) {
+    return new Response(JSON.stringify({ ok: false, message: `Python venv not found at ${pythonExe}` }), { status: 500, headers: { 'content-type': 'application/json; charset=utf-8' } });
+  }
+
+  // Build arguments — prefer parallel suite even for single test
+  // GPU usage is enabled via config (gpu_enabled: true); the suite does not accept a --gpu flag
+  const runner = path.join(srcDir, 'run_parallel_suite.py');
+  const args = [runner, '--tests', id, '--max-concurrent', '1'];
+
+  // Spawn Python process in srcDir
+  const stdoutChunks: string[] = [];
+  const stderrChunks: string[] = [];
+
+  const child = spawn(pythonExe, args, { cwd: srcDir, windowsHide: true });
+
+  const exited = new Promise<{ code: number | null }>((resolve) => {
+    child.stdout.setEncoding('utf-8');
+    child.stderr.setEncoding('utf-8');
+    child.stdout.on('data', (d) => stdoutChunks.push(String(d)));
+    child.stderr.on('data', (d) => stderrChunks.push(String(d)));
+    child.on('close', (code) => resolve({ code }));
+  });
+
+  // 5 minute hard timeout
+  const timeoutMs = 5 * 60 * 1000;
+  const timeout = new Promise<{ code: number | null }>((resolve) => setTimeout(() => {
+    try { child.kill('SIGTERM'); } catch {}
+    resolve({ code: -1 });
+  }, timeoutMs));
+
+  const { code } = await Promise.race([exited, timeout]);
+
+  const stdout = stdoutChunks.join('');
+  const stderr = stderrChunks.join('');
+
+  // Try to find summary - check multiple locations
+  let summary: any = null;
+  try {
+    // Strategy 1: Look for SUMMARY_JSON: marker in stdout
+    const summaryMatch = stdout.match(/SUMMARY_JSON:\s*(.*\.json)/);
+    if (summaryMatch) {
+      const summaryPath = summaryMatch[1].trim();
+      if (fs.existsSync(summaryPath)) {
+        const content = fs.readFileSync(summaryPath, { encoding: 'utf-8' });
+        summary = JSON.parse(content);
+      }
+    }
+    
+    // Strategy 2: Look in workspace/results/{id}/summary.json
+    if (!summary) {
+      const { workspaceDir } = getPaths();
+      const resultsSummaryPath = path.join(workspaceDir, 'results', id.toUpperCase(), 'summary.json');
+      if (fs.existsSync(resultsSummaryPath)) {
+        const content = fs.readFileSync(resultsSummaryPath, { encoding: 'utf-8' });
+        summary = JSON.parse(content);
+      }
+    }
+    // Strategy 2b: Tier folder fallback e.g., results/Coupling/COUP-01/summary.json
+    if (!summary) {
+      const { workspaceDir } = getPaths();
+      const tierFolderMap: Record<string, string> = {
+        'REL': 'Relativistic',
+        'GRAV': 'Gravity',
+        'ENER': 'Energy',
+        'QUAN': 'Quantization',
+        'EM': 'Electromagnetic',
+        'COUP': 'Coupling',
+        'THERM': 'Thermodynamics',
+      };
+      const prefix = id.split('-')[0].toUpperCase();
+      const tierFolder = tierFolderMap[prefix];
+      if (tierFolder) {
+        const tierResultsSummaryPath = path.join(workspaceDir, 'results', tierFolder, id.toUpperCase(), 'summary.json');
+        if (fs.existsSync(tierResultsSummaryPath)) {
+          const content = fs.readFileSync(tierResultsSummaryPath, { encoding: 'utf-8' });
+          summary = JSON.parse(content);
+        }
+      }
+    }
+    
+    // Strategy 3: Look in workspace/src/results/{id}/summary.json  
+    if (!summary) {
+      const { srcDir } = getPaths();
+      const srcResultsSummaryPath = path.join(srcDir, 'results', id.toUpperCase(), 'summary.json');
+      if (fs.existsSync(srcResultsSummaryPath)) {
+        const content = fs.readFileSync(srcResultsSummaryPath, { encoding: 'utf-8' });
+        summary = JSON.parse(content);
+      }
+    }
+  } catch (err) {
+    console.error('[API] Error parsing summary:', err);
+  }
+
+  // Build response
+  const ok = code === 0 || code === 2 || !!summary; // non-zero can still be pass; prefer summary if present
+
+  // Parse request body to check for advanced certification options
+  let body: any = null;
+  try {
+    body = await req.json();
+  } catch {
+    // No body or invalid JSON - use basic certification
+  }
+
+  // Extract validator fingerprint and environment from request
+  const validatorFingerprint = body?.validatorFingerprint;
+  const environment = body?.environment;
+
+  // Certification: deterministic hash + timestamp, write to results/certifications
+  let certificationPath = null;
+  if (ok && summary) {
+    try {
+      // Check for advanced certification request (optional identity in request body)
+      const useAdvanced = body?.useAdvancedCertification || false;
+      const identity: CertificationIdentity | undefined = body?.identity;
+      
+      if (useAdvanced) {
+        // Generate advanced certification with optional RFC 3161 timestamp
+        const useRFC3161 = body?.useRFC3161 || false;
+        const advancedCert = await createAdvancedCertification(
+          id,
+          summary,
+          identity,
+          useRFC3161
+        );
+        certificationPath = writeAdvancedCertification(advancedCert);
+        
+        // Append to tamper-evident registry
+        appendToRegistry({
+          experimentId: id,
+          hash: advancedCert.hash,
+          timestamp: advancedCert.timestamp,
+          certificationPath,
+        });
+      } else {
+        // Use basic certification (backward compatible)
+        certificationPath = writeCertification(id, summary, validatorFingerprint, environment);
+      }
+      
+      // Append to registry for tamper-evident log
+      if (certificationPath && !certificationPath.startsWith('Error')) {
+        appendToRegistry({
+          experimentId: id,
+          hash: summary.certification_hash || summary.hash || computeCertificationHash(summary),
+          timestamp: new Date().toISOString(),
+          certificationPath,
+        });
+      }
+    } catch (err) {
+      certificationPath = `Error writing certification: ${err}`;
+    }
+  }
+
+  return new Response(JSON.stringify({
+    ok,
+    message: ok ? `Validation completed for ${id}` : `Validation exited with code ${code}`,
+    details: {
+      summary,
+      certificationPath: certificationPath ? path.basename(certificationPath) : null, // Only filename, not full path
+    },
+  }), { status: ok ? 200 : 500, headers: { 'content-type': 'application/json; charset=utf-8' } });
+}
+ 

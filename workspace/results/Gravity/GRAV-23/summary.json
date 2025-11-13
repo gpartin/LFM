@@ -8,7 +8,7 @@
   "chi_dynamic_response": true,
   "chi_reached_edge": false,
   "energy_drift_frac": 0.512877832621141,
-  "runtime_sec": 0.053624629974365234,
+  "runtime_sec": 0.0456998348236084,
   "on_gpu": true,
   "G_coupling": 0.05,
   "c_chi": 1.0,
@@ -29,9 +29,9 @@
     "metrics": {
       "coupling_strength": 0.0028272176356583206
     },
-    "timestamp": "2025-11-10 14:10:31"
+    "timestamp": "2025-11-13 15:18:27"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:10:31.011034Z"
+  "timestamp": "2025-11-13T23:18:27.941686Z"
 }

@@ -8,12 +8,10 @@
  */
 
 import { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { testStatistics, formatSummary } from '@/data/test-statistics';
 
 function AboutContent() {
-  const router = useRouter();
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-space-dark via-space-medium to-space-dark">
@@ -282,15 +280,15 @@ function AboutContent() {
           </div>
         </div>
 
-        {/* Back to Experiments */}
+        {/* Back to Home */}
         <div className="text-center mt-12">
-          <button
-            onClick={() => router.back()}
+          <Link
+            href="/"
             className="inline-flex items-center gap-2 px-6 py-3 bg-accent-chi text-space-dark font-bold rounded-lg hover:bg-accent-particle transition-colors"
           >
             <span>←</span>
-            <span>Back to Experiments</span>
-          </button>
+            <span>Back to Home</span>
+          </Link>
         </div>
 
         {/* Footer Note */}

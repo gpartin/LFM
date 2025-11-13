@@ -100,9 +100,9 @@
       "chi_center": 0.30,
       "chi_edge": 0.14,
       "sigma": 18.0,
-  "dt": 0.015,
-  "steps": 6400,
-  "steps_quick": 6400,
+      "dt": 0.01,
+      "steps": 4800,
+      "steps_quick": 4800,
       "packet_amp": 0.02,
       "bump_width_cells": 5
     },

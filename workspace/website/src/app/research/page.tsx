@@ -5,11 +5,36 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAllExperiments, getResearchExperimentsByTier } from '@/data/experiments';
+
+interface CertificationStats {
+  totalValidations: number;
+  uniqueValidators: number;
+}
+
+interface CertificationCounts {
+  [experimentId: string]: CertificationStats;
+}
 
 export default function ResearchPage() {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
+  const [certCounts, setCertCounts] = useState<CertificationCounts>({});
+  const [isLoadingCerts, setIsLoadingCerts] = useState(true);
+  
+  // Fetch certification counts on mount
+  useEffect(() => {
+    fetch('/api/certifications')
+      .then(res => res.json())
+      .then(data => {
+        setCertCounts(data.counts || {});
+        setIsLoadingCerts(false);
+      })
+      .catch(err => {
+        console.error('Failed to load certifications:', err);
+        setIsLoadingCerts(false);
+      });
+  }, []);
   
   const allExperiments = getAllExperiments();
   const researchExperiments = allExperiments.filter(exp => exp.type === 'RESEARCH');
@@ -35,9 +60,28 @@ export default function ResearchPage() {
     7: 'Thermodynamics',
   };
   
-  const selectedExperiments = selectedTier 
+  // Sort experiments: fewest validations first, then alphabetically by tier name
+  const selectedExperiments = (selectedTier 
     ? getResearchExperimentsByTier(selectedTier) 
-    : researchExperiments;
+    : researchExperiments
+  ).sort((a, b) => {
+    // Primary sort: validation count (ascending - least validated first)
+    const countA = certCounts[a.id]?.uniqueValidators || 0;
+    const countB = certCounts[b.id]?.uniqueValidators || 0;
+    if (countA !== countB) {
+      return countA - countB;
+    }
+    
+    // Secondary sort: alphabetically by tier name
+    const tierNameA = a.tier ? tierNames[a.tier] : '';
+    const tierNameB = b.tier ? tierNames[b.tier] : '';
+    if (tierNameA !== tierNameB) {
+      return tierNameA.localeCompare(tierNameB);
+    }
+    
+    // Tertiary sort: by test ID
+    return a.id.localeCompare(b.id);
+  });
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-8">
@@ -47,6 +91,9 @@ export default function ResearchPage() {
           <h1 className="text-4xl font-bold mb-2">Research Experiments</h1>
           <p className="text-slate-300 text-lg">
             {researchExperiments.length} validation tests from test harness
+          </p>
+          <p className="text-sm text-slate-400 mt-2">
+            📊 Sorted by validation count (least validated first) — help validate untested experiments!
           </p>
         </div>
         
@@ -111,9 +158,10 @@ export default function ResearchPage() {
         {/* Experiments Grid */}
         <div className="grid gap-4">
           {selectedExperiments.map(exp => (
-            <div
+            <a
               key={exp.id}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 hover:bg-slate-800 transition-all"
+              href={`/research/${encodeURIComponent(exp.id)}`}
+              className="block bg-slate-800/50 border border-slate-700 rounded-lg p-6 hover:bg-slate-800 transition-all"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -133,6 +181,23 @@ export default function ResearchPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
+                  {/* Validation count badge */}
+                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-600/20 border border-purple-500/30 rounded-lg">
+                    <span className="text-purple-300 font-semibold text-sm">
+                      {isLoadingCerts ? '...' : (certCounts[exp.id]?.uniqueValidators || 0)}
+                    </span>
+                    <span className="text-purple-400 text-xs">
+                      {(certCounts[exp.id]?.uniqueValidators || 0) === 1 ? 'validator' : 'validators'}
+                    </span>
+                  </div>
+                  
+                  {/* Show total validations if different */}
+                  {certCounts[exp.id] && certCounts[exp.id].totalValidations > certCounts[exp.id].uniqueValidators && (
+                    <div className="text-xs text-purple-400/60">
+                      {certCounts[exp.id].totalValidations} total
+                    </div>
+                  )}
+                  
                   <span className={`px-3 py-1 rounded text-sm font-semibold ${
                     exp.status === 'production' ? 'bg-green-600/30 text-green-300' :
                     exp.status === 'beta' ? 'bg-yellow-600/30 text-yellow-300' :
@@ -143,7 +208,7 @@ export default function ResearchPage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

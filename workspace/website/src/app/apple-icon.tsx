@@ -5,6 +5,8 @@
  */
 import { ImageResponse } from 'next/og';
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
 
@@ -20,7 +22,7 @@ export default function AppleIcon() {
           alignItems: 'center',
           justifyContent: 'center',
           // Solid background for compatibility
-          background: '#14213d',
+          backgroundColor: '#14213d',
           borderRadius: 36,
         }}
       >
@@ -30,8 +32,7 @@ export default function AppleIcon() {
             height: 92,
             borderRadius: 24,
             // Replace conic gradient with solid color
-            background: '#60a5fa',
-            boxShadow: '0 12px 40px rgba(96,165,250,0.35)'
+            backgroundColor: '#60a5fa',
           }}
         />
       </div>

@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-11",
   "description": "Zero-point energy \u2014 ground state E\u2080 = \u00bd\u210f\u03c9 \u2260 0 (vacuum fluctuations)",
-  "timestamp": 1762812910.939826,
+  "timestamp": 1763064358.630286,
   "hardware": {
     "backend": "CuPy",
     "python": "3.13.9"

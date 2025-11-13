@@ -5,6 +5,8 @@
  */
 import { ImageResponse } from 'next/og';
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 export const size = { width: 32, height: 32 };
 export const contentType = 'image/png';
 
@@ -20,7 +22,7 @@ export default function Icon() {
           alignItems: 'center',
           justifyContent: 'center',
           // Solid background for compatibility
-          background: '#1e3a8a',
+          backgroundColor: '#1e3a8a',
           borderRadius: 8,
         }}
       >
@@ -30,8 +32,7 @@ export default function Icon() {
             height: 18,
             borderRadius: 6,
             // Avoid conic gradients
-            background: '#60a5fa',
-            boxShadow: '0 0 6px rgba(74,144,226,0.65) inset',
+            backgroundColor: '#60a5fa',
           }}
         />
       </div>

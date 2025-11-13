@@ -1,0 +1,31 @@
+{
+  "certificationId": "64d0da14-2647-4975-82c8-45a4a60bc80b",
+  "experimentId": "COUP-01",
+  "timestamp": "2025-11-13T17:56:10.406Z",
+  "hash": "4d1f35ce5c5ad1c8df8849047cb59dac1da3023a94113dbcb6ae567f467beb0b",
+  "validatorFingerprint": "sha256:0bfddbbfde35702942e668a0e3d7b72514c621f7e7d7d2f3bf2ed866d925f9f4",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "platform": "Win32",
+    "language": "en-US",
+    "screenResolution": "1536x864",
+    "colorDepth": 24,
+    "timezone": "America/Los_Angeles",
+    "latticeSize": 128,
+    "dt": 0.0002,
+    "dx": 0.02
+  },
+  "validation": {
+    "test_id": "COUP-01",
+    "description": "Relativistic + Gravitational Time Dilation (Phase 1)",
+    "passed": true,
+    "runtime_sec": 15.808040100004291,
+    "energy_drift": 0.000028233231941558782,
+    "primary_metric": 0.0010888569057818205,
+    "metric_name": "coupling_strength_error",
+    "convergence_validated": true,
+    "notes": "ω_ratio: measured=0.9994, theory=1.0005",
+    "timestamp": "2025-11-13T17:25:18.396230+00:00"
+  },
+  "version": "2.0"
+}

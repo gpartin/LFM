@@ -15,58 +15,80 @@ export default async function Image() {
   const title = 'Emergent Physics Lab';
   const subtitle = 'Emergent Gravity • Quantum • Electromagnetism';
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: 56,
-          // Use backgroundColor for @vercel/og compatibility
-          backgroundColor: '#0b1326',
-          border: '2px solid #1e3a8a',
-          color: '#eaf1ff',
-          fontFamily:
-            'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-        }}
-      >
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 10, backgroundColor: '#1e3a8a' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 16,
-              // Replace gradients with solid color for compatibility
-              backgroundColor: '#1e3a8a',
-              boxShadow: '0 8px 30px rgba(96,165,250,0.45)',
-            }}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: -0.5 }}>{title}</div>
-            <div style={{ fontSize: 22, opacity: 0.9 }}>{subtitle}</div>
-          </div>
-        </div>
-
+  try {
+    return new ImageResponse(
+      (
         <div
           style={{
-            alignSelf: 'flex-end',
-            fontSize: 18,
-            color: '#c7d7ff',
-            background: 'rgba(9,14,28,0.45)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            padding: '10px 14px',
-            borderRadius: 10,
-            backdropFilter: 'blur(4px)',
+            width: 1200,
+            height: 630,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            padding: 56,
+            position: 'relative',
+            background: '#0a0e27',
+            backgroundColor: '#0a0e27',
+            color: '#e0e6ed',
+            fontFamily:
+              'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
           }}
         >
-          emergentphysicslab.com
+          {/* Accent strip */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: 1200, height: 12, backgroundColor: '#00d9ff' }} />
+
+          {/* Title (condensed for Twitter) */}
+          <div style={{ display: 'flex', flexDirection: 'column', marginBottom: 18 }}>
+            <div style={{ fontSize: 62, fontWeight: 800, color: '#00d9ff' }}>Fundamental Forces</div>
+            <div style={{ fontSize: 46, fontWeight: 800, color: '#e0e6ed' }}>Emerging from</div>
+            <div style={{ fontSize: 46, fontWeight: 800, color: '#ff6b35' }}>a Single Equation</div>
+          </div>
+
+          {/* Equation panel */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: '#141b3d',
+              border: '2px solid #1e2847',
+              borderRadius: 12,
+              padding: 18,
+              marginBottom: 18,
+            }}
+          >
+            <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 28, color: '#00d9ff' }}>
+              d²E/dt² = c²∇²E - χ²(x,t)E
+            </div>
+          </div>
+
+          {/* URL */}
+          <div style={{ fontSize: 18, color: '#8892a6' }}>emergentphysicslab.com</div>
         </div>
-      </div>
-    ),
-    { width, height }
-  );
+      ),
+      { width, height }
+    );
+  } catch (err) {
+    console.error('[twitter-image] generation failed:', err);
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: 1200,
+            height: 630,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#0b1326',
+            color: '#ffffff',
+            fontSize: 48,
+            fontFamily: 'system-ui, Arial',
+          }}
+        >
+          Emergent Physics Lab
+        </div>
+      ),
+      { width, height }
+    );
+  }
 }

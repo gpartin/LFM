@@ -8,7 +8,7 @@
   "relative_diff": 7.165234746292048e-10,
   "tolerance": 0.05,
   "amplitude_ratio": 5.0,
-  "runtime_sec": 19.946877241134644,
+  "runtime_sec": 5.969629287719727,
   "on_gpu": true,
   "validation": {
     "test_id": "GRAV-26",
@@ -26,9 +26,9 @@
     "metrics": {
       "geodesic_deviation": 7.165234746292048e-10
     },
-    "timestamp": "2025-11-10 14:10:59"
+    "timestamp": "2025-11-13 15:18:35"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:10:59.465852Z"
+  "timestamp": "2025-11-13T23:18:35.414996Z"
 }

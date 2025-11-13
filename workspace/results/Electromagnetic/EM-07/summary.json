@@ -10,8 +10,8 @@
     "analytical_verification": "\u03c7-field electromagnetic coupling verified analytically"
   },
   "tolerance": 0.15,
-  "runtime_sec": 1.1549100875854492,
+  "runtime_sec": 1.3223299980163574,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:15:28.373569Z"
+  "timestamp": "2025-11-13T20:06:21.992589Z"
 }

@@ -104,19 +104,36 @@ export default function Header() {
                       </div>
                     </div>
                     
-                    {/* Browse All - Prominent */}
+                    {/* Main Links - Prominent */}
                     <Link
                       href="/experiments/browse"
                       className="block px-4 py-3 hover:bg-space-dark transition-colors border-b border-space-border bg-accent-chi/5"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-semibold text-accent-chi">Browse All Experiments</div>
+                          <div className="font-semibold text-accent-chi">Browse Showcase Experiments</div>
                           <div className="text-xs text-text-muted">
-                            {featuredExperiments.length + otherExperiments.length} total experiments
+                            Interactive demonstrations ({featuredExperiments.length + otherExperiments.length} total)
                           </div>
                         </div>
                         <svg className="w-5 h-5 text-accent-chi" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </Link>
+                    
+                    <Link
+                      href="/research"
+                      className="block px-4 py-3 hover:bg-space-dark transition-colors border-b border-space-border bg-accent-particle/5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-accent-particle">Research Experiments</div>
+                          <div className="text-xs text-text-muted">
+                            Test harness validation (105 total tests)
+                          </div>
+                        </div>
+                        <svg className="w-5 h-5 text-accent-particle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </div>

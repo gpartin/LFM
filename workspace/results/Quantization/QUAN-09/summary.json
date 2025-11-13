@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-09",
   "description": "Heisenberg uncertainty \u2014 \u0394x\u00b7\u0394k \u2248 1/2",
-  "timestamp": 1762812899.530861,
+  "timestamp": 1763064346.6540082,
   "hardware": {
     "backend": "CuPy",
     "python": "3.13.9"
