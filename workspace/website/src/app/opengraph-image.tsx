@@ -27,8 +27,8 @@ export default async function Image() {
           justifyContent: 'center',
           alignItems: 'flex-start',
           padding: 64,
-          background:
-            'radial-gradient(1200px 630px at 0% 0%, #0b1220 0%, #0a0f1a 60%, #070c14 100%)',
+          // Use a solid background color for broad renderer compatibility
+          background: '#0a0f1a',
           color: '#e5f0ff',
           fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
         }}
@@ -46,8 +46,8 @@ export default async function Image() {
               width: 96,
               height: 96,
               borderRadius: 24,
-              background:
-                'conic-gradient(from 45deg, #99f6e4, #60a5fa, #a78bfa, #f472b6, #99f6e4)',
+              // Avoid conic/radial gradients; use solid color instead
+              background: '#1e3a8a',
               boxShadow: '0 10px 40px rgba(96,165,250,0.35)',
             }}
           />

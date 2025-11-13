@@ -19,7 +19,8 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'radial-gradient(circle at 40% 40%, #4A90E2, #1e3a8a)',
+          // Solid background for compatibility
+          background: '#1e3a8a',
           borderRadius: 8,
         }}
       >
@@ -28,8 +29,8 @@ export default function Icon() {
             width: 18,
             height: 18,
             borderRadius: 6,
-            background:
-              'conic-gradient(from 45deg, #99f6e4, #60a5fa, #a78bfa, #f472b6, #99f6e4)',
+            // Avoid conic gradients
+            background: '#60a5fa',
             boxShadow: '0 0 6px rgba(74,144,226,0.65) inset',
           }}
         />

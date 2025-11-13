@@ -25,8 +25,8 @@ export default async function Image() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 56,
-          background:
-            'linear-gradient(135deg, #0b1326 0%, #14213d 60%, #1b2a52 100%)',
+          // Use solid color to avoid unsupported CSS functions in @vercel/og renderer
+          background: '#0b1326',
           color: '#eaf1ff',
           fontFamily:
             'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
@@ -38,8 +38,8 @@ export default async function Image() {
               width: 64,
               height: 64,
               borderRadius: 16,
-              background:
-                'radial-gradient(circle at 30% 30%, #60a5fa 0%, #1e3a8a 60%, #0b1326 100%)',
+              // Replace gradients with solid color for compatibility
+              background: '#1e3a8a',
               boxShadow: '0 8px 30px rgba(96,165,250,0.45)',
             }}
           />

@@ -19,8 +19,8 @@ export default function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background:
-            'linear-gradient(135deg, #0b1326 0%, #14213d 60%, #1b2a52 100%)',
+          // Solid background for compatibility
+          background: '#14213d',
           borderRadius: 36,
         }}
       >
@@ -29,8 +29,8 @@ export default function AppleIcon() {
             width: 92,
             height: 92,
             borderRadius: 24,
-            background:
-              'conic-gradient(from 45deg, #99f6e4, #60a5fa, #a78bfa, #f472b6, #99f6e4)',
+            // Replace conic gradient with solid color
+            background: '#60a5fa',
             boxShadow: '0 12px 40px rgba(96,165,250,0.35)'
           }}
         />
