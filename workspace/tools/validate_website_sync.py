@@ -85,15 +85,46 @@ def load_test_configs() -> Dict[str, Dict]:
             if not test_id:
                 continue
             
+            # Extract chi value - can be scalar or gradient
+            # Match the logic in experiment_sync_api.js extractChi()
+            chi_value = None
+            if "chi_const" in test:
+                chi_value = test["chi_const"]
+            elif "chi_gradient" in test:
+                chi_value = test["chi_gradient"]  # list [min, max]
+            else:
+                # Check all common chi field names
+                chi_keys = ['chi', 'chi_base', 'chi_bg', 'chi_left', 'chi_right', 
+                           'chi_inside', 'chi_outside', 'chi_barrier']
+                for key in chi_keys:
+                    if key in test:
+                        chi_value = test[key]
+                        break
+                
+                # Fallback to base params
+                if chi_value is None:
+                    if "chi" in base_params:
+                        chi_value = base_params["chi"]
+                    else:
+                        chi_value = 0.0
+            
+            # Extract latticeSize with same priority as experiment_sync_api.js:
+            # test.grid_size -> base_params.grid_points -> base_params.N -> 256
+            lattice_size = test.get("grid_size")
+            if lattice_size is None:
+                lattice_size = base_params.get("grid_points")
+            if lattice_size is None:
+                lattice_size = base_params.get("N", 256)
+            
             tests[test_id] = {
                 "tier": tier_info["tier"],
                 "tierName": tier_info["name"],
                 "config_file": tier_info["config"],
-                "latticeSize": base_params.get("grid_points") or base_params.get("N", 256),
+                "latticeSize": lattice_size,
                 "dt": base_params.get("dt") or base_params.get("time_step", 0.001),
                 "dx": base_params.get("dx") or base_params.get("space_step", 0.01),
                 "steps": test.get("steps", base_params.get("steps", 5000)),
-                "chi": test.get("chi_const", base_params.get("chi", 0.0)),
+                "chi": chi_value,
             }
     
     return tests
@@ -226,8 +257,28 @@ def validate_sync() -> Tuple[bool, List[str]]:
         if config["steps"] != website["steps"]:
             mismatches.append(f"steps: config={config['steps']}, website={website['steps']}")
         
-        # Compare chi (allow small float differences)
-        if abs(config["chi"] - website["chi"]) > 1e-10:
+        # Compare chi (allow small float differences or list equality)
+        config_chi = config["chi"]
+        website_chi = website["chi"]
+        chi_mismatch = False
+        if isinstance(config_chi, list) and isinstance(website_chi, list):
+            # Both are lists - compare element-wise
+            if len(config_chi) != len(website_chi):
+                chi_mismatch = True
+            else:
+                for c, w in zip(config_chi, website_chi):
+                    if abs(c - w) > 1e-10:
+                        chi_mismatch = True
+                        break
+        elif isinstance(config_chi, (int, float)) and isinstance(website_chi, (int, float)):
+            # Both are numbers - compare with tolerance
+            if abs(config_chi - website_chi) > 1e-10:
+                chi_mismatch = True
+        else:
+            # Type mismatch
+            chi_mismatch = True
+        
+        if chi_mismatch:
             mismatches.append(f"chi: config={config['chi']}, website={website['chi']}")
         
         if mismatches:
