@@ -17,7 +17,7 @@ import ParameterSlider from '@/components/ui/ParameterSlider';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { decideSimulationProfile } from '@/physics/core/simulation-profile';
 import SimpleCanvas from '@/components/visuals/SimpleCanvas';
-import FieldSliceCanvas from '@/components/visuals/FieldSliceCanvas';
+import UniversalCanvas from '@/components/visuals/UniversalCanvas';
 import { QuantumTunnelingSimulation } from '@/physics/quantum/quantum_tunneling_simulation';
 import { useSimulationState } from '@/hooks/useSimulationState';
 
@@ -178,17 +178,12 @@ export default function QuantumTunnelingPage() {
         <div className="lg:col-span-3">
           <div className="bg-space-panel rounded-lg overflow-hidden border border-space-border h-[600px]">
             {uiMode === 'advanced' ? (
-              <FieldSliceCanvas 
+              <UniversalCanvas 
+                kind="quantum"
                 simulation={simRef}
                 isRunning={state.isRunning}
-                showGrid={true}
-                showWave={state.ui.showWave}
-                showBarrier={state.ui.showBarrier}
-                showTransmissionOverlay={state.ui.showTransmissionPlot}
+                ui={state.ui}
                 transmissionValue={lastQMetricsRef.current?.transmission ?? '—'}
-                reflectionValue={lastQMetricsRef.current?.reflection ?? '—'}
-                conservationValue={lastQMetricsRef.current?.conservation ?? '—'}
-                updateInterval={3}
               />
             ) : (
               <SimpleCanvas isRunning={state.isRunning} parameters={{ ...state.params, __dim: dimMode }} views={{ showGrid: false, showField: false }} />

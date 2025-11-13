@@ -165,6 +165,7 @@ export default function Header() {
               badge={formatPassRate()}
               icon="💻"
             />
+            {/* Implications link intentionally removed from public nav */}
             <Link
               href={`/about?from=${encodeURIComponent(getFromParam())}`}
               className="px-4 py-2 text-text-secondary hover:text-accent-chi transition-colors"

@@ -14,7 +14,7 @@ import StandardMetricsPanel from '@/components/experiment/StandardMetricsPanel';
 import ParameterSlider from '@/components/ui/ParameterSlider';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { NBodyOrbitSimulation, createFigure8ThreeBody } from '@/physics/forces/n-body-orbit';
-import NBodyCanvas from '@/components/visuals/NBodyCanvas';
+import UniversalCanvas from '@/components/visuals/UniversalCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
 import { decideSimulationProfile } from '@/physics/core/simulation-profile';
 import SimpleCanvas from '@/components/visuals/SimpleCanvas';
@@ -24,6 +24,9 @@ export default function ThreeBodyPage() {
   const [backend, setBackend] = useState<'webgpu' | 'cpu'>('webgpu');
   const [uiMode, setUiMode] = useState<'advanced' | 'simple'>('advanced');
   const [dimMode, setDimMode] = useState<'3d' | '1d'>('3d');
+  // Editable parameters (MVP)
+  const [chiStrength, setChiStrength] = useState<number>(0.25);
+  const [latticeN, setLatticeN] = useState<number>(64);
   const [simReady, setSimReady] = useState(0); // Force re-render when sim initializes
   
   const deviceRef = useRef<GPUDevice | null>(null);
@@ -57,7 +60,7 @@ export default function ThreeBodyPage() {
     });
   }, [dispatch]);
 
-  // Initialize simulation - three-body preset (uses binary orbit as base for MVP)
+  // Initialize simulation - three-body preset with editable chiStrength and lattice size
   useEffect(() => {
     let cancelled = false;
     async function initSim() {
@@ -82,8 +85,9 @@ export default function ThreeBodyPage() {
         }
         
         // Create classic figure-8 three-body orbit (Chenciner & Montgomery, 2000)
-        const actualLatticeSize = Math.min(state.capabilities?.maxLatticeSize ?? 64, 64);
-        const sim = createFigure8ThreeBody(device, 0.25, actualLatticeSize, false);
+        const capMax = state.capabilities?.maxLatticeSize ?? latticeN;
+        const actualLatticeSize = Math.min(capMax, latticeN);
+        const sim = createFigure8ThreeBody(device, chiStrength, actualLatticeSize, false);
         await sim.initialize();
         if (cancelled) { sim.destroy(); return; }
         simRef.current = sim;
@@ -102,16 +106,22 @@ export default function ThreeBodyPage() {
       simRef.current = null;
       deviceRef.current = null;
     };
-  }, [backend, state.capabilities, state.resetTrigger, stopSimulation]);
+  }, [backend, state.capabilities, state.resetTrigger, stopSimulation, chiStrength, latticeN]);
 
   // Animation loop to step simulation
   useEffect(() => {
-    if (!state.isRunning) return;
+    if (!state.isRunning) {
+      // Cancel any in-flight RAF when pausing
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      return;
+    }
     
-    let rafId: number;
     const tick = async () => {
       const sim = simRef.current;
-      if (!sim) return;
+      if (!sim || !isRunningRef.current) return;
       
       // Step simulation (10 steps per frame for smooth animation)
       await sim.stepBatch(10);
@@ -129,14 +139,17 @@ export default function ThreeBodyPage() {
         },
       });
       
-      if (state.isRunning) {
-        rafId = requestAnimationFrame(tick);
+      if (isRunningRef.current) {
+        rafRef.current = requestAnimationFrame(tick);
       }
     };
     
-    rafId = requestAnimationFrame(tick);
+    rafRef.current = requestAnimationFrame(tick);
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
   }, [state.isRunning, dispatch]);
 
@@ -158,7 +171,7 @@ export default function ThreeBodyPage() {
           <h2 className="text-2xl font-bold text-accent-chi mb-4">The Famous Figure-8 Orbit</h2>
           <div className="prose prose-invert max-w-none text-text-secondary space-y-4">
             <p className="text-sm text-yellow-400 mb-4">
-              <strong>Note:</strong> Using the Chenciner-Montgomery figure-8 solution. Parameter controls coming soon!
+              <strong>Note:</strong> Using the Chenciner-Montgomery figure-8 solution. You can now adjust chi strength and lattice resolution in the right panel; more controls coming soon.
             </p>
             <p>
               This simulation demonstrates the <strong>three-body problem</strong>—one of physics' most famous challenges. 
@@ -187,13 +200,13 @@ export default function ThreeBodyPage() {
             <div className="lg:col-span-3">
               <div className="bg-space-panel rounded-lg overflow-hidden border border-space-border h-[600px]">
                 {uiMode === 'advanced' ? (
-                  <NBodyCanvas 
+                  <UniversalCanvas
                     key={simReady}
+                    kind="nbody"
                     simulation={simRef}
                     isRunning={state.isRunning}
-                    showParticles={state.ui.showParticles}
-                    showTrails={state.ui.showTrails}
-                    showBackground={state.ui.showBackground}
+                    ui={state.ui}
+                    chiStrength={chiStrength}
                   />
                 ) : (
                   <SimpleCanvas
@@ -233,34 +246,35 @@ export default function ThreeBodyPage() {
             <div className="lg:col-span-1 space-y-6">
               <div className="panel" data-panel="experiment-parameters">
                 <h3 className="text-lg font-bold mb-4">Experiment Parameters</h3>
-                <div className="space-y-3 text-sm text-text-secondary" data-section="profile-parameters">
-                  <div className="flex justify-between">
-                    <span>Number of Bodies:</span>
-                    <span className="text-accent-chi font-semibold">3</span>
+                <div className="space-y-5" data-section="profile-parameters">
+                  <div className="text-sm text-text-secondary grid grid-cols-2 gap-2">
+                    <div className="flex justify-between"><span>Number of Bodies:</span><span className="text-accent-chi font-semibold">3</span></div>
+                    <div className="flex justify-between"><span>Mass (each):</span><span className="text-text-primary">1.0 M☉</span></div>
+                    <div className="flex justify-between"><span>Initial Pattern:</span><span className="text-text-primary">Figure-8</span></div>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Mass (each):</span>
-                    <span className="text-text-primary">1.0 M☉</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Initial Pattern:</span>
-                    <span className="text-text-primary">Figure-8</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Chi Strength:</span>
-                    <span className="text-text-primary">0.25</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Lattice Size:</span>
-                    <span className="text-text-primary">64³</span>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-blue-500/10 border-l-4 border-blue-500 rounded" data-section="experiment-parameters">
-                  <p className="text-xs text-text-secondary">
-                    <strong className="text-blue-400">Info:</strong> This uses the Chenciner-Montgomery figure-8 solution 
-                    with precise initial conditions. Interactive parameter controls and other configurations (Lagrange triangles, 
-                    unstable chaos) coming soon!
-                  </p>
+                  <ParameterSlider
+                    label="Chi Strength"
+                    value={chiStrength}
+                    min={0.05}
+                    max={0.6}
+                    step={0.01}
+                    unit=""
+                    tooltip="Effective gravitational coupling in the emergent model"
+                    onDragStart={() => stopSimulation()}
+                    onChange={(v) => setChiStrength(Number.isFinite(v) ? v : chiStrength)}
+                  />
+                  <ParameterSlider
+                    label="Lattice Size (N)"
+                    value={latticeN}
+                    min={32}
+                    max={96}
+                    step={16}
+                    unit=""
+                    tooltip="Grid resolution for chi field (higher is slower, but more accurate)"
+                    onDragStart={() => stopSimulation()}
+                    onChange={(v) => setLatticeN(Math.round(v))}
+                  />
+                  <div className="text-xs text-text-muted">Changing parameters reinitializes the simulation.</div>
                 </div>
               </div>
 

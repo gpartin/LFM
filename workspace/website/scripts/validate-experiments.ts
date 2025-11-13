@@ -28,7 +28,7 @@ const SHOWCASE_EXPERIMENTS = [
   'binary-orbit',
   'three-body',
   'black-hole',
-  'stellar-collapse',
+  'gravitational-lensing',
   'big-bang',
   'quantum-tunneling', // Newly added quantum profile experiment
 ];

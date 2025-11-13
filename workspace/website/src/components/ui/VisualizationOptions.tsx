@@ -13,16 +13,18 @@ interface ViewToggleProps {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }
 
-function ViewToggle({ label, checked, onChange }: ViewToggleProps) {
+function ViewToggle({ label, checked, onChange, disabled = false }: ViewToggleProps) {
   return (
-    <label className="flex items-center space-x-3 cursor-pointer group">
+    <label className={`flex items-center space-x-3 group ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} title={disabled ? 'Coming soon for this experiment' : undefined}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-5 h-5 rounded border-2 border-purple-500 bg-space-dark checked:bg-purple-500 checked:border-purple-400 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-space-darker transition-all duration-200 cursor-pointer"
+        disabled={disabled}
+        className={`w-5 h-5 rounded border-2 border-purple-500 bg-space-dark checked:bg-purple-500 checked:border-purple-400 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-space-darker transition-all duration-200 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       />
       <span className="text-sm text-text-secondary group-hover:text-purple-400 transition-colors duration-200">
         {label}
@@ -35,6 +37,7 @@ export interface VisualizationToggle {
   key: string;
   label: string;
   checked: boolean;
+  disabled?: boolean;
 }
 
 interface VisualizationOptionsProps {
@@ -70,6 +73,7 @@ export default function VisualizationOptions({ toggles, onChange }: Visualizatio
               label={toggle.label}
               checked={toggle.checked}
               onChange={(checked) => onChange(toggle.key, checked)}
+              disabled={toggle.disabled}
             />
           ))}
         </div>

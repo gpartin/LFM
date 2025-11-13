@@ -15,7 +15,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-20">
+  <main className="flex-1 pt-20">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20">
           {/* Background gradient */}
@@ -56,6 +56,8 @@ export default function Home() {
                   📚 Read the Science
                 </Link>
               </div>
+
+              {/* Implications CTA removed: now accessible via header nav */}
 
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">

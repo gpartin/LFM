@@ -15,7 +15,7 @@ import StandardMetricsPanel, { MetricConfig } from '@/components/experiment/Stan
 import ParameterSlider from '@/components/ui/ParameterSlider';
 import { detectBackend } from '@/physics/core/backend-detector';
 import { BinaryOrbitSimulation, OrbitConfig } from '@/physics/forces/binary-orbit';
-import OrbitCanvas from '@/components/visuals/OrbitCanvas';
+import UniversalCanvas from '@/components/visuals/UniversalCanvas';
 import { useSimulationState } from '@/hooks/useSimulationState';
 import { WebGPUErrorBoundary } from '@/components/ErrorBoundary';
 import { decideSimulationProfile } from '@/physics/core/simulation-profile';
@@ -416,18 +416,11 @@ export default function BinaryOrbitPage() {
                 {/* 3D Canvas renders full scene; no 2D overlay needed */}
                 {uiMode === 'advanced' ? (
                   <WebGPUErrorBoundary>
-                    <OrbitCanvas
+                    <UniversalCanvas
+                      kind="orbit"
                       simulation={simRef}
                       isRunning={state.isRunning}
-                      showParticles={state.ui.showParticles}
-                      showTrails={state.ui.showTrails}
-                      showChi={state.ui.showChi}
-                      showLattice={state.ui.showLattice}
-                      showVectors={state.ui.showVectors}
-                      showDomes={state.ui.showDomes}
-                      showIsoShells={state.ui.showIsoShells}
-                      showWell={state.ui.showWell}
-                      showBackground={state.ui.showBackground}
+                      ui={state.ui}
                       chiStrength={state.params.chiStrength}
                     />
                   </WebGPUErrorBoundary>
