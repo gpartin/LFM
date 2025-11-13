@@ -254,6 +254,52 @@ export class NBodyOrbitSimulation {
     const half = width / 2;
     return { N, dx, width, half };
   }
+
+  /**
+   * Analytic chi field gradient at position (for visualization)
+   * Returns gradient of chi field: ∇χ = -2 * Σ(m_i * exp(-r_i²/σ²) * (x - x_i) / σ²)
+   */
+  analyticChiGradientAt(pos: [number, number, number]): [number, number, number] {
+    const sigma = this.latticeConfig.sigma ?? 2.0;
+    const invSigma2 = 1.0 / (sigma * sigma);
+    let gx = 0, gy = 0, gz = 0;
+    for (const p of this.state.particles) {
+      const dx = pos[0] - p.position[0];
+      const dy = pos[1] - p.position[1];
+      const dz = pos[2] - p.position[2];
+      const r2 = dx*dx + dy*dy + dz*dz;
+      const w = p.mass * Math.exp(-r2 * invSigma2);
+      const coeff = w * (-2 * invSigma2);
+      gx += coeff * dx;
+      gy += coeff * dy;
+      gz += coeff * dz;
+    }
+    return [gx, gy, gz];
+  }
+
+  /**
+   * Analytic chi field value at position (baseline + particle Gaussians, for visualization)
+   */
+  analyticChiAt(pos: [number, number, number]): number {
+    const sigma = this.latticeConfig.sigma ?? 2.0;
+    const invSigma2 = 1.0 / (sigma * sigma);
+    let chi = this.config.chiStrength; // baseline
+    for (const p of this.state.particles) {
+      const dx = pos[0] - p.position[0];
+      const dy = pos[1] - p.position[1];
+      const dz = pos[2] - p.position[2];
+      const r2 = dx*dx + dy*dy + dz*dz;
+      chi += p.mass * Math.exp(-r2 * invSigma2);
+    }
+    return chi;
+  }
+
+  /**
+   * Baseline chi field value (for visualization compatibility)
+   */
+  chiBaseline(): number {
+    return this.config.chiStrength;
+  }
 }
 
 /**

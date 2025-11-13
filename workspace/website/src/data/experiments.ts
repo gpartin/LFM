@@ -234,35 +234,35 @@ const SHOWCASE_EXPERIMENTS: ExperimentDefinition[] = [
   },
   
   {
-    id: 'stellar-collapse',
-    displayName: 'Stellar Collapse',
+    id: 'gravitational-lensing',
+    displayName: 'Gravitational Lensing',
     type: 'SHOWCASE',
     category: 'Astrophysics',
-    tagline: 'Star collapse into black hole via field concentration',
-    description: 'Models stellar collapse as progressive χ-field concentration. As field steepens, escape velocity increases until event horizon forms.',
-    icon: '⭐',
-    difficulty: 'advanced',
-    featured: false,
+    tagline: 'Light bending around massive objects (Einstein 1919)',
+    description: 'Shows how light rays bend when passing near massive objects due to χ field gradients. Demonstrates Einstein\'s 1919 eclipse observation, galaxy cluster lensing, and black hole photon spheres—all from pure LFM field dynamics.',
+    icon: '💫',
+    difficulty: 'intermediate',
+    featured: true,
     simulation: 'binary-orbit',
     backend: 'webgpu',
     initialConditions: {
       latticeSize: 64,
-      dt: 0.005,
+      dt: 0.0001,
       dx: 0.1,
-      steps: 8000,
+      steps: 10000,
       chi: 0.5,
       particles: [
-        { mass: 5000, position: [0, 0, 0], velocity: [0, 0, 0] },
-        { mass: 1.0, position: [4, 0, 0], velocity: [0, 0.3, 0] }
+        { mass: 2000, position: [0, 0, 0], velocity: [0, 0, 0] },
+        { mass: 0.01, position: [3, 0, 0], velocity: [0, 0.9, 0] }
       ]
     },
     visualization: {
       showParticles: true,
       showTrails: true,
-      showChi: true,
+      showChi: false,
       showLattice: false,
       showVectors: false,
-      showWell: true,
+      showWell: false,
       showDomes: false,
       showIsoShells: false,
       showBackground: true
@@ -395,6 +395,42 @@ const SHOWCASE_EXPERIMENTS: ExperimentDefinition[] = [
       discovery: 'Tier 4 - Quantization'
     },
     status: 'production'
+  }
+  ,
+  {
+    id: 'em-thermo-coupling',
+    displayName: 'EM → Thermal Coupling',
+    type: 'SHOWCASE',
+    category: 'Electromagnetic + Thermodynamics',
+    tagline: 'Light heats a medium: E² power deposits into temperature field',
+    description: 'A minimal crossover demo. A Gaussian EM wave deposits energy (∝ E²) into a temperature field that diffuses over time. Adjust amplitude, frequency, absorption, and diffusivity to see heating patterns and spread.',
+    icon: '⚡',
+    difficulty: 'beginner',
+    featured: false,
+    simulation: 'field-dynamics',
+    backend: 'cpu',
+    initialConditions: {
+      latticeSize: 64,
+      dt: 0.01,
+      dx: 0.1,
+      steps: 4000,
+      chi: 0.0,
+      fieldConfig: { initialProfile: 'gaussian', chiDynamics: false }
+    },
+    visualization: {
+      showParticles: false,
+      showTrails: false,
+      showChi: false,
+      showLattice: false,
+      showVectors: false,
+      showWell: false,
+      showDomes: false,
+      showIsoShells: false,
+      showBackground: false
+    },
+    links: {},
+    status: 'beta',
+    implementationNotes: 'Canvas-based EMThermo demo. Consider adding Poynting vectors and energy conservation metrics.'
   }
 ];
 

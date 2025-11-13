@@ -5,7 +5,7 @@
  * Test Statistics - Calculated from Actual Test Results (Canonical Source Preferred)
  * ======================================================
  * 
- * Generated: 2025-11-12T17:18:46.022Z
+ * Generated: 2025-11-13T03:32:02.017Z
  * Source: workspace/results/test_registry_canonical.json
  * 
  * Semantics:
@@ -61,7 +61,7 @@ export const testStatistics = {
 },
   
   /** ISO timestamp of when this was generated */
-  generatedAt: '2025-11-12T17:18:46.022Z'
+  generatedAt: '2025-11-13T03:32:02.017Z'
 } as const;
 
 /**

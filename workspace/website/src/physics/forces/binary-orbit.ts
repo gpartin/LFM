@@ -58,7 +58,9 @@ export class BinaryOrbitSimulation {
   
   private latticeConfig: LatticeConfig;
   private stepCount: number = 0; // used for throttling expensive calculations
-  private lastFieldEnergy: number = 0;
+  private lastFieldEnergy: number = 0; // cached total energy (legacy name)
+  private lastTotalEnergy: number = 0; // explicit cache of total energy
+  private lastKineticEnergy: number = 0; // explicit cache of kinetic energy
   
   // Diagnostics
   private diagnostics: DiagnosticLogger;
@@ -100,6 +102,107 @@ export class BinaryOrbitSimulation {
       maxSamples: 10000,
       samplingInterval: 0, // Record every call
     });
+  }
+
+  /**
+   * Apply a gentle one-time inward radial nudge to the secondary (moon) toward the primary (BH).
+   * The nudge magnitude is a small fraction of the instantaneous circular speed to keep it subtle.
+   * Momentum compensation is applied to the primary to keep center-of-mass momentum near zero.
+   *
+   * Args:
+   *   fractionOfCircular: Fraction of v_circ to use for radial nudge (default 0.05 = 5%).
+   */
+  applyRadialNudgeTowardPrimary(fractionOfCircular: number = 0.05): void {
+    try {
+      const p1 = this.state.particle1; // primary (BH)
+      const p2 = this.state.particle2; // secondary (moon)
+      if (!p1 || !p2) return;
+
+      // Compute radial unit vector from COM to secondary (moon)
+      const m1 = p1.mass;
+      const m2 = p2.mass;
+      const M = m1 + m2;
+      const com: [number, number, number] = [
+        (p1.position[0] * m1 + p2.position[0] * m2) / M,
+        (p1.position[1] * m1 + p2.position[1] * m2) / M,
+        (p1.position[2] * m1 + p2.position[2] * m2) / M,
+      ];
+      const rx = p2.position[0] - com[0];
+      const ry = p2.position[1] - com[1];
+      const rz = p2.position[2] - com[2];
+      const r = Math.max(1e-8, Math.hypot(rx, ry, rz));
+      const rhat: [number, number, number] = [rx / r, ry / r, rz / r];
+
+      // Estimate circular speed from current radius/force
+      const F2 = this.calculateAnalyticChiForce(p2);
+      const a2x = F2[0] / m2; const a2y = F2[1] / m2; const a2z = F2[2] / m2;
+      const a_inward = -(a2x * rhat[0] + a2y * rhat[1] + a2z * rhat[2]);
+      const v_circ = Math.sqrt(Math.max(0, a_inward * r));
+
+      // Choose nudge magnitude as small fraction of circular speed; clamp to a safe minimum/maximum
+      const frac = isFinite(fractionOfCircular) && fractionOfCircular > 0 ? fractionOfCircular : 0.05;
+      const base = isFinite(v_circ) && v_circ > 0 ? v_circ : 1.0;
+      let dvMag = base * frac;
+      dvMag = Math.min(Math.max(dvMag, 0.005), 0.2 * (v_circ || 1)); // [0.005, 0.2 v_circ]
+
+      // Apply inward (toward BH) on the secondary, and compensate on primary for COM momentum
+      const dv2: [number, number, number] = [-rhat[0] * dvMag, -rhat[1] * dvMag, -rhat[2] * dvMag];
+      p2.velocity[0] += dv2[0];
+      p2.velocity[1] += dv2[1];
+      p2.velocity[2] += dv2[2];
+
+      const momentumRatio = m2 / Math.max(1e-8, m1);
+      p1.velocity[0] -= momentumRatio * dv2[0];
+      p1.velocity[1] -= momentumRatio * dv2[1];
+      p1.velocity[2] -= momentumRatio * dv2[2];
+
+      // No need to update chi field here (positions unchanged); next step() refreshes field/time.
+      // This is intentionally a small perturbation to “get things going” when user presses Play.
+      // Console log for debugging and transparency in development builds
+      if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.log('[BinaryOrbit] Applied first-play radial nudge', { dvMag: Number(dvMag.toFixed(4)) });
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[BinaryOrbit] applyRadialNudgeTowardPrimary failed:', e);
+    }
+  }
+
+  /**
+   * Apply damping to the secondary's velocity components when inside a given analogue horizon radius.
+   * Reduces radial component more strongly to prevent "shooting through" the core; lightly damps tangential.
+   * Safe to call every frame; has no effect when outside rs.
+   */
+  applyHorizonDamping(rs: number, radialDamp: number = 0.85, tangentialDamp: number = 0.97): void {
+    try {
+      const p1 = this.state.particle1;
+      const p2 = this.state.particle2;
+      // Identify primary (heavier) and secondary consistently
+      const primary = p1.mass >= p2.mass ? p1 : p2;
+      const secondary = p1.mass >= p2.mass ? p2 : p1;
+      const dx = secondary.position[0] - primary.position[0];
+      const dy = secondary.position[1] - primary.position[1];
+      const dz = secondary.position[2] - primary.position[2];
+      const r = Math.hypot(dx, dy, dz);
+      if (!(r > 0) || !(rs > 0) || r > rs) return;
+
+      const rhat: [number, number, number] = [dx / r, dy / r, dz / r];
+      const v = secondary.velocity;
+      const vr = v[0]*rhat[0] + v[1]*rhat[1] + v[2]*rhat[2];
+      const vRad: [number, number, number] = [vr*rhat[0], vr*rhat[1], vr*rhat[2]];
+      const vTan: [number, number, number] = [v[0]-vRad[0], v[1]-vRad[1], v[2]-vRad[2]];
+
+      // Apply damping
+      const vrNew = vr * radialDamp;
+      const vTanNew: [number, number, number] = [vTan[0]*tangentialDamp, vTan[1]*tangentialDamp, vTan[2]*tangentialDamp];
+      secondary.velocity[0] = vrNew*rhat[0] + vTanNew[0];
+      secondary.velocity[1] = vrNew*rhat[1] + vTanNew[1];
+      secondary.velocity[2] = vrNew*rhat[2] + vTanNew[2];
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[BinaryOrbit] applyHorizonDamping failed:', e);
+    }
   }
 
   async initialize(): Promise<void> {
@@ -1085,8 +1188,11 @@ export class BinaryOrbitSimulation {
 
     // Field energy from lattice
     const fieldEnergy = await this.lattice.calculateEnergy();
-
-    return ke1 + ke2 + fieldEnergy;
+    const total = ke1 + ke2 + fieldEnergy;
+    // Cache breakdown for metrics (avoids recomputing heavy field energy every frame)
+    this.lastKineticEnergy = ke1 + ke2;
+    this.lastTotalEnergy = total;
+    return total;
   }
 
   /**
@@ -1108,6 +1214,23 @@ export class BinaryOrbitSimulation {
       (L1[1] + L2[1]) ** 2 + 
       (L1[2] + L2[2]) ** 2
     );
+  }
+
+  /**
+   * Retrieve last known energy breakdown. Field energy is approximated as total - kinetic
+   * from the last expensive energy calculation. If caches are empty, kinetic is recomputed
+   * from current state and total falls back to state.energy.
+   */
+  getEnergyBreakdown(): { total: number; kinetic: number; field: number } {
+    let kinetic = this.lastKineticEnergy;
+    if (!(kinetic > 0)) {
+      const v1 = this.state.particle1.velocity; const m1 = this.state.particle1.mass;
+      const v2 = this.state.particle2.velocity; const m2 = this.state.particle2.mass;
+      kinetic = 0.5 * m1 * (v1[0]**2 + v1[1]**2 + v1[2]**2) + 0.5 * m2 * (v2[0]**2 + v2[1]**2 + v2[2]**2);
+    }
+    const total = (this.lastTotalEnergy > 0 ? this.lastTotalEnergy : this.state.energy) || kinetic;
+    const field = total - kinetic;
+    return { total, kinetic, field };
   }
 
   private crossProduct(a: [number, number, number], b: [number, number, number]): [number, number, number] {

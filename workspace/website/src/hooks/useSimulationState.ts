@@ -36,6 +36,29 @@ export interface SimulationMetrics {
   separation: string;
   vRatio: string;
   effectiveSpeed: string;
+  // LFM-derived GR-like metrics
+  chiLocal?: string;
+  gradMag?: string;
+  tidalRad?: string;
+  energyKE?: string;
+  energyField?: string;
+  energyRate?: string;
+  clockRate?: string;
+  tidalStress?: string; // Tidal force vs self-gravity ratio
+  disruptionStatus?: string; // "Safe" | "Stressed" | "Disrupted"
+  // Stellar evolution metrics
+  evolutionPhase?: string; // "main-sequence" | "red-giant" | "white-dwarf"
+  stellarRadius?: string;
+  stellarTemperature?: string;
+  coreDensity?: string;
+  surfaceGravity?: string;
+  luminosity?: string;
+  // Gravitational lensing metrics
+  lensingScenario?: string; // "solar-eclipse" | "galaxy-cluster" | "black-hole"
+  deflectionAngle?: string;
+  impactParameter?: string;
+  einsteinRadius?: string;
+  lightDelay?: string;
 }
 
 export interface SimulationUI {
@@ -91,13 +114,13 @@ const initialMetrics: SimulationMetrics = {
 };
 
 const initialParams: SimulationParams = {
-  massRatio: 81.3,
+  massRatio: 16.0,  // matches blackHoleMass to moonMass ratio in page init
   orbitalDistance: 3.0,
   chiStrength: 0.25,
-  sigma: 2.0,
+  sigma: 1.0,
   dt: 0.001,
   latticeSize: 64,
-  simSpeed: 25.0,  // Reduced from 50.0 for more visible orbital motion
+  simSpeed: 500.0,  // Black hole experiment needs higher speed to see action
   startPreset: 1,
   startAngleDeg: 0,
   velocityScale: 1.0,
