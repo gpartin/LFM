@@ -10,7 +10,7 @@
 'use client';
 
 import React from 'react';
-import VisualizationOptions from '@/components/ui/VisualizationOptions';
+import VisualizationOptions, { type VisualizationToggle } from '@/components/ui/VisualizationOptions';
 
 /**
  * StandardVisualizationOptions - Unified visualization controls for all experiments
@@ -52,6 +52,13 @@ interface Props {
   showAdvancedOptions?: boolean;
   /** Additional custom controls to append */
   additionalControls?: React.ReactNode;
+  /** Optionally disable certain toggles to keep UI consistent while signaling unsupported layers */
+  disabledKeys?: string[];
+  /**
+   * Optional experiment-only toggles to merge into the main group
+   * so they appear under the single Visualization Options header.
+   */
+  extraToggles?: VisualizationToggle[];
 }
 
 const defaultLabels: Required<LabelOverrides> = {
@@ -72,25 +79,29 @@ export default function StandardVisualizationOptions({
   labelOverrides = {},
   showAdvancedOptions = true,
   additionalControls,
+  disabledKeys = [],
+  extraToggles = [],
 }: Props) {
   const labels = { ...defaultLabels, ...labelOverrides };
 
+  const isDisabled = (k: string) => disabledKeys.includes(k);
+
   const basicToggles = [
-    { key: 'showParticles', label: labels.showParticles, checked: state.showParticles },
-    { key: 'showTrails', label: labels.showTrails, checked: state.showTrails },
-    { key: 'showBackground', label: labels.showBackground, checked: state.showBackground },
+    { key: 'showParticles', label: labels.showParticles, checked: state.showParticles, disabled: isDisabled('showParticles') },
+    { key: 'showTrails', label: labels.showTrails, checked: state.showTrails, disabled: isDisabled('showTrails') },
+    { key: 'showBackground', label: labels.showBackground, checked: state.showBackground, disabled: isDisabled('showBackground') },
   ];
 
   const advancedToggles = showAdvancedOptions ? [
-    { key: 'showChi', label: labels.showChi, checked: state.showChi ?? false },
-    { key: 'showLattice', label: labels.showLattice, checked: state.showLattice ?? false },
-    { key: 'showVectors', label: labels.showVectors, checked: state.showVectors ?? false },
-    { key: 'showWell', label: labels.showWell, checked: state.showWell ?? false },
-    { key: 'showDomes', label: labels.showDomes, checked: state.showDomes ?? false },
-    { key: 'showIsoShells', label: labels.showIsoShells, checked: state.showIsoShells ?? false },
+    { key: 'showChi', label: labels.showChi, checked: state.showChi ?? false, disabled: isDisabled('showChi') },
+    { key: 'showLattice', label: labels.showLattice, checked: state.showLattice ?? false, disabled: isDisabled('showLattice') },
+    { key: 'showVectors', label: labels.showVectors, checked: state.showVectors ?? false, disabled: isDisabled('showVectors') },
+    { key: 'showWell', label: labels.showWell, checked: state.showWell ?? false, disabled: isDisabled('showWell') },
+    { key: 'showDomes', label: labels.showDomes, checked: state.showDomes ?? false, disabled: isDisabled('showDomes') },
+    { key: 'showIsoShells', label: labels.showIsoShells, checked: state.showIsoShells ?? false, disabled: isDisabled('showIsoShells') },
   ] : [];
 
-  const allToggles = [...basicToggles, ...advancedToggles];
+  const allToggles = [...basicToggles, ...advancedToggles, ...extraToggles];
 
   return (
     <div className="flex items-center gap-6 flex-wrap">
