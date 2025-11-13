@@ -1127,7 +1127,9 @@ class Tier6Harness(BaseTierHarness):
             passed=passed,
             runtime_sec=runtime,
             energy_drift=0.0,  # Not applicable for 1D analytical test
-            primary_metric=finest_wave_speed_error,
+            # Use the SAME metric value that validation logic consumed (l2_based_error)
+            # rather than raw wave speed error, to avoid downstream mismatches.
+            primary_metric=metrics.get("coupling_strength_error", finest_wave_speed_error),
             metric_name="coupling_strength_error",
             convergence_validated=convergence_ok,
             notes=f"L2_conv_ratio={avg_l2_conv_ratio:.2f}, L2_extrap={l2_extrap:.1e}, c_measured={results[2]['c_measured']:.6f}"

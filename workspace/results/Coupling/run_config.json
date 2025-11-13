@@ -220,5 +220,5 @@
       "notes": "Self-focusing Kerr model \u03c7(E)=\u03c7\u2080+\u03b1E\u00b2 with \u03b1=1.0, amplitude range [0.01-0.20]. E_sat detected via steepest-descent algorithm: measured=0.16, theory=sqrt(\u03c7/\u03b1)=0.14 (13% error \u2713). Energy drift 0.0005%. Iterations: (1) Wave packets dispersed, (2) Plane waves 48% transmission, (3) Added diagnostics, (4) \u03c7(1+\u03b1E\u00b2) wrong sign, (5) \u03c7/(1+\u03b1E\u00b2) too weak, (6) \u03c7+\u03b1E\u00b2 Kerr effect with \u03b1 tuning SUCCESS."
     }
   ],
-  "timestamp": "2025-11-13T23:43:39.461994Z"
+  "timestamp": "2025-11-13T23:58:18.015843Z"
 }
