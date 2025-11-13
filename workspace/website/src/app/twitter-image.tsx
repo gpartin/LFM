@@ -25,13 +25,15 @@ export default async function Image() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 56,
-          // Use solid color to avoid unsupported CSS functions in @vercel/og renderer
-          background: '#0b1326',
+          // Use backgroundColor for @vercel/og compatibility
+          backgroundColor: '#0b1326',
+          border: '2px solid #1e3a8a',
           color: '#eaf1ff',
           fontFamily:
             'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
         }}
       >
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 10, backgroundColor: '#1e3a8a' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
           <div
             style={{
@@ -39,7 +41,7 @@ export default async function Image() {
               height: 64,
               borderRadius: 16,
               // Replace gradients with solid color for compatibility
-              background: '#1e3a8a',
+              backgroundColor: '#1e3a8a',
               boxShadow: '0 8px 30px rgba(96,165,250,0.45)',
             }}
           />

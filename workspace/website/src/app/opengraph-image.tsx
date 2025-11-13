@@ -27,12 +27,15 @@ export default async function Image() {
           justifyContent: 'center',
           alignItems: 'flex-start',
           padding: 64,
-          // Use a solid background color for broad renderer compatibility
-          background: '#0a0f1a',
+          // Prefer backgroundColor over background for @vercel/og compatibility
+          backgroundColor: '#0a0f1a',
+          border: '2px solid #1e3a8a',
           color: '#e5f0ff',
           fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
         }}
       >
+        {/* Visible top bar to avoid “all-white” appearance if backgroundColor is ignored */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 12, backgroundColor: '#1e3a8a' }} />
         <div
           style={{
             display: 'inline-flex',
@@ -47,7 +50,7 @@ export default async function Image() {
               height: 96,
               borderRadius: 24,
               // Avoid conic/radial gradients; use solid color instead
-              background: '#1e3a8a',
+              backgroundColor: '#1e3a8a',
               boxShadow: '0 10px 40px rgba(96,165,250,0.35)',
             }}
           />
