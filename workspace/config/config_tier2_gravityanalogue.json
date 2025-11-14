@@ -64,6 +64,24 @@
       "steps": 100
     },
     {
+      "test_id": "GRAV-02",
+      "description": "Local frequency — Gaussian well (strong curvature)",
+      "mode": "local_frequency",
+      "chi_profile": "gaussian",
+      "chi0": 0.35,
+      "sigma": 16.0,
+      "steps": 100
+    },
+    {
+      "test_id": "GRAV-03",
+      "description": "Local frequency — Gaussian well (broader potential)",
+      "mode": "local_frequency",
+      "chi_profile": "gaussian",
+      "chi0": 0.28,
+      "sigma": 22.0,
+      "steps": 100
+    },
+    {
       "test_id": "GRAV-04",
       "description": "Local frequency — Gaussian well (shallow potential)",
       "mode": "local_frequency",
