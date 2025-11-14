@@ -12,9 +12,11 @@ interface Props {
   experiment: ExperimentDefinition;
   isRunning?: boolean;
   onMetrics?: (m: { energy?: number; energyDriftPct?: number; time?: number }) => void;
+  speedFactor?: number;
+  resetCounter?: number; // triggers reinitialization
 }
 
-export default function WavePacketCanvas({ experiment, isRunning = false, onMetrics }: Props) {
+export default function WavePacketCanvas({ experiment, isRunning = false, onMetrics, speedFactor = 1.0, resetCounter }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const stepsPerFrameRef = useRef<number>(3);
@@ -166,7 +168,8 @@ export default function WavePacketCanvas({ experiment, isRunning = false, onMetr
     // Animation loop
     const animate = () => {
       const steps = stepsPerFrameRef.current;
-      for (let s = 0; s < steps; s++) step();
+      const effectiveSteps = Math.max(1, Math.round(steps * speedFactor));
+      for (let s = 0; s < effectiveSteps; s++) step();
       tRef.t += steps * dt;
 
       // Update metrics occasionally (every ~6 frames to reduce cost)
@@ -190,7 +193,7 @@ export default function WavePacketCanvas({ experiment, isRunning = false, onMetr
     return () => {
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
     };
-  }, [experiment, isRunning, onMetrics]);
+  }, [experiment, isRunning, onMetrics, speedFactor, resetCounter]);
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-slate-950 rounded">

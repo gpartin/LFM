@@ -17,13 +17,13 @@ export default function Home() {
       
   <main className="flex-1 pt-20">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20">
+        <section className="relative overflow-hidden py-12 sm:py-16 md:py-20">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-accent-chi/5 to-transparent" />
           
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
                 <span className="text-accent-chi glow-text">Fundamental Forces</span>
                 <br />
                 <span className="text-text-primary">Emerging from</span>
@@ -31,24 +31,24 @@ export default function Home() {
                 <span className="text-accent-particle">a Single Equation</span>
               </h1>
               
-              <p className="text-xl text-text-secondary mb-8 leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-text-secondary mb-6 sm:mb-8 leading-relaxed px-4">
                 Watch gravity, relativity, and quantum phenomena emerge from the{' '}
                 <span className="text-accent-chi font-semibold">Lattice Field Medium</span> —
                 a modified Klein-Gordon equation running on each point of a 3D lattice.
               </p>
 
               {/* Equation Display */}
-              <div className="bg-space-panel border-2 border-accent-chi/30 rounded-lg p-6 mb-10 inline-block">
-                <div className="font-mono text-2xl md:text-3xl text-accent-chi mb-2">
+              <div className="bg-space-panel border-2 border-accent-chi/30 rounded-lg p-4 sm:p-6 mb-8 sm:mb-10 inline-block max-w-full">
+                <div className="font-mono text-lg sm:text-xl md:text-2xl lg:text-3xl text-accent-chi mb-2 break-all">
                   ∂²E/∂t² = c²∇²E − χ²(x,t)E
                 </div>
-                <div className="text-sm text-text-muted">
+                <div className="text-xs sm:text-sm text-text-muted">
                   One equation. All fundamental forces.
                 </div>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
                 <Link href="/experiments/binary-orbit" className="button-primary text-lg">
                   🪐 Launch Orbital Experiment
                 </Link>
@@ -60,7 +60,7 @@ export default function Home() {
               {/* Implications CTA removed: now accessible via header nav */}
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto px-4">
                 <StatCard 
                   value={testStatistics.passRate} 
                   label="Tests Passing" 
@@ -82,13 +82,13 @@ export default function Home() {
         </section>
 
         {/* What You Can Explore */}
-        <section className="py-20 bg-space-panel/50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12 text-accent-chi">
+        <section className="py-12 sm:py-16 md:py-20 bg-space-panel/50">
+          <div className="container mx-auto px-4 sm:px-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-accent-chi">
               Interactive Experiments
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
               <ExperimentCard
                 title="Earth-Moon Orbit"
                 icon="🌍"
@@ -136,13 +136,13 @@ export default function Home() {
         </section>
 
         {/* Key Features */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12 text-accent-chi">
+        <section className="py-12 sm:py-16 md:py-20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-accent-chi">
               Why This Matters
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
               <FeatureCard
                 icon="✓"
                 title="Authentic Physics"
@@ -168,17 +168,17 @@ export default function Home() {
         </section>
 
         {/* Research Links */}
-        <section className="py-20 bg-space-panel/30">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6 text-accent-chi">
+        <section className="py-12 sm:py-16 md:py-20 bg-space-panel/30">
+          <div className="container mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-accent-chi">
               Publicly Disclosed Research
             </h2>
-            <p className="text-lg text-text-secondary mb-8 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-text-secondary mb-6 sm:mb-8 max-w-3xl mx-auto">
               This website demonstrates the Lattice Field Medium framework, an open research project with
               public disclosures on OSF and Zenodo. It has not yet undergone formal peer review.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <a
                 href="https://osf.io/6agn8"
                 target="_blank"
@@ -216,9 +216,9 @@ export default function Home() {
 function StatCard({ value, label, description }: { value: string; label: string; description: string }) {
   return (
     <div className="panel text-center">
-      <div className="text-3xl font-bold text-accent-chi mb-2">{value}</div>
-      <div className="text-lg font-semibold text-text-primary mb-1">{label}</div>
-      <div className="text-sm text-text-muted">{description}</div>
+      <div className="text-2xl sm:text-3xl font-bold text-accent-chi mb-2">{value}</div>
+      <div className="text-base sm:text-lg font-semibold text-text-primary mb-1">{label}</div>
+      <div className="text-xs sm:text-sm text-text-muted">{description}</div>
     </div>
   );
 }
@@ -246,11 +246,11 @@ function ExperimentCard({
         ${isAvailable ? 'hover:border-accent-chi cursor-pointer hover:glow-box' : 'opacity-60 cursor-not-allowed'}
       `}
     >
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-accent-chi transition-colors">
+      <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{icon}</div>
+      <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-2 group-hover:text-accent-chi transition-colors">
         {title}
       </h3>
-      <p className="text-sm text-text-secondary leading-relaxed mb-4">
+      <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-3 sm:mb-4">
         {description}
       </p>
       {isAvailable ? (

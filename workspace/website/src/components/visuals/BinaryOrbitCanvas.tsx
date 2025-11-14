@@ -17,6 +17,8 @@ interface BinaryOrbitCanvasProps {
   experiment: ExperimentDefinition;
   isRunning?: boolean;
   onMetrics?: (m: { energy?: number; energyDriftPct?: number; time?: number }) => void;
+  speedFactor?: number;
+  resetCounter?: number; // triggers reinit
 }
 
 type Vec3 = [number, number, number];
@@ -27,7 +29,7 @@ function scale(a: Vec3, s: number): Vec3 { return [a[0]*s, a[1]*s, a[2]*s]; }
 
 interface Body { m: number; x: Vec3; v: Vec3; }
 
-function useBinaryLeapfrog(isRunning: boolean, onMetrics?: (m: { energy?: number; energyDriftPct?: number; time?: number }) => void) {
+function useBinaryLeapfrog(isRunning: boolean, speedFactor: number, resetCounter: number, onMetrics?: (m: { energy?: number; energyDriftPct?: number; time?: number }) => void) {
   const bodiesRef = useRef<Body[]>([
     { m: 1.0, x: [-1.0, 0, 0], v: [0, 0.6, 0] },
     { m: 1.0, x: [ 1.0, 0, 0], v: [0,-0.6, 0] },
@@ -65,8 +67,10 @@ function useBinaryLeapfrog(isRunning: boolean, onMetrics?: (m: { energy?: number
 
   useFrame(() => {
     if (isRunning) {
-      step();
-      tRef.current += dtRef.current;
+      // Scale integration steps by speedFactor (integer rounding)
+      const iterations = Math.max(1, Math.round(speedFactor));
+      for (let n = 0; n < iterations; n++) step();
+      tRef.current += dtRef.current * iterations;
       // compute energy and drift intermittently
       if (Math.random() < 0.2) {
         const [a, b] = bodiesRef.current;
@@ -85,6 +89,16 @@ function useBinaryLeapfrog(isRunning: boolean, onMetrics?: (m: { energy?: number
       }
     }
   });
+
+  // Reset: on resetCounter change reinitialize bodies
+  React.useEffect(() => {
+    bodiesRef.current = [
+      { m: 1.0, x: [-1.0, 0, 0], v: [0, 0.6, 0] },
+      { m: 1.0, x: [ 1.0, 0, 0], v: [0,-0.6, 0] },
+    ];
+    tRef.current = 0;
+    E0Ref.current = null;
+  }, [resetCounter]);
 
   return bodiesRef;
 }
@@ -116,9 +130,9 @@ function Bodies({ bodiesRef }: { bodiesRef: React.MutableRefObject<Body[]> }) {
   );
 }
 
-export default function BinaryOrbitCanvas({ experiment, isRunning = false, onMetrics }: BinaryOrbitCanvasProps) {
+export default function BinaryOrbitCanvas({ experiment, isRunning = false, onMetrics, speedFactor = 1.0, resetCounter = 0 }: BinaryOrbitCanvasProps) {
   // Hook maintains bodies and integrates when isRunning true
-  const bodiesRef = useBinaryLeapfrog(isRunning, onMetrics);
+  const bodiesRef = useBinaryLeapfrog(isRunning, speedFactor, resetCounter, onMetrics);
 
   return (
     <div className="relative h-full w-full">

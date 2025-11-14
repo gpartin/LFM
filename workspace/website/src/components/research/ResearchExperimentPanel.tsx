@@ -21,6 +21,7 @@ type ValidationResponse = {
   ok: boolean;
   message?: string;
   details?: any;
+  status?: string; // optional status codes like 'disabled'
 };
 
 export default function ResearchExperimentPanel({ experiment }: Props) {
@@ -29,6 +30,8 @@ export default function ResearchExperimentPanel({ experiment }: Props) {
   const [result, setResult] = useState<ValidationResponse | null>(null);
   const [validationCount, setValidationCount] = useState<number>(0);
   const [liveMetrics, setLiveMetrics] = useState<{ energy?: number; energyDriftPct?: number; time?: number } | null>(null);
+  const [speedFactor, setSpeedFactor] = useState<number>(1.0);
+  const [resetCounter, setResetCounter] = useState<number>(0);
 
   // Animation state (separate from validation)
   const isAnimating = isValidating || isPlaying;
@@ -160,6 +163,9 @@ export default function ResearchExperimentPanel({ experiment }: Props) {
     setIsPlaying(prev => !prev);
   }, []);
 
+  // Derive UI metadata (manual SHOWCASE or generated RESEARCH)
+  const ui = experiment.ui || { panels: ['metrics','energy'], controls: { play: true, reset: true }, metrics: { showEnergyDrift: true } };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 items-start">
       {/* Left: Elegant multi-canvas layout - FIXED HEIGHT */}
@@ -167,62 +173,121 @@ export default function ResearchExperimentPanel({ experiment }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 h-[560px]">
           {/* Primary canvas (large) — injected by SimulationDispatcher */}
           <div className="relative bg-slate-900/60 rounded-lg border border-slate-700 overflow-hidden md:row-span-2">
-            <div className="absolute top-0 left-0 right-0 px-3 py-2 text-xs font-semibold tracking-wide text-indigo-200 bg-indigo-950/50 border-b border-slate-700 z-10">
-              Primary Simulation — {experiment.simulation}
+            <div className="absolute top-0 left-0 right-0 px-3 py-2 text-xs font-semibold tracking-wide text-indigo-200 bg-indigo-950/50 border-b border-slate-700 z-10 flex items-center justify-between">
+              <span>Primary Simulation — {experiment.simulation}</span>
+              {ui.controls.speedSlider && (
+                <div className="flex items-center gap-2 text-[10px]">
+                  <label htmlFor="speedRange" className="text-slate-300">Speed</label>
+                  <input
+                    id="speedRange"
+                    type="range"
+                    min={0.25}
+                    max={2.0}
+                    step={0.25}
+                    value={speedFactor}
+                    className="accent-indigo-400"
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setSpeedFactor(v);
+                      console.log(`Speed factor set to ${v}`);
+                    }}
+                  />
+                </div>
+              )}
             </div>
             <div className="absolute inset-0 pt-8">
               <SimulationDispatcher 
                 experiment={experiment} 
                 isRunning={isAnimating} 
-                key={`sim-${experiment.id}`}
+                key={`sim-${experiment.id}-${resetCounter}`}
                 onMetrics={(m) => setLiveMetrics(m)}
+                speedFactor={speedFactor}
+                resetCounter={resetCounter}
               />
             </div>
             
             {/* Play/Pause control overlay */}
-            <div className="absolute bottom-4 left-4 z-20">
-              <button
-                onClick={togglePlayPause}
-                disabled={isValidating}
-                className={`
-                  px-4 py-2 rounded-lg font-medium text-sm shadow-lg transition-all
-                  ${isValidating 
-                    ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
-                    : isPlaying
-                      ? 'bg-red-500 hover:bg-red-600 text-white'
-                      : 'bg-indigo-500 hover:bg-indigo-600 text-white'
-                  }
-                `}
-                title={isValidating ? 'Validation running...' : isPlaying ? 'Pause simulation' : 'Play simulation'}
-              >
-                {isValidating ? '⏳ Validating...' : isPlaying ? '⏸ Pause' : '▶️ Play'}
-              </button>
-            </div>
+            {ui.controls.play && (
+              <div className="absolute bottom-4 left-4 z-20 flex gap-2">
+                <button
+                  onClick={togglePlayPause}
+                  disabled={isValidating}
+                  className={`
+                    px-4 py-2 rounded-lg font-medium text-sm shadow-lg transition-all
+                    ${isValidating 
+                      ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
+                      : isPlaying
+                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                    }
+                  `}
+                  title={isValidating ? 'Validation running...' : isPlaying ? 'Pause simulation' : 'Play simulation'}
+                >
+                  {isValidating ? '⏳ Validating...' : isPlaying ? '⏸ Pause' : '▶️ Play'}
+                </button>
+                {ui.controls.reset && (
+                  <button
+                    onClick={() => {
+                      console.log('Reset simulation requested');
+                      setIsPlaying(false);
+                      setLiveMetrics(null);
+                      setResetCounter(c => c + 1);
+                    }}
+                    className="px-4 py-2 rounded-lg font-medium text-sm shadow-lg bg-slate-600 hover:bg-slate-500 text-white"
+                    title="Reset simulation"
+                  >
+                    🔄 Reset
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Auxiliary canvas (top-right) */}
           <div className="relative bg-slate-900/60 rounded-lg border border-slate-700 overflow-hidden">
             <div className="absolute top-0 left-0 right-0 px-3 py-2 text-xs font-semibold tracking-wide text-slate-200 bg-slate-950/50 border-b border-slate-700 z-10">
-              Auxiliary View — χ / Grid
+              {ui.panels.includes('wave') && !ui.panels.includes('field') ? 'Wave Diagnostics' : 'Auxiliary View'}
             </div>
             <div className="absolute inset-0 pt-8 flex items-center justify-center text-slate-400 text-xs">
-              Secondary visualization (e.g., chi field, lattice)
+              {ui.panels.includes('field') && ui.controls.chiToggle && (
+                <div className="text-center space-y-1">
+                  <div>χ Field Overlay Enabled</div>
+                  {Array.isArray(experiment.initialConditions.chi) && (
+                    <div className="text-[10px] text-slate-500">Gradient: {experiment.initialConditions.chi[0]} → {experiment.initialConditions.chi[1]}</div>
+                  )}
+                </div>
+              )}
+              {!ui.panels.includes('field') && ui.panels.includes('wave') && (
+                <div className="text-center space-y-1">
+                  <div>Wave Packet Preview</div>
+                  {experiment.initialConditions.wavePacket && (
+                    <div className="text-[10px] text-slate-500">k = {experiment.initialConditions.wavePacket.k.join(', ')}</div>
+                  )}
+                </div>
+              )}
+              {!ui.panels.includes('field') && !ui.panels.includes('wave') && 'Secondary visualization (e.g., chi field, lattice)'}
             </div>
           </div>
 
           {/* Diagnostics canvas (bottom-right) */}
           <div className="relative bg-slate-900/60 rounded-lg border border-slate-700 overflow-hidden">
             <div className="absolute top-0 left-0 right-0 px-3 py-2 text-xs font-semibold tracking-wide text-slate-200 bg-slate-950/50 border-b border-slate-700 z-10">
-              Diagnostics — Spectrum / Energy
+              Diagnostics — {ui.panels.includes('particles') ? 'Orbit / Energy' : 'Spectrum / Energy'}
             </div>
             <div className="absolute inset-0 pt-8 flex items-center justify-center text-slate-300 text-xs">
               {liveMetrics ? (
                 <div className="space-y-1 text-center">
-                  {typeof liveMetrics.energyDriftPct === 'number' && (
+                  {ui.metrics?.showEnergyDrift && typeof liveMetrics.energyDriftPct === 'number' && (
                     <div>Energy drift (preview): <span className="font-mono">{liveMetrics.energyDriftPct.toFixed(3)}%</span></div>
                   )}
                   {typeof liveMetrics.energy === 'number' && (
                     <div>Total energy (preview): <span className="font-mono">{liveMetrics.energy.toExponential(3)}</span></div>
+                  )}
+                  {ui.metrics?.showOrbitElements && (
+                    <div className="text-[10px] text-slate-500">Orbit elements preview unavailable in static mode</div>
+                  )}
+                  {ui.metrics?.showTransmission && (
+                    <div className="text-[10px] text-slate-500">Transmission/Reflection computed during play (placeholder)</div>
                   )}
                   {typeof liveMetrics.time === 'number' && (
                     <div>Time: <span className="font-mono">{liveMetrics.time.toFixed(3)} s</span></div>
@@ -232,7 +297,7 @@ export default function ResearchExperimentPanel({ experiment }: Props) {
                   </div>
                 </div>
               ) : (
-                <div className="text-slate-500">Spectrum, energy timeline, or FFT diagnostics</div>
+                <div className="text-slate-500">{ui.panels.includes('particles') ? 'Orbit metrics / energy timeline' : 'Spectrum, energy timeline, or FFT diagnostics'}</div>
               )}
             </div>
           </div>
@@ -244,62 +309,118 @@ export default function ResearchExperimentPanel({ experiment }: Props) {
         {/* Validation - MOVED TO TOP */}
         <div className="bg-slate-900/60 rounded-lg border border-slate-700 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold">Run Validation</h3>
-            <span className="text-xs text-slate-400">GPU-accelerated</span>
+            <h3 className="text-lg font-semibold">Validation (Coming Soon)</h3>
+            <span className="text-xs text-slate-400">Static mode</span>
           </div>
-          <p className="text-slate-300 text-sm mb-3">
-            Validate this test against the official LFM physics harness. Results include a cryptographic 
-            certification with SHA-256 hash and ISO-8601 timestamp for tamper-evident validation.
-          </p>
+          <div className="rounded-md border border-yellow-700 bg-yellow-900/20 p-3 mb-3">
+            <div className="text-sm font-semibold text-yellow-300 mb-1">Live Harness Execution Disabled</div>
+            <p className="text-xs text-yellow-100 leading-relaxed">
+              This deployment does not run the GPU physics harness directly. A future update will enable
+              reproducible live validation runs with cryptographic certification. For now, published results
+              are static certified artifacts produced on an internal GPU system. Reproduce locally using the
+              repository, config, and commands below.
+            </p>
+          </div>
           <div className="flex gap-2">
             <button
-              className={`w-full px-4 py-3 rounded-lg font-semibold transition-colors ${
-                isValidating 
-                  ? 'bg-slate-700 text-slate-300 cursor-not-allowed' 
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white'
-              }`}
-              onClick={runValidation}
-              disabled={isValidating}
+              className="w-full px-4 py-3 rounded-lg font-semibold bg-slate-700 text-slate-400 cursor-not-allowed"
+              disabled
+              title="Live validation is not available in this deployment"
             >
-              {isValidating ? '⏳ Running Validation...' : '▶️ Run Validation'}
+              🚫 Validation Unavailable
             </button>
           </div>
 
           {result && (
-            <div className={`mt-4 rounded border p-3 ${result.ok ? 'border-green-700 bg-green-900/20' : 'border-red-700 bg-red-900/20'}`}>
+            <div
+              className={`mt-4 rounded border p-3 ${
+                result.ok
+                  ? 'border-green-700 bg-green-900/20'
+                  : result.status === 'disabled'
+                    ? 'border-yellow-700 bg-yellow-900/20'
+                    : 'border-red-700 bg-red-900/20'
+              }`}
+            >
               <div className="text-sm">
-                {result.details?.alreadyValidated ? (
+                {result.status === 'disabled' ? (
+                  <div>
+                    <div className="font-semibold mb-2">⚠️ Validation Disabled</div>
+                    <p className="text-slate-300 mb-2">
+                      Live harness execution is disabled in this deployment. Displaying static evidence
+                      {result.details?.summary?.static_mode && ' (precomputed summary)'} when available.
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      Reason: {result.details?.disabledReason || 'Not provided'}
+                    </p>
+                  </div>
+                ) : result.details?.alreadyValidated ? (
                   <div>
                     <div className="font-semibold mb-2">✅ Already Validated</div>
                     <p className="text-slate-300 mb-2">
-                      You have already validated this experiment. Your validation has been recorded 
+                      You have already validated this experiment. Your validation has been recorded
                       and cannot be duplicated. Thank you for contributing to scientific verification!
                     </p>
                   </div>
                 ) : (
-                  <div className="font-semibold mb-2">{result.ok ? '✅ Validation PASSED' : '❌ Validation FAILED'}</div>
+                  <div className="font-semibold mb-2">
+                    {result.ok ? '✅ Validation PASSED' : '❌ Validation FAILED'}
+                  </div>
                 )}
                 {result.details?.summary && (
                   <div className="space-y-1 text-slate-200">
-                    <div>Energy Drift: <span className="font-mono text-xs">{result.details.summary.energy_drift?.toExponential(2)}</span></div>
+                    <div>
+                      Energy Drift:{' '}
+                      <span className="font-mono text-xs">
+                        {result.details.summary.energy_drift?.toExponential(2)}
+                      </span>
+                      {result.details.summary.execution_disabled && (
+                        <span className="ml-2 text-[10px] text-yellow-400">(static)</span>
+                      )}
+                    </div>
                     {result.details.summary.primary_metric !== undefined && (
-                      <div>Primary Metric: <span className="font-mono text-xs">{result.details.summary.primary_metric?.toExponential(2)}</span> ({result.details.summary.metric_name})</div>
+                      <div>
+                        Primary Metric:{' '}
+                        <span className="font-mono text-xs">
+                          {result.details.summary.primary_metric?.toExponential(2)}
+                        </span>{' '}
+                        ({result.details.summary.metric_name})
+                      </div>
                     )}
                     {result.details.summary.runtime_sec && (
-                      <div>Runtime: <span className="font-mono text-xs">{result.details.summary.runtime_sec.toFixed(2)}s</span></div>
+                      <div>
+                        Runtime:{' '}
+                        <span className="font-mono text-xs">
+                          {result.details.summary.runtime_sec.toFixed(2)}s
+                        </span>
+                      </div>
                     )}
                     {result.details.summary.notes && (
-                      <div className="text-xs text-slate-300 mt-1">{result.details.summary.notes}</div>
+                      <div className="text-xs text-slate-300 mt-1">
+                        {result.details.summary.notes}
+                      </div>
                     )}
                   </div>
                 )}
-                {attestation && (
+                {attestation && result.status !== 'disabled' && (
                   <div className="mt-3 p-2 rounded bg-slate-950/70 border border-indigo-700">
                     <div className="font-semibold text-indigo-300 mb-1">🔒 Certification</div>
-                    <div className="text-xs text-slate-300 mb-1">Hash: <span className="font-mono break-all">{attestation.hash.substring(0, 16)}...</span></div>
-                    <div className="text-xs text-slate-300 mb-1">Timestamp: <span className="font-mono">{new Date(attestation.timestamp).toLocaleString()}</span></div>
+                    <div className="text-xs text-slate-300 mb-1">
+                      Hash:{' '}
+                      <span className="font-mono break-all">
+                        {attestation.hash.substring(0, 16)}...
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-300 mb-1">
+                      Timestamp:{' '}
+                      <span className="font-mono">
+                        {new Date(attestation.timestamp).toLocaleString()}
+                      </span>
+                    </div>
                     {result.details?.certificationPath && (
-                      <div className="text-xs text-slate-400">ID: <span className="font-mono">{result.details.certificationPath}</span></div>
+                      <div className="text-xs text-slate-400">
+                        ID:{' '}
+                        <span className="font-mono">{result.details.certificationPath}</span>
+                      </div>
                     )}
                   </div>
                 )}

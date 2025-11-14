@@ -152,10 +152,17 @@ export default function EvidencePanel({ experiment, validationSummary, validatio
         </div>
       ) : (
         <div className="text-center py-8">
-          <div className="text-white/50 mb-4">No validation data available</div>
-          <div className="text-xs text-white/30">
-            Run validation to generate evidence and certification
+          <div className="text-white/50 mb-2">No live validation artifacts</div>
+          <div className="text-xs text-white/40 max-w-[420px] mx-auto leading-relaxed">
+            This deployment operates in <span className="font-semibold text-yellow-300">static certification mode</span>. 
+            Live GPU harness execution is disabled. Upcoming release will enable on-demand cryptographic validation.
+            You can still reproduce results locally using the published configuration and repository commit.
           </div>
+          {experiment.type === 'RESEARCH' && (
+            <div className="mt-4 text-[11px] text-white/30">
+              Expected soon: live pass/fail runs, hash attestation, integrity re-verification.
+            </div>
+          )}
         </div>
       )}
     </div>
