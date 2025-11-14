@@ -4,7 +4,7 @@
   "test_id": "QUAN-10",
   "description": "Bound state quantization \u2014 discrete energy eigenvalues E_n emerge from boundary conditions",
   "passed": true,
-  "timestamp": 1763064363.3869243,
+  "timestamp": 1763146475.9488764,
   "hardware": {
     "backend": "CuPy"
   },

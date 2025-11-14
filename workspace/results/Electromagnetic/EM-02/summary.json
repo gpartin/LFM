@@ -13,8 +13,8 @@
     "outside_wire_error": 0.0
   },
   "tolerance": 0.03,
-  "runtime_sec": 1.0863964557647705,
+  "runtime_sec": 0.7585089206695557,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-13T20:06:07.538930Z"
+  "timestamp": "2025-11-14T18:12:52.626483Z"
 }

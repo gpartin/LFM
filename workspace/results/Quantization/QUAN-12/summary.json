@@ -4,7 +4,7 @@
   "test_id": "QUAN-12",
   "description": "Quantum tunneling \u2014 barrier penetration when E < V (classically forbidden)",
   "passed": true,
-  "timestamp": 1763064361.9147575,
+  "timestamp": 1763146472.0164635,
   "hardware": {
     "backend": "CuPy"
   },

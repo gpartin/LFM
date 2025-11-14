@@ -16,20 +16,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:12:54Z",
+        "exit_code": 0,
+        "runtime_sec": 0.7585089206695557,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.1950361013412476,
+      "runtime_sec": 1.0,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:10Z"
+    "last_run": "2025-11-14T18:12:54Z"
   },
   "EM-04": {
     "runs": [
@@ -48,20 +56,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:01Z",
+        "exit_code": 0,
+        "runtime_sec": 0.7516772747039795,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.0809653997421265,
+      "runtime_sec": 1.0,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:16Z"
+    "last_run": "2025-11-14T18:13:01Z"
   },
   "EM-01": {
     "runs": [
@@ -168,20 +184,36 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:12:58Z",
+        "exit_code": 0,
+        "runtime_sec": 1.4974336624145508,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:54:45Z",
+        "exit_code": 0,
+        "runtime_sec": 1.7202074527740479,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 2.0760706663131714,
+      "runtime_sec": 1.8922281980514528,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:15Z"
+    "last_run": "2025-11-14T18:54:45Z"
   },
   "EM-05": {
     "runs": [
@@ -200,20 +232,36 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:06Z",
+        "exit_code": 0,
+        "runtime_sec": 1.011747121810913,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:54:52Z",
+        "exit_code": 0,
+        "runtime_sec": 0.8888061046600342,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.1844620227813722,
+      "runtime_sec": 1.0,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:19Z"
+    "last_run": "2025-11-14T18:54:52Z"
   },
   "EM-06": {
     "runs": [
@@ -232,20 +280,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:08Z",
+        "exit_code": 0,
+        "runtime_sec": 0.903857946395874,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.2364955425262452,
+      "runtime_sec": 1.0,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:20Z"
+    "last_run": "2025-11-14T18:13:08Z"
   },
   "EM-08": {
     "runs": [
@@ -264,6 +320,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:11Z",
+        "exit_code": 0,
+        "runtime_sec": 0.44289064407348633,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:54:51Z",
+        "exit_code": 0,
+        "runtime_sec": 0.497422456741333,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -273,11 +345,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:25Z"
+    "last_run": "2025-11-14T18:54:51Z"
   },
   "EM-09": {
     "runs": [
@@ -296,6 +368,14 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:14Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4927370548248291,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -305,11 +385,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:25Z"
+    "last_run": "2025-11-14T18:13:14Z"
   },
   "EM-10": {
     "runs": [
@@ -328,6 +408,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:17Z",
+        "exit_code": 0,
+        "runtime_sec": 0.470475435256958,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:54:59Z",
+        "exit_code": 0,
+        "runtime_sec": 0.6122856140136719,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -337,11 +433,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:28Z"
+    "last_run": "2025-11-14T18:54:59Z"
   },
   "EM-11": {
     "runs": [
@@ -360,20 +456,36 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:18Z",
+        "exit_code": 0,
+        "runtime_sec": 1.0653014183044434,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:01Z",
+        "exit_code": 0,
+        "runtime_sec": 1.4749665260314941,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.1485590934753418,
+      "runtime_sec": 1.6224631786346437,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:32Z"
+    "last_run": "2025-11-14T18:55:01Z"
   },
   "EM-07": {
     "runs": [
@@ -392,20 +504,36 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:11Z",
+        "exit_code": 0,
+        "runtime_sec": 1.0695691108703613,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:54:53Z",
+        "exit_code": 0,
+        "runtime_sec": 1.1948301792144775,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.4545629978179933,
+      "runtime_sec": 1.3143131971359254,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:23Z"
+    "last_run": "2025-11-14T18:54:53Z"
   },
   "EM-13": {
     "runs": [
@@ -424,6 +552,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:20Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4424629211425781,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:05Z",
+        "exit_code": 0,
+        "runtime_sec": 0.6485681533813477,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -433,11 +577,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:33Z"
+    "last_run": "2025-11-14T18:55:05Z"
   },
   "EM-14": {
     "runs": [
@@ -456,6 +600,14 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:23Z",
+        "exit_code": 0,
+        "runtime_sec": 0.36075687408447266,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -465,11 +617,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:39Z"
+    "last_run": "2025-11-14T18:13:23Z"
   },
   "EM-15": {
     "runs": [
@@ -488,6 +640,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:24Z",
+        "exit_code": 0,
+        "runtime_sec": 0.6006591320037842,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:07Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4709665775299072,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -497,11 +665,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:40Z"
+    "last_run": "2025-11-14T18:55:07Z"
   },
   "EM-12": {
     "runs": [
@@ -520,20 +688,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:19Z",
+        "exit_code": 0,
+        "runtime_sec": 3.390300989151001,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 3.7262621164321903,
+      "runtime_sec": 3.7293310880661013,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:33Z"
+    "last_run": "2025-11-14T18:13:19Z"
   },
   "EM-16": {
     "runs": [
@@ -552,6 +728,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:25Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4871633052825928,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:08Z",
+        "exit_code": 0,
+        "runtime_sec": 0.5415019989013672,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -561,11 +753,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:40Z"
+    "last_run": "2025-11-14T18:55:08Z"
   },
   "EM-17": {
     "runs": [
@@ -584,20 +776,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:27Z",
+        "exit_code": 0,
+        "runtime_sec": 0.7380669116973877,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.0973467111587525,
+      "runtime_sec": 1.0,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:46Z"
+    "last_run": "2025-11-14T18:13:27Z"
   },
   "EM-18": {
     "runs": [
@@ -616,6 +816,22 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:28Z",
+        "exit_code": 0,
+        "runtime_sec": 0.47338271141052246,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:14Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4971950054168701,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -625,11 +841,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:47Z"
+    "last_run": "2025-11-14T18:55:14Z"
   },
   "EM-19": {
     "runs": [
@@ -648,20 +864,36 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:30Z",
+        "exit_code": 0,
+        "runtime_sec": 1.5293841361999512,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:55:17Z",
+        "exit_code": 0,
+        "runtime_sec": 2.3992671966552734,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 2.147494673728943,
+      "runtime_sec": 2.639193916320801,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 4,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:47Z"
+    "last_run": "2025-11-14T18:55:17Z"
   },
   "EM-20": {
     "runs": [
@@ -680,6 +912,14 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:29Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4227116107940674,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -689,11 +929,11 @@
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:51Z"
+    "last_run": "2025-11-14T18:13:29Z"
   },
   "EM-21": {
     "runs": [
@@ -712,20 +952,28 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-14T18:13:34Z",
+        "exit_code": 0,
+        "runtime_sec": 1.7103374004364014,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
-      "runtime_sec": 1.5718804836273195,
+      "runtime_sec": 1.8813711404800417,
       "cpu_cores_needed": 1.1,
       "memory_mb": 600.0,
       "gpu_memory_mb": 0.0,
       "uses_gpu": false,
       "confidence": "last_run",
-      "sample_size": 2,
+      "sample_size": 3,
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-13T20:06:54Z"
+    "last_run": "2025-11-14T18:13:34Z"
   },
   "REL-01": {
     "runs": [

@@ -10,8 +10,8 @@
     "analytical_verification": "Faraday's law verified analytically"
   },
   "tolerance": 0.02,
-  "runtime_sec": 1.8873369693756104,
+  "runtime_sec": 1.7202074527740479,
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-13T20:06:13.265747Z"
+  "timestamp": "2025-11-14T18:54:43.113167Z"
 }

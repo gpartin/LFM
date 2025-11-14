@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-08",
   "description": "High-Energy Lattice Blowout Test",
-  "timestamp": 1763064345.9100323,
+  "timestamp": 1763146446.6423006,
   "hardware": {
     "backend": "CuPy"
   },

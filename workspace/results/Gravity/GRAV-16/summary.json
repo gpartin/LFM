@@ -7,9 +7,9 @@
   "ratio_parallel": 1.0,
   "ratio_theory": 1.0,
   "omegaA_serial": 0.0,
-  "omegaB_serial": 166.52815437316895,
+  "omegaB_serial": 195.0681083202362,
   "omegaA_parallel": 0.0,
-  "omegaB_parallel": 166.52815437316895,
+  "omegaB_parallel": 195.0681083202362,
   "omegaA_theory": 160.0,
   "omegaB_theory": 0.0,
   "chiA": 0.10000000149011612,
@@ -38,9 +38,9 @@
     "metrics": {
       "local_frequency_ratio_error": 0.0
     },
-    "timestamp": "2025-11-13 15:16:42"
+    "timestamp": "2025-11-14 10:53:38"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-13T23:16:42.412916Z"
+  "timestamp": "2025-11-14T18:53:38.039085Z"
 }
