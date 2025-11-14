@@ -1,2 +1,2 @@
 test_id,description,passed,energy_drift,wave_drop,runtime_sec
-ENER-01,Global conservation — short,True,0.0021498656572412904,,4.963648080825806
+ENER-01,Global conservation — short,True,0.0021498656572412904,,4.99121356010437

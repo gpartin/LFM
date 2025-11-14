@@ -18,12 +18,14 @@ import {
 export const runtime = 'nodejs';
 
 function mapPrefixToRunnerAndConfig(id: string): { runner: string; config: string } | null {
+  // Prefix-based mapping; ensure gravity analogue uses correct harness filename.
   const prefix = id.split('-')[0].toUpperCase();
   switch (prefix) {
     case 'REL':
       return { runner: 'run_tier1_relativistic.py', config: '../config/config_tier1_relativistic.json' };
     case 'GRAV':
-      return { runner: 'run_tier2_gravity.py', config: '../config/config_tier2_gravityanalogue.json' };
+      // Corrected runner name (previously run_tier2_gravity.py which does not exist).
+      return { runner: 'run_tier2_gravityanalogue.py', config: '../config/config_tier2_gravityanalogue.json' };
     case 'ENER':
       return { runner: 'run_tier3_energy.py', config: '../config/config_tier3_energy.json' };
     case 'QUAN':
@@ -158,8 +160,20 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     console.error('[API] Error parsing summary:', err);
   }
 
-  // Build response
-  const ok = code === 0 || code === 2 || !!summary; // non-zero can still be pass; prefer summary if present
+  // Determine pass/fail strictly from summary when available.
+  // Harness may exit with code 2 even on success; rely on summary.passed/status fields.
+  const summaryPassed = summary && (
+    summary.passed === true ||
+    (typeof summary.status === 'string' && summary.status.toLowerCase() === 'passed')
+  );
+  // Fallback: if no summary, treat exit codes 0/2 as pass (legacy behavior) to maintain compatibility.
+  const ok = summary ? summaryPassed : (code === 0 || code === 2);
+
+  // Attach explicit exit code + pass flag for frontend diagnostics.
+  if (summary) {
+    summary.exit_code = code; // non-canonical diagnostic field
+    summary.pass_flag = summaryPassed; // normalized boolean
+  }
 
   // Parse request body to check for advanced certification options
   let body: any = null;
@@ -220,9 +234,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   return new Response(JSON.stringify({
     ok,
-    message: ok ? `Validation completed for ${id}` : `Validation exited with code ${code}`,
+    message: ok ? `Validation completed for ${id}` : `Validation failed (exit code ${code}${summary ? ', summary.pass_flag=' + (summary.pass_flag ? 'true' : 'false') : ''})`,
     details: {
       summary,
+      exitCode: code,
       certificationPath: certificationPath ? path.basename(certificationPath) : null, // Only filename, not full path
     },
   }), { status: ok ? 200 : 500, headers: { 'content-type': 'application/json; charset=utf-8' } });
