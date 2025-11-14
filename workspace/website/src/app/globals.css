@@ -28,18 +28,30 @@
   .button-primary {
     @apply bg-accent-chi hover:bg-accent-chi/80 text-space-dark font-semibold py-3 px-6 rounded-lg transition-all duration-200;
     @apply hover:shadow-lg hover:shadow-accent-chi/50;
+    @apply text-sm sm:text-base;
+    min-height: 44px; /* iOS touch target minimum */
   }
   
   .button-secondary {
     @apply border-2 border-accent-chi text-accent-chi hover:bg-accent-chi/10 font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+    @apply text-sm sm:text-base;
+    min-height: 44px; /* iOS touch target minimum */
   }
   
   .panel {
-    @apply bg-space-panel border border-space-border rounded-lg p-6;
+    @apply bg-space-panel border border-space-border rounded-lg;
+    padding: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .panel {
+      padding: 1.5rem;
+    }
   }
   
   .metric-display {
     @apply flex items-center justify-between py-2 border-b border-space-border last:border-b-0;
+    @apply text-sm sm:text-base;
   }
 }
 

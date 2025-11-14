@@ -161,24 +161,24 @@ export default function ExperimentsBrowsePage() {
       <Header />
       
       <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-accent-chi mb-2">Explore Physics Experiments</h1>
-            <p className="text-text-secondary">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl font-bold text-accent-chi mb-2">Explore Physics Experiments</h1>
+            <p className="text-sm sm:text-base text-text-secondary">
               Browse our collection of interactive physics simulations. Each experiment demonstrates emergent phenomena from lattice field medium.
             </p>
           </div>
 
           {/* Search Bar */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <div className="relative">
               <input
                 type="search"
                 placeholder="Search experiments by name, description, or tags..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-6 py-4 bg-space-border/30 border-2 border-accent-chi/30 rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-chi transition-colors"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base bg-space-border/30 border-2 border-accent-chi/30 rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-chi transition-colors"
                 aria-label="Search experiments"
               />
               <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,19 +188,19 @@ export default function ExperimentsBrowsePage() {
           </div>
 
           {/* Filters */}
-          <div className="mb-8 panel">
+          <div className="mb-6 sm:mb-8 panel">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-accent-chi">Filters</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-accent-chi">Filters</h2>
               <button
                 onClick={clearFilters}
-                className="text-sm text-accent-particle hover:text-accent-chi transition-colors"
+                className="text-xs sm:text-sm text-accent-particle hover:text-accent-chi transition-colors"
                 aria-label="Clear all filters"
               >
                 Clear All
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Category Filter */}
               <div>
                 <label className="block text-sm font-semibold text-text-primary mb-2">Category</label>
@@ -261,13 +261,13 @@ export default function ExperimentsBrowsePage() {
           </div>
 
           {/* Results Count */}
-          <div className="mb-6 text-text-secondary">
+          <div className="mb-4 sm:mb-6 text-sm sm:text-base text-text-secondary">
             Showing <span className="font-semibold text-accent-chi">{filteredExperiments.length}</span> experiment{filteredExperiments.length !== 1 ? 's' : ''}
           </div>
 
           {/* Experiments Grid */}
           {filteredExperiments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredExperiments.map((exp) => (
                 <Link
                   key={exp.metadata.id}
@@ -276,7 +276,7 @@ export default function ExperimentsBrowsePage() {
                   aria-label={`View ${exp.metadata.title} experiment`}
                 >
                   {/* Thumbnail */}
-                  <div className="w-full h-48 bg-space-border/50 rounded-lg mb-4 flex items-center justify-center text-4xl">
+                  <div className="w-full h-40 sm:h-48 bg-space-border/50 rounded-lg mb-3 sm:mb-4 flex items-center justify-center text-3xl sm:text-4xl">
                     {exp.metadata.category === 'gravity' ? '⚫' : 
                      exp.metadata.category === 'orbital-mechanics' ? '🌍' :
                      exp.metadata.category === 'electromagnetic' ? '⚡' :
@@ -286,13 +286,13 @@ export default function ExperimentsBrowsePage() {
                   {/* Content */}
                   <div>
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-xl font-bold text-accent-chi">{exp.metadata.title}</h3>
+                      <h3 className="text-lg sm:text-xl font-bold text-accent-chi">{exp.metadata.title}</h3>
                       {exp.metadata.featured && (
-                        <span className="text-yellow-400 text-xl" title="Featured experiment">⭐</span>
+                        <span className="text-yellow-400 text-lg sm:text-xl shrink-0 ml-2" title="Featured experiment">⭐</span>
                       )}
                     </div>
 
-                    <p className="text-sm text-text-secondary mb-4 line-clamp-2">
+                    <p className="text-xs sm:text-sm text-text-secondary mb-3 sm:mb-4 line-clamp-2">
                       {exp.metadata.shortDescription}
                     </p>
 

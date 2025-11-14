@@ -5,36 +5,13 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { getAllExperiments, getResearchExperimentsByTier } from '@/data/experiments';
-
-interface CertificationStats {
-  totalValidations: number;
-  uniqueValidators: number;
-}
-
-interface CertificationCounts {
-  [experimentId: string]: CertificationStats;
-}
 
 export default function ResearchPage() {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [certCounts, setCertCounts] = useState<CertificationCounts>({});
-  const [isLoadingCerts, setIsLoadingCerts] = useState(true);
-  
-  // Fetch certification counts on mount
-  useEffect(() => {
-    fetch('/api/certifications')
-      .then(res => res.json())
-      .then(data => {
-        setCertCounts(data.counts || {});
-        setIsLoadingCerts(false);
-      })
-      .catch(err => {
-        console.error('Failed to load certifications:', err);
-        setIsLoadingCerts(false);
-      });
-  }, []);
   
   const allExperiments = getAllExperiments();
   const researchExperiments = allExperiments.filter(exp => exp.type === 'RESEARCH');
@@ -60,52 +37,36 @@ export default function ResearchPage() {
     7: 'Thermodynamics',
   };
   
-  // Sort experiments: fewest validations first, then alphabetically by tier name
+  // Sort experiments alphabetically by test ID
   const selectedExperiments = (selectedTier 
     ? getResearchExperimentsByTier(selectedTier) 
     : researchExperiments
-  ).sort((a, b) => {
-    // Primary sort: validation count (ascending - least validated first)
-    const countA = certCounts[a.id]?.uniqueValidators || 0;
-    const countB = certCounts[b.id]?.uniqueValidators || 0;
-    if (countA !== countB) {
-      return countA - countB;
-    }
-    
-    // Secondary sort: alphabetically by tier name
-    const tierNameA = a.tier ? tierNames[a.tier] : '';
-    const tierNameB = b.tier ? tierNames[b.tier] : '';
-    if (tierNameA !== tierNameB) {
-      return tierNameA.localeCompare(tierNameB);
-    }
-    
-    // Tertiary sort: by test ID
-    return a.id.localeCompare(b.id);
-  });
+  ).sort((a, b) => a.id.localeCompare(b.id));
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 pt-20">
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-4 sm:p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Research Experiments</h1>
-          <p className="text-slate-300 text-lg">
-            {researchExperiments.length} validation tests from test harness
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Research Experiments</h1>
+          <p className="text-slate-300 text-base sm:text-lg">
+            {researchExperiments.length} research experiments from the test harness
           </p>
-          <p className="text-sm text-slate-400 mt-2">
-            📊 Sorted by validation count (least validated first) — help validate untested experiments!
-          </p>
+          {/* Sorting text intentionally omitted per product guidance */}
         </div>
         
         {/* Validation System Coming Soon Notice */}
-        <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-lg p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="text-4xl">🔬</div>
+        <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+            <div className="text-3xl sm:text-4xl">🔬</div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-blue-300 mb-2">
+              <h3 className="text-lg sm:text-xl font-bold text-blue-300 mb-2">
                 Cryptographic Validation System - Coming Soon
               </h3>
-              <p className="text-gray-300 mb-3">
+              <p className="text-sm sm:text-base text-gray-300 mb-3">
                 These experiments currently demonstrate the physics qualitatively using WebGPU. 
                 Soon, you'll be able to run the <strong>exact same Python code</strong> as our test harness 
                 and receive cryptographically signed validation certificates.
@@ -129,10 +90,10 @@ export default function ResearchPage() {
         </div>
         
         {/* Tier Selector */}
-        <div className="mb-8 flex gap-2 flex-wrap">
+        <div className="mb-6 sm:mb-8 flex gap-2 flex-wrap">
           <button
             onClick={() => setSelectedTier(null)}
-            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg font-semibold transition-all ${
               selectedTier === null 
                 ? 'bg-indigo-600 text-white' 
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -144,13 +105,15 @@ export default function ResearchPage() {
             <button
               key={tier}
               onClick={() => setSelectedTier(parseInt(tier))}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg font-semibold transition-all ${
                 selectedTier === parseInt(tier) 
                   ? 'bg-indigo-600 text-white' 
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
-              Tier {tier}: {name} ({experimentsByTier[parseInt(tier)]?.length || 0})
+              <span className="hidden sm:inline">Tier {tier}: {name} </span>
+              <span className="sm:hidden">T{tier} </span>
+              ({experimentsByTier[parseInt(tier)]?.length || 0})
             </button>
           ))}
         </div>
@@ -161,43 +124,26 @@ export default function ResearchPage() {
             <a
               key={exp.id}
               href={`/research/${encodeURIComponent(exp.id)}`}
-              className="block bg-slate-800/50 border border-slate-700 rounded-lg p-6 hover:bg-slate-800 transition-all"
+              className="block bg-slate-800/50 border border-slate-700 rounded-lg p-4 sm:p-6 hover:bg-slate-800 transition-all"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-white">{exp.testId}</h3>
-                    <span className="px-2 py-1 bg-indigo-600/30 text-indigo-300 text-sm rounded">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                <div className="flex-1 w-full sm:w-auto">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                    <h3 className="text-lg sm:text-xl font-bold text-white">{exp.testId}</h3>
+                    <span className="px-2 py-1 bg-indigo-600/30 text-indigo-300 text-xs sm:text-sm rounded">
                       Tier {exp.tier}
                     </span>
-                    <span className="px-2 py-1 bg-slate-700 text-slate-300 text-sm rounded">
+                    <span className="px-2 py-1 bg-slate-700 text-slate-300 text-xs sm:text-sm rounded">
                       {exp.simulation}
                     </span>
                   </div>
-                  <p className="text-slate-300 mb-2">{exp.tagline}</p>
-                  <div className="text-sm text-slate-400">
+                  <p className="text-sm sm:text-base text-slate-300 mb-2">{exp.tagline}</p>
+                  <div className="text-xs sm:text-sm text-slate-400 space-y-1">
                     <div>Lattice: {exp.initialConditions.latticeSize}³, dt: {exp.initialConditions.dt}, dx: {exp.initialConditions.dx}</div>
                     <div>Steps: {exp.initialConditions.steps}, χ: {exp.initialConditions.chi}</div>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  {/* Validation count badge */}
-                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-600/20 border border-purple-500/30 rounded-lg">
-                    <span className="text-purple-300 font-semibold text-sm">
-                      {isLoadingCerts ? '...' : (certCounts[exp.id]?.uniqueValidators || 0)}
-                    </span>
-                    <span className="text-purple-400 text-xs">
-                      {(certCounts[exp.id]?.uniqueValidators || 0) === 1 ? 'validator' : 'validators'}
-                    </span>
-                  </div>
-                  
-                  {/* Show total validations if different */}
-                  {certCounts[exp.id] && certCounts[exp.id].totalValidations > certCounts[exp.id].uniqueValidators && (
-                    <div className="text-xs text-purple-400/60">
-                      {certCounts[exp.id].totalValidations} total
-                    </div>
-                  )}
-                  
                   <span className={`px-3 py-1 rounded text-sm font-semibold ${
                     exp.status === 'production' ? 'bg-green-600/30 text-green-300' :
                     exp.status === 'beta' ? 'bg-yellow-600/30 text-yellow-300' :
@@ -210,8 +156,11 @@ export default function ResearchPage() {
               </div>
             </a>
           ))}
+          </div>
         </div>
-      </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -9,12 +9,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { formatPassRate } from '@/data/test-statistics';
 import { getShowcaseExperiments, type ExperimentDefinition } from '@/data/experiments';
 
 export default function Header() {
   const [experimentsOpen, setExperimentsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   // In test environments, usePathname() can be null; default to empty string to avoid errors
   const pathname = usePathname() ?? '';
   
@@ -43,6 +44,22 @@ export default function Header() {
     return 'Home';
   };
   
+  // Close mobile menu on route change (best-effort using pathname)
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Close on Escape key for accessibility
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-space-dark/95 backdrop-blur-sm border-b border-space-border">
       <div className="container mx-auto px-4 py-4">
@@ -192,13 +209,89 @@ export default function Header() {
           </nav>
 
           {/* Mobile menu button */}
-          <button className="md:hidden p-2 text-text-secondary hover:text-accent-chi">
+          <button
+            aria-label="Open navigation menu"
+            className="md:hidden p-2 text-text-secondary hover:text-accent-chi"
+            onClick={() => setMobileOpen(true)}
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
         </div>
       </div>
+
+      {/* Mobile Navigation Overlay */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-[60] bg-space-dark/90 backdrop-blur-sm">
+          <div className="flex flex-col h-full">
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-space-border">
+              <Link href="/" className="flex items-center space-x-3" onClick={() => setMobileOpen(false)}>
+                <div className="w-9 h-9 bg-gradient-to-br from-accent-chi to-accent-particle rounded-lg flex items-center justify-center">
+                  <span className="text-xl">⚛️</span>
+                </div>
+                <span className="text-sm font-bold text-accent-chi">Emergent Physics Lab</span>
+              </Link>
+              <button
+                aria-label="Close navigation menu"
+                className="p-2 text-text-secondary hover:text-accent-chi"
+                onClick={() => setMobileOpen(false)}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Menu items */}
+            <nav className="flex-1 overflow-y-auto">
+              <ul className="px-4 py-4 space-y-2">
+                <li>
+                  <Link href="/" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/experiments/browse" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    Browse Showcase Experiments
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/research" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    Research Experiments
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/about?from=${encodeURIComponent(getFromParam())}`} className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    About
+                  </Link>
+                </li>
+                <li className="mt-4">
+                  <a href="https://osf.io/6agn8" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    🔬 OSF Project (DOI: 10.17605/OSF.IO/6AGN8)
+                  </a>
+                </li>
+                <li>
+                  <a href="https://zenodo.org/records/17536484" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    📚 Zenodo Archive (DOI: 10.5281/zenodo.17536484)
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/gpartin/LFM" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                    💻 GitHub Repository
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            {/* Bottom area */}
+            <div className="px-4 py-3 border-t border-space-border text-right">
+              <button className="button-secondary" onClick={() => setMobileOpen(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

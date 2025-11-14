@@ -9,13 +9,13 @@
 
 export default function Footer() {
   return (
-    <footer className="border-t border-space-border bg-space-panel mt-20">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="border-t border-space-border bg-space-panel mt-12 sm:mt-16 md:mt-20">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {/* About */}
-          <div>
-            <h3 className="text-lg font-bold text-accent-chi mb-3">About This Project</h3>
-            <p className="text-sm text-text-secondary leading-relaxed">
+          <div className="sm:col-span-2 md:col-span-1">
+            <h3 className="text-base sm:text-lg font-bold text-accent-chi mb-2 sm:mb-3">About This Project</h3>
+            <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
               Interactive demonstrations of the Lattice Field Medium framework, showing how fundamental
               forces emerge from a single modified Klein-Gordon equation.
             </p>
@@ -23,8 +23,8 @@ export default function Footer() {
 
           {/* Research Links */}
           <div>
-            <h3 className="text-lg font-bold text-accent-chi mb-3">Research</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-base sm:text-lg font-bold text-accent-chi mb-2 sm:mb-3">Research</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <a
                   href="https://osf.io/6agn8"
@@ -63,8 +63,8 @@ export default function Footer() {
 
           {/* License */}
           <div>
-            <h3 className="text-lg font-bold text-accent-chi mb-3">License & Attribution</h3>
-            <div className="text-sm text-text-secondary space-y-2">
+            <h3 className="text-base sm:text-lg font-bold text-accent-chi mb-2 sm:mb-3">License & Attribution</h3>
+            <div className="text-xs sm:text-sm text-text-secondary space-y-2">
               <p>
                 <strong>Research Content:</strong><br />
                 CC BY-NC-ND 4.0
@@ -91,11 +91,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-space-border text-center text-sm text-text-muted">
+        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-space-border text-center text-xs sm:text-sm text-text-muted">
           <p>
             © {new Date().getFullYear()} Emergent Physics Lab. All physics simulations run authentic LFM code.
           </p>
-          <p className="mt-2">
+          <p className="mt-1 sm:mt-2">
             This website demonstrates real scientific research. All claims are backed by reproducible tests.
           </p>
         </div>
