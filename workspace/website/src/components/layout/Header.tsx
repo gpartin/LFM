@@ -61,7 +61,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-space-dark/95 backdrop-blur-sm border-b border-space-border">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-space-dark/95 backdrop-blur-sm border-b border-space-border">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -211,7 +211,7 @@ export default function Header() {
           {/* Mobile menu button */}
           <button
             aria-label="Open navigation menu"
-            className="md:hidden p-2 text-text-secondary hover:text-accent-chi"
+            className="md:hidden p-2 text-text-secondary hover:text-accent-chi transition-colors"
             onClick={() => setMobileOpen(true)}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,10 +223,10 @@ export default function Header() {
 
       {/* Mobile Navigation Overlay */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-[60] bg-space-dark/90 backdrop-blur-sm">
-          <div className="flex flex-col h-full">
+        <div className="md:hidden fixed inset-0 z-[60] bg-space-dark/95 backdrop-blur-md">
+          <div className="flex flex-col h-full w-full min-h-screen">
             {/* Top bar */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-space-border">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-space-border bg-space-panel">
               <Link href="/" className="flex items-center space-x-3" onClick={() => setMobileOpen(false)}>
                 <div className="w-9 h-9 bg-gradient-to-br from-accent-chi to-accent-particle rounded-lg flex items-center justify-center">
                   <span className="text-xl">⚛️</span>
@@ -235,7 +235,7 @@ export default function Header() {
               </Link>
               <button
                 aria-label="Close navigation menu"
-                className="p-2 text-text-secondary hover:text-accent-chi"
+                className="p-2 text-text-secondary hover:text-accent-chi transition-colors"
                 onClick={() => setMobileOpen(false)}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,50 +245,45 @@ export default function Header() {
             </div>
 
             {/* Menu items */}
-            <nav className="flex-1 overflow-y-auto">
-              <ul className="px-4 py-4 space-y-2">
+            <nav className="flex-1 overflow-y-auto bg-space-dark">
+              <ul className="px-4 py-6 space-y-3">
                 <li>
-                  <Link href="/" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    Home
+                  <Link href="/" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    🏠 Home
                   </Link>
                 </li>
                 <li>
-                  <Link href="/experiments/browse" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    Browse Showcase Experiments
+                  <Link href="/experiments/browse" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    🧪 Browse Showcase Experiments
                   </Link>
                 </li>
                 <li>
-                  <Link href="/research" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    Research Experiments
+                  <Link href="/research" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    📊 Research Experiments
                   </Link>
                 </li>
                 <li>
-                  <Link href={`/about?from=${encodeURIComponent(getFromParam())}`} className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    About
+                  <Link href={`/about?from=${encodeURIComponent(getFromParam())}`} className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    ℹ️ About
                   </Link>
                 </li>
-                <li className="mt-4">
-                  <a href="https://osf.io/6agn8" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    🔬 OSF Project (DOI: 10.17605/OSF.IO/6AGN8)
+                <li className="pt-3 border-t border-space-border">
+                  <a href="https://osf.io/6agn8" target="_blank" rel="noopener noreferrer" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    🔬 OSF Project
                   </a>
                 </li>
                 <li>
-                  <a href="https://zenodo.org/records/17536484" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
-                    📚 Zenodo Archive (DOI: 10.5281/zenodo.17536484)
+                  <a href="https://zenodo.org/records/17536484" target="_blank" rel="noopener noreferrer" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                    📚 Zenodo Archive
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/gpartin/LFM" target="_blank" rel="noopener noreferrer" className="block px-3 py-3 rounded-lg bg-space-panel hover:bg-space-dark transition-colors" onClick={() => setMobileOpen(false)}>
+                  <a href="https://github.com/gpartin/LFM" target="_blank" rel="noopener noreferrer" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
                     💻 GitHub Repository
                   </a>
                 </li>
               </ul>
             </nav>
-
-            {/* Bottom area */}
-            <div className="px-4 py-3 border-t border-space-border text-right">
-              <button className="button-secondary" onClick={() => setMobileOpen(false)}>Close</button>
-            </div>
           </div>
         </div>
       )}
