@@ -36,7 +36,7 @@ export const testStatistics = {
     "passing": 5
   }
 },
-  generatedAt: '2025-11-13T23:34:20.683Z'
+  generatedAt: '2025-11-14T01:28:08.906Z'
 } as const;
 
 export function formatPassRate(): string {

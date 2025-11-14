@@ -105,6 +105,31 @@ export interface ExperimentDefinition {
   // Status
   status: 'production' | 'beta' | 'development' | 'planned';
   implementationNotes?: string;        // Technical notes
+
+  // Optional per-experiment notice for context (e.g., why skipped)
+  specialNotice?: {
+    heading?: string;
+    body: string;
+    severity?: 'info' | 'warning' | 'critical';
+  };
+
+  // UI Metadata (auto-derived for RESEARCH via generation script; manual for SHOWCASE)
+  ui?: {
+    panels: string[];                  // Ordered list of logical panels (e.g., ['field','wave','particles','metrics','energy'])
+    controls: {
+      play: boolean;                   // Show play/pause button
+      reset: boolean;                  // Show reset control
+      speedSlider?: boolean;           // Show speed adjustment slider
+      chiToggle?: boolean;             // Allow toggling chi field overlay
+    };
+    metrics?: {
+      showEnergyDrift?: boolean;       // Display preview energy drift metric
+      showPrimaryMetric?: boolean;     // Display primary metric preview if approximable in browser
+      showTransmission?: boolean;      // Wave packet transmission (tunneling/double slit)
+      showReflection?: boolean;        // Wave packet reflection
+      showOrbitElements?: boolean;     // Orbital mechanics panel
+    };
+  };
 }
 
 /**
@@ -506,12 +531,30 @@ const RESEARCH_EXPERIMENTS: ExperimentDefinition[] = [
 import { RESEARCH_EXPERIMENTS as GENERATED_RESEARCH_EXPERIMENTS } from './research-experiments-generated';
 
 // Merge manual showcase example with generated experiments
-const ALL_RESEARCH_EXPERIMENTS = [
+// Apply overrides for specific experiments (non-generated fields, e.g., special notices)
+const RESEARCH_OVERRIDES: Record<string, Partial<ExperimentDefinition>> = {
+  'GRAV-09': {
+    specialNotice: {
+      heading: 'Why this test is skipped on the website',
+      severity: 'warning',
+      body: `GRAV-09 probes a property that only has a well-defined meaning under a continuum assumption.
+The quantity it evaluates presumes an infinitely divisible spacetime; on a discrete lattice with finite Δx, the metric is not invariant and does not converge in the intended sense.
+Because LFM models physics on a discrete lattice (by construction), presenting GRAV-09 here would imply a continuum-only result that is outside this model’s scope.
+Skipping it is deliberate and scientifically significant: it draws a clear boundary between continuum assumptions and discrete-lattice predictions.
+For context and discussion, see analysis/grav09_discrete_grid_limitation.md.`
+    }
+  }
+};
+
+const ALL_RESEARCH_EXPERIMENTS: ExperimentDefinition[] = [
   // Keep the manual REL-01 as a showcase template
   RESEARCH_EXPERIMENTS[0],
   // Add all generated experiments (includes REL-01 again, but with simpler metadata)
   ...GENERATED_RESEARCH_EXPERIMENTS
-];
+].map((exp) => ({
+  ...exp,
+  ...(RESEARCH_OVERRIDES[exp.id] || {})
+}));
 
 /**
  * Get all experiments (showcase + research)

@@ -4,6 +4,8 @@
  */
 
 import { getExperimentById } from '@/data/experiments';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import ResearchExperimentPanel from '@/components/research/ResearchExperimentPanel';
 import Link from 'next/link';
 
@@ -16,19 +18,28 @@ export default async function ResearchExperimentPage({ params }: PageProps) {
 
   if (!exp) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white p-8">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold mb-4">Experiment not found</h1>
-          <p className="text-slate-300 mb-6">No experiment with id: {params.id}</p>
-          <Link href="/research" className="text-indigo-400 hover:text-indigo-300 underline">Back to Research</Link>
-        </div>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-20">
+          <div className="min-h-screen bg-slate-950 text-white p-8">
+            <div className="max-w-5xl mx-auto">
+              <h1 className="text-3xl font-bold mb-4">Experiment not found</h1>
+              <p className="text-slate-300 mb-6">No experiment with id: {params.id}</p>
+              <Link href="/research" className="text-indigo-400 hover:text-indigo-300 underline">Back to Research</Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-6 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 pt-20">
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -46,8 +57,31 @@ export default async function ResearchExperimentPage({ params }: PageProps) {
           <Link href="/research" className="text-indigo-400 hover:text-indigo-300 underline">All experiments</Link>
         </div>
 
+        {/* Experiment-specific notice (e.g., skip rationale) */}
+        {exp.specialNotice && (
+          <div
+            className={`mb-6 rounded-lg border p-4 ${
+              exp.specialNotice.severity === 'critical'
+                ? 'bg-red-900/30 border-red-700/40'
+                : exp.specialNotice.severity === 'warning'
+                ? 'bg-yellow-900/20 border-yellow-600/40'
+                : 'bg-blue-900/20 border-blue-700/40'
+            }`}
+          >
+            {exp.specialNotice.heading && (
+              <h3 className="text-lg font-semibold mb-2">
+                {exp.specialNotice.heading}
+              </h3>
+            )}
+            <p className="text-slate-200 whitespace-pre-line">{exp.specialNotice.body}</p>
+          </div>
+        )}
+
         <ResearchExperimentPanel experiment={exp} />
-      </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

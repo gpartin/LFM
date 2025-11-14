@@ -48,7 +48,37 @@ import { ExperimentDefinition } from './experiments';
 export const RESEARCH_EXPERIMENTS: ExperimentDefinition[] = [
 `;
 
-  const entries = allExperiments
+  // Inject UI metadata derived from physics characteristics if not already present
+  const enriched = allExperiments.map(exp => {
+    if (exp.ui) return exp; // Manual override or already enriched
+    const sim = exp.simulation;
+    const ic = exp.initialConditions || {};
+    const hasParticles = Array.isArray(ic.particles) && ic.particles.length > 0;
+    const hasWavePacket = !!ic.wavePacket;
+    const chiGradient = Array.isArray(ic.chi);
+    const panels = [];
+    if (sim === 'field-dynamics') panels.push('field');
+    if (hasWavePacket) panels.push('wave');
+    if (hasParticles) panels.push('particles');
+    // Always include metrics & energy panels
+    panels.push('metrics','energy');
+    const controls = {
+      play: true,
+      reset: true,
+      speedSlider: hasWavePacket || hasParticles,
+      chiToggle: sim === 'field-dynamics' || chiGradient
+    };
+    const metrics = {
+      showEnergyDrift: true,
+      showPrimaryMetric: false,
+      showTransmission: hasWavePacket && /tunnel|slit/i.test(exp.displayName),
+      showReflection: hasWavePacket && /tunnel|slit/i.test(exp.displayName),
+      showOrbitElements: hasParticles
+    };
+    return { ...exp, ui: { panels, controls, metrics } };
+  });
+
+  const entries = enriched
     .map((exp) => '  ' + JSON.stringify(exp, null, 2).replace(/\n/g, '\n  '))
     .join(',\n');
 

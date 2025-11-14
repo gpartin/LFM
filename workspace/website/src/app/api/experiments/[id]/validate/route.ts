@@ -53,14 +53,53 @@ function getPaths() {
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const allow = process.env.ALLOW_HARNESS_RUNS === '1';
+  const id = decodeURIComponent(params.id);
+  // If harness execution is disabled, attempt to serve a static summary fallback (read-only evidence) if present.
   if (!allow) {
+    let staticSummary: any = null;
+    try {
+      const { workspaceDir } = getPaths();
+      const fallbackPaths: string[] = [];
+      // Results canonical locations to attempt (ordered)
+      fallbackPaths.push(path.join(workspaceDir, 'results', id.toUpperCase(), 'summary.json'));
+      const tierFolderMap: Record<string, string> = {
+        'REL': 'Relativistic',
+        'GRAV': 'Gravity',
+        'ENER': 'Energy',
+        'QUAN': 'Quantization',
+        'EM': 'Electromagnetic',
+        'COUP': 'Coupling',
+        'THERM': 'Thermodynamics',
+      };
+      const prefix = id.split('-')[0].toUpperCase();
+      const tierFolder = tierFolderMap[prefix];
+      if (tierFolder) {
+        fallbackPaths.push(path.join(workspaceDir, 'results', tierFolder, id.toUpperCase(), 'summary.json'));
+      }
+      for (const p of fallbackPaths) {
+        if (staticSummary) break;
+        if (fs.existsSync(p)) {
+          try {
+            const raw = fs.readFileSync(p, { encoding: 'utf-8' });
+            staticSummary = JSON.parse(raw);
+            // Mark as static / non-executed for frontend clarity.
+            staticSummary.static_mode = true;
+            staticSummary.execution_disabled = true;
+          } catch {}
+        }
+      }
+    } catch {}
     return new Response(JSON.stringify({
       ok: false,
-      message: 'Validation disabled (set ALLOW_HARNESS_RUNS=1 in env to enable).',
+      status: 'disabled',
+      message: 'Harness execution disabled – set ALLOW_HARNESS_RUNS=1 to enable live validation.',
+      details: {
+        summary: staticSummary,
+        disabledReason: 'env:ALLOW_HARNESS_RUNS!=1',
+      },
     }), { status: 503, headers: { 'content-type': 'application/json; charset=utf-8' } });
   }
-
-  const id = decodeURIComponent(params.id);
+  // Normal execution path below
   const mapping = mapPrefixToRunnerAndConfig(id);
   if (!mapping) {
     return new Response(JSON.stringify({ ok: false, message: `Unknown experiment id prefix for ${id}` }), { status: 400, headers: { 'content-type': 'application/json; charset=utf-8' } });

@@ -20,17 +20,20 @@ interface Props {
   experiment: ExperimentDefinition;
   isRunning?: boolean;
   onMetrics?: (m: LiveMetrics) => void;
+  speedFactor?: number;       // From UI speed slider (1.0 default)
+  resetCounter?: number;      // Increment to trigger reset
 }
 
 // Registry pattern: map simulation type to canvas component
-const CANVAS_REGISTRY: Record<SimulationType, React.ComponentType<{ experiment: ExperimentDefinition; isRunning?: boolean; onMetrics?: (m: LiveMetrics) => void }>> = {
-  'wave-packet': WavePacketCanvas,
-  'n-body': BinaryOrbitCanvas,
-  'binary-orbit': BinaryOrbitCanvas,
-  'field-dynamics': FieldDynamicsCanvas,
+type CanvasCommonProps = { experiment: ExperimentDefinition; isRunning?: boolean; onMetrics?: (m: LiveMetrics) => void; speedFactor?: number; resetCounter?: number };
+const CANVAS_REGISTRY: Record<SimulationType, React.ComponentType<CanvasCommonProps>> = {
+  'wave-packet': WavePacketCanvas as React.ComponentType<CanvasCommonProps>,
+  'n-body': BinaryOrbitCanvas as React.ComponentType<CanvasCommonProps>,
+  'binary-orbit': BinaryOrbitCanvas as React.ComponentType<CanvasCommonProps>,
+  'field-dynamics': FieldDynamicsCanvas as React.ComponentType<CanvasCommonProps>,
 };
 
-export default function SimulationDispatcher({ experiment, isRunning, onMetrics }: Props) {
+export default function SimulationDispatcher({ experiment, isRunning, onMetrics, speedFactor = 1.0, resetCounter = 0 }: Props) {
   // Safety check
   if (!experiment) {
     return (
@@ -55,7 +58,13 @@ export default function SimulationDispatcher({ experiment, isRunning, onMetrics 
   
   return (
     <div className="h-full w-full flex items-center justify-center">
-      <CanvasComponent experiment={experiment} isRunning={isRunning} onMetrics={onMetrics} />
+      <CanvasComponent 
+        experiment={experiment} 
+        isRunning={isRunning} 
+        onMetrics={onMetrics} 
+        speedFactor={speedFactor} 
+        resetCounter={resetCounter}
+      />
     </div>
   );
 }

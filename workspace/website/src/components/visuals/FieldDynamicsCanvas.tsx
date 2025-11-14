@@ -9,9 +9,11 @@ interface Props {
   experiment: ExperimentDefinition;
   isRunning?: boolean;
   onMetrics?: (m: { energy?: number; energyDriftPct?: number; time?: number }) => void; // unused here
+  speedFactor?: number;
+  resetCounter?: number;
 }
 
-export default function FieldDynamicsCanvas({ experiment, isRunning }: Props) {
+export default function FieldDynamicsCanvas({ experiment, isRunning, speedFactor = 1.0, resetCounter }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const timeRef = useRef<number>(0);
@@ -41,7 +43,7 @@ export default function FieldDynamicsCanvas({ experiment, isRunning }: Props) {
         return;
       }
       
-      timeRef.current += 0.05; // Advance time
+      timeRef.current += 0.05 * speedFactor; // Advance time scaled by speedFactor
       drawFrame(ctx, canvas.width, canvas.height, N, chiMin, chiMax, timeRef.current);
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -59,7 +61,7 @@ export default function FieldDynamicsCanvas({ experiment, isRunning }: Props) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [experiment, isRunning]);
+  }, [experiment, isRunning, speedFactor, resetCounter]);
 
   return (
     <canvas
