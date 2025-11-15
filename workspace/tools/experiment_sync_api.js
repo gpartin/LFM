@@ -54,13 +54,18 @@ function generateExperimentEntry(tierInfo, test, baseParams, tierConfig) {
   const description = test.description || test.name || '';
   const simType = inferSimulation(test, tierInfo, description);
 
-  const latticeSize = (Number.isFinite(test.grid_size) ? test.grid_size : undefined) ||
-                      (Number.isFinite(baseParams.grid_points) ? baseParams.grid_points : undefined) ||
-                      (Number.isFinite(baseParams.N) ? baseParams.N : undefined) || 256;
+  // Support both scalar and array latticeSize (for 3D grids like [128, 128, 192])
+  // If array, use max dimension as representative size for website visualization
+  let latticeSizeRaw = (test.grid_points !== undefined ? test.grid_points : undefined) ||
+                       (test.grid_size !== undefined ? test.grid_size : undefined) ||
+                       (baseParams.grid_points !== undefined ? baseParams.grid_points : undefined) ||
+                       (baseParams.N !== undefined ? baseParams.N : undefined) || 256;
+  const latticeSize = Array.isArray(latticeSizeRaw) ? Math.max(...latticeSizeRaw) : latticeSizeRaw;
   const steps = (Number.isFinite(test.steps) ? test.steps : undefined) ||
                 (Number.isFinite(baseParams.steps) ? baseParams.steps : undefined) || 5000;
-  const dt = (typeof baseParams.dt === 'number' ? baseParams.dt : (typeof baseParams.time_step === 'number' ? baseParams.time_step : 0.001));
-  const dx = (typeof baseParams.dx === 'number' ? baseParams.dx : (typeof baseParams.space_step === 'number' ? baseParams.space_step : 0.01));
+  // Test-specific dt/dx should override baseParams (priority: test.dt > baseParams.dt > baseParams.time_step)
+  const dt = (typeof test.dt === 'number' ? test.dt : (typeof baseParams.dt === 'number' ? baseParams.dt : (typeof baseParams.time_step === 'number' ? baseParams.time_step : 0.001)));
+  const dx = (typeof test.dx === 'number' ? test.dx : (typeof baseParams.dx === 'number' ? baseParams.dx : (typeof baseParams.space_step === 'number' ? baseParams.space_step : 0.01)));
   const chi = extractChi(test, baseParams);
   const tierFolder = (() => {
     const out = tierConfig && tierConfig.output_dir ? String(tierConfig.output_dir) : `../results/${tierInfo.name}`;

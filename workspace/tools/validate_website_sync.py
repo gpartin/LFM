@@ -253,8 +253,16 @@ def validate_sync() -> Tuple[bool, List[str]]:
         if config["tier"] != website["tier"]:
             mismatches.append(f"tier: config={config['tier']}, website={website['tier']}")
         
-        # Compare latticeSize
-        if config["latticeSize"] != website["latticeSize"]:
+        # Compare latticeSize (website uses max dimension if config has array)
+        config_size = config["latticeSize"]
+        website_size = website["latticeSize"]
+        # Normalize config_size: if array, take max dimension
+        if isinstance(config_size, list):
+            config_size_normalized = max(config_size)
+        else:
+            config_size_normalized = config_size
+        
+        if config_size_normalized != website_size:
             mismatches.append(f"latticeSize: config={config['latticeSize']}, website={website['latticeSize']}")
         
         # Compare dt (allow small float differences)
