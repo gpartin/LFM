@@ -90,46 +90,46 @@ export default function Home() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
               <ExperimentCard
-                title="Earth-Moon Orbit"
+                title="Binary Orbit"
                 icon="🌍"
                 description="Watch two masses orbit due to emergent gravity from chi field gradients. Real-time parameter control."
                 href="/experiments/binary-orbit"
                 status="available"
               />
               <ExperimentCard
-                title="Wave Propagation"
-                icon="〰️"
-                description="Observe electromagnetic waves emerging from lattice vibrations. Adjustable frequency and amplitude."
-                href="/experiments/wave-propagation"
-                status="coming-soon"
+                title="Quantum Tunneling"
+                icon="🌊"
+                description="Particles passing through barriers via wave mechanics on the lattice. Classical → Quantum."
+                href="/experiments/quantum-tunneling"
+                status="available"
               />
               <ExperimentCard
                 title="Gravitational Lensing"
                 icon="🌟"
                 description="Light bending around massive objects through chi field distortions. Pure emergence."
-                href="/experiments/lensing"
-                status="coming-soon"
+                href="/experiments/gravitational-lensing"
+                status="available"
               />
               <ExperimentCard
-                title="Relativistic Effects"
+                title="Double Slit"
+                icon="〰️"
+                description="Classic quantum interference pattern emerging from wave dynamics on the lattice."
+                href="/experiments/double-slit"
+                status="available"
+              />
+              <ExperimentCard
+                title="Three-Body Problem"
                 icon="⚡"
-                description="Lorentz contraction and time dilation arising from lattice structure. No special relativity needed."
-                href="/experiments/relativity"
-                status="coming-soon"
+                description="Chaotic dynamics of three gravitating masses. Watch emergent gravity create complex orbits."
+                href="/experiments/three-body"
+                status="available"
               />
               <ExperimentCard
-                title="Quantum Tunneling"
-                icon="🌊"
-                description="Particles passing through barriers via wave mechanics on the lattice. Classical → Quantum."
-                href="/experiments/tunneling"
-                status="coming-soon"
-              />
-              <ExperimentCard
-                title="Chi Field Viewer"
+                title="EM-Thermo Coupling"
                 icon="🔬"
-                description="Visualize the scalar field that gives rise to all forces. Interactive 3D exploration."
-                href="/experiments/chi-field"
-                status="coming-soon"
+                description="Electromagnetic and thermodynamic coupling on the lattice. Energy transfer between fields."
+                href="/experiments/em-thermo-coupling"
+                status="available"
               />
             </div>
           </div>
