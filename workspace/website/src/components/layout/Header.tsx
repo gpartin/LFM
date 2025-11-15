@@ -188,9 +188,9 @@ export default function Header() {
               icon="🔬"
             />
             <ExternalLink
-              href="https://zenodo.org/records/17536484"
+              href="https://zenodo.org/records/17618474"
               label="Zenodo"
-              badge="10.5281/zenodo.17536484"
+              badge="10.5281/zenodo.17618474"
               icon="📚"
             />
             <ExternalLink
