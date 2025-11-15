@@ -1,0 +1,40 @@
+{
+  "test_id": "GRAV-17",
+  "timestamp_utc": "2025-11-14T23:58:35Z",
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1338,
+      "sha256": "ea92f1cc4b74ad32e0d72faaff6c4137b8c8db06087c034974b86841b4fc075f",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_GRAV-17_serial.csv",
+      "rel_path": "diagnostics\\energy_trace_GRAV-17_serial.csv",
+      "bytes": 12272,
+      "sha256": "4edcb81dd022b5ccd44aaa8b05296facc3e35a25b26638b0c39abbae4f6ddd38",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_GRAV-17_serial.json",
+      "rel_path": "diagnostics\\energy_trace_GRAV-17_serial.json",
+      "bytes": 138,
+      "sha256": "e6812fe7f2738d28204277dcf43484c0f849ab0b2874bb1117e00e687f1d8afe",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "1272be300bf69b4b7199c831097b58cfd957cd01d9e66c14aab01750dc81537c",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-01
+passed,True
+coupling_strength_error,1.088856905782e-03
+energy_drift,2.823323194156e-05
+runtime_sec,16.790381

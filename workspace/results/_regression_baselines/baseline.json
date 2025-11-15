@@ -1,0 +1,12 @@
+{
+  "REL-11": {
+    "primary_metric": 0.002053596136026671,
+    "energy_drift": 0.00044017382716825,
+    "timestamp": "2025-11-14T23:44:35Z"
+  },
+  "QUAN-10": {
+    "primary_metric": 0.0,
+    "energy_drift": 0.0,
+    "timestamp": "2025-11-14T23:44:35Z"
+  }
+}

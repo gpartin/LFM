@@ -8,10 +8,10 @@
     "tau_max": 1000.0,
     "fit_success": true
   },
-  "runtime_sec": 23.914059162139893,
+  "runtime_sec": 21.45924735069275,
   "tier": 7,
   "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:17:13.027269Z"
+  "timestamp": "2025-11-14T18:56:55.477746Z"
 }

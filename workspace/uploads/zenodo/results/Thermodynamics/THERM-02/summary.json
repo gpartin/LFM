@@ -9,10 +9,10 @@
     "reversibility_ratio": 1.0000000000000033,
     "tolerance": 0.9
   },
-  "runtime_sec": 24.9610812664032,
+  "runtime_sec": 16.211020708084106,
   "tier": 7,
   "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:16:56.200984Z"
+  "timestamp": "2025-11-14T18:56:48.509907Z"
 }

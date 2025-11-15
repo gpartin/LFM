@@ -1034,27 +1034,43 @@ def _list_entries_for_dir(base_dir: Path) -> List[Tuple[str, int, str]]:
     return entries
 
 
-def copy_results_summaries(dest_dir: Path, include_full: bool = False):
-    """Copy key result files from workspace/results to dest_dir/results for reproducibility.
-    
+def _copy_results_summaries_from_to(src_root: Path, dest_dir: Path, include_full: bool = False):
+    """Internal helper to copy key result files from src_root to dest_dir/results deterministically.
+
+    - Explicitly excludes transient parallel_* summaries from uploads to avoid stale artifacts.
+    - Proactively removes any pre-existing parallel_*.json files in destination.
+
     Args:
-        dest_dir: Destination directory (uploads/osf or uploads/zenodo)
-        include_full: If True, copy everything; if False, copy only summaries/plots
-    
+        src_root: Source results directory
+        dest_dir: Destination root (e.g., uploads/osf or uploads/zenodo)
+        include_full: If True, include diagnostics CSVs (limited); otherwise summaries/plots only.
+
     Returns:
-        List of relative paths copied
+        List of relative destination paths copied (relative to dest_dir)
     """
-    copied = []
-    src_root = ROOT / 'results'
+    copied: list[str] = []
     dst_root = dest_dir / 'results'
-    
+
     if not src_root.exists():
         return copied
-    
+
     dst_root.mkdir(parents=True, exist_ok=True)
-    
-    # Copy top-level files
-    for top_file in ['MASTER_TEST_STATUS.csv', 'README.md', 'parallel_run_summary.json', 'parallel_test_results.json']:
+
+    # Deterministic cleanup: remove stale transient parallel_* summaries from destination
+    try:
+        for stale in ['parallel_run_summary.json', 'parallel_test_results.json']:
+            stale_path = dst_root / stale
+            if stale_path.exists():
+                try:
+                    stale_path.unlink()
+                except Exception:
+                    pass
+    except Exception:
+        # Non-fatal; continue copy
+        pass
+
+    # Copy top-level files (allowlist only)
+    for top_file in ['MASTER_TEST_STATUS.csv', 'README.md']:
         src = src_root / top_file
         if src.exists() and src.is_file():
             dst = dst_root / top_file
@@ -1063,17 +1079,17 @@ def copy_results_summaries(dest_dir: Path, include_full: bool = False):
                 copied.append(f"results/{top_file}")
             except Exception:
                 pass
-    
+
     # Copy per-category results
     for category_dir in sorted(src_root.iterdir()):
         if not category_dir.is_dir():
             continue
         if category_dir.name in ['__pycache__', '.git']:
             continue
-        
+
         dst_category = dst_root / category_dir.name
         dst_category.mkdir(parents=True, exist_ok=True)
-        
+
         # Copy category README
         readme = category_dir / 'README.md'
         if readme.exists():
@@ -1082,17 +1098,17 @@ def copy_results_summaries(dest_dir: Path, include_full: bool = False):
                 copied.append(f"results/{category_dir.name}/README.md")
             except Exception:
                 pass
-        
+
         # Copy per-test results
         for test_dir in sorted(category_dir.iterdir()):
             if not test_dir.is_dir():
                 continue
             if test_dir.name in ['__pycache__', '.git']:
                 continue
-            
+
             dst_test = dst_category / test_dir.name
             dst_test.mkdir(parents=True, exist_ok=True)
-            
+
             # Always copy: summary.json, readme.txt
             for essential in ['summary.json', 'readme.txt']:
                 src_file = test_dir / essential
@@ -1102,7 +1118,7 @@ def copy_results_summaries(dest_dir: Path, include_full: bool = False):
                         copied.append(f"results/{category_dir.name}/{test_dir.name}/{essential}")
                     except Exception:
                         pass
-            
+
             # Copy plots directory
             plots_dir = test_dir / 'plots'
             if plots_dir.exists() and plots_dir.is_dir():
@@ -1114,7 +1130,7 @@ def copy_results_summaries(dest_dir: Path, include_full: bool = False):
                         copied.append(f"results/{category_dir.name}/{test_dir.name}/plots/{plot.name}")
                     except Exception:
                         pass
-            
+
             # Optionally copy diagnostics (if include_full)
             if include_full:
                 diag_dir = test_dir / 'diagnostics'
@@ -1127,8 +1143,14 @@ def copy_results_summaries(dest_dir: Path, include_full: bool = False):
                             copied.append(f"results/{category_dir.name}/{test_dir.name}/diagnostics/{diag.name}")
                         except Exception:
                             pass
-    
+
     return copied
+
+
+def copy_results_summaries(dest_dir: Path, include_full: bool = False):
+    """Copy key result files from workspace/results to dest_dir/results (deterministic, no stale artifacts)."""
+    src_root = ROOT / 'results'
+    return _copy_results_summaries_from_to(src_root, dest_dir, include_full=include_full)
 
 
 def generate_tier_achievements(tier_name: str, category_dir: str, dest_dir: Path, 

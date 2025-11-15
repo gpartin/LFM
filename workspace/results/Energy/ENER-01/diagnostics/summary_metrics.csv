@@ -1,0 +1,5 @@
+metric,value
+test_id,ENER-01
+passed,True
+energy_drift,2.149865657241e-03
+runtime_sec,17.938977

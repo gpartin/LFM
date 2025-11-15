@@ -2,11 +2,11 @@
   "test_id": "COUP-08",
   "description": "Dynamic coupling - time-varying χ (Phase 2)",
   "passed": true,
-  "runtime_sec": 1.4637330999830738,
+  "runtime_sec": 1.41531800001394,
   "energy_drift": 2.6168236908116203e-05,
   "primary_metric": 0.04064569651763151,
   "metric_name": "dynamic_response_error",
   "convergence_validated": false,
   "notes": "mod_depth: theory=0.320, meas=0.614",
-  "timestamp": "2025-11-14T18:55:48.427522+00:00"
+  "timestamp": "2025-11-14T23:57:57.883253+00:00"
 }

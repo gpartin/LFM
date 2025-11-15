@@ -817,6 +817,20 @@ class BaseTierHarness(NumericIntegrityMixin):
             log(f"[metrics] Failed to record metrics for {test_id}: {e}", "WARN")
             # Don't fail test on metrics errors
 
+        # NEW: Emit standardized evidence artifacts (summary CSV + small PNGs)
+        try:
+            from utils.evidence import emit_summary_artifacts  # type: ignore
+            def _log_fn(msg: str, level: str = "INFO"):
+                try:
+                    log(msg, level)
+                except Exception:
+                    pass
+            made = emit_summary_artifacts(output_dir, log_fn=_log_fn)
+            if made:
+                log(f"[evidence] Artifacts generated for {test_id}", "INFO")
+        except Exception as e:
+            log(f"[evidence] Generation skipped for {test_id}: {type(e).__name__}: {e}", "WARN")
+
         return result
 
     def _extract_metrics_for_tracking(

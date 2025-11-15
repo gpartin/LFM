@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-07
+passed,True
+resonance_amplitude_ratio,2.498587234374e+00
+energy_drift,1.800443263361e-02
+runtime_sec,11.855750

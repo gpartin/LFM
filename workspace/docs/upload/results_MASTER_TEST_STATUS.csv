@@ -1,5 +1,5 @@
 ﻿MASTER TEST STATUS REPORT - LFM Lattice Field Model
-Generated: 2025-11-12 07:28:24
+Generated: 2025-11-14 12:21:47
 Validation Rule: Suite marked NOT RUN if any test missing from CSV
 
 CATEGORY SUMMARY
@@ -42,7 +42,7 @@ GRAV-03,Local frequency — Gaussian well (broader potential),PASS,
 GRAV-04,Local frequency — Gaussian well (shallow potential),PASS,
 GRAV-05,Local frequency — linear χ-gradient (moderate),PASS,
 GRAV-06,Local frequency — Gaussian well (stable reference),PASS,
-GRAV-07,Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics),PASS,
+GRAV-07,Time dilation — bound states in double-well potential (KNOWN: Packet becomes trapped; demonstrates bound state physics) [ISOLATED],PASS,
 GRAV-08,Time dilation — uniform χ diagnostic (isolate grid dispersion),PASS,
 GRAV-09,Time dilation — 2x refined grid (N=128; dx=0.5) [OPTIMIZED: matched baseline duration for fair convergence comparison],SKIP,Test design incompatible with discrete Klein-Gordon dispersion. Continuous theory allows bound states with ω≈χ (k→0 limit); but discrete grid with dx=0.5 requires representing all fields as Fourier sum with k_min=2π/L. Any localized initial condition couples to grid modes with k≈2.26 (36% of k_max=π/dx≈6.28); creating ω²≈k²+χ²≈5.1+0.04=5.14 where k-content dominates χ² by factor ~100. Both wells measure ω≈2.25 (not χA=0.30; χB=0.14); making ratio validation impossible (ratio≈1.03 vs expected 2.14). Measured ω/χ ratio 7-15× confirms dispersion relation but proves test cannot isolate pure χ-oscillation. Alternative tests (GRAV-07; GRAV-08; GRAV-13; GRAV-18) validate χ-dependent effects without this discretization artifact. Key lesson: discrete grid simulation introduces unavoidable k-content; tests must be designed accounting for ω²=k²+χ² not assuming ω≈χ.
 GRAV-10,Gravitational redshift — measure frequency shift in 1D potential well,PASS,

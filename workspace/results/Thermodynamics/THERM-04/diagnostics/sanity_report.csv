@@ -1,0 +1,5 @@
+file,status,detail
+entropy_evolution.csv,WARN,constant second column
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows
+thermalization_metrics.csv,WARN,no numeric rows

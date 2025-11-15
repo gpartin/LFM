@@ -1,2 +1,2 @@
 test_id,description,passed,energy_drift,wave_drop,runtime_sec
-ENER-01,Global conservation — short,True,0.0021498656572412904,,5.6951258182525635
+ENER-10,Thermalization — noise + damping reaches steady state,True,0.005385270127688525,,20.787002325057983

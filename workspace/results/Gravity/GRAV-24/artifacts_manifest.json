@@ -1,0 +1,40 @@
+{
+  "test_id": "GRAV-24",
+  "timestamp_utc": "2025-11-14T23:53:19Z",
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1043,
+      "sha256": "db893ffcfc02e9189127e322b45af7eae13dfc7674aca6a26dcc5df840680f2b",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_evolution_GRAV-24.csv",
+      "rel_path": "diagnostics\\chi_evolution_GRAV-24.csv",
+      "bytes": 1164,
+      "sha256": "35a4da778995c52c22ad6a9bee705607e4dc1b6667102c80cbc9b0e9c961f56e",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 66,
+      "sha256": "f3b382a0eb8c5b2424fd4a1d457ea7d2c85dea7871b66261f4e1973a4ac2a944",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_coupling_GRAV-24.png",
+      "rel_path": "plots\\chi_coupling_GRAV-24.png",
+      "bytes": 111694,
+      "sha256": "c372d324e61082fdb9ebc4e5a88eff874dd0d2f8d8346a4d64dbe44cda1d0723",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

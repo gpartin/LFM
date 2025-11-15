@@ -11,7 +11,7 @@
   "E_energy_final": 0.34754038783353447,
   "G_coupling": 0.1,
   "chi_bg": 0.05,
-  "runtime_sec": 0.13905549049377441,
+  "runtime_sec": 0.18111538887023926,
   "on_gpu": true,
   "validation": {
     "test_id": "GRAV-24",
@@ -29,9 +29,9 @@
     "metrics": {
       "amplitude_error": 0.012032611056794953
     },
-    "timestamp": "2025-11-14 10:50:20"
+    "timestamp": "2025-11-14 15:53:19"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-14T18:50:20.317975Z"
+  "timestamp": "2025-11-14T23:53:19.092139Z"
 }

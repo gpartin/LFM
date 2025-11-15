@@ -1,0 +1,4 @@
+component,value,unit,source
+poynting_conservation_error,0.0,arb,summary.json
+wave_frequency,0.1,arb,summary.json
+speed_of_light,1.0,arb,summary.json

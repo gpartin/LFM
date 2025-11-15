@@ -3,10 +3,11 @@
   "category": "Quantization",
   "test_id": "QUAN-02",
   "description": "\u0394E Transfer \u2014 High Energy",
-  "timestamp": 1762812802.000437,
+  "timestamp": 1763146353.2247453,
   "hardware": {
     "backend": "CuPy"
   },
+  "energy_drift": 0.008551734526189063,
   "parameters": {
     "N": 512,
     "dx": 0.1,
@@ -16,6 +17,7 @@
     "mode_2": 5
   },
   "metrics": {
+    "energy_drift": 0.008551734526189063,
     "max_energy_drift": 0.008551734526189063,
     "mean_energy_drift": 0.00718146068843159,
     "tolerance": 0.01

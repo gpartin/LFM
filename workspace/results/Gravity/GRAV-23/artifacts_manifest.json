@@ -1,0 +1,88 @@
+{
+  "test_id": "GRAV-23",
+  "timestamp_utc": "2025-11-14T23:53:17Z",
+  "artifact_count": 10,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1072,
+      "sha256": "1e6662b448dca008292269c1ff5ea63d6262601960637ea91ef70b823b04afd8",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_wave_history_GRAV-23.csv",
+      "rel_path": "diagnostics\\chi_wave_history_GRAV-23.csv",
+      "bytes": 1800,
+      "sha256": "016721c44002168b4ca0c1776ecb7b9876979ae498d71be1f03a08ee0445d1c1",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_wave_spectrum.csv",
+      "rel_path": "diagnostics\\chi_wave_spectrum.csv",
+      "bytes": 323,
+      "sha256": "2ef207c667d8385facceb34efa66e5480cf08dece9e1c53ac1ac3fc5bea018b0",
+      "category": "diagnostic",
+      "role": "optional"
+    },
+    {
+      "name": "dynamic_chi_metrics.csv",
+      "rel_path": "diagnostics\\dynamic_chi_metrics.csv",
+      "bytes": 160,
+      "sha256": "18a4544eac676ec1187ae26e0e3ee1f74ba4bcbc65d0dd243b79be73563b1fa4",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 177,
+      "sha256": "d5195065bc2ab59aa6590c0fa05824546288781ee34b032a27b59c66c25caac5",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 66,
+      "sha256": "3ea679a88d2af40a0dacc7fb2748f88f89139dc00c100f2baad9562acd0f5ec6",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_wave_evolution_GRAV-23.png",
+      "rel_path": "plots\\chi_wave_evolution_GRAV-23.png",
+      "bytes": 115277,
+      "sha256": "30fe0ebdabc13ee5f46aa2f169aae209f57230b756099de0cebb04062ce7f6b9",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_wave_profile.png",
+      "rel_path": "plots\\chi_wave_profile.png",
+      "bytes": 12093,
+      "sha256": "eda6bbe5bb7be5b26b6daf34b576e2ff48bf6a55a8bd02c6cd91b0d3abf57345",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "chi_wave_spectrum.png",
+      "rel_path": "plots\\chi_wave_spectrum.png",
+      "bytes": 28308,
+      "sha256": "5ac3b56f5d613342489145730b75cd09b53628ec7865a2ce0835a141aa9829cc",
+      "category": "plot",
+      "role": "optional"
+    },
+    {
+      "name": "summary_card.png",
+      "rel_path": "plots\\summary_card.png",
+      "bytes": 7168,
+      "sha256": "512b98771f171071a50dbd1b06c71a46af41b4d4c0c96ce6d61c62ea11f8300a",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

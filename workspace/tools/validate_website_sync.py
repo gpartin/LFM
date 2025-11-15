@@ -108,21 +108,33 @@ def load_test_configs() -> Dict[str, Dict]:
                     else:
                         chi_value = 0.0
             
-            # Extract latticeSize with same priority as experiment_sync_api.js:
-            # test.grid_size -> base_params.grid_points -> base_params.N -> 256
-            lattice_size = test.get("grid_size")
+            # Extract latticeSize with same priority as generate_website_experiments.js:
+            # test.grid_points -> test.grid_size -> base_params.grid_points -> base_params.N -> 256
+            lattice_size = test.get("grid_points")
+            if lattice_size is None:
+                lattice_size = test.get("grid_size")
             if lattice_size is None:
                 lattice_size = base_params.get("grid_points")
             if lattice_size is None:
                 lattice_size = base_params.get("N", 256)
+            
+            # Extract dt with test-specific override priority
+            dt_value = test.get("dt")
+            if dt_value is None:
+                dt_value = base_params.get("dt") or base_params.get("time_step", 0.001)
+            
+            # Extract dx with test-specific override priority
+            dx_value = test.get("dx")
+            if dx_value is None:
+                dx_value = base_params.get("dx") or base_params.get("space_step", 0.01)
             
             tests[test_id] = {
                 "tier": tier_info["tier"],
                 "tierName": tier_info["name"],
                 "config_file": tier_info["config"],
                 "latticeSize": lattice_size,
-                "dt": base_params.get("dt") or base_params.get("time_step", 0.001),
-                "dx": base_params.get("dx") or base_params.get("space_step", 0.01),
+                "dt": dt_value,
+                "dx": dx_value,
                 "steps": test.get("steps", base_params.get("steps", 5000)),
                 "chi": chi_value,
             }

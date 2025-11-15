@@ -1,0 +1,7 @@
+file,status,detail
+drift_analysis.csv,PASS,ok
+energy_components.csv,PASS,ok
+momentum_density.csv,PASS,ok
+momentum_history.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

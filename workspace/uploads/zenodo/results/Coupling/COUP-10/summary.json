@@ -2,11 +2,11 @@
   "test_id": "COUP-10",
   "description": "Nonlinear coupling - self-interaction via χ feedback (Phase 2)",
   "passed": true,
-  "runtime_sec": 5.347919200023171,
+  "runtime_sec": 3.9383848999859765,
   "energy_drift": 9.348728891129568e-05,
   "primary_metric": 0.6902808389096966,
   "metric_name": "nonlinearity_strength",
   "convergence_validated": false,
   "notes": "ω_low=63.073, ω_high=19.535, nonlinearity=0.690",
-  "timestamp": "2025-11-10T22:16:13.790075+00:00"
+  "timestamp": "2025-11-14T18:56:20.094424+00:00"
 }

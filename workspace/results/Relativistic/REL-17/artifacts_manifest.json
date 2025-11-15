@@ -1,0 +1,80 @@
+{
+  "test_id": "REL-17",
+  "timestamp_utc": "2025-11-14T23:47:00Z",
+  "artifact_count": 9,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 900,
+      "sha256": "4b493478e359cb17c0dcb3e5db915508e5210bb5eff7d15de2b65eb0d4d5690c",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "boost_analysis.csv",
+      "rel_path": "diagnostics\\boost_analysis.csv",
+      "bytes": 109,
+      "sha256": "e6ac46c5e1433e0d8dec20601dd74e7fe48f25018deb108130d86de87ac7d280",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_evolution.csv",
+      "rel_path": "diagnostics\\energy_evolution.csv",
+      "bytes": 869,
+      "sha256": "48fe53526f9f832c52e27e31e5cb176561e6bb1835a03a2b9a5bf67865063fbd",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "invariant_mass.csv",
+      "rel_path": "diagnostics\\invariant_mass.csv",
+      "bytes": 104,
+      "sha256": "8d40ffed1bbc374d1b5662fcbbfc00c7cbcd1d880ea44b7388c19bc6476b19ca",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 234,
+      "sha256": "346389d0d5d85d79fd61fe209f8465a9cd2d9ad2b4928112c4f9d7d393b54c88",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 43,
+      "sha256": "98dc76598cf01be32ad3d32894f30444d328f64d41c3236e7f446b27d566c52b",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "covariance_test.png",
+      "rel_path": "plots\\covariance_test.png",
+      "bytes": 49505,
+      "sha256": "2523ccc3754023d34ace7e8f6873d07a2afcc94d835c747871d7d2d28c572ba1",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_evolution.png",
+      "rel_path": "plots\\energy_evolution.png",
+      "bytes": 13052,
+      "sha256": "08c646af47cc4464382178055b359cf65b1e81f8d8143c0fe2031512955c9ee4",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "invariant_mass_REL-17.png",
+      "rel_path": "plots\\invariant_mass_REL-17.png",
+      "bytes": 173842,
+      "sha256": "9e35d77162d771437b6aab87614440ad653f2f5c9b69fac99de7b41fd33692ed",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

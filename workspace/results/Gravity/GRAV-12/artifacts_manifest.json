@@ -1,0 +1,96 @@
+{
+  "test_id": "GRAV-12",
+  "timestamp_utc": "2025-11-14T23:51:10Z",
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1359,
+      "sha256": "62503db69ae78a6d411c8594fa100b681ef4a60d67ba52002aaf1749142983b3",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "delay_measurement.csv",
+      "rel_path": "diagnostics\\delay_measurement.csv",
+      "bytes": 212,
+      "sha256": "f09c7557f4bd137024c41aa98ad01674ec97bad47d7021cb604bd0894185e04d",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "detector_signals_GRAV-12.csv",
+      "rel_path": "diagnostics\\detector_signals_GRAV-12.csv",
+      "bytes": 150268,
+      "sha256": "9e9936f6a59aee57e6cdc9076d39ed5f13f9c306e7e53a3f59eec3028ebedf8a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "envelope_measurement_GRAV-12.csv",
+      "rel_path": "diagnostics\\envelope_measurement_GRAV-12.csv",
+      "bytes": 249447,
+      "sha256": "7043b232d40098abc987c93f63cce7653db0db60c264778891f1fdb6328bc075",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_snapshots_GRAV-12.csv",
+      "rel_path": "diagnostics\\field_snapshots_GRAV-12.csv",
+      "bytes": 17855,
+      "sha256": "d93639a778455aada87141a38900a92446c539fe990b180f5b5d6981de990fae",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "initial_conditions_GRAV-12.csv",
+      "rel_path": "diagnostics\\initial_conditions_GRAV-12.csv",
+      "bytes": 20522,
+      "sha256": "978651cad1ac816eb5f0c145c72a043b5565a2a8d3ff2179eae41d6cc7f8c37e",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_analysis_GRAV-12.csv",
+      "rel_path": "diagnostics\\packet_analysis_GRAV-12.csv",
+      "bytes": 641,
+      "sha256": "239f1b0c3a632be9300fc1b74a2779d7cbdaa4b90c45e1c6e88218141f1112d2",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 300,
+      "sha256": "4163be311808964e6428360b40fbdb516d53a2e33c417f1ea4de0ae43d06a5bd",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "a47792586cee8892030a604c5262f7e7116ad9dd03f34fedac5c378fbc603f29",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "arrival_curve.png",
+      "rel_path": "plots\\arrival_curve.png",
+      "bytes": 59069,
+      "sha256": "8773eb5d2de8f494415ad2bdd673f5d8b28ea145f525e30be1b575451c208898",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "summary_card.png",
+      "rel_path": "plots\\summary_card.png",
+      "bytes": 4884,
+      "sha256": "0a5dc8aa38bbdd8575b3b0209a74fbea630cc5b621bad4182771e79181473227",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

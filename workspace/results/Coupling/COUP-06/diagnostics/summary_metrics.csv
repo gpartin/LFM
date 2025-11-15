@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-06
+passed,True
+localization_length_error,2.547928534824e-11
+energy_drift,1.280480297355e-02
+runtime_sec,18.395467

@@ -1,0 +1,4 @@
+component,value,unit,source
+chi_coupling_error,8.326672684688674e-16,arb,summary.json
+coupling_strength,0.05,arb,summary.json
+chi_amplitude,0.1,arb,summary.json

@@ -1,0 +1,7 @@
+file,status,detail
+boost_analysis.csv,WARN,no numeric rows
+covariance_metrics.csv,WARN,no numeric rows
+energy_evolution.csv,PASS,ok
+initial_residual.csv,WARN,no numeric rows
+mode_projection_series.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

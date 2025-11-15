@@ -2,11 +2,11 @@
   "test_id": "COUP-04",
   "description": "Bound State Energy Levels in χ-Well (Phase 2)",
   "passed": true,
-  "runtime_sec": 8.597827199962921,
+  "runtime_sec": 6.587288200011244,
   "energy_drift": 0.0002935715693971838,
   "primary_metric": 0.16149588069201126,
   "metric_name": "coupling_strength_error",
   "convergence_validated": false,
   "notes": "omega=9.4084, inside_frac=1.000, loc_ok=True",
-  "timestamp": "2025-11-10T22:15:51.753799+00:00"
+  "timestamp": "2025-11-14T18:55:44.311370+00:00"
 }

@@ -1,0 +1,4 @@
+metric,value
+test_id,THERM-01
+passed,True
+runtime_sec,16.253356

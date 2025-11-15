@@ -1,0 +1,6 @@
+file,status,detail
+eigenvalues.csv,PASS,ok
+energy_spectrum.csv,PASS,ok
+mode_shapes.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

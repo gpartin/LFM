@@ -165,6 +165,16 @@ def save_summary(base_dir, test_id, summary_data, metrics=None):
         # Callers and tests can still enforce presence separately.
         print(f"Warning: failed to generate readme.txt for {base}: {e}")
 
+    # Best-effort: emit standardized evidence artifacts (summary CSV + PNG)
+    # This makes artifact generation universal for all code paths that call save_summary.
+    try:
+        # Lazy import to avoid creating a hard dependency if evidence utilities are unavailable
+        from utils.evidence import emit_summary_artifacts  # type: ignore
+        emit_summary_artifacts(base, None)
+    except Exception:
+        # Never fail the save operation due to evidence rendering issues
+        pass
+
     return str(summary_path)
 
 # ---------------------------------------------------------------------

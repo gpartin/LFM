@@ -6,18 +6,18 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-12 07:28:26"
+generated: "2025-11-14 12:22:23"
 ---
 
 # Evidence Review: Documentation vs. Test Results
 
-Generated: 2025-11-12 07:28:26
+Generated: 2025-11-14 12:22:23
 
 ## Overview
 
 This document provides an automated compliance audit that cross-references
 scientific discoveries documented in `discoveries.json` against actual
-computational test results from the 85-test validation suite.
+computational test results from the 106-test validation suite.
 
 **Purpose:** Ensure every claimed discovery has corresponding computational
 evidence, and flag any gaps between documentation and validated outcomes.
@@ -34,7 +34,7 @@ evidence, and flag any gaps between documentation and validated outcomes.
 ## Methodology
 
 1. Parse discoveries.json for claimed discoveries
-2. Load test outcomes from MASTER_TEST_STATUS.csv (85 tier tests)
+2. Load test outcomes from MASTER_TEST_STATUS.csv (106 tier tests)
 3. Check if discovery evidence references specific test results
 4. Flag discoveries without direct test links for manual review
 

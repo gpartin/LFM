@@ -27,7 +27,7 @@ Skips excluded from denominator per formal exemption list (GRAV-09).
 | **EXECUTIVE_SUMMARY.md** | High-level overview for decision-makers and funding agencies |
 | **CORE_EQUATIONS.md** | Mathematical foundation: discrete lattice rules and continuum limits |
 | **MASTER_DOCUMENT.md** | Conceptual framework and physical interpretation |
-| **TEST_DESIGN.md** | Validation methodology: 88-test suite design and pass/fail criteria |
+| **TEST_DESIGN.md** | Validation methodology: 105-test suite design and pass/fail criteria |
 
 ### 📊 Validation Results
 
@@ -95,7 +95,7 @@ Skips excluded from denominator per formal exemption list (GRAV-09).
 
 ### 📁 Test Results Archive
 
-`results/` directory contains **per-test validation packets** for all 88 tests:
+`results/` directory contains **per-test validation packets** for all 105 tests:
 - Individual test summaries (JSON + TXT)
 - Diagnostic plots (energy conservation, field evolution, frequency analysis)
 - Configuration snapshots for exact reproducibility
@@ -204,7 +204,7 @@ If you use this work in research, please cite:
 
 - **Total Files**: 450+ (including test result subdirectories)
 - **Documentation**: 15 core documents (MD + PDF formats)
-- **Test Results**: 85 validation packets with full diagnostics
+- **Test Results**: 105 validation packets with full diagnostics
 - **Plots**: 90+ visualization files demonstrating physical validation
 - **Code Snapshots**: Configuration files for exact test reproducibility
 - **Archive Size**: ~7 MB (uncompressed)
@@ -213,7 +213,7 @@ If you use this work in research, please cite:
 
 ## Version History
 
-- **v3.2** (2025-11-06) — Terminology corrections, 85-test validation complete
+- **v3.2** (2025-11-06) — Terminology corrections, validation complete
 - **v3.1** (2025-11-05) — Tier 6 coupling tests Phase 1, upload restructuring
 - **v3.0** (2025-11-03) — Defensive publication release with ND restrictions
 - **v2.x** (2025-10-xx) — Tier 5 electromagnetic validation complete

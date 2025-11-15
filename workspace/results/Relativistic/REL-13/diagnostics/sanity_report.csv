@@ -1,0 +1,7 @@
+file,status,detail
+dispersion_measurement.csv,WARN,no numeric rows
+dispersion_spectrum.csv,WARN,constant second column
+energy_evolution.csv,PASS,ok
+projection_series.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

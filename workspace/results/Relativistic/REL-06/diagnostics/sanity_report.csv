@@ -1,0 +1,7 @@
+file,status,detail
+energy_components_series.csv,PASS,ok
+energy_flow.csv,PASS,ok
+energy_trace_REL-06.csv,PASS,ok
+field_spectrum.csv,PASS,ok
+phase_corr.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

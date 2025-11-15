@@ -1,0 +1,40 @@
+{
+  "test_id": "GRAV-26",
+  "timestamp_utc": "2025-11-14T23:53:44Z",
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 945,
+      "sha256": "cb1bcce3170ca164daf413f02d437ae5c0eb131f0e467ce2053f16e71f7c30fb",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "equivalence_trajectories_GRAV-26.csv",
+      "rel_path": "diagnostics\\equivalence_trajectories_GRAV-26.csv",
+      "bytes": 3280,
+      "sha256": "f4e8f94db4701fb139fc257c1050cdce336dcf34e403036f02924bb15afac4d7",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 67,
+      "sha256": "46b74f2d3c8d49240218523b941927aee1083d6edcc77ce63afb8dfa86d649cd",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "equivalence_principle_GRAV-26.png",
+      "rel_path": "plots\\equivalence_principle_GRAV-26.png",
+      "bytes": 136607,
+      "sha256": "d093d5ca89397adbd18b3a0bfc32a7301789a3accede19fee5ec6e7d5dfce82a",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

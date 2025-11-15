@@ -3,7 +3,7 @@
   "category": "Quantization",
   "test_id": "QUAN-06",
   "description": "Phase-Amplitude Coupling \u2014 High Noise",
-  "timestamp": 1763146456.4544778,
+  "timestamp": 1763164591.6222172,
   "hardware": {
     "backend": "CuPy"
   },

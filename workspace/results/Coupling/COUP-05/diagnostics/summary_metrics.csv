@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-05
+passed,True
+transmission_coefficient_error,1.884516026540e-02
+energy_drift,5.202508865949e-03
+runtime_sec,31.218557

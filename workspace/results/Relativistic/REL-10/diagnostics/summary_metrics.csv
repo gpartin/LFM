@@ -1,0 +1,4 @@
+metric,value
+test_id,REL-10
+passed,True
+spherical_error,1.680007563390e-13

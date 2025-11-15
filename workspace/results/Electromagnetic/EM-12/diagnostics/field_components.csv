@@ -1,0 +1,4 @@
+component,value,unit,source
+em-12_error,1.4685823496403974,arb,summary.json
+max_individual_error,1.4685823496403974,arb,summary.json
+avg_individual_error,0.9539717905187256,arb,summary.json

@@ -1,0 +1,88 @@
+{
+  "test_id": "GRAV-13",
+  "timestamp_utc": "2025-11-14T23:52:00Z",
+  "artifact_count": 10,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1368,
+      "sha256": "f4d0303d4ec404393147f4236dd35dc8780709f8efd7a679e8595d806d534951",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_profile.csv",
+      "rel_path": "diagnostics\\chi_profile.csv",
+      "bytes": 49,
+      "sha256": "7c9e70e45f5eb40535a0a533c881dfe2d5fa82547432abe488a065cdc841d181",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_trace_GRAV-13_serial.csv",
+      "rel_path": "diagnostics\\energy_trace_GRAV-13_serial.csv",
+      "bytes": 1536,
+      "sha256": "c65a1d5257f23b5ade70a39fbbe7d276176361bcae3e22ddeef5dba68806f263",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_GRAV-13_serial.json",
+      "rel_path": "diagnostics\\energy_trace_GRAV-13_serial.json",
+      "bytes": 138,
+      "sha256": "4bcfa8902ea8b71982eaba39df9fca905ebf6b7716feb2b3a5bfe7c0b2675923",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "frequency_shifts.csv",
+      "rel_path": "diagnostics\\frequency_shifts.csv",
+      "bytes": 197,
+      "sha256": "1353120a873d92a1338b73ac3fc8bfd3d4d2284956aba40ec4fb0c9f009380f6",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "local_freq_profile_GRAV-13.csv",
+      "rel_path": "diagnostics\\local_freq_profile_GRAV-13.csv",
+      "bytes": 2240,
+      "sha256": "b273f4836b5f391fdbf7b71b939b5b41647d90e16f180cc7593f85ff61d6bf7f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 198,
+      "sha256": "cb18a9aa921548250d8fcb00b5532b78d74a7aa31dee4c149bfc59b056ba122a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "2c05bad956a2e5f358468cf7d42d2b586a859c428f6b71663e37798aa114b24a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "frequency_vs_position.png",
+      "rel_path": "plots\\frequency_vs_position.png",
+      "bytes": 17244,
+      "sha256": "ac77482b8ef57fd468dfc9be10178ce69cdb36bbc9f778dfdaa810b2aa2acc0d",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "redshift_curve.png",
+      "rel_path": "plots\\redshift_curve.png",
+      "bytes": 35015,
+      "sha256": "c8d3a21799b42edf7ac08759a052c720a20ad9710ee69cbb88cf781f77a6a25a",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

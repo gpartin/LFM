@@ -1,0 +1,5 @@
+metric,value
+test_id,REL-08
+passed,True
+linearity_error,2.673757827198e-05
+energy_drift,6.314702163530e-05

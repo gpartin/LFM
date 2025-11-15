@@ -2,11 +2,11 @@
   "test_id": "COUP-03",
   "description": "Light Deflection During Transverse Motion (Phase 2)",
   "passed": true,
-  "runtime_sec": 21.442638300010003,
+  "runtime_sec": 21.894314200006193,
   "energy_drift": 0.049015272345121264,
   "primary_metric": 0.0,
   "metric_name": "coupling_strength_error",
   "convergence_validated": false,
   "notes": "theta_static=0.436584 rad, theta_moving=0.436584 rad, drift_static=4.9015e-02, drift_moving=4.9015e-02",
-  "timestamp": "2025-11-14T18:55:44.165669+00:00"
+  "timestamp": "2025-11-14T23:57:54.301336+00:00"
 }

@@ -2,11 +2,11 @@
   "test_id": "COUP-11",
   "description": "Interference - coupled field mixing (Phase 2)",
   "passed": true,
-  "runtime_sec": 5.815327699994668,
+  "runtime_sec": 4.51908149998053,
   "energy_drift": 0.008633716452998425,
   "primary_metric": 0.8223027505294952,
   "metric_name": "fringe_visibility",
   "convergence_validated": false,
   "notes": "V=0.822, I_max=0.000, I_min=0.000",
-  "timestamp": "2025-11-10T22:16:21.221587+00:00"
+  "timestamp": "2025-11-14T18:56:27.180137+00:00"
 }

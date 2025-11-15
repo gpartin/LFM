@@ -12,10 +12,10 @@
     "max_energy_drift": 0.10534965430428755,
     "tolerance_increase_min": 0.1
   },
-  "runtime_sec": 21.393908500671387,
+  "runtime_sec": 14.13517451286316,
   "tier": 7,
   "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-10T22:16:45.950411Z"
+  "timestamp": "2025-11-14T18:56:46.048638Z"
 }

@@ -1,0 +1,6 @@
+metric,value
+entropy_initial,4.692608443e-01
+entropy_final,5.364437991e-01
+entropy_increase,6.718295476e-02
+linear_fit_slope,-1.276489428e-05
+max_energy_drift,1.053496543e-01

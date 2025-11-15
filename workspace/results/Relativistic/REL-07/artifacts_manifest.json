@@ -1,0 +1,24 @@
+{
+  "test_id": "REL-07",
+  "timestamp_utc": "2025-11-14T23:46:39Z",
+  "artifact_count": 2,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 670,
+      "sha256": "ef18d709291e254d77f02b0539801d4e62cb3b5a7edd85184eb938adee7329da",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 75,
+      "sha256": "ba5e578adab271ae4e264d9ac843a115adbaf6c96e440d612e542e7dbb07b091",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

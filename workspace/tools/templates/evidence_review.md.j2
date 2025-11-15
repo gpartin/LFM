@@ -17,7 +17,7 @@ Generated: {{ generation_time }}
 
 This document provides an automated compliance audit that cross-references
 scientific discoveries documented in `discoveries.json` against actual
-computational test results from the 85-test validation suite.
+computational test results from the {{ test_count }}-test validation suite.
 
 **Purpose:** Ensure every claimed discovery has corresponding computational
 evidence, and flag any gaps between documentation and validated outcomes.
@@ -34,7 +34,7 @@ evidence, and flag any gaps between documentation and validated outcomes.
 ## Methodology
 
 1. Parse discoveries.json for claimed discoveries
-2. Load test outcomes from MASTER_TEST_STATUS.csv (85 tier tests)
+2. Load test outcomes from MASTER_TEST_STATUS.csv ({{ test_count }} tier tests)
 3. Check if discovery evidence references specific test results
 4. Flag discoveries without direct test links for manual review
 
