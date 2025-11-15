@@ -38,13 +38,13 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://zenodo.org/records/17536484"
+                  href="https://zenodo.org/records/17618474"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-text-secondary hover:text-accent-chi transition-colors flex items-center space-x-2"
                 >
                   <span>📚</span>
-                  <span>Zenodo Archive (DOI: 10.5281/zenodo.17536484)</span>
+                  <span>Zenodo Archive (DOI: 10.5281/zenodo.17618474)</span>
                 </a>
               </li>
               <li>

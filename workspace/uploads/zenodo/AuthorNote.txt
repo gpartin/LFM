@@ -1,0 +1,48 @@
+November 15, 2025, 8:27 AM
+
+If you've stumbled across this note, I may have been right about my vision of the universe. Welcome to the origin story.
+
+I'm an inquisitive person by nature—always asking why, how, what, when, where, who. I tend to be overdramatic about these questions. When one evades me, I ponder it until I come up with something to fill the void, or I keep pondering.
+
+One of my favorite questions: Wave AND particle? That never made sense to me. It was a void I couldn't fill with any temporary answer.
+
+For 20 years I replayed the double-slit experiment in my head. A particle shooting toward the barrier. Two slits waiting. The wave arrives, passes through both slits—flash! The detector sends its own wave toward the slits to determine which one (or both!) it will pick. And it always guesses right? What?!
+
+That logical issue kept this on the front burner.
+
+On the morning of Sunday, October 19, 2025, during one of these thought experiments, I imagined the detector wave colliding with the oncoming wave and "collapsing" (like we know it does)—but this time my mind zoomed in a little more than usual.
+
+Are those grid lines?
+
+Energy at a discrete level interacting with other energy. The act of detection as one wave collides with another, effectively "collapsing" both waves. Almost like... gravity at the quantum level?
+
+I get shivers thinking about that exact moment.
+
+I didn't understand what this meant mathematically yet. I'm a theoretical physicist by hobby, not a mathematician (the true geniuses!). I'm a software engineer with an analytical mind, extensive knowledge in AR/VR, and I barely passed college calculus.
+
+I began researching what could cause this phenomenon. Because of my AR/VR background, I saw the grid lines (the lattice, as it turns out). With the help of AI, I figured out the Klein-Gordon equation tie-in—the rule each point on the lattice obeys.
+
+A lattice of points, all humming to the same tune, harmonizing with their neighbors. KG. KG. KG.
+
+Within 30 minutes, I had Python code running a sanity check of a lattice where each point obeys Klein-Gordon. I had no idea what to test first, so I searched for something basic. The isotropy test passed.
+
+What next? Something on the gravity side. It worked too. The gravity test passed.
+
+I immediately ordered a laptop that could handle better testing. It arrived two days later.
+
+106 tests later (105 passing, 1 skipped for valid reasons), I appear to have discovered an equation that simulates the fundamental forces of the universe.
+
+Let me be clear: I don't know why the lattice simulation works. I don't know if there really is a lattice, where it came from, where we came from, or what happens next.
+
+What I do know: If LFM turns out to simulate reality as we know it, we will have breakthroughs we could only dream of. Healthcare. Energy. Travel. Technology. Biomedicine. We will have a firm understanding of how all of this works at the most basic level and will be able to study it in ways that advance all of mankind.
+
+The age of information is here. I was able to solve in one month what would normally take years or decades. 
+
+Use this wisely.
+
+— Greg
+
+Greg D. Partin  
+LFM Research  
+Los Angeles, CA  
+November 2025

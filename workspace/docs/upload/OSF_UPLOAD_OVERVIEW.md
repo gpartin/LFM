@@ -7,9 +7,9 @@ This is a dry-run staging area. Upload the following files to OSF:
 | COMMERCIAL_LICENSE_REQUEST.md | 6320 | `001cdc827ea25e6d199bac36062cd63570fafb3b42edba3984843b9d008a9cd6` |
 | LICENSE | 19673 | `2bb242cab4d02d4241f3cff0a34ad79402ac9284cf4cc7ec94fd87feb12639a8` |
 | LICENSE_MATRIX.md | 1872 | `7a6421f205729d0b2b2d7274bbd166cb1c46960d6b974a1109973e45d8948166` |
-| MANIFEST.md | 30161 | `e42f0ccf8b6b23f5801f8b73a848df769dae07e944818661bf890d5666dcf8d8` |
+| MANIFEST.md | 30161 | `68bc946c597eb84cc6d406a2dd690e365e72cfc3db0e6985bf18973a946602f5` |
 | NOTICE | 5857 | `5cc5a429a2babea5d11ef5da8788f9aed2aa34210b469eb391b786f4d17b4e57` |
-| OSF_UPLOAD_OVERVIEW.md | 29766 | `d80d847e2aa7f2b708bebb3b004cad2820153b7f44e040b75d70256e882b3ab0` |
+| OSF_UPLOAD_OVERVIEW.md | 29766 | `2eefeb4d7caf6d2945a40c4287e6c5f2ee11bf2ffac48ed9a041704a166ba7c4` |
 | plots/Coupling/COUP-01/coupling_strength.png | 14516 | `a70540f762b5a988c18436a5a8535fc3c224018a59acc27d673e5be970a06841` |
 | plots/Coupling/COUP-02/coupling_strength.png | 15899 | `81a2d74b4cb250b82b36dea6ecb62dd869e820b2a03049b9c0d24d949b585618` |
 | plots/Coupling/COUP-02/wave_speed_comparison.png | 16779 | `c37df20f3d88dd87504dabcc796d2a0af6f8d97fac97a04c6f5b5013259070cd` |
@@ -227,8 +227,8 @@ This is a dry-run staging area. Upload the following files to OSF:
 | plots/Thermodynamics/THERM-05/second_law_validation.png | 18116 | `2e5b2f29ef17bbe6423748195546ba462ef7bb2f08f1ca1887a7716591bb467c` |
 | PLOTS_OVERVIEW.md | 20698 | `4399beb5aa9454326a323a21010095c7accca51d9b68a7473f6407c01f54c669` |
 | README.md | 2234 | `56a3d29e414ba3f3181413396efefc1678079f3f3a400da154ce875cb0baf9f2` |
-| results_MASTER_TEST_STATUS.csv | 10263 | `1ff9df2ccad2beb7f9b5c44e0e8d0bfe50cf200a0a03c96b9d418201efac644a` |
-| SKIP_DISCLOSURE.md | 1890 | `f66a8f7bdad4b0141021be01c372d0b5adca59e233994b7762d895971fb93e03` |
+| results_MASTER_TEST_STATUS.csv | 10263 | `cfa49d76ee8aa9400e54e21dd0198f6c412848cb9a4ed59ef36d2e80b0c5f8a0` |
+| SKIP_DISCLOSURE.md | 1890 | `decbcda7d72a5a8c21a7e0f699bdea5fd79279283604d44f3ccf76b5bf15b0c2` |
 | txt/Executive_Summary.txt | 6935 | `98ba8bcd654340cbc6208557490d1558402d5b95259730eb5bb4e949976ad922` |
 | txt/HUMAN_IMPLICATIONS_SUMMARY.txt | 8156 | `b2b1531800b659031a02086ee6a717c8a6de9831e8ff01bca95a64ff91699f87` |
 | txt/LFM_Core_Equations.txt | 11017 | `883ac5bbc95b0081fab332003e756794991376972834357199945d21a9f57e05` |
@@ -236,4 +236,4 @@ This is a dry-run staging area. Upload the following files to OSF:
 | txt/LFM_Phase1_Test_Design.txt | 10224 | `0d7b83ff666bb2f8967ef55595c6efe03ac9f76e257421f7105de56c7a8ab5fc` |
 | txt/README.md | 583 | `a48fcdc1de21c703cadee41804eb13b8be162b3fa3707e2fc84a886a9b2e6b2f` |
 | UPLOAD_COMPLIANCE_AUDIT.md | 62 | `e4340d3178e82e2c2dfdff0542af54acfb3fd9ae963d8295f517dd2190c17e21` |
-| LFM_upload_bundle_20251115_v1.zip | 11271633 | `b89715e86ef02433569ddbbb24eaf293bf51c4364fc9f9619284a0e4747f4159` |
+| LFM_upload_bundle_20251115_v1.zip | 11271615 | `8c755735a94fdcc7d3da794e81af3e47b09450ff78c1a6d94cc9566c26cf7e88` |

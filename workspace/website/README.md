@@ -72,7 +72,7 @@ Watch two masses orbit each other with gravity emerging from the chi field:
 ## Research Links
 
 - **OSF Project**: [10.17605/OSF.IO/6AGN8](https://osf.io/6agn8)
-- **Zenodo Archive**: [10.5281/zenodo.17536484](https://zenodo.org/records/17536484)
+- **Zenodo Archive**: [10.5281/zenodo.17618474](https://zenodo.org/records/17618474)
 - **GitHub Repository**: [github.com/gpartin/LFM](https://github.com/gpartin/LFM)
 
 ## Development

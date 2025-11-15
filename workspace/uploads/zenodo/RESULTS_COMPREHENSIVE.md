@@ -5,8 +5,8 @@ institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-15 07:36:48"
+doi: "https://zenodo.org/records/17618474"
+generated: "2025-11-15 09:12:55"
 ---
 
 # Comprehensive Test Results
@@ -14,7 +14,7 @@ generated: "2025-11-15 07:36:48"
 ## Overview
 
 This document provides a high-level summary of LFM validation test results across all tiers. For detailed test-by-test results, see the individual tier achievement reports.
-Generated: 2025-11-15 07:36:48
+Generated: 2025-11-15 09:12:55
 
 ## Test Summary
 

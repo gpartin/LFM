@@ -1,13 +1,13 @@
 {
   "test_id": "REL-01",
-  "timestamp_utc": "2025-11-15T14:57:30Z",
+  "timestamp_utc": "2025-11-15T15:38:26Z",
   "artifact_count": 6,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 1001,
-      "sha256": "7f84233adf0b046019bf885f1822f5c713fd786f32199c447bac715af2f09ba8",
+      "sha256": "0c719f333a3d62a8ba252455ec3a6647a3c202c8afbef0c2ed6dbab1ce596e4b",
       "category": "metadata",
       "role": "supplemental"
     },

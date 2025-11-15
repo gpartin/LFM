@@ -5,13 +5,13 @@ institution: "LFM Research, Los Angeles CA USA"
 license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
-doi: "https://zenodo.org/records/17536484"
-generated: "2025-11-15 07:36:48"
+doi: "https://zenodo.org/records/17618474"
+generated: "2025-11-15 09:12:55"
 ---
 
 # Tier 2 — Gravity Analogue Validation Achievements
 
-Generated: 2025-11-15 07:36:48
+Generated: 2025-11-15 09:12:55
 
 ## Overview
 

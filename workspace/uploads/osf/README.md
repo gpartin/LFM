@@ -2,12 +2,12 @@
 
 **A Computational Framework Demonstrating Emergent Gravity, Quantum Mechanics, and Electromagnetism from Discrete Field Dynamics**
 
-[![DOI](https://zenodo.org/badge/DOI/https://zenodo.org/records/17536484.svg)](https://doi.org/https://zenodo.org/records/17536484)
+[![DOI](https://zenodo.org/badge/DOI/https://zenodo.org/records/17618474.svg)](https://doi.org/https://zenodo.org/records/17618474)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ---
 
-> Provenance: commit `05e2b37b08f48f88d471a33fc8e9dd729306ada2`, built `2025-11-15 07:36:48`, deterministic: on
+> Provenance: commit `284e4f6d92ac482e28117b1b10ca9ad5eea6d29a`, built `2025-11-15 09:12:55`, deterministic: on
 
 ## Overview
 
@@ -145,8 +145,8 @@ Organized by tier: `Relativistic/`, `Gravity/`, `Energy/`, `Quantization/`, `Ele
 
 This archive is a **deterministically generated snapshot** of the LFM Phase 1 validation suite. Key provenance:
 
-- **Git Commit**: `05e2b37b08f48f88d471a33fc8e9dd729306ada2`
-- **Generation Date**: 2025-11-15 07:36:48
+- **Git Commit**: `284e4f6d92ac482e28117b1b10ca9ad5eea6d29a`
+- **Generation Date**: 2025-11-15 09:12:55
 - **Deterministic**: on
 
 For full environment details (Python, NumPy, CuPy, OS), see the Provenance section in `MANIFEST.md`. All files include SHA256 checksums in `MANIFEST.md` for integrity verification.
@@ -164,8 +164,8 @@ If you use this work in research, please cite:
   year = {2025},
   publisher = {Zenodo},
   version = {3.2},
-  doi = {https://zenodo.org/records/17536484},
-  url = {https://doi.org/https://zenodo.org/records/17536484}
+  doi = {https://zenodo.org/records/17618474},
+  url = {https://doi.org/https://zenodo.org/records/17618474}
 }
 ```
 
@@ -228,7 +228,7 @@ Special thanks to the open-source scientific computing community (NumPy, CuPy, S
 
 ---
 
-**Archive Generation**: This README and all contents were generated deterministically via `tools/build_upload_package.py` on 2025-11-15 07:36:48.
+**Archive Generation**: This README and all contents were generated deterministically via `tools/build_upload_package.py` on 2025-11-15 09:12:55.
 
 **File Integrity**: Verify checksums in `MANIFEST.md` before use.
 

@@ -1,13 +1,13 @@
 {
   "test_id": "QUAN-01",
-  "timestamp_utc": "2025-11-15T15:37:05Z",
+  "timestamp_utc": "2025-11-15T15:38:22Z",
   "artifact_count": 6,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
-      "bytes": 649,
-      "sha256": "431762acb881e79e76007ceea9c1bb0a986269d0c49ebd6b43ba8060cef3f448",
+      "bytes": 648,
+      "sha256": "6f0743fca3718382b2b1f7cb42de0ff13f70f0e1dc4b89920eb1d84f2be16046",
       "category": "metadata",
       "role": "supplemental"
     },

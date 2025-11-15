@@ -188,7 +188,7 @@ export default function Home() {
                 🔬 View OSF Project
               </a>
               <a
-                href="https://zenodo.org/records/17536484"
+                href="https://zenodo.org/records/17618474"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="button-secondary"

@@ -273,7 +273,7 @@ export default function Header() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://zenodo.org/records/17536484" target="_blank" rel="noopener noreferrer" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
+                  <a href="https://zenodo.org/records/17618474" target="_blank" rel="noopener noreferrer" className="block px-4 py-4 rounded-lg bg-space-panel hover:bg-accent-chi/10 transition-colors text-text-primary font-medium text-lg border border-space-border hover:border-accent-chi" onClick={() => setMobileOpen(false)}>
                     📚 Zenodo Archive
                   </a>
                 </li>

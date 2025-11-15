@@ -770,7 +770,7 @@ def write_zenodo_metadata(entries: List[Tuple[str, int, str]], deterministic: bo
         "keywords": ["Lattice Field Medium", "EM-analogous", "Klein-Gordon equation", "electromagnetic phenomena", "discrete spacetime", "lattice simulation"],
         "related_identifiers": [
             {"relation": "isSupplementTo", "identifier": "https://osf.io/6agn8"},
-            {"relation": "isSupplementTo", "identifier": "https://zenodo.org/records/17510124"}
+            {"relation": "isSupplementTo", "identifier": "https://zenodo.org/records/17618474"}
         ],
         "notes": "LFM Phase 1 validation package - electromagnetic phenomena emerging from Klein-Gordon dynamics."
     }
@@ -1464,7 +1464,7 @@ def _generate_discoveries_overview(dest_dir: Path, deterministic: bool = False):
         'license: "CC BY-NC-ND 4.0"',
     'contact: "latticefieldmediumresearch@gmail.com"',
         'orcid: "https://orcid.org/0009-0004-0327-6528"',
-        'url: "https://zenodo.org/records/17536484"',
+        'url: "https://zenodo.org/records/17618474"',
         f'generated: "{stamp}"',
         '---',
         '',
@@ -2122,7 +2122,7 @@ def _txt_to_markdown(txt_path: Path, title: str, deterministic: bool = False) ->
     lines.append('license: "CC BY-NC-ND 4.0"')
     lines.append('contact: "latticefieldmediumresearch@gmail.com"')
     lines.append('orcid: "https://orcid.org/0009-0004-0327-6528"')
-    lines.append('url: "https://zenodo.org/records/17536484"')
+    lines.append('url: "https://zenodo.org/records/17618474"')
     if deterministic:
         lines.append(f'generated: "{_deterministic_now_str()}"')
     lines.append('---')

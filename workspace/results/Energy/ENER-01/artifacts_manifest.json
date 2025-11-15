@@ -1,13 +1,13 @@
 {
   "test_id": "ENER-01",
-  "timestamp_utc": "2025-11-15T15:37:06Z",
+  "timestamp_utc": "2025-11-15T15:38:23Z",
   "artifact_count": 12,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 824,
-      "sha256": "d9693a5858154fd3fac323524a9cb228ac2bb9adbfb355d52dea0fff42a3c235",
+      "sha256": "93a2dc4edcfda6996f22cd8d8de2b3da0594186d771b7b2e251292edef71828e",
       "category": "metadata",
       "role": "supplemental"
     },
@@ -55,7 +55,7 @@
       "name": "summary_metrics.csv",
       "rel_path": "diagnostics\\summary_metrics.csv",
       "bytes": 99,
-      "sha256": "3067c4299def18e4e7ecdd22349ed2c30dcbd7bd2382b905bd7f09b70333a880",
+      "sha256": "998126ce7d27a1e910279f5e509927241e7ae21e8b159d44e43959d930915054",
       "category": "diagnostic",
       "role": "supplemental"
     },

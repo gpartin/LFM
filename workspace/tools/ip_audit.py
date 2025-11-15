@@ -120,7 +120,7 @@ def check_zenodo_links() -> Tuple[bool, List[str]]:
     old_doi = "10.5281/zenodo.17510124"
     
     # Should contain new record URL
-    new_record = "https://zenodo.org/records/17536484"
+    new_record = "https://zenodo.org/records/17618474"
     
     key_files = [
         Path("workspace/uploads/zenodo/README.md"),

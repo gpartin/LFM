@@ -1,16 +1,4 @@
----
-title: "LFM Phase 1 Test Design"
-author: "Greg D. Partin"
-institution: "LFM Research, Los Angeles CA USA"
-license: "CC BY-NC-ND 4.0"
-contact: "latticefieldmediumresearch@gmail.com"
-orcid: "https://orcid.org/0009-0004-0327-6528"
-url: "https://zenodo.org/records/17618474"
-generated: "2025-11-15 09:12:55"
----
-
-# ﻿Lattice-Field Medium (LFM): Phase 1 Test Design — Proof-of-Concept Validation System
-
+﻿Lattice-Field Medium (LFM): Phase 1 Test Design — Proof-of-Concept Validation System
 
 Version 3.2 — 2025-11-06 (Defensive ND Release)
 Greg D. Partin | LFM Research — Los Angeles CA USA
@@ -21,9 +9,7 @@ adds No-Derivatives restrictions and defensive-publication language for
 intellectual property protection. All LFM Phase-1 documents are
 synchronized under this unified v3.0 release.
 
-
-## Abstract
-
+Abstract
 
 Phase 1 defines the design and implementation framework for validating
 the Lattice-Field Medium (LFM) through reproducible Tier 1–7 tests. It
@@ -42,41 +28,36 @@ foundation for expert review.
 
 2 Hardware and Environment
 
+	-----------------------------------------------------------------------
+	Component               Specification           Notes
+	----------------------- ----------------------- -----------------------
+	System                  MSI Katana A15 AI       Primary development
+																									node
 
------------------------------------------------------------------------
+	CPU / GPU               Ryzen 7 8845HS / RTX    Hardware sufficient for all
+										4060 (8 GB VRAM)        Tier 1–7 test campaigns
 
-Component               Specification           Notes
+	RAM / Storage           32 GB / 1 TB SSD        Sufficient for 3D Tier
+																									3 tests
 
------------------------ ----------------------- -----------------------
+	OS                      Windows 11 x64          
 
-System                  MSI Katana A15 AI       Primary development
-node
+	Python Environment      3.11.9 + NumPy, SciPy,  Standard computation
+													Numba, CuPy-CUDA12x     stack
 
-CPU / GPU               Ryzen 7 8845HS / RTX    Hardware sufficient for all
-4060 (8 GB VRAM)        Tier 1–7 test campaigns
-
-RAM / Storage           32 GB / 1 TB SSD        Sufficient for 3D Tier
-3 tests
-
-OS                      Windows 11 x64
-
-Python Environment      3.11.9 + NumPy, SciPy,  Standard computation
-Numba, CuPy-CUDA12x     stack
-
-Version Control         Git (local → GitHub     Ensures provenance and
-private)                reproducibility
-
------------------------------------------------------------------------
+	Version Control         Git (local → GitHub     Ensures provenance and
+													private)                reproducibility
+	-----------------------------------------------------------------------
 
 3 Folder and File Architecture
 
 The LFM Proof-of-Concept environment follows a strict folder structure:
-LFM\\code — Source modules and Tier kernels
-LFM\\config — JSON configuration and thresholds
-LFM\\runs — Runtime data for each experiment
-LFM\\results — Metrics, plots, and summaries
-LFM\\logs — Execution and environment logs
-LFM\\packages — Proof-packet archives
+LFM\code — Source modules and Tier kernels
+LFM\config — JSON configuration and thresholds
+LFM\runs — Runtime data for each experiment
+LFM\results — Metrics, plots, and summaries
+LFM\logs — Execution and environment logs
+LFM\packages — Proof-packet archives
 
 4 Configuration and Validation Logic
 
@@ -87,30 +68,25 @@ tolerances, run_settings, and notes.
 
 5 Pass/Fail Framework
 
+	-----------------------------------------------------------------------
+	Tier                    Goal                    Pass Criteria (Phase 1)
+	----------------------- ----------------------- -----------------------
+	1                       Lorentz isotropy &      Δv/c ≤ 1 %, anisotropy ≤ 1 %; energy drift within typical
+								dispersion              bounds 10⁻⁶ … 10⁻⁴ depending on grid/BCs
 
------------------------------------------------------------------------
+	2                       Weak-field / redshift   Correlation > 0.95 with analytic model; drift ≤ 1 %
 
-Tier                    Goal                    Pass Criteria (Phase 1)
+	3                       Energy conservation     Relative energy drift |ΔE| / |E₀| within 10⁻⁶ … 10⁻⁴ typical;
+	                                                strict baseline tolerance configured as 1×10⁻¹² in
+	                                                /config/validation_thresholds.json for conservative runs
 
------------------------ ----------------------- -----------------------
+	4                       Quantum behavior        Discrete energy eigenvalues with <2% error; quantum tunneling 
+	                                                demonstrated; uncertainty relation Δx·Δk ≥ 0.5 confirmed
 
-1                       Lorentz isotropy &      Δv/c ≤ 1 %, anisotropy ≤ 1 %; energy drift within typical
-dispersion              bounds 10⁻⁶ … 10⁻⁴ depending on grid/BCs
-
-2                       Weak-field / redshift   Correlation > 0.95 with analytic model; drift ≤ 1 %
-
-3                       Energy conservation     Relative energy drift |ΔE| / |E₀| within 10⁻⁶ … 10⁻⁴ typical;
-strict baseline tolerance configured as 1×10⁻¹² in
-/config/validation_thresholds.json for conservative runs
-
-4                       Quantum behavior        Discrete energy eigenvalues with <2% error; quantum tunneling
-demonstrated; uncertainty relation Δx·Δk ≥ 0.5 confirmed
-
-5                       Electromagnetic theory  EM-analogous phenomena validated: wave propagation, field coupling,
-polarization, and birefringence emerge from Klein-Gordon + χ-field;
-{{PASS_RATE:Electromagnetic}} test success rate on implemented phenomena
-
------------------------------------------------------------------------
+	5                       Electromagnetic theory  EM-analogous phenomena validated: wave propagation, field coupling,
+	                                                polarization, and birefringence emerge from Klein-Gordon + χ-field;
+	                                                {{PASS_RATE:Electromagnetic}} test success rate on implemented phenomena
+	-----------------------------------------------------------------------
 
 6 Orchestration and Parallelism
 
@@ -136,9 +112,9 @@ anchoring ensure reproducibility.
 
 9 Phase 1 Test Scope
 
-Phase 1 currently executes Tier 1–7 tests (105 tests total across 7 physics domains).
-Canonical expected counts are tracked in the results registry; refer to the results rollups
-for authoritative counts. Additional exploratory tests may be present. Refer to the per-tier
+Phase 1 currently executes Tier 1–7 tests (105 tests total across 7 physics domains). 
+Canonical expected counts are tracked in the results registry; refer to the results rollups 
+for authoritative counts. Additional exploratory tests may be present. Refer to the per-tier 
 results under results/<Tier>/* for PASS/FAIL/SKIP status. Expected duration for a full run
 depends on hardware and concurrency.
 
@@ -152,34 +128,29 @@ proof packets.
 
 11 Metadata Alignment
 
+	-----------------------------------------------------------------------
+	Field                               Value
+	----------------------------------- -----------------------------------
+	Keywords                            lattice field theory; discrete
+																			spacetime; emergent relativity;
+																			reproducibility; computational
+																			physics
 
------------------------------------------------------------------------
+	License                             License CC BY-NC-ND 4.0
+																			(non-commercial, attribution
+																			required)
 
-Field                               Value
+	Category Tags                       Theoretical Physics · Computational
+																			Physics · Simulation Frameworks
 
------------------------------------ -----------------------------------
+	Data Availability                   All proof packets and logs provided
+																			as supplemental data under
+																			reproducible archive.
 
-Keywords                            lattice field theory; discrete
-spacetime; emergent relativity;
-reproducibility; computational
-physics
+	Funding / Acknowledgements          Self-funded; no external sponsors.
 
-License                             License CC BY-NC-ND 4.0
-(non-commercial, attribution
-required)
-
-Category Tags                       Theoretical Physics · Computational
-Physics · Simulation Frameworks
-
-Data Availability                   All proof packets and logs provided
-as supplemental data under
-reproducible archive.
-
-Funding / Acknowledgements          Self-funded; no external sponsors.
-
-Contact                             latticefieldmediumresearch@gmail.com
-
------------------------------------------------------------------------
+	Contact                             latticefieldmediumresearch@gmail.com
+	-----------------------------------------------------------------------
 
 12 Summary
 
@@ -197,9 +168,7 @@ All rights reserved. “Lattice-Field Medium,” “LFM Equation,” and “LFM
 Research Framework”
 are original works authored by Greg D. Partin.
 
-
-### License Update (v3.2 — 2025-11-06):
-
+License Update (v3.2 — 2025-11-06):
 Beginning with version 3.0, this work is licensed under the
 Creative Commons Attribution–NonCommercial–NoDerivatives 4.0
 International License (CC BY-NC-ND 4.0).
@@ -233,9 +202,7 @@ described here are disclosed solely for scientific reproducibility. They
 are not granted for reuse, adaptation, or redistribution in derivative
 simulation frameworks without written permission of the author.
 
-
-### Citation (Zenodo Record):
-
+Citation (Zenodo Record):
 Partin, G. D. (2025). Lattice-Field Medium (LFM): A Deterministic
 Lattice Framework for Emergent Relativity, Gravitation, and Quantization
 — Phase 1 Conceptual Hypothesis v1.0. Zenodo.
@@ -245,8 +212,3 @@ Contact & Licensing:
 Research Inquiries: latticefieldmediumresearch@gmail.com
 Commercial Licensing: licensing@emergentphysicslab.com
 See: github.com/gpartin/LFM/blob/main/workspace/COMMERCIAL_LICENSE_REQUEST.md
-
-
----
-
-License: CC BY-NC-ND 4.0
