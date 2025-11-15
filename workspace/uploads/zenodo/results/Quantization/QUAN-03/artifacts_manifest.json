@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-03",
+  "timestamp_utc": "2025-11-14T23:56:48Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 599,
+      "sha256": "92b141722552b3e8a620498265173ecabe9b37de755b38dd5dceecc49b504c3f",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "3fa319f2dced1380d6cdf203ff0227845ac1c3ec8ffb0c07989139af41eab43c",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "spectral_linearity.png",
+      "rel_path": "plots\\spectral_linearity.png",
+      "bytes": 56834,
+      "sha256": "e8bd74818d45ad18a7823b03723f83f48af694a57285e7eaca10ca280d578b6e",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,3 @@
+# synthesized if single-point measurement; extend test harness for multi-k sampling
+k,omega_measured,omega_theory,rel_error
+5.829126994e+01,5.785032629e+01,5.829127187e+01,7.564521477e-03

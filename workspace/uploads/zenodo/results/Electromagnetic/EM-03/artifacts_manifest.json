@@ -1,0 +1,72 @@
+{
+  "test_id": "EM-03",
+  "timestamp_utc": "2025-11-14T23:56:55Z",
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 543,
+      "sha256": "45edb71a7fcaaa4de794766a27ab39639223de5c461b49275777469b16539291",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 150,
+      "sha256": "ec9b6b8e3ad71bb299d6ff574aba8e867c3a023f284df8e05472449279f4a230",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "2a41bd6b79d98292d252f93e97bf523ad506e9a095f5f1d9d93e0d69f41d4cab",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "441d62197021fc37b4f97555e74859719858f6812cdbc8e3a77df6e217825b36",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "faraday_error_analysis.png",
+      "rel_path": "plots\\faraday_error_analysis.png",
+      "bytes": 42974,
+      "sha256": "3b562e8fdd690b40cf84cc97935463fffc1f1059ddf87396a36f21479603194d",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "faraday_induction.png",
+      "rel_path": "plots\\faraday_induction.png",
+      "bytes": 131351,
+      "sha256": "e94a41221baa44e8281cb47cb41c990c783ce7b00872a672a0f17cd152acc5b4",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17944,
+      "sha256": "f3cb0ac8fca53c983a94b4c07937d546d1333f47f59b433e3f94be4528eb1dc8",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

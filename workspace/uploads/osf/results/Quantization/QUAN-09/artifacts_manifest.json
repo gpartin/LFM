@@ -1,0 +1,40 @@
+{
+  "test_id": "QUAN-09",
+  "timestamp_utc": "2025-11-14T23:56:22Z",
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 560,
+      "sha256": "52d36c3312bac052250f2fb537f8dc21d250add3dd2019b9ba583dce7e66aef3",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "6d0eae7084c19191fb1fe15d31696b6a830c5aceaf6f5b0af07ceac158c4a752",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "uncertainty_results.csv",
+      "rel_path": "diagnostics\\uncertainty_results.csv",
+      "bytes": 319,
+      "sha256": "c44fe9850bfe009bb6f62aefee557054d994fd89c574791457f3c62020855bd3",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "uncertainty_dx_dk.png",
+      "rel_path": "plots\\uncertainty_dx_dk.png",
+      "bytes": 38562,
+      "sha256": "228a4db51cfceb15a6e448bd91da67720304423c9bd5b08f5b02206d02839c17",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

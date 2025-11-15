@@ -1,0 +1,4 @@
+metric,value
+test_id,EM-06
+passed,True
+runtime_sec,0.974750

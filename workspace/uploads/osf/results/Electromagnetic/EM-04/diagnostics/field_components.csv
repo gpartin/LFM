@@ -1,0 +1,4 @@
+component,value,unit,source
+ampere_law_error,0.0,arb,summary.json
+displacement_current,0.0001,arb,summary.json
+charging_rate,0.0001,arb,summary.json

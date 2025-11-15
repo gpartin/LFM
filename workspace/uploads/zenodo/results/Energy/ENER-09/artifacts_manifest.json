@@ -1,0 +1,104 @@
+{
+  "test_id": "ENER-09",
+  "timestamp_utc": "2025-11-14T23:55:13Z",
+  "artifact_count": 12,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 895,
+      "sha256": "22979fedb04078061128c53cd69a540951fc7f8bffb69fd0469de2287c72db9b",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "drift_analysis.csv",
+      "rel_path": "diagnostics\\drift_analysis.csv",
+      "bytes": 1915,
+      "sha256": "e7db74d933d1ac0df8fdca1dfa9fe207a8576ebebf9e7b84fa8a22d7f9747b3c",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_components.csv",
+      "rel_path": "diagnostics\\energy_components.csv",
+      "bytes": 3685,
+      "sha256": "55dfc1d02f89ea07cb791dfa3c9058abc6810b7e80d16ea6bf6df347ab3181f9",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_trace.csv",
+      "rel_path": "diagnostics\\energy_trace.csv",
+      "bytes": 13526,
+      "sha256": "c3e9fd30de4d6826cd0d9f3432c771b9bc42c2220481b2222a77bdf2f4f49747",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "entropy_trace.csv",
+      "rel_path": "diagnostics\\entropy_trace.csv",
+      "bytes": 13067,
+      "sha256": "7d0fa6ce274c706ce3ab15a90445952fc981ce4ea3a4f6cf81292968a322218a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 174,
+      "sha256": "cd58a85d8eb990f27d8a11af48f216f39402106895f14f7649142fef35162f8d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 100,
+      "sha256": "6d20227a91a8b0fd23a9303d71a0b580945c3c62bb6df75028c813bcf91b3be8",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "drift_evolution.png",
+      "rel_path": "plots\\drift_evolution.png",
+      "bytes": 26044,
+      "sha256": "c99c4695cf5849c9fe00e3adbfa2379b2e078403ca7ebae4fe6666f839d01a71",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_partition.png",
+      "rel_path": "plots\\energy_partition.png",
+      "bytes": 22532,
+      "sha256": "6f10d667aa8bdd63f48e335dd8f7862b79a073efee7d2ea40ab41b54455394be",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_time_series.png",
+      "rel_path": "plots\\energy_time_series.png",
+      "bytes": 30768,
+      "sha256": "26cab7a753ad73606816e3f724ba9582ac072e068a2510de350f901203d39380",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_vs_time.png",
+      "rel_path": "plots\\energy_vs_time.png",
+      "bytes": 70214,
+      "sha256": "bccc4a6582ccbd3ce4fb9675925c9423e8cec423ffc0861b4282a58d7ab478a9",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "entropy_vs_time.png",
+      "rel_path": "plots\\entropy_vs_time.png",
+      "bytes": 51978,
+      "sha256": "0453321cb078f9e482a903aa28f7866841e96dfa0866709f9c2fafca8e9acf89",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

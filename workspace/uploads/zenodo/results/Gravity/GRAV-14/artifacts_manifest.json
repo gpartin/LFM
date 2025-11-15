@@ -1,0 +1,56 @@
+{
+  "test_id": "GRAV-14",
+  "timestamp_utc": "2025-11-14T23:52:18Z",
+  "artifact_count": 6,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1278,
+      "sha256": "d9882c9182c43a3ad86df814ea36f62187ae6db4dc7cbcb2d6423a148bae703d",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "detector_signal_GRAV-14_control.csv",
+      "rel_path": "diagnostics\\detector_signal_GRAV-14_control.csv",
+      "bytes": 111847,
+      "sha256": "91bd67cdb9db4d3fd825c2ca0835177eebd2df63fa2b274c7943b4dc6db21607",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "detector_signal_GRAV-14_slab.csv",
+      "rel_path": "diagnostics\\detector_signal_GRAV-14_slab.csv",
+      "bytes": 111860,
+      "sha256": "af09f3d1931496353b76a1e1ddfc2d7b78eda99014c20e649209dc44ac76d533",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_tracking_GRAV-14_control.csv",
+      "rel_path": "diagnostics\\packet_tracking_GRAV-14_control.csv",
+      "bytes": 90960,
+      "sha256": "57b322324e54a9a978388e7eb3ccb3b5b17888afd125d5314c2e50a109e8d802",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_tracking_GRAV-14_slab.csv",
+      "rel_path": "diagnostics\\packet_tracking_GRAV-14_slab.csv",
+      "bytes": 91197,
+      "sha256": "2291d835d0d3fe37fb432e35ec827588169146e722e1df0cff3cdb1ffe25418a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "899aaf44f0d519e56356feacfe1f919fb012c202ab09f06488473bb8b0ab46e5",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

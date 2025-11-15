@@ -615,8 +615,19 @@ def _convert_md_to_txt(src: Path, dst: Path):
     pandoc = _find_pandoc()
     if pandoc:
         import subprocess as _sp
-        _sp.run([str(pandoc), str(src), '-t', 'plain', '-o', str(dst)], check=True)
-        return
+        try:
+            # Prefer GitHub-flavored markdown reader to avoid YAML frontmatter issues
+            r = _sp.run([str(pandoc), '--from=gfm+yaml_metadata_block', str(src), '-t', 'plain', '-o', str(dst)],
+                        capture_output=True, text=True)
+            if r.returncode == 0 and dst.exists():
+                return
+            # Fallback attempt without metadata parsing
+            r2 = _sp.run([str(pandoc), '--from=markdown', str(src), '-t', 'plain', '-o', str(dst)],
+                         capture_output=True, text=True)
+            if r2.returncode == 0 and dst.exists():
+                return
+        except Exception:
+            pass
     # Fallback: naive markdown strip
     txt = src.read_text(encoding='utf-8')
     # Remove common markdown markers
@@ -1035,18 +1046,15 @@ def _list_entries_for_dir(base_dir: Path) -> List[Tuple[str, int, str]]:
 
 
 def _copy_results_summaries_from_to(src_root: Path, dest_dir: Path, include_full: bool = False):
-    """Internal helper to copy key result files from src_root to dest_dir/results deterministically.
+    """Copy result files from src_root to dest_dir/results deterministically.
 
-    - Explicitly excludes transient parallel_* summaries from uploads to avoid stale artifacts.
-    - Proactively removes any pre-existing parallel_*.json files in destination.
-
-    Args:
-        src_root: Source results directory
-        dest_dir: Destination root (e.g., uploads/osf or uploads/zenodo)
-        include_full: If True, include diagnostics CSVs (limited); otherwise summaries/plots only.
-
-    Returns:
-        List of relative destination paths copied (relative to dest_dir)
+    Policy:
+    - Always copy: category README.md, per-test summary.json and readme.txt
+    - Plots: copy all common formats (png,jpg,jpeg,svg,gif,mp4)
+    - Diagnostics: if include_full=True, copy all files in diagnostics/ (recursive)
+    - Root-level per-test files: copy *.json, *.csv, *.txt (metadata/metrics)
+    - Exclude transient artifacts: parallel_*.json at destination root; skip __pycache__/.git
+    - Avoid heavy frame dumps by default (directories named 'frames')
     """
     copied: list[str] = []
     dst_root = dest_dir / 'results'
@@ -1119,17 +1127,30 @@ def _copy_results_summaries_from_to(src_root: Path, dest_dir: Path, include_full
                     except Exception:
                         pass
 
-            # Copy plots directory
+            # Copy root-level metadata files (json/csv/txt)
+            for ext in ('*.json', '*.csv', '*.txt'):
+                for f in sorted(test_dir.glob(ext)):
+                    if f.name in ['summary.json', 'readme.txt']:
+                        continue
+                    try:
+                        shutil.copyfile(f, dst_test / f.name)
+                        copied.append(f"results/{category_dir.name}/{test_dir.name}/{f.name}")
+                    except Exception:
+                        pass
+
+            # Copy plots directory (common formats)
             plots_dir = test_dir / 'plots'
             if plots_dir.exists() and plots_dir.is_dir():
                 dst_plots = dst_test / 'plots'
                 dst_plots.mkdir(parents=True, exist_ok=True)
-                for plot in sorted(plots_dir.glob('*.png')):
-                    try:
-                        shutil.copyfile(plot, dst_plots / plot.name)
-                        copied.append(f"results/{category_dir.name}/{test_dir.name}/plots/{plot.name}")
-                    except Exception:
-                        pass
+                plot_exts = ['*.png', '*.jpg', '*.jpeg', '*.svg', '*.gif', '*.mp4']
+                for pat in plot_exts:
+                    for plot in sorted(plots_dir.glob(pat)):
+                        try:
+                            shutil.copyfile(plot, dst_plots / plot.name)
+                            copied.append(f"results/{category_dir.name}/{test_dir.name}/plots/{plot.name}")
+                        except Exception:
+                            pass
 
             # Optionally copy diagnostics (if include_full)
             if include_full:
@@ -1137,10 +1158,22 @@ def _copy_results_summaries_from_to(src_root: Path, dest_dir: Path, include_full
                 if diag_dir.exists() and diag_dir.is_dir():
                     dst_diag = dst_test / 'diagnostics'
                     dst_diag.mkdir(parents=True, exist_ok=True)
-                    for diag in sorted(diag_dir.glob('*.csv'))[:10]:  # Limit CSVs
+                    # Copy all diagnostics files recursively (exclude heavy 'frames')
+                    for f in sorted(diag_dir.rglob('*')):
+                        if f.is_dir():
+                            # Skip heavy frame dumps by default
+                            if f.name.lower() == 'frames':
+                                continue
+                            # Ensure directory exists
+                            rel_dir = f.relative_to(test_dir)
+                            (dst_test / rel_dir).mkdir(parents=True, exist_ok=True)
+                            continue
                         try:
-                            shutil.copyfile(diag, dst_diag / diag.name)
-                            copied.append(f"results/{category_dir.name}/{test_dir.name}/diagnostics/{diag.name}")
+                            rel = f.relative_to(test_dir)
+                            dest_f = dst_test / rel
+                            dest_f.parent.mkdir(parents=True, exist_ok=True)
+                            shutil.copyfile(f, dest_f)
+                            copied.append(f"results/{category_dir.name}/{test_dir.name}/{rel.as_posix()}")
                         except Exception:
                             pass
 
@@ -1699,9 +1732,9 @@ def main():
         print(f"Merged {len(merged_zen)} legacy artifact group(s) into Zenodo payload")
     
     # Copy results tree to both destinations
-    print("\n[INFO] Copying results summaries to upload payloads...")
-    copied_osf_results = copy_results_summaries(DEST_OSF, include_full=False)
-    copied_zen_results = copy_results_summaries(DEST_ZENODO, include_full=False)
+    print("\n[INFO] Copying full results data to upload payloads...")
+    copied_osf_results = copy_results_summaries(DEST_OSF, include_full=True)
+    copied_zen_results = copy_results_summaries(DEST_ZENODO, include_full=True)
     print(f"Copied {len(copied_osf_results)} result files to OSF payload")
     print(f"Copied {len(copied_zen_results)} result files to Zenodo payload")
     
@@ -2274,8 +2307,9 @@ def generate_upload_readme(dest_dir: Path, deterministic: bool = False) -> str:
         # If template missing, leave existing README.md untouched
         return 'README.md'
 
-    # Minimal context for future extension
+    # Deterministic generation time
     generation_time = _deterministic_now_str() if deterministic else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     # Load canonical registry
     canonical_path = ROOT / 'results' / 'test_registry_canonical.json'
     try:
@@ -2291,7 +2325,24 @@ def generate_upload_readme(dest_dir: Path, deterministic: bool = False) -> str:
             'passed': data.get('passed', 0)
         }
 
-    content = tmpl.render(generation_time=generation_time, canonical=canonical, tiers=tiers)
+    # Git SHA for provenance
+    commit_sha = 'unknown'
+    try:
+        import subprocess as _sp
+        pr = _sp.run(['git', '--no-pager', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True, timeout=3)
+        if pr.returncode == 0:
+            commit_sha = pr.stdout.strip()
+    except Exception:
+        pass
+
+    # Render README with provenance
+    content = tmpl.render(
+        generation_time=generation_time,
+        deterministic=deterministic,
+        commit_sha=commit_sha,
+        canonical=canonical,
+        tiers=tiers,
+    )
     (dest_dir / 'README.md').write_text(content, encoding='utf-8')
     return 'README.md'
 

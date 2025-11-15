@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-08
+passed,True
+dynamic_response_error,4.064569651763e-02
+energy_drift,2.616823690812e-05
+runtime_sec,3.459290

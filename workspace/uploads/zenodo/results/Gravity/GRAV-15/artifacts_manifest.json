@@ -1,0 +1,32 @@
+{
+  "test_id": "GRAV-15",
+  "timestamp_utc": "2025-11-14T23:54:33Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1181,
+      "sha256": "888112e677e4703aaa0c5f20ac6e902d5f023125069a8d360f5b4eee83663375",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_snapshots_3d_GRAV-15.h5",
+      "rel_path": "diagnostics\\field_snapshots_3d_GRAV-15.h5",
+      "bytes": 5032,
+      "sha256": "046cd4b0113b06dd8af447643101c0b6daf965fe31330aa235cedc5328abb4c9",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "6042074f30d6a2568cbe27f81f92bc48ee59a77541ddbf69c87b712c0f92eea6",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

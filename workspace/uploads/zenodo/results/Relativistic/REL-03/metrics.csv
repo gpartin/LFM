@@ -1,0 +1,7 @@
+metric,value
+rel_error,0.008174590345536359
+covariance_ratio,0.9918254096544636
+residual_lab_rms,8.70392429529781
+residual_boost_rms,8.632773279785189
+omega_lab,38.93156618782542
+energy_drift,3.114139104095775e-05

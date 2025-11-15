@@ -6,7 +6,7 @@ license: "CC BY-NC-ND 4.0"
 contact: "latticefieldmediumresearch@gmail.com"
 orcid: "https://orcid.org/0009-0004-0327-6528"
 doi: "https://zenodo.org/records/17536484"
-{% if deterministic_date %}generated: "{{ deterministic_date }}"{% endif %}
+generated: "{{ deterministic_date if deterministic_date else generation_time }}"
 ---
 
 # {{ tier_name }} Validation Achievements
@@ -26,9 +26,9 @@ Generated: {{ deterministic_date if deterministic_date else generation_time }}
 
 | Test ID | Status | Description |
 |---------|--------|-------------|
-{%- for test in tests %}
+{% for test in tests %}
 | {{ test.id }} | {{ test.status }} | {{ test.description }} |
-{%- endfor %}
+{% endfor %}
 
 ## Significance
 

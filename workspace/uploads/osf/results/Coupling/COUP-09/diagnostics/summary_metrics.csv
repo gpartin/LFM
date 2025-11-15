@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-09
+passed,True
+asymmetry_ratio,1.893665886707e-01
+energy_drift,6.719798086415e-02
+runtime_sec,28.412320

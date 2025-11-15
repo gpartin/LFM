@@ -2,11 +2,11 @@
   "test_id": "COUP-05",
   "description": "Tunneling Rate Modulation by χ-Field (Phase 2)",
   "passed": true,
-  "runtime_sec": 48.166286599996965,
+  "runtime_sec": 50.84676849999232,
   "energy_drift": 0.005202508865948619,
   "primary_metric": 0.018845160265398953,
   "metric_name": "transmission_coefficient_error",
   "convergence_validated": false,
   "notes": "Higher χ barrier yields attenuation_ratio=0.981",
-  "timestamp": "2025-11-14T18:56:28.429696+00:00"
+  "timestamp": "2025-11-14T23:58:37.786269+00:00"
 }

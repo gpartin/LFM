@@ -1,0 +1,6 @@
+file,status,detail
+detector_signal_GRAV-14_control.csv,PASS,ok
+detector_signal_GRAV-14_slab.csv,PASS,ok
+packet_tracking_GRAV-14_control.csv,PASS,ok
+packet_tracking_GRAV-14_slab.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

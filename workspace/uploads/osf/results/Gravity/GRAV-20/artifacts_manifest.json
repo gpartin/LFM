@@ -1,0 +1,48 @@
+{
+  "test_id": "GRAV-20",
+  "timestamp_utc": "2025-11-14T23:53:05Z",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1095,
+      "sha256": "cf00437f34013b37c9d74fe96174f606116b7d2223f6e5180c6a9d18b8546f90",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "self_consistency_profile_GRAV-20.csv",
+      "rel_path": "diagnostics\\self_consistency_profile_GRAV-20.csv",
+      "bytes": 1202,
+      "sha256": "f045e532d279caf881654cc401b7fe4b6015379488881ded6839b81c0e81a07d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 66,
+      "sha256": "5210213bfd122a9f872c418773d7bf44b23594ac3402388d105e1e1708b57c31",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "self_consistency_profile_overlay_GRAV-20.png",
+      "rel_path": "plots\\self_consistency_profile_overlay_GRAV-20.png",
+      "bytes": 51482,
+      "sha256": "76de10a4890ecec2f3ad068a45f6b803add7a7ffb0a6562a02c96c9d4a9aeaa8",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "self_consistency_ratio_GRAV-20.png",
+      "rel_path": "plots\\self_consistency_ratio_GRAV-20.png",
+      "bytes": 35015,
+      "sha256": "dc3c0449e2f8f7d16b8a814c427a236c9be6a0275d918836e65c463daf7f9023",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

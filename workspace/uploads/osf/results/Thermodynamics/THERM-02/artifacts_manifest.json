@@ -1,0 +1,72 @@
+{
+  "test_id": "THERM-02",
+  "timestamp_utc": "2025-11-14T23:58:57Z",
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 507,
+      "sha256": "eefed0ea5133ea76a79454a31c7f70e89b8bcb59fcea2110f364649bde439d2d",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "entropy_evolution.csv",
+      "rel_path": "diagnostics\\entropy_evolution.csv",
+      "bytes": 2614,
+      "sha256": "cecbbb15ac5272ee9f5438499c9f1fe75176d58b2924840b3adda600ad9181c7",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 162,
+      "sha256": "e504ab5b012cb9646a9c0195d45eacc45301f37586b02773ce1ed1f959ff819d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 68,
+      "sha256": "c4ee9b423f7ba9bce297dba16f559f6affb3d629dfb5e6d11d485ff19467e74a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "thermalization_metrics.csv",
+      "rel_path": "diagnostics\\thermalization_metrics.csv",
+      "bytes": 180,
+      "sha256": "5d292539942d8f3f8c38cd4febca847a25ca8088a51a7cfa3497190e85bc8eca",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "entropy_increase.png",
+      "rel_path": "plots\\entropy_increase.png",
+      "bytes": 17075,
+      "sha256": "9c60cc7324927bc26b70948dcca6240ac7bfbf1805f6857aba4c3bcb0339ae63",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "entropy_time_series.png",
+      "rel_path": "plots\\entropy_time_series.png",
+      "bytes": 20808,
+      "sha256": "fdb3c8fda7abd39fbbbedda779b5e1ea0df0148a79826e75497aae5096e6dc2d",
+      "category": "plot",
+      "role": "optional"
+    },
+    {
+      "name": "second_law_validation.png",
+      "rel_path": "plots\\second_law_validation.png",
+      "bytes": 18116,
+      "sha256": "2e5b2f29ef17bbe6423748195546ba462ef7bb2f08f1ca1887a7716591bb467c",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

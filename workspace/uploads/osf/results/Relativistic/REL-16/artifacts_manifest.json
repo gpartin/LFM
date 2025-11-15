@@ -1,0 +1,48 @@
+{
+  "test_id": "REL-16",
+  "timestamp_utc": "2025-11-14T23:46:59Z",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 876,
+      "sha256": "82ab5fc11aa7b3751ad4ea6b154e922f155a7850a6646a865cfb8ed593eeabfc",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "momentum_density.csv",
+      "rel_path": "diagnostics\\momentum_density.csv",
+      "bytes": 23050,
+      "sha256": "4a0d68e208c510abea2d98666742611b2153dd9dca2dd5b8a911569dc64873b9",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "momentum_history.csv",
+      "rel_path": "diagnostics\\momentum_history.csv",
+      "bytes": 1604,
+      "sha256": "6b418d0f5afd1aa3c3f382fa594e117b98a0e0732e21f64fe771d3f336814a5f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 65,
+      "sha256": "71759e65922a9447ec489010e31fbd3cb7a1c3bb73148954e417e68c99f9483f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "momentum_conservation_REL-16.png",
+      "rel_path": "plots\\momentum_conservation_REL-16.png",
+      "bytes": 112284,
+      "sha256": "9e6d84e615e748e700a0e3ae1c2d9f5da496e382456168a3ad8d494a35c1cdcf",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

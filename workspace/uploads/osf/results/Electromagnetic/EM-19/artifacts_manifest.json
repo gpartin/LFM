@@ -1,0 +1,64 @@
+{
+  "test_id": "EM-19",
+  "timestamp_utc": "2025-11-14T23:57:23Z",
+  "artifact_count": 7,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 658,
+      "sha256": "8073ca7621cac03223629cf2c387ca207369c18a7711320834c2bfa00e9aa5d5",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 419,
+      "sha256": "4f23af8038662cc28b2cc323a5d2c418f7145dc28e92e10558966d90596198ca",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "2a41bd6b79d98292d252f93e97bf523ad506e9a095f5f1d9d93e0d69f41d4cab",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "104c985619aeb96401554e18a7d5113ea7f5d4c8d955293e9bda555a177e0f41",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "gauge_invariance.png",
+      "rel_path": "plots\\gauge_invariance.png",
+      "bytes": 174033,
+      "sha256": "ee17b461cbf007e66dbca336b9c348300fef2d1c7703cb0094e6982dc763f1e6",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17820,
+      "sha256": "56d8503dd8b5b4024cfb9469d000b1b69c7047247dd8837a18599858f0d0c157",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

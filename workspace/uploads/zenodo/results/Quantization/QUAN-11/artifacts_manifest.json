@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-11",
+  "timestamp_utc": "2025-11-14T23:56:41Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 790,
+      "sha256": "57e151f55f7b6174ac517001268b981ecd66ed20fe91b094eba19492b4ddfe7d",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "53b88e5131ab1ed82cce5a461ae7e70b1f2436fb13b7f62a2551b0f389e821a0",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "zero_point_energy.png",
+      "rel_path": "plots\\zero_point_energy.png",
+      "bytes": 101495,
+      "sha256": "cc5ee6570e0b0d847f33d488338f5f70ea0d1069b1f7426fc90ed88011f29b06",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

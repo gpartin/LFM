@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-10
+passed,True
+nonlinearity_strength,6.902808389097e-01
+energy_drift,9.348728891130e-05
+runtime_sec,3.706717

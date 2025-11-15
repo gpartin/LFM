@@ -1,0 +1,48 @@
+{
+  "test_id": "COUP-04",
+  "timestamp_utc": "2025-11-14T23:16:29Z",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 427,
+      "sha256": "9b5cd7a0acfab5c07e21291a6de695be4ed4843663e7f18fd786566e86943c9e",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "coupling_analysis.csv",
+      "rel_path": "diagnostics\\coupling_analysis.csv",
+      "bytes": 85,
+      "sha256": "da40fd0b754bfff9958f45ff40ed66fdd24be049f9333fa19810a5f2c77c3c7d",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 143,
+      "sha256": "f3c22790276d6e8a3c2c298a8184e15cbfa956a4a5be5f123f6512f6ec6c77b8",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "wave_speed_profile.csv",
+      "rel_path": "diagnostics\\wave_speed_profile.csv",
+      "bytes": 42,
+      "sha256": "531837fd81d72ca7dca72f2945ed3cd541eb567b893451e6b5bc76eb0257fa6a",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "coupling_strength.png",
+      "rel_path": "plots\\coupling_strength.png",
+      "bytes": 16692,
+      "sha256": "4bfd3de809d15cdd4c93c2373c01486029cd3986de7c44917944d831f179385f",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

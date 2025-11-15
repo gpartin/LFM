@@ -1,0 +1,96 @@
+{
+  "test_id": "ENER-11",
+  "timestamp_utc": "2025-11-14T23:55:04Z",
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 973,
+      "sha256": "30147003d773b3aa310a5f0fec824260616ce48e5161223cbbb66dbc34cf88a4",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "drift_analysis.csv",
+      "rel_path": "diagnostics\\drift_analysis.csv",
+      "bytes": 1872,
+      "sha256": "8c862f0e48210d2674e7675e60e848344bcca64ef7dfb173cfb4f840d48396a5",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_components.csv",
+      "rel_path": "diagnostics\\energy_components.csv",
+      "bytes": 3642,
+      "sha256": "aa63ae4cedfdafcb236cc2713b2ccf76060aaef1489b7afc27cd80b7da9a53eb",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "momentum_density.csv",
+      "rel_path": "diagnostics\\momentum_density.csv",
+      "bytes": 28700,
+      "sha256": "0af1a77674ac81bbc13b5aba74047649d45d55b7dc1bbf9073dcb204e4b987ee",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "momentum_history.csv",
+      "rel_path": "diagnostics\\momentum_history.csv",
+      "bytes": 1723,
+      "sha256": "c4db1474cab0194297e7b8453536ec29b41721734f93191018e6c301949c08b2",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 181,
+      "sha256": "979b1395e672b72a1151c6b275d6eef131b900c1ca62522f98b44fde1fe316a0",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 99,
+      "sha256": "7c33c84d89b23808b258c1e4440417d1873fe65e01e5de6829be3a8376353d63",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "drift_evolution.png",
+      "rel_path": "plots\\drift_evolution.png",
+      "bytes": 24787,
+      "sha256": "1894902a4e8086155ccab67c658094eb6be7dfa9304426b0bdab7aaee294aa15",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_partition.png",
+      "rel_path": "plots\\energy_partition.png",
+      "bytes": 22638,
+      "sha256": "0ebb618824b6d9bda19800b543e5a2d2373f19d57b9f27c98a9cc541a8a08583",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_time_series.png",
+      "rel_path": "plots\\energy_time_series.png",
+      "bytes": 30926,
+      "sha256": "e91848caea85af41d77c3db20ed865e70efb98e99b8a05293e4c060ef5a1ea30",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "momentum_vs_time.png",
+      "rel_path": "plots\\momentum_vs_time.png",
+      "bytes": 60953,
+      "sha256": "182982cd3956c5057979c73cd44a47e1d30970301b6c957341f89c58b90a396b",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

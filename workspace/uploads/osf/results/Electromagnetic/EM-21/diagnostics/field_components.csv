@@ -1,0 +1,14 @@
+component,value,unit,source
+arrival_time_baseline,19.990000000000002,arb,summary.json
+arrival_time_modulated,19.990000000000002,arb,summary.json
+delta_t_measured,2.9351613503900723e-06,arb,summary.json
+expected_delay,2.868929030841133e-06,arb,summary.json
+expected_delay_uncalibrated,0.011475716123364533,arb,summary.json
+chi_avg_retarded,0.04517998473765563,arb,summary.json
+chi_frequency,0.01,arb,summary.json
+chi_amplitude,0.05,arb,summary.json
+gate_center,9.525,arb,summary.json
+gate_width,2.5400000000000005,arb,summary.json
+relative_error,0.022565137531583082,arb,summary.json
+pml_cells,16,arb,summary.json
+pml_order,3,arb,summary.json

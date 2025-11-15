@@ -1,0 +1,5 @@
+metric,value
+test_id,REL-01
+passed,True
+anisotropy,1.783229614193e-16
+energy_drift,4.486754185573e-06

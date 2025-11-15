@@ -1,0 +1,64 @@
+{
+  "test_id": "EM-02",
+  "timestamp_utc": "2025-11-14T23:56:53Z",
+  "artifact_count": 7,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 566,
+      "sha256": "7c988e1e3803fe8a6546cf64d47cdba14beb040466096307f496702618624df8",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 355,
+      "sha256": "361330b82d03e18e88ac6c5363bb02d68aa194158647d7e8aa50e24bb9c9e187",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "2a41bd6b79d98292d252f93e97bf523ad506e9a095f5f1d9d93e0d69f41d4cab",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "0287d982ac4ae57244ab83ea30b95589858a8941154d4061701f22e2daa033f9",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "magnetic_generation_verification.png",
+      "rel_path": "plots\\magnetic_generation_verification.png",
+      "bytes": 140499,
+      "sha256": "e922afbaf9b793d2c1901008550d0fa5797522622e7ae4d3e432b089a23ad458",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17916,
+      "sha256": "11bbae6616abe1a0cea168911faca5e22fdcdf808ce72599647e49f45a1f107e",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

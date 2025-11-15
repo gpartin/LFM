@@ -1,0 +1,6 @@
+file,status,detail
+chi_field_map.csv,PASS,ok
+light_bending_GRAV-25.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows
+trajectory_data.csv,PASS,ok

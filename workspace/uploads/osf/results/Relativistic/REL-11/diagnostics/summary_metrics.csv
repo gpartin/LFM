@@ -1,0 +1,6 @@
+metric,value
+test_id,REL-11
+passed,True
+rel_err,2.053596136027e-03
+energy_drift,4.401738271682e-04
+runtime_sec,0.000000

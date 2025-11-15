@@ -1,0 +1,6 @@
+file,status,detail
+boost_analysis.csv,WARN,no numeric rows
+energy_evolution.csv,WARN,constant second column
+invariant_mass.csv,WARN,no numeric rows
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

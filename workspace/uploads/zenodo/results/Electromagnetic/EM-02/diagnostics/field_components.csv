@@ -1,0 +1,9 @@
+component,value,unit,source
+magnetic_generation_error,0.0,arb,summary.json
+absolute_error,0.0,arb,summary.json
+current_density,0.001,arb,summary.json
+total_current,3.141592653589794e-05,arb,summary.json
+wire_radius,0.1,arb,summary.json
+test_points,2,arb,summary.json
+inside_wire_error,0.0,arb,summary.json
+outside_wire_error,0.0,arb,summary.json

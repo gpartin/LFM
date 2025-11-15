@@ -1,0 +1,104 @@
+{
+  "test_id": "REL-13",
+  "timestamp_utc": "2025-11-14T23:46:54Z",
+  "artifact_count": 12,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1269,
+      "sha256": "e343c472bfeea4d483e0639c5470ac805ea64598456d8350019baec765a346f8",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "dispersion_measurement.csv",
+      "rel_path": "diagnostics\\dispersion_measurement.csv",
+      "bytes": 252,
+      "sha256": "fcfa0b62e51638eccace5ac00396b5f26a07080af4361eba6d0529855e438d46",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "dispersion_spectrum.csv",
+      "rel_path": "diagnostics\\dispersion_spectrum.csv",
+      "bytes": 191,
+      "sha256": "10b67acd69a77a240fa17a8906ba2ff19103eca059eb9f5fd8b80065c8b2a02b",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_evolution.csv",
+      "rel_path": "diagnostics\\energy_evolution.csv",
+      "bytes": 1396,
+      "sha256": "41d763f30f8d6cac1f0b182daf2523ac31a3a8e884f6f4cb22309c63ea8aea8c",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "projection_series.csv",
+      "rel_path": "diagnostics\\projection_series.csv",
+      "bytes": 118020,
+      "sha256": "25ecba32a2b5a3d86df9284e309acdb14893f7c191ed85c8c138cbba953c7c75",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 265,
+      "sha256": "29522b530117b922cf7a5286b5fbaef5a0d90f4aa3f93c360f14745b97b19b92",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 126,
+      "sha256": "3c2b1b075d965527e9d4c3a08bc24d4ec42e681c2bf0e6084855abb484b06c65",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "dispersion_REL-13.png",
+      "rel_path": "plots\\dispersion_REL-13.png",
+      "bytes": 59257,
+      "sha256": "b50ac891e1e2d5593f2e2ff17066aee55b1967ba173c0b601b802bfbf7fc29e3",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "dispersion_spectrum.png",
+      "rel_path": "plots\\dispersion_spectrum.png",
+      "bytes": 38691,
+      "sha256": "67cfab1da5613687dea2c4c6a58e6891b68773bcf861364129176c52ca24d002",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_evolution.png",
+      "rel_path": "plots\\energy_evolution.png",
+      "bytes": 22758,
+      "sha256": "9adee0a81143aadbf744138f656a0a29a9ad189cd215e3da388442d5b0d44616",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "omega_squared_ratio.png",
+      "rel_path": "plots\\omega_squared_ratio.png",
+      "bytes": 63152,
+      "sha256": "f879e2703437b716ca773bdcffcdfca4ae7be9cd10bfe50b53143e326d3032dd",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "projection_series.png",
+      "rel_path": "plots\\projection_series.png",
+      "bytes": 54296,
+      "sha256": "c5c2632e8cb36008c2ab60cfbb75004eb37902d3dd8aebda5469797e71225d6f",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

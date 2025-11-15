@@ -1,0 +1,56 @@
+{
+  "test_id": "REL-01",
+  "timestamp_utc": "2025-11-15T14:57:30Z",
+  "artifact_count": 6,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1001,
+      "sha256": "7f84233adf0b046019bf885f1822f5c713fd786f32199c447bac715af2f09ba8",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "frequency_measurement.csv",
+      "rel_path": "diagnostics\\frequency_measurement.csv",
+      "bytes": 177,
+      "sha256": "c2bcad60699ef8e38be2fe0217455ac3710842bbe9fceb27e250dd06c2774482",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 150,
+      "sha256": "bdd63bafb26f87cfd256841309a71b7f932174997e3a0dcf80cbf7ebe0e80e70",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 107,
+      "sha256": "79e125db9ccb95c11340602cc441530db91ae452f317d5169be02f09f7fab5f6",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "isotropy_comparison.png",
+      "rel_path": "plots\\isotropy_comparison.png",
+      "bytes": 59533,
+      "sha256": "c41e730c0afe50c095e849c91993272112ac2f5fe9e641df917bbb17a398ed3a",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "summary_card.png",
+      "rel_path": "plots\\summary_card.png",
+      "bytes": 11300,
+      "sha256": "897435bd2510af06b51fc5216c66e04f30e13bcf8bd5083e4db3979e7727412f",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

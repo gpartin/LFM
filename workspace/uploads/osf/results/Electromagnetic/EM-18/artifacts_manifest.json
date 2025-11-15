@@ -1,0 +1,64 @@
+{
+  "test_id": "EM-18",
+  "timestamp_utc": "2025-11-14T23:57:21Z",
+  "artifact_count": 7,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 516,
+      "sha256": "b1542c9913f19aae800860e707a4b119f1a19cb5d09e7e1ff577d9881ef7fdcb",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 149,
+      "sha256": "3aed8d9b11dc02fc343d9180c10dade46fd8ddbed66d0217277ece2c86bf16f0",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "2a41bd6b79d98292d252f93e97bf523ad506e9a095f5f1d9d93e0d69f41d4cab",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "f261fe6bf8d30e61582220407b630b999df3ae9e1454ecacf02ed62e5e1383d3",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "em-18_analysis.png",
+      "rel_path": "plots\\em-18_analysis.png",
+      "bytes": 89371,
+      "sha256": "9191670a71e7491306c9d7f81e1ed1af97a601fef0e59f8fbcb042214ce912f6",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17836,
+      "sha256": "c107ad69c0108eb8c2447e2f7f599c796bceaed3352e0d8a3c1f76533b749742",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

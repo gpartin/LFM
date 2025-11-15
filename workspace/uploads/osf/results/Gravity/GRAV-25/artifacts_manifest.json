@@ -1,0 +1,80 @@
+{
+  "test_id": "GRAV-25",
+  "timestamp_utc": "2025-11-14T23:53:34Z",
+  "artifact_count": 9,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1004,
+      "sha256": "562280e7867ef2bb4151a1ac4d03ce396f4a32167fed0743c35cc4cb241398ee",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "chi_field_map.csv",
+      "rel_path": "diagnostics\\chi_field_map.csv",
+      "bytes": 27655,
+      "sha256": "886bed9d83983784ad94459cf23c51e4cdbececc3ded4d69f1787877ba487c64",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "light_bending_GRAV-25.csv",
+      "rel_path": "diagnostics\\light_bending_GRAV-25.csv",
+      "bytes": 34364,
+      "sha256": "f486384fe0ae92043389ae38e3374a202794cd180bc639cf88b7ca4a839aa795",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 153,
+      "sha256": "0c34836a683ec1b9c8163259fff2859f78902ed05db653bc1055f62bbfefc3f1",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 67,
+      "sha256": "db9eaa889e19ee5e96b26f89f60da9250957a0b402595590eafaa3ce298fdd0e",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "trajectory_data.csv",
+      "rel_path": "diagnostics\\trajectory_data.csv",
+      "bytes": 34364,
+      "sha256": "f486384fe0ae92043389ae38e3374a202794cd180bc639cf88b7ca4a839aa795",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "deflection_angle.png",
+      "rel_path": "plots\\deflection_angle.png",
+      "bytes": 19799,
+      "sha256": "089c0369631e5dfff27455f77f9e450d702da8949f19c7c76972f723112273bb",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "light_bending_GRAV-25.png",
+      "rel_path": "plots\\light_bending_GRAV-25.png",
+      "bytes": 107443,
+      "sha256": "13b46c505dfdba179aafb0b99139eef124bd4673e150a0a9a9b605f34709a3d4",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "ray_trajectory.png",
+      "rel_path": "plots\\ray_trajectory.png",
+      "bytes": 34240,
+      "sha256": "5f6118bcc528d93e93d2a8ed06fd46026ab8f8162567bf8477d62d46abd1930f",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

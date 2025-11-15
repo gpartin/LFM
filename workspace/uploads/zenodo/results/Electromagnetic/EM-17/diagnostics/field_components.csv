@@ -1,0 +1,8 @@
+component,value,unit,source
+arrival_time_measured,9.71,arb,summary.json
+arrival_time_expected,9.067248755824448,arb,summary.json
+group_delay_error,0.06619477282961413,arb,summary.json
+c_eff,0.9925833339709302,arb,summary.json
+distance,9.0,arb,summary.json
+probe_index,102,arb,summary.json
+source_index,12,arb,summary.json

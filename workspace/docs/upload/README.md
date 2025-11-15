@@ -1,4 +1,4 @@
----
+<!-- Frontmatter moved to HTML comment to avoid pandoc YAML parse issues
 title: "LFM Documentation Index"
 author: "Greg D. Partin"
 institution: "LFM Research, Los Angeles CA USA"
@@ -7,7 +7,7 @@ contact: "latticefieldmediumresearch@gmail.com"
 generated: "2025-11-11 00:00:00"
 date: "2025-11-11"
 version: "3.1"
----
+-->
 
 <!-- Copyright (c) 2025 Greg D. Partin. All rights reserved. -->
 <!-- Licensed under CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International). -->
@@ -16,6 +16,8 @@ version: "3.1"
 <!-- Contact: latticefieldmediumresearch@gmail.com -->
 
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+
+# LFM Documentation Index
 
 ## Standard Introduction
 

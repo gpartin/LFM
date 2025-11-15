@@ -1,0 +1,48 @@
+{
+  "test_id": "GRAV-16",
+  "timestamp_utc": "2025-11-14T23:55:54Z",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1181,
+      "sha256": "a154c788e2bfbf6e3fc1f43a58ceb59014ba49645a2b90f304ff2d357ded0784",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_snapshots_3d_GRAV-16.h5",
+      "rel_path": "diagnostics\\field_snapshots_3d_GRAV-16.h5",
+      "bytes": 5752,
+      "sha256": "d734fe08366b5caaaaa6dc2980f7644ea9de47f3657ce1b6d258835e7cf4f871",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "interference_profile_GRAV-16.csv",
+      "rel_path": "diagnostics\\interference_profile_GRAV-16.csv",
+      "bytes": 4285,
+      "sha256": "ab6eb40815237bd71f1a69e546d6128f6acf6629dc3425b5f952637d909d576d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "cfeb0891edeceab6995b5a79b8fd10c436bdefa2f7254f9444a578500e45efa2",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "interference_pattern_GRAV-16.png",
+      "rel_path": "plots\\interference_pattern_GRAV-16.png",
+      "bytes": 85286,
+      "sha256": "526fcad25f4f405eb123aadac904290a6c77f5c542a8e30a7b87cc39251f127b",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

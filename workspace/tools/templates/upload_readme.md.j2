@@ -7,6 +7,8 @@
 
 ---
 
+> Provenance: commit `{{ commit_sha }}`, built `{{ generation_time }}`, deterministic: {{ 'on' if deterministic else 'off' }}
+
 ## Overview
 
 This archive contains the complete computational validation of the **Lattice Field Medium (LFM)** framework — a novel approach demonstrating that gravitational, quantum, and electromagnetic phenomena can emerge from a single discrete field equation on a computational lattice.
@@ -141,16 +143,13 @@ Organized by tier: `Relativistic/`, `Gravity/`, `Energy/`, `Quantization/`, `Ele
 
 ## Reproducibility Statement
 
-This archive represents a **deterministically generated snapshot** of the LFM Phase 1 validation suite:
+This archive is a **deterministically generated snapshot** of the LFM Phase 1 validation suite. Key provenance:
 
-- **Git Commit**: `5a4fd52d7ab20edc7c6c910e4f774a191e4d7249`
-- **Python**: 3.13.9
-- **NumPy**: 2.3.4
-- **CuPy**: 13.6.0 (GPU acceleration)
-- **OS**: Windows 11 (10.0.26200)
-- **Generation Date**: 2025-11-06
+- **Git Commit**: `{{ commit_sha }}`
+- **Generation Date**: {{ generation_time }}
+- **Deterministic**: {{ 'on' if deterministic else 'off' }}
 
-All files include SHA256 checksums in `MANIFEST.md` for integrity verification.
+For full environment details (Python, NumPy, CuPy, OS), see the Provenance section in `MANIFEST.md`. All files include SHA256 checksums in `MANIFEST.md` for integrity verification.
 
 ---
 
@@ -229,7 +228,7 @@ Special thanks to the open-source scientific computing community (NumPy, CuPy, S
 
 ---
 
-**Archive Generation**: This README and all contents were generated deterministically via `tools/build_upload_package.py` on 2025-11-06 at 16:04:38 UTC.
+**Archive Generation**: This README and all contents were generated {{ 'deterministically' if deterministic else 'non-deterministically' }} via `tools/build_upload_package.py` on {{ generation_time }}.
 
 **File Integrity**: Verify checksums in `MANIFEST.md` before use.
 

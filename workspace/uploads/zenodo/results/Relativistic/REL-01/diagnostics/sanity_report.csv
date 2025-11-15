@@ -1,0 +1,4 @@
+file,status,detail
+frequency_measurement.csv,WARN,no numeric rows
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

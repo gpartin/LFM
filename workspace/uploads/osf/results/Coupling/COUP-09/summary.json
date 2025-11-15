@@ -2,11 +2,11 @@
   "test_id": "COUP-09",
   "description": "Asymmetric coupling - directional energy transfer (Phase 2)",
   "passed": true,
-  "runtime_sec": 48.033399999985704,
+  "runtime_sec": 49.87904200001503,
   "energy_drift": 0.06719798086415277,
   "primary_metric": 0.1893665886706767,
   "metric_name": "asymmetry_ratio",
   "convergence_validated": false,
   "notes": "η_fwd=0.517, η_rev=0.419, asymmetry=0.189",
-  "timestamp": "2025-11-14T18:56:38.572397+00:00"
+  "timestamp": "2025-11-14T23:58:49.814723+00:00"
 }

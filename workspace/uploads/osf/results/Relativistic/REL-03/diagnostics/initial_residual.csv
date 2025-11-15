@@ -1,0 +1,7 @@
+quantity,value,units
+omega_theory,3.911651009108e+01,rad/s
+k_ang,3.911651009108e+01,rad/m
+chi,0.000000000000e+00,1/m
+dt,5.000000000000e-05,s
+dx,8.000000000000e-03,m
+residual_rms_t0,5.531929930091e+05,field_units

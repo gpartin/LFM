@@ -1,0 +1,96 @@
+{
+  "test_id": "GRAV-11",
+  "timestamp_utc": "2025-11-14T23:50:59Z",
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1207,
+      "sha256": "e9e03899cac0ae41622e7b3182c55abf7536fce46c32f4e9f818b86d3090493e",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "centroid_tracking_GRAV-11_control.csv",
+      "rel_path": "diagnostics\\centroid_tracking_GRAV-11_control.csv",
+      "bytes": 5794,
+      "sha256": "7e6216141eb84b3e10ea1da9cf7b77bd5a7e274f193e521459d08ecf3b90dc04",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "centroid_tracking_GRAV-11_serial.csv",
+      "rel_path": "diagnostics\\centroid_tracking_GRAV-11_serial.csv",
+      "bytes": 2324,
+      "sha256": "aaabe26ccacd80158b1c935f9471db28df5475cca4f94424a5a846b6227c7d65",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "detector_signal_GRAV-11_control.csv",
+      "rel_path": "diagnostics\\detector_signal_GRAV-11_control.csv",
+      "bytes": 84144,
+      "sha256": "3f9db56c60d347cab03740eb796d764e3aed137dcd13a89a36061c25ccd49e64",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "detector_signal_GRAV-11_slab.csv",
+      "rel_path": "diagnostics\\detector_signal_GRAV-11_slab.csv",
+      "bytes": 84323,
+      "sha256": "b9668b570977b861433ea1e27527ef92a9783845856b3cfe234529d0e3db346f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_GRAV-11_serial.csv",
+      "rel_path": "diagnostics\\energy_trace_GRAV-11_serial.csv",
+      "bytes": 6223,
+      "sha256": "9406f67b57330a8b90f1de6404ec61de1a889a3d941a83c455f8a7b00b88df5d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_GRAV-11_serial.json",
+      "rel_path": "diagnostics\\energy_trace_GRAV-11_serial.json",
+      "bytes": 138,
+      "sha256": "32c9ca1eef18e2f971635f50cb87536c7992c5c565ab9e55d2f6684f2635a8c0",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_tracking_GRAV-11_control.csv",
+      "rel_path": "diagnostics\\packet_tracking_GRAV-11_control.csv",
+      "bytes": 2788,
+      "sha256": "de782c931312ba4140a98cbfae4641cb8a5975c058fa508d292e5deafad2dec2",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_tracking_GRAV-11_parallel.csv",
+      "rel_path": "diagnostics\\packet_tracking_GRAV-11_parallel.csv",
+      "bytes": 2785,
+      "sha256": "fcf15d8f867b52a31f8f4db251f58f7749438974905ac0f6f1333a6679f57975",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "packet_tracking_GRAV-11_serial.csv",
+      "rel_path": "diagnostics\\packet_tracking_GRAV-11_serial.csv",
+      "bytes": 2794,
+      "sha256": "f1ea512c5ca5cf534a3f7b9d987ab6fff2c7eb0a7214cbcfb08eba4d3d17c521",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "20f8ead860983045b8cc30b2eb9052dad508606b543896bf2adb5a355ce25278",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

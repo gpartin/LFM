@@ -1,0 +1,4 @@
+metric,value
+test_id,REL-04
+passed,True
+energy_drift,2.511206894151e-04

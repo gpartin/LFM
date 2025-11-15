@@ -1,0 +1,24 @@
+{
+  "test_id": "GRAV-22",
+  "timestamp_utc": "2025-11-14T23:53:13Z",
+  "artifact_count": 2,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 850,
+      "sha256": "b6722834770b691b3a614c6afdaf381db9634cad0149fb66d2621bc3e24d5f04",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 66,
+      "sha256": "ac7bf0c2684d9370fba54e6d12dc419a2b1a74dfcb143391c0e79c22de8f87e9",
+      "category": "diagnostic",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

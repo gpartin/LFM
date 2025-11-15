@@ -1,0 +1,202 @@
+{
+  "test_id": "EM-12",
+  "description": "Time-Varying \u03c7-Field EM Response",
+  "num_test_points": 3,
+  "test_points": [
+    {
+      "index": 0,
+      "location": "\u03c7 trough (d\u03c7/dt\u22480)",
+      "diagnostics": {
+        "test_id": "EM-12",
+        "time_query": 75.0,
+        "measurement_window": {
+          "start": 5100,
+          "end": 7500,
+          "length": 2400,
+          "start_time_sec": 51.0,
+          "end_time_sec": 75.0,
+          "duration_sec": 24.0
+        },
+        "settle_time": 50.0,
+        "gate_region": {
+          "center": 9.525,
+          "width": 2.5400000000000005,
+          "domain_length": 12.700000000000001
+        },
+        "chi_parameters": {
+          "base": 0.1,
+          "amplitude": 0.05,
+          "frequency": 0.01,
+          "period_sec": 100.0,
+          "coupling_alpha": 0.2,
+          "chi_phase_at_measurement": 4.71238898038469,
+          "chi_value_at_measurement": 0.05,
+          "chi_avg_retarded": -0.049788021001793956,
+          "relative_to_peak_phase": 0.14936406294298807
+        },
+        "probe_frequency": 0.03,
+        "measured_phase_shift": -2.0827220914458285e-05,
+        "expected_phase_shift": -0.00035756167480259943,
+        "expected_phase_uncalibrated": -0.002383744498683996,
+        "dynamic_coupling_factor": 0.15,
+        "peak_possible_phase": 0.002393893602035423,
+        "correlation_lag_samples": 0,
+        "frequency_bin_index": 1,
+        "frequency_bin_value": 0.041666666666666664,
+        "frequency_resolution": 0.041666666666666664,
+        "frequency_error_Hz": 0.011666666666666665,
+        "multitaper": {
+          "enabled": true,
+          "NW": 4.0,
+          "K": 7
+        },
+        "coherence_at_probe": 0.02040812970966357,
+        "prereg_window_used": false,
+        "error": 0.941752088151068,
+        "signal_stats": {
+          "baseline_rms": 0.04932051124707474,
+          "modulated_rms": 0.04930319172556035,
+          "cross_spectrum_magnitude": 0.7644585878060993,
+          "snr_estimate": 314.3774296975805
+        },
+        "validation_checks": {
+          "frequency_resolution_adequate": false,
+          "frequency_bin_accurate": false,
+          "post_settle_data_only": true,
+          "sufficient_window_length": true,
+          "coherence_threshold_met": false
+        }
+      }
+    },
+    {
+      "index": 1,
+      "location": "\u03c7 peak (d\u03c7/dt\u22480)",
+      "diagnostics": {
+        "test_id": "EM-12",
+        "time_query": 125.0,
+        "measurement_window": {
+          "start": 5100,
+          "end": 12500,
+          "length": 7400,
+          "start_time_sec": 51.0,
+          "end_time_sec": 125.0,
+          "duration_sec": 74.0
+        },
+        "settle_time": 50.0,
+        "gate_region": {
+          "center": 9.525,
+          "width": 2.5400000000000005,
+          "domain_length": 12.700000000000001
+        },
+        "chi_parameters": {
+          "base": 0.1,
+          "amplitude": 0.05,
+          "frequency": 0.01,
+          "period_sec": 100.0,
+          "coupling_alpha": 0.2,
+          "chi_phase_at_measurement": 1.5707963267948974,
+          "chi_value_at_measurement": 0.15000000000000002,
+          "chi_avg_retarded": 0.049788021001794226,
+          "relative_to_peak_phase": 0.1493640629429889
+        },
+        "probe_frequency": 0.03,
+        "measured_phase_shift": -0.0007630711551064694,
+        "expected_phase_shift": 0.0003575616748026014,
+        "expected_phase_uncalibrated": 0.002383744498684009,
+        "dynamic_coupling_factor": 0.15,
+        "peak_possible_phase": 0.002393893602035423,
+        "correlation_lag_samples": 0,
+        "frequency_bin_index": 2,
+        "frequency_bin_value": 0.02702702702702703,
+        "frequency_resolution": 0.013513513513513514,
+        "frequency_error_Hz": 0.0029729729729729704,
+        "multitaper": {
+          "enabled": true,
+          "NW": 4.0,
+          "K": 7
+        },
+        "coherence_at_probe": 0.020408110701242373,
+        "prereg_window_used": false,
+        "error": 1.4685823496403974,
+        "signal_stats": {
+          "baseline_rms": 0.049201452356642514,
+          "modulated_rms": 0.04920153314734591,
+          "cross_spectrum_magnitude": 1.2128353263768792,
+          "snr_estimate": 501.00871389195373
+        },
+        "validation_checks": {
+          "frequency_resolution_adequate": false,
+          "frequency_bin_accurate": true,
+          "post_settle_data_only": true,
+          "sufficient_window_length": true,
+          "coherence_threshold_met": false
+        }
+      }
+    },
+    {
+      "index": 2,
+      "location": "\u03c7 trough (d\u03c7/dt\u22480)",
+      "diagnostics": {
+        "test_id": "EM-12",
+        "time_query": 175.0,
+        "measurement_window": {
+          "start": 5100,
+          "end": 17500,
+          "length": 12400,
+          "start_time_sec": 51.0,
+          "end_time_sec": 175.0,
+          "duration_sec": 124.0
+        },
+        "settle_time": 50.0,
+        "gate_region": {
+          "center": 9.525,
+          "width": 2.5400000000000005,
+          "domain_length": 12.700000000000001
+        },
+        "chi_parameters": {
+          "base": 0.1,
+          "amplitude": 0.05,
+          "frequency": 0.01,
+          "period_sec": 100.0,
+          "coupling_alpha": 0.2,
+          "chi_phase_at_measurement": 4.7123889803846915,
+          "chi_value_at_measurement": 0.05,
+          "chi_avg_retarded": -0.049788021001793956,
+          "relative_to_peak_phase": 0.14936406294298807
+        },
+        "probe_frequency": 0.03,
+        "measured_phase_shift": -0.00019609363981676751,
+        "expected_phase_shift": -0.00035756167480259943,
+        "expected_phase_uncalibrated": -0.002383744498683996,
+        "dynamic_coupling_factor": 0.15,
+        "peak_possible_phase": 0.002393893602035423,
+        "correlation_lag_samples": 0,
+        "frequency_bin_index": 4,
+        "frequency_bin_value": 0.03225806451612903,
+        "frequency_resolution": 0.008064516129032258,
+        "frequency_error_Hz": 0.0022580645161290325,
+        "multitaper": {
+          "enabled": true,
+          "NW": 4.0,
+          "K": 7
+        },
+        "coherence_at_probe": 0.02040810983680186,
+        "prereg_window_used": false,
+        "error": 0.45158093376471137,
+        "signal_stats": {
+          "baseline_rms": 0.04913971840298018,
+          "modulated_rms": 0.049136103256706344,
+          "cross_spectrum_magnitude": 2.0228240547651843,
+          "snr_estimate": 837.769864282117
+        },
+        "validation_checks": {
+          "frequency_resolution_adequate": false,
+          "frequency_bin_accurate": true,
+          "post_settle_data_only": true,
+          "sufficient_window_length": true,
+          "coherence_threshold_met": false
+        }
+      }
+    }
+  ]
+}

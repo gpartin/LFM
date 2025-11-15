@@ -1,0 +1,40 @@
+{
+  "test_id": "REL-15",
+  "timestamp_utc": "2025-11-14T23:46:57Z",
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 746,
+      "sha256": "fa277919d4c5aead4ad7b30abffda7ee9104b4701c9cff158d795ad27ac4bc65",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "correlation_data.csv",
+      "rel_path": "diagnostics\\correlation_data.csv",
+      "bytes": 3229,
+      "sha256": "092df5ee1663c33eff86b3fe780a3ed526a7e0ffcf4585dad05514060b494c1c",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 65,
+      "sha256": "372849bfb593d188855a6ba7c5dfb70379206a55705995b6c1f71cddc9e71824",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "correlation_vs_distance_REL-15.png",
+      "rel_path": "plots\\correlation_vs_distance_REL-15.png",
+      "bytes": 193019,
+      "sha256": "ef244d1f04d4450fdba78d03a365adecb0a9a15dbfd43d55743b27acc221ebf9",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

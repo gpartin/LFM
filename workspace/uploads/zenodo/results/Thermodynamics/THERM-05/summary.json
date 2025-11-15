@@ -8,10 +8,10 @@
     "fit_quality": "poor",
     "tolerance_r_squared_min": 0.001
   },
-  "runtime_sec": 31.317718029022217,
+  "runtime_sec": 32.69560408592224,
   "tier": 7,
   "category": "Thermodynamics",
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-14T18:57:11.168374Z"
+  "timestamp": "2025-11-14T23:59:20.140781Z"
 }

@@ -1,0 +1,88 @@
+{
+  "test_id": "QUAN-12",
+  "timestamp_utc": "2025-11-14T23:56:43Z",
+  "artifact_count": 10,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 943,
+      "sha256": "a2a21b29cf342c98244f5b6d5eac7c08a49036662f0e5a9347abcea5d9eee187",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "barrier_profile.csv",
+      "rel_path": "diagnostics\\barrier_profile.csv",
+      "bytes": 1655,
+      "sha256": "29a44b20c9ac8e361a854f22d9d50babcd2fb931b9f5f7a8f06e4cdab4a1c6c6",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_regions.csv",
+      "rel_path": "diagnostics\\energy_regions.csv",
+      "bytes": 34753,
+      "sha256": "c596a98ea7439f703776fd3d223bf6d986d6b027b0e27b5f10af25cd46d3c24b",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 190,
+      "sha256": "83aa93eb74ae7c1019aeb551d47e46a06cb37bf78f403bad9d6544572bddbccc",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "8f0345d87ba10a5e133b2fc7866824c2f63f8a8769ddd75851d84dece664cb16",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "transmission_data.csv",
+      "rel_path": "diagnostics\\transmission_data.csv",
+      "bytes": 109,
+      "sha256": "283f90feec3ac8aa1ae7aea2c31b5340984c4f1adcabbd07d1c8bd5a96cedeea",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "barrier_schematic.png",
+      "rel_path": "plots\\barrier_schematic.png",
+      "bytes": 18180,
+      "sha256": "bc296e46bc7f5c67c7293039aa41c64797b5f7a027a53dd51c045f8f2734bb1b",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "transmission_curve.png",
+      "rel_path": "plots\\transmission_curve.png",
+      "bytes": 19250,
+      "sha256": "dac86a3e874b646710764df828f9be05bb9406ff7721f037b185b4b094932e08",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "tunneling_snapshot.png",
+      "rel_path": "plots\\tunneling_snapshot.png",
+      "bytes": 60569,
+      "sha256": "ece641e75b0a6d94a8ae002a1a13966679f9db2db4f83373d998398b2fd71983",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "tunneling_transmission.png",
+      "rel_path": "plots\\tunneling_transmission.png",
+      "bytes": 91802,
+      "sha256": "845f7fbe653c53299bff8f7cf242c15e17aef03daece803da3c0eef4157867df",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

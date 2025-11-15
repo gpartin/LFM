@@ -1,0 +1,80 @@
+{
+  "test_id": "QUAN-10",
+  "timestamp_utc": "2025-11-14T23:56:41Z",
+  "artifact_count": 9,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 757,
+      "sha256": "16ce83bdf19d023918de3dbc09b74876e0a2ab5b919d1784e58189a5825c0047",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "eigenvalues.csv",
+      "rel_path": "diagnostics\\eigenvalues.csv",
+      "bytes": 426,
+      "sha256": "7eb78664acbb6c27fd2c2bcf38cd8c503045f772fa0e2b35dabdac0b21f09166",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "energy_spectrum.csv",
+      "rel_path": "diagnostics\\energy_spectrum.csv",
+      "bytes": 233,
+      "sha256": "72545900ec24f8650452aad41b313f22e9dbdcd5ab4a2fade8cb5d311051c9ef",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "mode_shapes.csv",
+      "rel_path": "diagnostics\\mode_shapes.csv",
+      "bytes": 35123,
+      "sha256": "5cea944259d1e26164fdb6b9c77b7718c0ef3474688e58dd2e3ea5f0a67c1b46",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 181,
+      "sha256": "cc18184fd725c7e25c76f73c079777a07163ad3aca0b90190159fc4cb71e7239",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 44,
+      "sha256": "599f811aacd0eed4eeffbcd100aca428803be79ee9517b7b754d31989195cf03",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "bound_state_modes.png",
+      "rel_path": "plots\\bound_state_modes.png",
+      "bytes": 223882,
+      "sha256": "4e07f913a46ea0407a6741a868c559ea5f1d243003bb5e663208b65a1212c5cc",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "mode_evolution.png",
+      "rel_path": "plots\\mode_evolution.png",
+      "bytes": 109555,
+      "sha256": "29023645855813cd0b41d3d6dd69d2bbbcb3ad7a74b6ce709d83cde561104fcf",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "quantized_energies.png",
+      "rel_path": "plots\\quantized_energies.png",
+      "bytes": 67315,
+      "sha256": "c7741f87679c16b96031c20af030379c68fbcff3a7a005fdc957dc1a47b5be8e",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-05",
+  "timestamp_utc": "2025-11-14T23:56:29Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 646,
+      "sha256": "ba9b1d80d442818dce16054bd9785a1a171aa5c2ee791618db1d783defd3100c",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "4d04059f1bc692401fc27c1f465cff79f2872757b6a3d715383d8944ead12cf0",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "linearity_superposition.png",
+      "rel_path": "plots\\linearity_superposition.png",
+      "bytes": 225626,
+      "sha256": "be83654da0e729017d1362f137c194b4e08c0d408e0541ed1a8888fcc2e84a63",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

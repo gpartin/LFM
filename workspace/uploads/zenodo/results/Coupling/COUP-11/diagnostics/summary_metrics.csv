@@ -1,0 +1,6 @@
+metric,value
+test_id,COUP-11
+passed,True
+fringe_visibility,8.223027505295e-01
+energy_drift,8.633716452998e-03
+runtime_sec,5.289607

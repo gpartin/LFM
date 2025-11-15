@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-14",
+  "timestamp_utc": "2025-11-14T23:56:47Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 741,
+      "sha256": "1c7e0aceb4c55beadf8f443ef01a6e767119d9e7582d601341111c862a260492",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "710233fb653330678191f2000f0930041c37bd49cf211d2a9fc5907dc36c6700",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "non_thermalization.png",
+      "rel_path": "plots\\non_thermalization.png",
+      "bytes": 190119,
+      "sha256": "f06bb6d960decdea2e1705a99cea9d56274b558d78e5a0b4289f6cbe715b74cf",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,3 @@
+file,status,detail
+energy_trace_GRAV-05_serial.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

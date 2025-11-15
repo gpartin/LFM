@@ -1,0 +1,7 @@
+file,status,detail
+chi_profile.csv,PASS,ok
+energy_trace_GRAV-13_serial.csv,PASS,ok
+frequency_shifts.csv,PASS,ok
+local_freq_profile_GRAV-13.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

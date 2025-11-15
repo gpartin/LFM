@@ -1,0 +1,48 @@
+{
+  "test_id": "QUAN-02",
+  "timestamp_utc": "2025-11-14T23:55:24Z",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 645,
+      "sha256": "172a92826eeef84ab414ee9441ab2e76b432e82e3410e1c718113e87b4f06648",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 78,
+      "sha256": "765e06a64302f18ffb6c8d34e8f5078d1e6aa71dbfa30186f10e007204bc490f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_conservation.png",
+      "rel_path": "plots\\energy_conservation.png",
+      "bytes": 61696,
+      "sha256": "eaf9137e8d20d6aa0918ea308f71d6e137532460f8a4c46b1a9909aca172f3aa",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_evolution.png",
+      "rel_path": "plots\\energy_evolution.png",
+      "bytes": 28127,
+      "sha256": "61e8aeb65e640257ca497374ca01779f54ba58b76ae838d293e9a5684e519e0a",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "mode_exchange.png",
+      "rel_path": "plots\\mode_exchange.png",
+      "bytes": 81326,
+      "sha256": "75217c5a1e69f26ac7c770677e1f4b0adf418dd397b441dabc8cdf9f16a29230",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,80 @@
+{
+  "test_id": "REL-03",
+  "timestamp_utc": "2025-11-14T23:47:53Z",
+  "artifact_count": 9,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1081,
+      "sha256": "f4990e905669fa9876ad980c0d47f7d5cb7a92f5d0fe495b2ab12a39152a9a5c",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "boost_analysis.csv",
+      "rel_path": "diagnostics\\boost_analysis.csv",
+      "bytes": 109,
+      "sha256": "b8a23cf31df7ecfe371ea27cf5ea5b09a3292f401bbca55c1647a1f0e7125398",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "covariance_metrics.csv",
+      "rel_path": "diagnostics\\covariance_metrics.csv",
+      "bytes": 310,
+      "sha256": "abe3f21df0e4b97789cfa95e3eadb5c48f67275c07dcd4946299eec8c1be51de",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_evolution.csv",
+      "rel_path": "diagnostics\\energy_evolution.csv",
+      "bytes": 3312,
+      "sha256": "20dfd9a5dbca43e9491e631187c4b580b71ef5bb8ff8f0655a49fe0f273b70f1",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "initial_residual.csv",
+      "rel_path": "diagnostics\\initial_residual.csv",
+      "bytes": 219,
+      "sha256": "f6f42b2fa39ddb853fee1e534f2e76b21e7b4c870c243dc3d38f153b1c798f4e",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "mode_projection_series.csv",
+      "rel_path": "diagnostics\\mode_projection_series.csv",
+      "bytes": 2359074,
+      "sha256": "a4fc7bdd069b7c920fc5f45ecbbe25883fd9dc91be83e1f52f5bee9fd3ab3239",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 76,
+      "sha256": "5463c9812e87028b537d53bb449d9ed4579909fe2397fec403c9983153f98975",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "covariance_test.png",
+      "rel_path": "plots\\covariance_test.png",
+      "bytes": 53117,
+      "sha256": "8b61b6d412453443840f2cf1470dd6f57edf44b69bd6b353b8771a5e5b9e4637",
+      "category": "plot",
+      "role": "required"
+    },
+    {
+      "name": "energy_evolution.png",
+      "rel_path": "plots\\energy_evolution.png",
+      "bytes": 62479,
+      "sha256": "71cadfd4ab856826481ad75d6ebd66d97e6abfe794330fa25ab7463b2851f3fb",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

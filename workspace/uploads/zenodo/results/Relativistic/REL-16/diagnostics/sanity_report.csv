@@ -1,0 +1,4 @@
+file,status,detail
+momentum_density.csv,PASS,ok
+momentum_history.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

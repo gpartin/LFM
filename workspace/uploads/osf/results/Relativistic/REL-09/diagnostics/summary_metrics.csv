@@ -1,0 +1,4 @@
+metric,value
+test_id,REL-09
+passed,True
+anisotropy,1.936751572971e-16

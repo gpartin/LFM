@@ -13,7 +13,7 @@
   "kinetic_energy_final": 4.423322523086824,
   "gradient_energy_final": 4.41273314067138,
   "potential_energy_final": 0.0,
-  "runtime_sec": 7.506070613861084,
+  "runtime_sec": 7.842979907989502,
   "quick_mode": false,
   "backend": "GPU",
   "params": {
@@ -46,9 +46,9 @@
       "v_measured": 0.018580265389425882,
       "max_violation": 0.0033565104618352715
     },
-    "timestamp": "2025-11-14 10:43:36"
+    "timestamp": "2025-11-14 15:46:41"
   },
   "schema_version": "1.0",
   "license": "CC BY-NC-ND 4.0",
-  "timestamp": "2025-11-14T18:43:36.105645Z"
+  "timestamp": "2025-11-14T23:46:41.716517Z"
 }

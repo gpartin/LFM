@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-13",
+  "timestamp_utc": "2025-11-14T23:56:45Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 875,
+      "sha256": "3cf26c6068da84a0c502f544f1f888aba52f6b332fa82f250e7e0e18254b817a",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "ac51c15f20836bfe403be7453968f89dfeeb8d97bffd14e100eee95734b9ccc5",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "wave_particle_duality.png",
+      "rel_path": "plots\\wave_particle_duality.png",
+      "bytes": 107708,
+      "sha256": "873fc22330906a08ea65c3daa30cce5e29efc8abe44db5a010762da69eddc122",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

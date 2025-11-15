@@ -1,0 +1,10 @@
+metric,value,threshold,passed
+covariance_ratio,9.91825410e-01,1.05,True
+rel_error,8.17459035e-03,0.05,True
+residual_lab_rms,8.70392430e+00,,
+residual_boost_rms,8.63277328e+00,,
+num_samples,524288,,
+omega_lab,3.89315662e+01,,
+omega_theory,3.91165101e+01,,
+beta,2.00000000e-01,,
+gamma,1.02062073e+00,,

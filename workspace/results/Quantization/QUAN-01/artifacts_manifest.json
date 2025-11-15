@@ -1,21 +1,21 @@
 {
   "test_id": "QUAN-01",
-  "timestamp_utc": "2025-11-15T14:51:15Z",
+  "timestamp_utc": "2025-11-15T15:37:05Z",
   "artifact_count": 6,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 649,
-      "sha256": "8bd972bffcf817c00ee0063189a28432c4dea69c2c3a66231809047517a8e797",
+      "sha256": "431762acb881e79e76007ceea9c1bb0a986269d0c49ebd6b43ba8060cef3f448",
       "category": "metadata",
       "role": "supplemental"
     },
     {
       "name": "sanity_report.csv",
       "rel_path": "diagnostics\\sanity_report.csv",
-      "bytes": 62,
-      "sha256": "e4e14d910268f2b0ae45a398b4c110af5431dd05e341448d3edb7b5f79973345",
+      "bytes": 102,
+      "sha256": "d3cb5095274684e3793a61718f933c245bb0c94cca3679d2c5132ffbf4565e0b",
       "category": "diagnostic",
       "role": "supplemental"
     },

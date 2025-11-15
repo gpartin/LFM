@@ -1,0 +1,72 @@
+{
+  "test_id": "EM-12",
+  "timestamp_utc": "2025-11-14T23:57:12Z",
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1028,
+      "sha256": "88eefa7073933fabc3bd98b52b584aa2c02892b4191aaaf310c34c39955c4ffb",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "em-12_diagnostics.json",
+      "rel_path": "diagnostics\\em-12_diagnostics.json",
+      "bytes": 6986,
+      "sha256": "01bdb5418bcb37c89fafb7d84f34b797ac996cfd3fd9489a02c330a7f04450fc",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 194,
+      "sha256": "4afec57f5c64a79a75a9fd60eccb239b0996b8794bdf17a40af37baedb421f8a",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "9d499048bdcd839b99a50918f6324ad1453219237462097aef8579324b1b4da0",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "f06e345678087934ba144e81f9fa0da4fea7f8c73beecf2c252b6b3e94cfcd0f",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "em-12_analysis.png",
+      "rel_path": "plots\\em-12_analysis.png",
+      "bytes": 91519,
+      "sha256": "dfd5dd0d4741ec03c3b30ee8ccfd8a4d82add1b56aa2b5e2ad3ac0404ce5f724",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17771,
+      "sha256": "2bfa2997ce084ca6b63a1b3a8564c0344770f26ae63e1ca83ccbb45726ee3b1d",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

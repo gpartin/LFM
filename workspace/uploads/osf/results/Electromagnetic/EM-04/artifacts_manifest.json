@@ -1,0 +1,64 @@
+{
+  "test_id": "EM-04",
+  "timestamp_utc": "2025-11-14T23:56:55Z",
+  "artifact_count": 7,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 661,
+      "sha256": "e527fa9c482341af0f84cc29d5ab356b35f2fc7f1b8c5e9bceecb3501a3588a0",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_components.csv",
+      "rel_path": "diagnostics\\field_components.csv",
+      "bytes": 153,
+      "sha256": "52115bf1daba478d961c728c2ff71d6b20eabda1ef615e77152b329994ced0be",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "poynting_flux.csv",
+      "rel_path": "diagnostics\\poynting_flux.csv",
+      "bytes": 60,
+      "sha256": "2a41bd6b79d98292d252f93e97bf523ad506e9a095f5f1d9d93e0d69f41d4cab",
+      "category": "diagnostic",
+      "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 192,
+      "sha256": "9aa35f37ea32d9e0246ca60d289ac30a2b823b7a64a3d3ef69c20c07e58e522d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 64,
+      "sha256": "7f2923b10a842424c042b7c0d24efb097ec55424b09a708e13b9afd1847f8042",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "ampere_displacement.png",
+      "rel_path": "plots\\ampere_displacement.png",
+      "bytes": 122963,
+      "sha256": "1b58511e684f8ec7ecfc7d733fd6a0a8ff8c188c098db711b103edbc73929806",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "poynting_vector.png",
+      "rel_path": "plots\\poynting_vector.png",
+      "bytes": 17880,
+      "sha256": "e602b1741e358a111a04dc1835ef742d88d2ba2b6ba369ee61c3685b2b3da4ad",
+      "category": "plot",
+      "role": "required"
+    }
+  ],
+  "version": "1.0"
+}

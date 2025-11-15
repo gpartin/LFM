@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-08",
+  "timestamp_utc": "2025-11-14T23:56:18Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 576,
+      "sha256": "97f81beb155cfc077517dd4f9ab3ec7bbf53bfee32e168c4957dd40e4093cbe7",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "6c787d279294a81a3e6dd239b4285ca01a208d8fa548a95640e0100356a0cb3e",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "stability_test.png",
+      "rel_path": "plots\\stability_test.png",
+      "bytes": 174855,
+      "sha256": "09002a5fa5a16d75fc30ff90ce6150e6964bc3e6a8dd3755c736e454e392d6ee",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

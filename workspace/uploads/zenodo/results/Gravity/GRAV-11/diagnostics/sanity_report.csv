@@ -1,0 +1,10 @@
+file,status,detail
+centroid_tracking_GRAV-11_control.csv,PASS,ok
+centroid_tracking_GRAV-11_serial.csv,PASS,ok
+detector_signal_GRAV-11_control.csv,PASS,ok
+detector_signal_GRAV-11_slab.csv,PASS,ok
+energy_trace_GRAV-11_serial.csv,PASS,ok
+packet_tracking_GRAV-11_control.csv,PASS,ok
+packet_tracking_GRAV-11_parallel.csv,PASS,ok
+packet_tracking_GRAV-11_serial.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

@@ -1,0 +1,9 @@
+file,status,detail
+delay_measurement.csv,WARN,no numeric rows
+detector_signals_GRAV-12.csv,PASS,ok
+envelope_measurement_GRAV-12.csv,PASS,ok
+field_snapshots_GRAV-12.csv,PASS,ok
+initial_conditions_GRAV-12.csv,PASS,ok
+packet_analysis_GRAV-12.csv,PASS,ok
+sanity_report.csv,WARN,no numeric rows
+summary_metrics.csv,WARN,no numeric rows

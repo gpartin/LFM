@@ -1,0 +1,104 @@
+{
+  "test_id": "REL-05",
+  "timestamp_utc": "2025-11-14T23:46:41Z",
+  "artifact_count": 12,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 1417,
+      "sha256": "d776cbb0b7b5294be29a253e2221919afe834cbb37f005f6a370c11d47a0a563",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_flow.csv",
+      "rel_path": "diagnostics\\energy_flow.csv",
+      "bytes": 456681,
+      "sha256": "13322e0d2a552ffa3306b64fffda8db8de06758aef4780de1de4ac4b3424c7db",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_flow.png",
+      "rel_path": "diagnostics\\energy_flow.png",
+      "bytes": 31401,
+      "sha256": "d86a7a0f1f80b9f6533d3ea2a9f64b9f5c9ccb048da9a15f63112fbf68f75469",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_REL-05.csv",
+      "rel_path": "diagnostics\\energy_trace_REL-05.csv",
+      "bytes": 382935,
+      "sha256": "b3ebfdd29789c489699d0e0fed16fd9f4026d489b1792d232540f9a75e6fab7d",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "energy_trace_REL-05.json",
+      "rel_path": "diagnostics\\energy_trace_REL-05.json",
+      "bytes": 148,
+      "sha256": "b189ea6117c6742269dabe6bc2861adb546d504d4607b805738d4d7c6ce6733c",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_spectrum.csv",
+      "rel_path": "diagnostics\\field_spectrum.csv",
+      "bytes": 26375,
+      "sha256": "028d2d3a665e0589f0e544bedb0ef49cf010d5997c2afd18fabb6778447a483a",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "field_spectrum.png",
+      "rel_path": "diagnostics\\field_spectrum.png",
+      "bytes": 20743,
+      "sha256": "7be5a073548303f5e33ce0b7556a9215b682f1503a60ac5dc9887c7deaf3d458",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "phase_corr.csv",
+      "rel_path": "diagnostics\\phase_corr.csv",
+      "bytes": 618076,
+      "sha256": "7db1451bd53d6c2fe4cb740397766eb8e8a5cd2d88e311ca2c418fd7b2cf1b7c",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "phase_corr.png",
+      "rel_path": "diagnostics\\phase_corr.png",
+      "bytes": 16870,
+      "sha256": "9a28a98d937c6f94588bb2831fd720f43dbecd04f42ed8fda70c4c36956dadf2",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 126,
+      "sha256": "879467f5eac240f67adef45200e50bb9aedaf8c8866eb502bf11e281b4d268ba",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "concept_REL-05.gif",
+      "rel_path": "plots\\concept_REL-05.gif",
+      "bytes": 208109,
+      "sha256": "b046b8df42bcfd15825395328e386c88d73771fa331cb4702cc577a1c57463ce",
+      "category": "plot",
+      "role": "supplemental"
+    },
+    {
+      "name": "concept_REL-05.png",
+      "rel_path": "plots\\concept_REL-05.png",
+      "bytes": 30860,
+      "sha256": "b98aea612b37440fd31560eb43334820ee391cb3802512eeca38f91146c8e1a9",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

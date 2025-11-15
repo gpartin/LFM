@@ -2,11 +2,11 @@
   "test_id": "COUP-01",
   "description": "Relativistic + Gravitational Time Dilation (Phase 1)",
   "passed": true,
-  "runtime_sec": 72.05581479999819,
+  "runtime_sec": 66.63032440000097,
   "energy_drift": 2.8233231941558782e-05,
   "primary_metric": 0.0010888569057818205,
   "metric_name": "coupling_strength_error",
   "convergence_validated": true,
   "notes": "ω_ratio: measured=0.9994, theory=1.0005",
-  "timestamp": "2025-11-14T18:56:29.008265+00:00"
+  "timestamp": "2025-11-14T23:58:30.810179+00:00"
 }

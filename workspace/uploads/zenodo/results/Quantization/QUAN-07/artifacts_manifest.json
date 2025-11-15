@@ -1,0 +1,32 @@
+{
+  "test_id": "QUAN-07",
+  "timestamp_utc": "2025-11-14T23:56:12Z",
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "name": "summary.json",
+      "rel_path": "summary.json",
+      "bytes": 581,
+      "sha256": "ddbf56e1ee1635a7609231eec89f49030067e04fbd8c719b924e8a91cc1bee12",
+      "category": "metadata",
+      "role": "supplemental"
+    },
+    {
+      "name": "summary_metrics.csv",
+      "rel_path": "diagnostics\\summary_metrics.csv",
+      "bytes": 45,
+      "sha256": "379e22853ee4d990c9445975ea7665dd13f96a34c3725e4d702671c566472761",
+      "category": "diagnostic",
+      "role": "supplemental"
+    },
+    {
+      "name": "wavefront_stability.png",
+      "rel_path": "plots\\wavefront_stability.png",
+      "bytes": 89946,
+      "sha256": "dc6b9a1c031653f8b1352d853137e8416bfd7c6608fd4c53a45a663abb92e28c",
+      "category": "plot",
+      "role": "supplemental"
+    }
+  ],
+  "version": "1.0"
+}

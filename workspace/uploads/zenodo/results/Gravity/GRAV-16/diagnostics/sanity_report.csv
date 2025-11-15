@@ -1,0 +1,3 @@
+file,status,detail
+interference_profile_GRAV-16.csv,PASS,ok
+summary_metrics.csv,WARN,no numeric rows

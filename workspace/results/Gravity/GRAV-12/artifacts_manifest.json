@@ -1,13 +1,13 @@
 {
   "test_id": "GRAV-12",
-  "timestamp_utc": "2025-11-15T14:51:15Z",
+  "timestamp_utc": "2025-11-15T15:37:04Z",
   "artifact_count": 11,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 1359,
-      "sha256": "76f5f18f14738c4399d732ab4304f6f412153ce0a3f05ce7181552b8b23ee886",
+      "sha256": "246d8d0ec9ba94a4c5dc45b6d98ca7032f6a73191e008863a0b19fa2a718fac2",
       "category": "metadata",
       "role": "supplemental"
     },
