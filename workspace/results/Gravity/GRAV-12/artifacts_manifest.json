@@ -1,13 +1,13 @@
 {
   "test_id": "GRAV-12",
-  "timestamp_utc": "2025-11-14T23:51:10Z",
+  "timestamp_utc": "2025-11-15T14:51:15Z",
   "artifact_count": 11,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 1359,
-      "sha256": "62503db69ae78a6d411c8594fa100b681ef4a60d67ba52002aaf1749142983b3",
+      "sha256": "76f5f18f14738c4399d732ab4304f6f412153ce0a3f05ce7181552b8b23ee886",
       "category": "metadata",
       "role": "supplemental"
     },
@@ -62,8 +62,8 @@
     {
       "name": "sanity_report.csv",
       "rel_path": "diagnostics\\sanity_report.csv",
-      "bytes": 300,
-      "sha256": "4163be311808964e6428360b40fbdb516d53a2e33c417f1ea4de0ae43d06a5bd",
+      "bytes": 340,
+      "sha256": "942efd5df163f2f362754c40450114975a18b4c2b90e916736cc9063f072c1b6",
       "category": "diagnostic",
       "role": "supplemental"
     },

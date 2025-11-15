@@ -1,13 +1,13 @@
 {
   "test_id": "ENER-01",
-  "timestamp_utc": "2025-11-14T23:53:57Z",
+  "timestamp_utc": "2025-11-15T14:51:16Z",
   "artifact_count": 12,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
-      "bytes": 825,
-      "sha256": "93017903fc22e55c6e50547bc10bd2c364ca498ddadd8ce461ff578207e30b03",
+      "bytes": 824,
+      "sha256": "2d05cb0f58a444be04b75c24f03dfa0cbdf082b69442438ef9055cca0d5f5c29",
       "category": "metadata",
       "role": "supplemental"
     },
@@ -46,16 +46,16 @@
     {
       "name": "sanity_report.csv",
       "rel_path": "diagnostics\\sanity_report.csv",
-      "bytes": 174,
-      "sha256": "cd58a85d8eb990f27d8a11af48f216f39402106895f14f7649142fef35162f8d",
+      "bytes": 214,
+      "sha256": "259b9b391712d757623b0abc303ef4061d5d71fd87e36a61384cb83f382e1873",
       "category": "diagnostic",
       "role": "supplemental"
     },
     {
       "name": "summary_metrics.csv",
       "rel_path": "diagnostics\\summary_metrics.csv",
-      "bytes": 100,
-      "sha256": "c722b1c29f7700f93d5b2ef538915d8d85085b4cc6ca4714753ac98cecd72984",
+      "bytes": 99,
+      "sha256": "5be03fb0d09c30087d99ab6f3909372933179b8e967d6435c2303de6e3eae194",
       "category": "diagnostic",
       "role": "supplemental"
     },

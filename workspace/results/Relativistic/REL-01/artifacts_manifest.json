@@ -1,13 +1,13 @@
 {
   "test_id": "REL-01",
-  "timestamp_utc": "2025-11-14T23:46:40Z",
-  "artifact_count": 5,
+  "timestamp_utc": "2025-11-15T14:51:19Z",
+  "artifact_count": 6,
   "artifacts": [
     {
       "name": "summary.json",
       "rel_path": "summary.json",
       "bytes": 1001,
-      "sha256": "8e387a0bc57ac1dc5edd29aeb4e639c210e83fc76e877f673eec11698e7be519",
+      "sha256": "98af1f82ccbc27754dbe6cd5dfe0116b3c633655afb24a3f830ecbfb837ca28e",
       "category": "metadata",
       "role": "supplemental"
     },
@@ -18,6 +18,14 @@
       "sha256": "c2bcad60699ef8e38be2fe0217455ac3710842bbe9fceb27e250dd06c2774482",
       "category": "diagnostic",
       "role": "required"
+    },
+    {
+      "name": "sanity_report.csv",
+      "rel_path": "diagnostics\\sanity_report.csv",
+      "bytes": 150,
+      "sha256": "bdd63bafb26f87cfd256841309a71b7f932174997e3a0dcf80cbf7ebe0e80e70",
+      "category": "diagnostic",
+      "role": "supplemental"
     },
     {
       "name": "summary_metrics.csv",

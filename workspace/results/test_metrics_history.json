@@ -130,14 +130,6 @@
   "EM-01": {
     "runs": [
       {
-        "timestamp": "2025-11-11T00:57:06Z",
-        "exit_code": 0,
-        "runtime_sec": 0.316286563873291,
-        "peak_cpu_percent": 100.0,
-        "peak_memory_mb": 500.0,
-        "peak_gpu_memory_mb": 0.0
-      },
-      {
         "timestamp": "2025-11-11T00:58:31Z",
         "exit_code": 0,
         "runtime_sec": 0.32732439041137695,
@@ -208,6 +200,14 @@
         "peak_cpu_percent": 100.0,
         "peak_memory_mb": 500.0,
         "peak_gpu_memory_mb": 0.0
+      },
+      {
+        "timestamp": "2025-11-15T14:51:13Z",
+        "exit_code": 0,
+        "runtime_sec": 0.4101126194000244,
+        "peak_cpu_percent": 100.0,
+        "peak_memory_mb": 500.0,
+        "peak_gpu_memory_mb": 0.0
       }
     ],
     "estimated_resources": {
@@ -221,7 +221,7 @@
       "timeout_multiplier": 3.0
     },
     "priority": 50,
-    "last_run": "2025-11-14T23:56:52Z"
+    "last_run": "2025-11-15T14:51:13Z"
   },
   "EM-03": {
     "runs": [
